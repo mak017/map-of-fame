@@ -16,8 +16,7 @@ const rename = require('gulp-rename');
 const cache = require('gulp-cache');
 const gulpIf = require('gulp-if');
 const extend = require('extend');
-
-const folders = ['portfolio', 'resume'];
+const imageminJpegRecompress = require('imagemin-jpeg-recompress');
 
 // Configuration
 //
@@ -99,7 +98,7 @@ gulp.task('uglify', function () {
 
 gulp.task('img', function () {
   return gulp
-    .src('images/**/*.{jpg,png,svg}')
+    .src('images/raw/**/*.{jpg,png,svg}')
     .pipe(
       debug({
         title: 'img:',
@@ -125,7 +124,7 @@ gulp.task('img', function () {
         suffix: '.min',
       }),
     )
-    .pipe(gulp.dest('./'))
+    .pipe(gulp.dest('images/compressed/'))
     .on('end', function () {
       browserSync.reload();
     });
@@ -133,7 +132,7 @@ gulp.task('img', function () {
 
 gulp.task('watch', function () {
   gulp.watch('js/main.js', gulp.series('uglify'));
-  gulp.watch('images/**/*.{jpg,png,svg}', gulp.series('img'));
+  gulp.watch('images/raw/**/*.{jpg,png,svg}', gulp.series('img'));
   gulp.watch('scss/*.scss', gulp.series('sass'));
 
   browserSync.init({

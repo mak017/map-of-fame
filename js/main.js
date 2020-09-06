@@ -3,7 +3,11 @@
 // }
 
 document.addEventListener('DOMContentLoaded', function () {
+  // Init leaflet map
   const map = L.map('map');
+  const addSpotSidebar = document.querySelector('.add-spot');
+
+  // Tile layer
   L.tileLayer(
     'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
     {
@@ -18,6 +22,10 @@ document.addEventListener('DOMContentLoaded', function () {
     },
   ).addTo(map);
 
+  // Change position of zoom control
+  map.zoomControl.setPosition('bottomleft');
+
+  // Get location by IP
   fetch('https://ipinfo.io/json?token=c97eec3767f442')
     .then((response) => {
       return response.json();
@@ -27,4 +35,23 @@ document.addEventListener('DOMContentLoaded', function () {
       const location = loc.split(',').map((item) => +item);
       map.setView(location, 13);
     });
+
+  const newMarkerIcon = L.icon({
+    iconUrl: '../images/compressed/new-marker.min.svg',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    shadowUrl: '../images/compressed/new-marker-shadow.min.svg',
+    shadowSize: [46, 46],
+    shadowAnchor: [23, 43],
+  });
+
+  document.querySelector('.addSpot').addEventListener('click', function () {
+    const center = map.getCenter();
+    const newMarker = L.marker(center, { draggable: true, icon: newMarkerIcon }).addTo(map);
+    newMarker.addEventListener('moveend', function () {
+      if (!addSpotSidebar.classList.contains('visible')) {
+        addSpotSidebar.classList.add('visible');
+      }
+    });
+  });
 });
