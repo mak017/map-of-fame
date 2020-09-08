@@ -1,32 +1,7 @@
 @import "reset";
 
-body {
-  overflow: hidden;
-}
+@import "colors";
 
-.map {
-  z-index: 0;
-  width: 100%;
-  height: 100vh;
-}
+@import "toggle_switcher";
 
-button {
-  position: absolute;
-  right: 10px;
-  bottom: 20px;
-}
-
-.add-spot {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 150px;
-  transform: translateX(100%);
-  transition: transform 0.3s;
-  background-color: #fff;
-
-  &.visible {
-    transform: translateX(0);
-  }
-}
+@import "main";
