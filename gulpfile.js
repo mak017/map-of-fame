@@ -17,6 +17,8 @@ const cache = require('gulp-cache');
 const gulpIf = require('gulp-if');
 const extend = require('extend');
 const imageminJpegRecompress = require('imagemin-jpeg-recompress');
+const webpack = require('webpack');
+const webpackConfig = require(__dirname + '/webpack.config.js');
 
 // Configuration
 //
@@ -50,7 +52,7 @@ gulp.task('sass', function () {
 
   // const tasks = folders.map(function (element) {
   return gulp
-    .src('scss/!(_)*.scss', {
+    .src('src/scss/!(_)*.scss', {
       base: 'scss',
     })
     .pipe(
@@ -65,40 +67,51 @@ gulp.task('sass', function () {
     .pipe(cleanCSS())
     .pipe(gulpIf(config.env === 'development', sourcemaps.write()))
     .pipe(plumber.stop())
-    .pipe(gulp.dest('css'))
+    .pipe(gulp.dest('dist/css'))
     .pipe(browserSync.stream());
-  // };
-  // return merge(tasks);
 });
 
-gulp.task('uglify', function () {
-  return gulp
-    .src('js/main.js')
-    .pipe(
-      plumber(function (error) {
-        console.log('uglify:', error.message);
-        this.emit('end');
-      }),
-    )
-    .pipe(gulpIf(config.env === 'development', sourcemaps.init()))
-    .pipe(gulpIf(config.env === 'production', uglify()))
-    .on('error', swallowError)
-    .pipe(gulpIf(config.env === 'development', sourcemaps.write()))
-    .pipe(plumber.stop())
-    .pipe(
-      rename({
-        suffix: '.min',
-      }),
-    )
-    .pipe(gulp.dest('js'))
-    .on('end', function () {
-      browserSync.reload();
+gulp.task('js', function () {
+  return new Promise((resolve, reject) => {
+    const compiler = webpack(webpackConfig);
+    compiler.run((err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
     });
+  });
 });
+
+// gulp.task('uglify', function () {
+//   return gulp
+//     .src('js/main.js')
+//     .pipe(
+//       plumber(function (error) {
+//         console.log('uglify:', error.message);
+//         this.emit('end');
+//       }),
+//     )
+//     .pipe(gulpIf(config.env === 'development', sourcemaps.init()))
+//     .pipe(gulpIf(config.env === 'production', uglify()))
+//     .on('error', swallowError)
+//     .pipe(gulpIf(config.env === 'development', sourcemaps.write()))
+//     .pipe(plumber.stop())
+//     .pipe(
+//       rename({
+//         suffix: '.min',
+//       }),
+//     )
+//     .pipe(gulp.dest('js'))
+//     .on('end', function () {
+//       browserSync.reload();
+//     });
+// });
 
 gulp.task('img', function () {
   return gulp
-    .src('images/raw/**/*.{jpg,png,svg}')
+    .src('src/images/**/*.{jpg,png,svg}')
     .pipe(
       debug({
         title: 'img:',
@@ -124,16 +137,16 @@ gulp.task('img', function () {
         suffix: '.min',
       }),
     )
-    .pipe(gulp.dest('images/compressed/'))
+    .pipe(gulp.dest('dist/images/'))
     .on('end', function () {
       browserSync.reload();
     });
 });
 
 gulp.task('watch', function () {
-  gulp.watch('js/main.js', gulp.series('uglify'));
-  gulp.watch('images/raw/**/*.{jpg,png,svg}', gulp.series('img'));
-  gulp.watch('scss/*.scss', gulp.series('sass'));
+  gulp.watch('src/**/*.js', gulp.series('js'));
+  gulp.watch('src/images/**/*.{jpg,png,svg}', gulp.series('img'));
+  gulp.watch('src/scss/**/*.scss', gulp.series('sass'));
 
   browserSync.init({
     server: {
@@ -143,9 +156,9 @@ gulp.task('watch', function () {
   browserSync.watch(['./*.html']).on('change', browserSync.reload);
 });
 
-gulp.task('default', gulp.series('set-dev-node-env', gulp.parallel('uglify', 'sass'), 'watch'));
+gulp.task('default', gulp.series('set-dev-node-env', gulp.parallel('js', 'sass'), 'watch'));
 
-gulp.task('build', gulp.series(gulp.parallel('set-prod-node-env', 'uglify', 'sass')));
+gulp.task('build', gulp.series(gulp.parallel('set-prod-node-env', 'js', 'sass')));
 
 console.log('env:', config.env);
 
