@@ -1,0 +1,25 @@
+.map {
+  z-index: 0;
+  width: 100%;
+  height: 100vh;
+
+  &-marker {
+    &-with-photo {
+      border: 4px solid #fff;
+      border-radius: 50%;
+    }
+
+    &-cluster {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 4px solid #fff;
+      border-radius: 50%;
+      opacity: 0.6;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+    }
+  }
+}

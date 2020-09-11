@@ -1,4 +1,7 @@
+/* eslint-disable no-console */
+/* eslint-disable func-names */
 const gulp = require('gulp');
+const path = require('path');
 const browserSync = require('browser-sync').create();
 const minimist = require('minimist');
 const sass = require('gulp-sass');
@@ -7,22 +10,20 @@ const cssnext = require('postcss-preset-env');
 const mqpacker = require('css-mqpacker');
 const sortCSSmq = require('sort-css-media-queries');
 const cleanCSS = require('gulp-clean-css');
-const uglify = require('gulp-uglify');
 const debug = require('gulp-debug');
 const plumber = require('gulp-plumber');
 const sourcemaps = require('gulp-sourcemaps');
 const imagemin = require('gulp-imagemin');
 const rename = require('gulp-rename');
-const cache = require('gulp-cache');
 const gulpIf = require('gulp-if');
 const extend = require('extend');
 const imageminJpegRecompress = require('imagemin-jpeg-recompress');
 const webpack = require('webpack');
-const webpackConfig = require(__dirname + '/webpack.config.js');
+const webpackConfig = require(path.join(__dirname, '/webpack.config.js'));
 
 // Configuration
 //
-var config = extend(
+let config = extend(
   {
     env: process.env.NODE_ENV,
   },
@@ -32,11 +33,13 @@ var config = extend(
 // Getters / Setters
 //
 gulp.task('set-dev-node-env', function (done) {
-  process.env.NODE_ENV = config.env = 'development';
+  config.env = 'development';
+  process.env.NODE_ENV = config.env;
   done();
 });
 gulp.task('set-prod-node-env', function (done) {
-  process.env.NODE_ENV = config.env = 'production';
+  config.env = 'production';
+  process.env.NODE_ENV = config.env;
   done();
 });
 
@@ -50,11 +53,8 @@ gulp.task('sass', function () {
     }),
   ];
 
-  // const tasks = folders.map(function (element) {
   return gulp
-    .src('src/scss/!(_)*.scss', {
-      base: 'scss',
-    })
+    .src('src/scss/!(_)*.scss')
     .pipe(
       plumber(function (error) {
         console.log('sass:', error.message);
@@ -79,35 +79,11 @@ gulp.task('js', function () {
         reject(err);
       } else {
         resolve();
+        browserSync.reload();
       }
     });
   });
 });
-
-// gulp.task('uglify', function () {
-//   return gulp
-//     .src('js/main.js')
-//     .pipe(
-//       plumber(function (error) {
-//         console.log('uglify:', error.message);
-//         this.emit('end');
-//       }),
-//     )
-//     .pipe(gulpIf(config.env === 'development', sourcemaps.init()))
-//     .pipe(gulpIf(config.env === 'production', uglify()))
-//     .on('error', swallowError)
-//     .pipe(gulpIf(config.env === 'development', sourcemaps.write()))
-//     .pipe(plumber.stop())
-//     .pipe(
-//       rename({
-//         suffix: '.min',
-//       }),
-//     )
-//     .pipe(gulp.dest('js'))
-//     .on('end', function () {
-//       browserSync.reload();
-//     });
-// });
 
 gulp.task('img', function () {
   return gulp
@@ -161,8 +137,3 @@ gulp.task('default', gulp.series('set-dev-node-env', gulp.parallel('js', 'sass')
 gulp.task('build', gulp.series(gulp.parallel('set-prod-node-env', 'js', 'sass')));
 
 console.log('env:', config.env);
-
-function swallowError(error) {
-  console.log(error.toString());
-  this.emit('end');
-}

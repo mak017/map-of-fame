@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import { grayScaleTileLayer } from './grayScaleTileLayer';
 
 export const stamenTerrain = L.tileLayer(
   'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}',
@@ -8,6 +9,16 @@ export const stamenTerrain = L.tileLayer(
     minZoom: 0,
     maxZoom: 18,
     ext: 'png',
+  },
+);
+
+export const openStreetMapMapnik = grayScaleTileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    fadeAnimation: false,
   },
 );
 // const lightLayer = L.tileLayer(

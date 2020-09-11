@@ -1,46 +1,49 @@
 import L from 'leaflet';
+import 'leaflet.markercluster';
+import { clusterIcon, markerWithPhoto } from './mapUtils/icons';
 const RANDOM_MARKERS_COUNT = 100;
-const arrMarkers = [];
+let arrMarkers = [];
 
-export const onAddMarkersClick = (map) => {
-  clearmarkers();
-  plotrandom(RANDOM_MARKERS_COUNT, map);
-};
-
-const clearmarkers = () => {
+const clearMarkers = (map) => {
   if (arrMarkers) {
-    for (let i in arrMarkers) {
-      arrMarkers[i].removeFrom(map);
-    }
+    arrMarkers.forEach((marker) => marker.removeFrom(map));
   }
   arrMarkers = [];
 };
 
-const plotrandom = (number, map) => {
+const placeMarker = (location, text) => {
+  let marker = L.marker(location, { title: text, icon: markerWithPhoto });
+  return marker;
+};
+
+const plotRandom = (number, map) => {
   const bounds = map.getBounds();
   const southWest = bounds.getSouthWest();
   const northEast = bounds.getNorthEast();
   const lngSpan = northEast.lng - southWest.lng;
   const latSpan = northEast.lat - southWest.lat;
-  pointsRand = [];
+  const pointsRand = [];
+  const markers = L.markerClusterGroup({
+    spiderfyOnMaxZoom: false,
+    showCoverageOnHover: false,
+    iconCreateFunction: clusterIcon,
+  });
 
-  for (let i = 0; i < number; ++i) {
+  for (let i = 0; i < number; i += 1) {
     const point = [
       southWest.lat + latSpan * Math.random(),
       southWest.lng + lngSpan * Math.random(),
     ];
     pointsRand.push(point);
-  }
-
-  for (var i = 0; i < number; ++i) {
-    var str_text = i + ' : ' + pointsRand[i];
-    var marker = placeMarker(pointsRand[i], str_text);
-    marker.addTo(map);
+    const strText = `${i} : ${pointsRand[i]}`;
+    const marker = placeMarker(pointsRand[i], strText);
+    markers.addLayer(marker);
     arrMarkers.push(marker);
   }
+  map.addLayer(markers);
 };
 
-const placeMarker = (location, text) => {
-  var marker = L.marker(location, { title: text });
-  return marker;
+export const addRandomMarkers = (map) => {
+  clearMarkers(map);
+  plotRandom(RANDOM_MARKERS_COUNT, map);
 };
