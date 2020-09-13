@@ -4,13 +4,44 @@ body {
   font-size: 16px;
 }
 
-.button-add_spot {
-  position: absolute;
-  right: 10px;
-  bottom: 20px;
+.button {
+  border: 0;
+  border-radius: 2px;
+
+  &-main_screen {
+    background: #fff;
+
+    &:active {
+      background-color: var(--color-accent);
+    }
+  }
+
+  &-open_calendar {
+    position: absolute;
+    top: 16px;
+    left: 18px;
+    width: 114px;
+    height: 40px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 13px;
+      left: 13px;
+      width: 14px;
+      height: 14px;
+      background: url(../images/calendar.svg);
+    }
+  }
+
+  &-add_spot {
+    position: absolute;
+    right: 10px;
+    bottom: 20px;
+  }
 }
 
-.button-dark_mode, .mode-switcher {
+.mode-switcher {
   position: absolute;
   right: 10px;
   bottom: 60px;

@@ -1,13 +1,12 @@
 import L from 'leaflet';
 import { addRandomMarkers } from './randomMarkersStub';
-import { openStreetMapMapnik } from './mapUtils/tileLayers';
+import { openRailwayMap, openStreetMapMapnik } from './mapUtils/tileLayers';
 import { newMarkerIcon } from './mapUtils/icons';
 
-// const state = {
-//   mode: 'light',
-// };
+const state = {
+  mode: 'regular',
+};
 
-// document.addEventListener('DOMContentLoaded', function () {
 // Init leaflet map
 const map = L.map('map', { layers: [openStreetMapMapnik] });
 const addSpotSidebar = document.querySelector('.add-spot');
@@ -16,14 +15,36 @@ const addSpotSidebar = document.querySelector('.add-spot');
 map.zoomControl.setPosition('bottomleft');
 
 // Get location by IP
-fetch('https://ipinfo.io/json?token=c97eec3767f442')
-  .then((response) => response.json())
-  .then((data) => {
-    const { loc } = data;
-    const location = loc.split(',').map((item) => +item);
-    map.setView(location, 13);
+const getLocationByIp = () =>
+  fetch('https://ipinfo.io/json?token=c97eec3767f442')
+    .then((response) => response.json())
+    .then((data) => {
+      const { loc } = data;
+      return loc.split(',').map((item) => +item);
+    });
+
+const getLocation = () => {
+  if (navigator.geolocation) {
+    return new Promise((res, rej) => {
+      navigator.geolocation.getCurrentPosition(res, rej);
+    })
+      .then((position) => {
+        const { latitude, longitude } = position.coords;
+        return [+latitude, +longitude];
+      })
+      .catch(() => getLocationByIp());
+  }
+  return getLocationByIp();
+};
+
+const setLocation = () => {
+  getLocation().then((response) => {
+    map.setView(response, 13);
     addRandomMarkers(map);
   });
+};
+
+setLocation();
 
 const onNewMarkerMoveEnd = () => {
   if (!addSpotSidebar.classList.contains('visible')) {
@@ -39,15 +60,12 @@ const onAddSpotBtnClick = () => {
 
 document.querySelector('.button-add_spot').addEventListener('click', onAddSpotBtnClick);
 
-// document.querySelector('.button-dark_mode').addEventListener('click', function () {
-//   if (state.mode === 'light') {
-//     map.removeLayer(lightLayer);
-//     map.addLayer(darkLayer);
-//     state.mode = 'dark';
-//   } else {
-//     map.removeLayer(darkLayer);
-//     map.addLayer(lightLayer);
-//     state.mode = 'light';
-//   }
-// });
-// });
+document.querySelector('#mode-switcher').addEventListener('change', function () {
+  if (state.mode === 'regular') {
+    map.addLayer(openRailwayMap);
+    state.mode = 'railway';
+  } else {
+    map.removeLayer(openRailwayMap);
+    state.mode = 'regular';
+  }
+});

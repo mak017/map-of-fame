@@ -14,7 +14,6 @@ const debug = require('gulp-debug');
 const plumber = require('gulp-plumber');
 const sourcemaps = require('gulp-sourcemaps');
 const imagemin = require('gulp-imagemin');
-const rename = require('gulp-rename');
 const gulpIf = require('gulp-if');
 const extend = require('extend');
 const imageminJpegRecompress = require('imagemin-jpeg-recompress');
@@ -107,11 +106,6 @@ gulp.task('img', function () {
         }),
         imagemin.svgo(),
       ]),
-    )
-    .pipe(
-      rename({
-        suffix: '.min',
-      }),
     )
     .pipe(gulp.dest('dist/images/'))
     .on('end', function () {
