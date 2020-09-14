@@ -60,11 +60,13 @@ const onAddSpotBtnClick = () => {
 
 document.querySelector('.button-add_spot').addEventListener('click', onAddSpotBtnClick);
 
-document.querySelector('#mode-switcher').addEventListener('change', function () {
+document.querySelector('.button-switch_mode').addEventListener('click', function () {
   if (state.mode === 'regular') {
+    this.classList.add('active');
     map.addLayer(openRailwayMap);
     state.mode = 'railway';
   } else {
+    this.classList.remove('active');
     map.removeLayer(openRailwayMap);
     state.mode = 'regular';
   }

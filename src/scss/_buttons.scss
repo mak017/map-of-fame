@@ -1,0 +1,130 @@
+.button {
+  border: 0;
+  border-radius: 2px;
+  cursor: pointer;
+
+  &:disabled {
+    pointer-events: none;
+  }
+
+  &-main_screen {
+    background: var(--color-light);
+
+    &:active {
+      background-color: var(--color-accent);
+    }
+  }
+
+  &-square {
+    width: 40px;
+    height: 40px;
+  }
+
+  &-open_calendar {
+    position: relative;
+    min-width: 114px;
+    height: 40px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 13px;
+      left: 13px;
+      width: 14px;
+      height: 14px;
+      background: url(../images/calendar.svg);
+    }
+  }
+
+  &-lighthouse {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    margin-left: 12px;
+    overflow: hidden;
+    background-color: var(--color-dark);
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 22px;
+      height: 22px;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.3s;
+      border-radius: 50%;
+      background-color: var(--color-accent);
+    }
+
+    svg {
+      position: relative;
+      transition: transform 0.3s;
+      fill: var(--color-light);
+    }
+
+    &:disabled {
+      background-color: var(--color-light);
+
+      svg {
+        fill: rgba($color: #000, $alpha: 0.2);
+      }
+    }
+
+    &:hover {
+      &::before {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      svg {
+        transform: scale(1.5);
+      }
+    }
+
+    &.active, &:active {
+      &::before {
+        transform: translate(-50%, -50%) scale(3);
+      }
+
+      svg {
+        transform: scale(1);
+      }
+    }
+  }
+
+  &-open_search {
+    margin-right: 12px;
+    background-image: url(../images/loupe.svg);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 20px 20px;
+  }
+
+  &-open_login {
+    background-image: url(../images/lock.svg);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 9px 17px;
+  }
+
+  &-switch_mode {
+    position: absolute;
+    bottom: 18px;
+    left: 70px;
+    background-image: url(../images/railroad.svg);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 19px 22px;
+
+    &.active {
+      background-color: var(--color-accent);
+    }
+  }
+
+  &-add_spot {
+    position: absolute;
+    right: 10px;
+    bottom: 20px;
+  }
+}
