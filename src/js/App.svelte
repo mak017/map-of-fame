@@ -1,16 +1,21 @@
 <script>
 import L from "leaflet";
+import { isLoggedIn } from "./store.js";
 import { addRandomMarkers } from "./randomMarkersStub";
 import { openRailwayMap, openStreetMapMapnik } from "./mapUtils/tileLayers";
 // import { newMarkerIcon } from './mapUtils/icons';
 
-// const state = {
-//   mode: 'regular',
-// };
+const state = {
+  mode: "regular",
+};
+
+let map;
+let isLoggedInValue;
+isLoggedIn.subscribe((value) => (isLoggedInValue = value));
 
 // Init leaflet map
 const initMap = (container) => {
-  const map = L.map(container, { layers: [openStreetMapMapnik] });
+  map = L.map(container, { layers: [openStreetMapMapnik] });
   // const addSpotSidebar = document.querySelector('.add-spot');
 
   // Change position of zoom control
@@ -64,23 +69,26 @@ const initMap = (container) => {
 
 // document.querySelector('.button-add_spot').addEventListener('click', onAddSpotBtnClick);
 
-// document.querySelector('.button-switch_mode').addEventListener('click', function () {
-//   if (state.mode === 'regular') {
-//     this.classList.add('active');
-//     map.addLayer(openRailwayMap);
-//     state.mode = 'railway';
-//   } else {
-//     this.classList.remove('active');
-//     map.removeLayer(openRailwayMap);
-//     state.mode = 'regular';
-//   }
-// });
+const handleChangeModeClick = () => {
+  if (state.mode === "regular") {
+    map.addLayer(openRailwayMap);
+    state.mode = "railway";
+  } else {
+    map.removeLayer(openRailwayMap);
+    state.mode = "regular";
+  }
+};
+
+console.log(isLoggedInValue);
 </script>
 
 <div class="map" use:initMap></div>
 <div class="main-top_left_wrapper">
   <button class="button button-main_screen button-open_calendar">2020</button>
-  <button class="button button-square button-lighthouse">
+  <button
+    class="button button-square button-lighthouse"
+    disabled="{!isLoggedInValue}"
+  >
     <svg
       width="9"
       height="15"
@@ -98,12 +106,22 @@ const initMap = (container) => {
   <button
     class="button button-main_screen button-square button-open_search"
   ></button>
-  <button
-    class="button button-main_screen button-square button-open_login"
-  ></button>
+  {#if isLoggedInValue}
+    <button
+      class="button button-main_screen button-square button-burger"
+    ></button>
+  {:else}
+    <button
+      class="button button-main_screen button-square button-open_login"
+    ></button>
+  {/if}
 </div>
-<button class="button button-add_spot">Add Spot</button>
 <button
   class="button button-main_screen button-square button-switch_mode"
+  class:active="{state.mode === 'railway'}"
+  on:click="{handleChangeModeClick}"
 ></button>
-<div class="add-spot"></div>
+{#if isLoggedInValue}
+  <button class="button button-add_spot">Add Spot</button>
+  <div class="add-spot"></div>
+{/if}

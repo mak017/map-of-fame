@@ -122,6 +122,13 @@
     }
   }
 
+  &-burger {
+    background-image: url(../images/burger.svg);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 18px 13px;
+  }
+
   &-add_spot {
     position: absolute;
     right: 10px;

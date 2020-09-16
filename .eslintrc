@@ -13,7 +13,7 @@
     "sourceType": "module"
   },
   "rules": {
-    "comma-dangle": [2, "always-multiline"],
+    "comma-dangle": [2, "only-multiline"],
     "no-var": 2,
     "arrow-body-style": [2, "as-needed"]
   }
