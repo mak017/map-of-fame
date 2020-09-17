@@ -10,6 +10,9 @@
 // };
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const ImageminPlugin = require("imagemin-webpack-plugin").default;
+const imageminJpegRecompress = require("imagemin-jpeg-recompress");
 const path = require("path");
 
 const mode = process.env.NODE_ENV || "development";
@@ -75,6 +78,26 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: "[name].css",
+    }),
+    // new CopyWebpackPlugin({
+    //   patterns: [
+    //     {
+    //       from: "./src/images/",
+    //       to: "./public/images/",
+    //     },
+    //   ],
+    // }),
+    new ImageminPlugin({
+      test: /\.(jpe?g|png|gif|svg)$/i,
+      optiPng: { optimizationLevel: 5 },
+      plugins: [
+        imageminJpegRecompress({
+          loops: 4,
+          min: 50,
+          max: 95,
+          quality: "high",
+        }),
+      ],
     }),
   ],
   devtool: prod ? false : "source-map",

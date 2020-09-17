@@ -13,6 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "browser-sync": "^2.26.12",
+    "copy-webpack-plugin": "^6.1.0",
     "cross-env": "^7.0.2",
     "css-loader": "^4.3.0",
     "css-mqpacker": "^7.0.0",
@@ -31,6 +32,7 @@
     "gulp-sass": "^4.1.0",
     "gulp-sourcemaps": "^2.6.5",
     "imagemin-jpeg-recompress": "^7.0.0",
+    "imagemin-webpack-plugin": "^2.4.2",
     "mini-css-extract-plugin": "^0.11.2",
     "minimist": "^1.2.5",
     "postcss-preset-env": "^6.7.0",
