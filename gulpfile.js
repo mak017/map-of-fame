@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable func-names */
 const gulp = require("gulp");
-const path = require("path");
+// const path = require("path");
 const browserSync = require("browser-sync").create();
 const minimist = require("minimist");
 const sass = require("gulp-sass");
@@ -17,8 +17,8 @@ const imagemin = require("gulp-imagemin");
 const gulpIf = require("gulp-if");
 const extend = require("extend");
 const imageminJpegRecompress = require("imagemin-jpeg-recompress");
-const webpack = require("webpack");
-const webpackConfig = require(path.join(__dirname, "/webpack.config.js"));
+// const webpack = require("webpack");
+// const webpackConfig = require(path.join(__dirname, "/webpack.config.js"));
 
 // Configuration
 //
@@ -70,19 +70,19 @@ gulp.task("sass", function () {
     .pipe(browserSync.stream());
 });
 
-gulp.task("js", function () {
-  return new Promise((resolve, reject) => {
-    const compiler = webpack(webpackConfig);
-    compiler.run((err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-        browserSync.reload();
-      }
-    });
-  });
-});
+// gulp.task("js", function () {
+//   return new Promise((resolve, reject) => {
+//     const compiler = webpack(webpackConfig);
+//     compiler.run((err) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         resolve();
+//         browserSync.reload();
+//       }
+//     });
+//   });
+// });
 
 gulp.task("img", function () {
   return gulp
@@ -114,26 +114,20 @@ gulp.task("img", function () {
 });
 
 gulp.task("watch", function () {
-  gulp.watch("src/**/*.{js,svelte}", gulp.series("js"));
+  // gulp.watch("src/**/*.{js,svelte}", gulp.series("js"));
   gulp.watch("src/images/**/*.{jpg,png,svg}", gulp.series("img"));
   gulp.watch("src/scss/**/*.scss", gulp.series("sass"));
 
-  browserSync.init({
-    server: {
-      baseDir: "./",
-    },
-  });
-  browserSync.watch(["public/*.html"]).on("change", browserSync.reload);
+  // browserSync.init({
+  //   server: {
+  //     baseDir: "./",
+  //   },
+  // });
+  // browserSync.watch(["public/*.html"]).on("change", browserSync.reload);
 });
 
-gulp.task(
-  "default",
-  gulp.series("set-dev-node-env", gulp.parallel("js", "sass"), "watch")
-);
+gulp.task("default", gulp.series("set-dev-node-env", "sass", "watch"));
 
-gulp.task(
-  "build",
-  gulp.series(gulp.parallel("set-prod-node-env", "js", "sass"))
-);
+gulp.task("build", gulp.series(gulp.parallel("set-prod-node-env", "sass")));
 
 console.log("env:", config.env);

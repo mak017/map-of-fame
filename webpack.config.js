@@ -9,10 +9,11 @@
 //   },
 // };
 
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-const ImageminPlugin = require("imagemin-webpack-plugin").default;
-const imageminJpegRecompress = require("imagemin-jpeg-recompress");
+// const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+// const CopyWebpackPlugin = require("copy-webpack-plugin");
+// const ImageminPlugin = require("imagemin-webpack-plugin").default;
+// const imageminJpegRecompress = require("imagemin-jpeg-recompress");
+import WatchExternalFilesPlugin from "webpack-watch-files-plugin";
 const path = require("path");
 
 const mode = process.env.NODE_ENV || "development";
@@ -59,51 +60,75 @@ module.exports = {
         //     },
         //   },
         // },
-        use: "svelte-loader",
-      },
-      {
-        test: /\.css$/,
         use: [
-          /**
-           * MiniCssExtractPlugin doesn't support HMR.
-           * For developing, use 'style-loader' instead.
-           * */
-          prod ? MiniCssExtractPlugin.loader : "style-loader",
-          "css-loader",
+          "babel-loader",
+          {
+            loader: "svelte-loader",
+            options: {
+              dev: !prod,
+            },
+          },
         ],
       },
+      {
+        test: /\.m?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"],
+          },
+        },
+      },
+      // {
+      //   test: /\.css$/,
+      //   use: [
+      //     /**
+      //      * MiniCssExtractPlugin doesn't support HMR.
+      //      * For developing, use 'style-loader' instead.
+      //      * */
+      //     prod ? MiniCssExtractPlugin.loader : "style-loader",
+      //     "css-loader",
+      //   ],
+      // },
     ],
   },
   mode,
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: "[name].css",
-    }),
-    // new CopyWebpackPlugin({
-    //   patterns: [
-    //     {
-    //       from: "./src/images/",
-    //       to: "./public/images/",
-    //     },
-    //   ],
-    // }),
-    new ImageminPlugin({
-      test: /\.(jpe?g|png|gif|svg)$/i,
-      optiPng: { optimizationLevel: 5 },
-      plugins: [
-        imageminJpegRecompress({
-          loops: 4,
-          min: 50,
-          max: 95,
-          quality: "high",
-        }),
+    new WatchExternalFilesPlugin({
+      files: [
+        "./public/images/**/*",
+        "./public/index.html",
+        "./public/init.css",
       ],
     }),
+    //   new MiniCssExtractPlugin({
+    //     filename: "[name].css",
+    //   }),
+    //   new CopyWebpackPlugin({
+    //     patterns: [
+    //       {
+    //         from: path.join(__dirname, "/src/images"),
+    //         to: path.join(__dirname, "/public/images"),
+    //       },
+    //     ],
+    //   }),
+    //   // new ImageminPlugin({
+    //   //   test: /\.(jpe?g|png|gif|svg)$/i,
+    //   //   optiPng: { optimizationLevel: 5 },
+    //   //   plugins: [
+    //   //     imageminJpegRecompress({
+    //   //       loops: 4,
+    //   //       min: 50,
+    //   //       max: 95,
+    //   //       quality: "high",
+    //   //     }),
+    //   //   ],
+    //   // }),
   ],
   devtool: prod ? false : "source-map",
   devServer: {
     contentBase: "public",
-    // hot: true,
-    // overlay: true,
+    overlay: true,
   },
 };

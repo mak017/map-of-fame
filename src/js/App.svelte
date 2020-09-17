@@ -1,12 +1,14 @@
 <script>
 import L from "leaflet";
+import { fly } from "svelte/transition";
 import { isLoggedIn } from "./store.js";
 import { addRandomMarkers } from "./randomMarkersStub";
 import { openRailwayMap, openStreetMapMapnik } from "./mapUtils/tileLayers";
-// import { newMarkerIcon } from './mapUtils/icons';
+import { newMarkerIcon } from "./mapUtils/icons";
 
 const state = {
   mode: "regular",
+  addSpotSidebarVisible: false,
 };
 
 let map;
@@ -53,21 +55,32 @@ const initMap = (container) => {
   };
 
   setLocation();
+
+  return {
+    destroy: () => {
+      map.remove();
+      map = null;
+    },
+  };
 };
 
-// const onNewMarkerMoveEnd = () => {
-//   if (!addSpotSidebar.classList.contains('visible')) {
-//     addSpotSidebar.classList.add('visible');
-//   }
-// };
+const onNewMarkerMoveEnd = () => {
+  console.log("state.addSpotSidebarVisible", state.addSpotSidebarVisible);
+  if (!state.addSpotSidebarVisible) {
+    console.log("true");
+    state.addSpotSidebarVisible = true;
+  }
+};
 
-// const onAddSpotBtnClick = () => {
-//   const center = map.getCenter();
-//   const newMarker = L.marker(center, { draggable: true, icon: newMarkerIcon }).addTo(map);
-//   newMarker.addEventListener('moveend', onNewMarkerMoveEnd);
-// };
-
-// document.querySelector('.button-add_spot').addEventListener('click', onAddSpotBtnClick);
+const onAddSpotBtnClick = () => {
+  const center = map.getCenter();
+  console.log("center", center);
+  const newMarker = L.marker(center, {
+    draggable: true,
+    icon: newMarkerIcon,
+  }).addTo(map);
+  newMarker.addEventListener("moveend", onNewMarkerMoveEnd);
+};
 
 const handleChangeModeClick = () => {
   if (state.mode === "regular") {
@@ -78,8 +91,6 @@ const handleChangeModeClick = () => {
     state.mode = "regular";
   }
 };
-
-console.log(isLoggedInValue);
 </script>
 
 <div class="map" use:initMap></div>
@@ -122,6 +133,8 @@ console.log(isLoggedInValue);
   on:click="{handleChangeModeClick}"
 ></button>
 {#if isLoggedInValue}
-  <button class="button button-add_spot">Add Spot</button>
-  <div class="add-spot"></div>
+  <button class="button button-add_spot" on:click="{onAddSpotBtnClick}">Add Spot</button>
+  {#if state.addSpotSidebarVisible}
+    <div class="add-spot" transition:fly="{{ x: 150, duration: 300 }}"></div>
+  {/if}
 {/if}
