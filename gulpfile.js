@@ -1,8 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable func-names */
 const gulp = require("gulp");
-// const path = require("path");
-const browserSync = require("browser-sync").create();
 const minimist = require("minimist");
 const sass = require("gulp-sass");
 const postcss = require("gulp-postcss");
@@ -17,8 +15,6 @@ const imagemin = require("gulp-imagemin");
 const gulpIf = require("gulp-if");
 const extend = require("extend");
 const imageminJpegRecompress = require("imagemin-jpeg-recompress");
-// const webpack = require("webpack");
-// const webpackConfig = require(path.join(__dirname, "/webpack.config.js"));
 
 // Configuration
 //
@@ -66,23 +62,8 @@ gulp.task("sass", function () {
     .pipe(cleanCSS())
     .pipe(gulpIf(config.env === "development", sourcemaps.write()))
     .pipe(plumber.stop())
-    .pipe(gulp.dest("public"))
-    .pipe(browserSync.stream());
+    .pipe(gulp.dest("public"));
 });
-
-// gulp.task("js", function () {
-//   return new Promise((resolve, reject) => {
-//     const compiler = webpack(webpackConfig);
-//     compiler.run((err) => {
-//       if (err) {
-//         reject(err);
-//       } else {
-//         resolve();
-//         browserSync.reload();
-//       }
-//     });
-//   });
-// });
 
 gulp.task("img", function () {
   return gulp
@@ -107,23 +88,12 @@ gulp.task("img", function () {
         imagemin.svgo(),
       ])
     )
-    .pipe(gulp.dest("public/images/"))
-    .on("end", function () {
-      browserSync.reload();
-    });
+    .pipe(gulp.dest("public/images/"));
 });
 
 gulp.task("watch", function () {
-  // gulp.watch("src/**/*.{js,svelte}", gulp.series("js"));
   gulp.watch("src/images/**/*.{jpg,png,svg}", gulp.series("img"));
   gulp.watch("src/scss/**/*.scss", gulp.series("sass"));
-
-  // browserSync.init({
-  //   server: {
-  //     baseDir: "./",
-  //   },
-  // });
-  // browserSync.watch(["public/*.html"]).on("change", browserSync.reload);
 });
 
 gulp.task("default", gulp.series("set-dev-node-env", "sass", "watch"));

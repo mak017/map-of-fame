@@ -7,8 +7,8 @@ import { openRailwayMap, openStreetMapMapnik } from "./mapUtils/tileLayers";
 import { newMarkerIcon } from "./mapUtils/icons";
 
 const state = {
-  mode: "regular",
-  addSpotSidebarVisible: false,
+  isRailwayMode: false,
+  isAddSpotSidebarVisible: false,
 };
 
 let map;
@@ -18,7 +18,6 @@ isLoggedIn.subscribe((value) => (isLoggedInValue = value));
 // Init leaflet map
 const initMap = (container) => {
   map = L.map(container, { layers: [openStreetMapMapnik] });
-  // const addSpotSidebar = document.querySelector('.add-spot');
 
   // Change position of zoom control
   map.zoomControl.setPosition("bottomleft");
@@ -65,16 +64,13 @@ const initMap = (container) => {
 };
 
 const onNewMarkerMoveEnd = () => {
-  console.log("state.addSpotSidebarVisible", state.addSpotSidebarVisible);
-  if (!state.addSpotSidebarVisible) {
-    console.log("true");
-    state.addSpotSidebarVisible = true;
+  if (!state.isAddSpotSidebarVisible) {
+    state.isAddSpotSidebarVisible = true;
   }
 };
 
 const onAddSpotBtnClick = () => {
   const center = map.getCenter();
-  console.log("center", center);
   const newMarker = L.marker(center, {
     draggable: true,
     icon: newMarkerIcon,
@@ -83,12 +79,12 @@ const onAddSpotBtnClick = () => {
 };
 
 const handleChangeModeClick = () => {
-  if (state.mode === "regular") {
+  if (state.isRailwayMode === false) {
     map.addLayer(openRailwayMap);
-    state.mode = "railway";
+    state.isRailwayMode = true;
   } else {
     map.removeLayer(openRailwayMap);
-    state.mode = "regular";
+    state.isRailwayMode = false;
   }
 };
 </script>
@@ -134,7 +130,7 @@ const handleChangeModeClick = () => {
 ></button>
 {#if isLoggedInValue}
   <button class="button button-add_spot" on:click="{onAddSpotBtnClick}">Add Spot</button>
-  {#if state.addSpotSidebarVisible}
+  {#if state.isAddSpotSidebarVisible}
     <div class="add-spot" transition:fly="{{ x: 150, duration: 300 }}"></div>
   {/if}
 {/if}
