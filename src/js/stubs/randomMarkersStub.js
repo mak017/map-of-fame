@@ -1,6 +1,6 @@
-import L from 'leaflet';
-import 'leaflet.markercluster';
-import { clusterIcon, markerWithPhoto } from './mapUtils/icons';
+import L from "leaflet";
+import "leaflet.markercluster";
+import { clusterIcon, markerWithPhoto } from "../mapUtils/icons";
 const RANDOM_MARKERS_COUNT = 100;
 let arrMarkers = [];
 

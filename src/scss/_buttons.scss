@@ -24,6 +24,7 @@
     position: relative;
     min-width: 114px;
     height: 40px;
+    padding: 0 36px;
 
     &::before {
       content: "";
@@ -33,6 +34,16 @@
       width: 14px;
       height: 14px;
       background: url(../images/calendar.svg);
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 8px;
+      height: 5px;
+      background: url(../images//triangle-down.svg);
     }
   }
 
@@ -131,7 +142,13 @@
 
   &-add_spot {
     position: absolute;
-    right: 10px;
-    bottom: 20px;
+    right: 18px;
+    bottom: 18px;
+    padding: 9px 18px;
+    background-color: var(--color-dark);
+    color: var(--color-light);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.2222222;
   }
 }

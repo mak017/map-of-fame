@@ -1,19 +1,24 @@
 <script>
+import Modal from "./Modal.svelte";
 import L from "leaflet";
 import { fly } from "svelte/transition";
-import { isLoggedIn } from "./store.js";
-import { addRandomMarkers } from "./randomMarkersStub";
+import { isLoggedIn, selectedYear } from "./store.js";
+import { addRandomMarkers } from "./stubs/randomMarkersStub";
 import { openRailwayMap, openStreetMapMapnik } from "./mapUtils/tileLayers";
 import { newMarkerIcon } from "./mapUtils/icons";
+import Calendar from "./Calendar.svelte";
 
 const state = {
   isRailwayMode: false,
   isAddSpotSidebarVisible: false,
+  showCalendar: false,
 };
 
 let map;
 let isLoggedInValue;
+let selectedYearValue;
 isLoggedIn.subscribe((value) => (isLoggedInValue = value));
+selectedYear.subscribe((value) => (selectedYearValue = value));
 
 // Init leaflet map
 const initMap = (container) => {
@@ -91,7 +96,10 @@ const handleChangeModeClick = () => {
 
 <div class="map" use:initMap></div>
 <div class="main-top_left_wrapper">
-  <button class="button button-main_screen button-open_calendar">2020</button>
+  <button
+    class="button button-main_screen button-open_calendar"
+    on:click="{() => (state.showCalendarModal = true)}"
+  >{selectedYearValue}</button>
   <button
     class="button button-square button-lighthouse"
     disabled="{!isLoggedInValue}"
@@ -125,7 +133,7 @@ const handleChangeModeClick = () => {
 </div>
 <button
   class="button button-main_screen button-square button-switch_mode"
-  class:active="{state.mode === 'railway'}"
+  class:active="{state.isRailwayMode}"
   on:click="{handleChangeModeClick}"
 ></button>
 {#if isLoggedInValue}
@@ -133,4 +141,16 @@ const handleChangeModeClick = () => {
   {#if state.isAddSpotSidebarVisible}
     <div class="add-spot" transition:fly="{{ x: 150, duration: 300 }}"></div>
   {/if}
+{/if}
+
+{#if state.showCalendarModal}
+  <Modal on:close="{() => (state.showCalendarModal = false)}">
+    <h2 slot="header">Date</h2>
+
+    <Calendar selectedYear="{selectedYearValue}" />
+
+    <a
+      href="https://www.merriam-webster.com/dictionary/modal"
+    >merriam-webster.com</a>
+  </Modal>
 {/if}
