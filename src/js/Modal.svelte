@@ -1,3 +1,37 @@
+<script>
+import { isMobile } from "./utils.js";
+import { createEventDispatcher } from "svelte";
+
+export let title;
+export let withAd = false;
+const dispatch = createEventDispatcher();
+const close = () => dispatch("close");
+
+const handle_keydown = (e) => {
+  if (e.key === "Escape") {
+    close();
+    return;
+  }
+};
+</script>
+
+<svelte:window on:keydown={handle_keydown} />
+
+<div class="modal" role="dialog" aria-modal="true">
+  <button class="close" on:click={close} />
+  <span class="logo" />
+  <h2>{title}</h2>
+  <slot />
+  {#if withAd && !isMobile()}
+    <div style="width: 938px">
+      <img
+        src="../images/stubs/stubad.jpg"
+        alt=""
+        style="object-fit: cover;width: 100%;height: 100%;" />
+    </div>
+  {/if}
+</div>
+
 <style>
 .modal {
   display: flex;
@@ -6,11 +40,11 @@
   left: 0;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100%;
   height: 100vh;
+  padding: 5vh 0;
   overflow: auto;
-  background: white;
+  background: var(--color-light);
 }
 
 .close {
@@ -25,52 +59,48 @@
   cursor: pointer;
 }
 
-</style>
+.logo {
+  display: block;
+  position: absolute;
+  left: 18vw;
+  top: 0px;
+  width: 57px;
+  height: 76px;
+  background: var(--color-accent) url(../images/logo.svg) 50% 50%/43px 56px
+    no-repeat;
+  border-radius: 0 0 2px 2px;
+}
 
-<script>
-import { createEventDispatcher } from "svelte";
+h2 {
+  margin: auto 0 6vh;
+  color: var(--color-dark);
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 29px;
+  text-align: center;
+  text-transform: uppercase;
+}
 
-const dispatch = createEventDispatcher();
-const close = () => dispatch("close");
+div {
+  height: 150px;
+  min-height: 150px;
+  max-width: 100%;
+  margin: auto 0 0;
+  overflow: hidden;
+}
 
-const handle_keydown = (e) => {
-  if (e.key === "Escape") {
-    close();
-    return;
+@media (max-width: 767px) {
+  .modal {
+    padding: 50px 0;
   }
-
-  // if (e.key === "Tab") {
-  //   // trap focus
-  //   const nodes = modal.querySelectorAll("*");
-  //   const tabbable = Array.from(nodes).filter((n) => n.tabIndex >= 0);
-
-  //   let index = tabbable.indexOf(document.activeElement);
-  //   if (index === -1 && e.shiftKey) index = 0;
-
-  //   index += tabbable.length + (e.shiftKey ? -1 : 1);
-  //   index %= tabbable.length;
-
-  //   tabbable[index].focus();
-  //   e.preventDefault();
-  // }
-};
-
-// const previously_focused =
-//   typeof document !== "undefined" && document.activeElement;
-
-// if (previously_focused) {
-//   onDestroy(() => {
-//     previously_focused.focus();
-//   });
-// }
-</script>
-
-<svelte:window on:keydown="{handle_keydown}" />
-
-<div class="modal" role="dialog" aria-modal="true">
-  <button class="close" on:click="{close}"></button>
-  <slot name="header" />
-  <slot />
-
-  <!-- svelte-ignore a11y-autofocus -->
-</div>
+  .close {
+    right: 12px;
+  }
+  .logo {
+    left: 12px;
+  }
+  h2 {
+    margin-top: 44px;
+  }
+}
+</style>
