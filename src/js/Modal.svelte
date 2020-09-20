@@ -25,7 +25,7 @@ const handle_keydown = (e) => {
   {#if withAd && !isMobile()}
     <div style="width: 938px">
       <img
-        src="../images/stubs/stubad.jpg"
+        src="images/stubs/stubad.jpg"
         alt=""
         style="object-fit: cover;width: 100%;height: 100%;" />
     </div>

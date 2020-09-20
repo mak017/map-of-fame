@@ -43,12 +43,12 @@
     }
 
     &-in {
-      background: var(--color-light) url(../images/plus.svg) 50% 50%/18px 18px
+      background: var(--color-light) url(images/plus.svg) 50% 50%/18px 18px
         no-repeat;
     }
 
     &-out {
-      background: var(--color-light) url(../images/minus.svg) 50% 50%/18px 3.5px
+      background: var(--color-light) url(images/minus.svg) 50% 50%/18px 3.5px
         no-repeat;
     }
   }

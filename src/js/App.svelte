@@ -11,7 +11,7 @@ import Calendar from "./Calendar.svelte";
 const state = {
   isRailwayMode: false,
   isAddSpotSidebarVisible: false,
-  showCalendarModal: true,
+  showCalendarModal: false,
   isLighthouseActive: false,
 };
 
