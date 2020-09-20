@@ -14,7 +14,7 @@ const state = {
   isAddSpotSidebarVisible: false,
   isLighthouseActive: false,
   showCalendarModal: false,
-  showSearchModal: true,
+  showSearchModal: false,
 };
 
 let map;
