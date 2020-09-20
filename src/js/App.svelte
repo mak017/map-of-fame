@@ -1,18 +1,20 @@
 <script>
-import { setLocation } from "./mapUtils/locationUtils.js";
-import Modal from "./Modal.svelte";
 import L from "leaflet";
 import { fly } from "svelte/transition";
+import SearchForm from "./components/SearchForm.svelte";
+import { setLocation } from "./mapUtils/locationUtils.js";
+import Modal from "./components/Modal.svelte";
 import { isLoggedIn, selectedYear } from "./store.js";
 import { openRailwayMap, openStreetMapMapnik } from "./mapUtils/tileLayers";
 import { newMarkerIcon } from "./mapUtils/icons";
-import Calendar from "./Calendar.svelte";
+import Calendar from "./components/Calendar.svelte";
 
 const state = {
   isRailwayMode: false,
   isAddSpotSidebarVisible: false,
-  showCalendarModal: false,
   isLighthouseActive: false,
+  showCalendarModal: false,
+  showSearchModal: true,
 };
 
 let map;
@@ -21,6 +23,7 @@ let selectedYearValue;
 isLoggedIn.subscribe((value) => (isLoggedInValue = value));
 selectedYear.subscribe((value) => (selectedYearValue = value));
 const showCalendar = (show) => (state.showCalendarModal = show);
+const showSearch = (show) => (state.showSearchModal = show);
 
 // Init leaflet map
 const initMap = (container) => {
@@ -69,7 +72,7 @@ const handleChangeModeClick = () => {
 <div class="main-top_left_wrapper">
   <button
     class="button button-main_screen button-open_calendar"
-    on:click={() => (state.showCalendarModal = true)}>{selectedYearValue}</button>
+    on:click={() => showCalendar(true)}>{selectedYearValue}</button>
   <button
     class="button button-square button-lighthouse"
     class:active={state.isLighthouseActive}
@@ -86,7 +89,9 @@ const handleChangeModeClick = () => {
   </button>
 </div>
 <div class="main-top_right_wrapper">
-  <button class="button button-main_screen button-square button-open_search" />
+  <button
+    class="button button-main_screen button-square button-open_search"
+    on:click={() => showSearch(true)} />
   {#if isLoggedInValue}
     <button class="button button-main_screen button-square button-burger" />
   {:else}
@@ -107,6 +112,12 @@ const handleChangeModeClick = () => {
 {#if state.showCalendarModal}
   <Modal on:close={() => showCalendar(false)} title="Date" withAd>
     <Calendar {selectedYear} {showCalendar} />
+  </Modal>
+{/if}
+
+{#if state.showSearchModal}
+  <Modal on:close={() => showSearch(false)} title="Search" withAd>
+    <SearchForm />
   </Modal>
 {/if}
 

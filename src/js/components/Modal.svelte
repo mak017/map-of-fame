@@ -1,28 +1,33 @@
 <script>
-import { isMobile } from "./utils.js";
+import { isMobile } from "../utils.js";
 import { createEventDispatcher } from "svelte";
 
 export let title;
 export let withAd = false;
 const dispatch = createEventDispatcher();
 const close = () => dispatch("close");
+let isMobileWidth = isMobile();
 
-const handle_keydown = (e) => {
+const handleKeyDown = (e) => {
   if (e.key === "Escape") {
     close();
     return;
   }
 };
+
+const handleResize = () => {
+  isMobileWidth = isMobile();
+};
 </script>
 
-<svelte:window on:keydown={handle_keydown} />
+<svelte:window on:keydown={handleKeyDown} on:resize={handleResize} />
 
-<div class="modal" role="dialog" aria-modal="true">
+<div class="modal" class:withAd role="dialog" aria-modal="true">
   <button class="close" on:click={close} />
   <span class="logo" />
   <h2>{title}</h2>
   <slot />
-  {#if withAd && !isMobile()}
+  {#if withAd && !isMobileWidth}
     <div style="width: 938px">
       <img
         src="images/stubs/stubad.jpg"
@@ -32,7 +37,7 @@ const handle_keydown = (e) => {
   {/if}
 </div>
 
-<style>
+<style lang="scss">
 .modal {
   display: flex;
   position: fixed;
@@ -40,11 +45,15 @@ const handle_keydown = (e) => {
   left: 0;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100vh;
   padding: 5vh 0;
   overflow: auto;
   background: var(--color-light);
+  &.withAd {
+    justify-content: flex-start;
+  }
 }
 
 .close {
@@ -55,7 +64,7 @@ const handle_keydown = (e) => {
   width: 34px;
   height: 34px;
   border: 0;
-  background: url(../images/close-cross.svg);
+  background: url(../../images/close-cross.svg);
   cursor: pointer;
 }
 
@@ -66,7 +75,7 @@ const handle_keydown = (e) => {
   top: 0px;
   width: 57px;
   height: 76px;
-  background: var(--color-accent) url(../images/logo.svg) 50% 50%/43px 56px
+  background: var(--color-accent) url(../../images/logo.svg) 50% 50%/43px 56px
     no-repeat;
   border-radius: 0 0 2px 2px;
 }

@@ -1,6 +1,6 @@
 <script>
-import { isMobile } from "./utils.js";
-import { getDatesFilterStub } from "./stubs/datesFilterStub.js";
+import { isMobile } from "../utils.js";
+import { getDatesFilterStub } from "../stubs/datesFilterStub.js";
 export let selectedYear;
 export let showCalendar;
 let selectedYearValue;
