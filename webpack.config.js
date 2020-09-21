@@ -1,5 +1,6 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-import autoPreprocess from "svelte-preprocess";
+// const autoPreprocess = require("svelte-preprocess");
+import { scss } from "svelte-preprocess";
 const path = require("path");
 
 const mode = process.env.NODE_ENV || "development";
@@ -31,7 +32,7 @@ module.exports = {
             loader: "svelte-loader",
             options: {
               dev: !prod,
-              preprocess: autoPreprocess(),
+              preprocess: [scss()],
               emitCss: true,
             },
           },

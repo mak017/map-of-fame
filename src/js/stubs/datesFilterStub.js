@@ -8,8 +8,14 @@ export const getDatesFilterStub = () => {
     "1966",
     "1967",
   ];
-  for (let year = 1969; year < 2022; year += 1) {
+  for (let year = 1969; year < new Date().getFullYear() + 2; year += 1) {
     yearsArray.push(`${year}`);
   }
   return yearsArray;
+};
+
+export const getValidDates = () => {
+  const years = [...getDatesFilterStub()];
+  years.pop();
+  return years;
 };

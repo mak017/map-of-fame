@@ -8,13 +8,13 @@
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
   },
-  "plugins": ["svelte3"],
-  "overrides": [
-    {
-      "files": ["*.svelte"],
-      "processor": "svelte3/svelte3"
-    }
-  ],
+  // "plugins": ["svelte3"],
+  // "overrides": [
+  //   {
+  //     "files": ["*.svelte"],
+  //     "processor": "svelte3/svelte3"
+  //   }
+  // ],
   "parserOptions": {
     "ecmaVersion": 2019,
     "sourceType": "module"
@@ -22,6 +22,7 @@
   "rules": {
     "comma-dangle": [2, "only-multiline"],
     "no-var": 2,
-    "arrow-body-style": [2, "as-needed"]
+    "arrow-body-style": [2, "as-needed"],
+    "prefer-const": "error"
   }
 }

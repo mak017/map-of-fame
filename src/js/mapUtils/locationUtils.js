@@ -36,7 +36,10 @@ const getLocation = async () => {
 export const setLocation = (map) => {
   getLocation()
     .then((response) => {
-      map.setView(response.center, response.zoom);
+      map.setView(
+        response.center || DEFAULT_VIEW.coordinates,
+        response.zoom || DEFAULT_ZOOM
+      );
     })
     .catch(() => {
       map.setView(DEFAULT_VIEW.coordinates, DEFAULT_VIEW.zoom);

@@ -1,6 +1,7 @@
 <script>
 import { isMobile } from "../utils.js";
 import { getDatesFilterStub } from "../stubs/datesFilterStub.js";
+import { permalink } from "../mapUtils/permalink.js";
 export let selectedYear;
 export let showCalendar;
 let selectedYearValue;
@@ -12,6 +13,7 @@ const currentYear = new Date().getFullYear();
 
 const handleClick = (year) => {
   selectedYear.set(year);
+  permalink.update();
   showCalendar(false);
 };
 </script>
