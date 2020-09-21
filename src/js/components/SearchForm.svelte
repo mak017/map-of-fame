@@ -1,10 +1,15 @@
 <script>
 import FormTextInput from "./elements/FormTextInput.svelte";
+let year = "";
+let artist = "";
 </script>
 
 <form on:submit|preventDefault>
-  <FormTextInput placeholder="Year" hint="1970 - 2020" />
-  <FormTextInput placeholder="Artist/Crew" hint="Empty to show all" />
+  <FormTextInput placeholder="Year" hint="1970 - 2020" value={year} />
+  <FormTextInput
+    placeholder="Artist/Crew"
+    hint="Empty to show all"
+    value={artist} />
   <div class="filter">
     <div class="checkbox">
       <input type="checkbox" id="filter-walls" />

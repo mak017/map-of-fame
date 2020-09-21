@@ -1,3 +1,5 @@
+import { getCurrentYear } from "../utils";
+
 export const getDatesFilterStub = () => {
   const yearsArray = [
     "????",
@@ -8,7 +10,7 @@ export const getDatesFilterStub = () => {
     "1966",
     "1967",
   ];
-  for (let year = 1969; year < new Date().getFullYear() + 2; year += 1) {
+  for (let year = 1969; year < getCurrentYear() + 2; year += 1) {
     yearsArray.push(`${year}`);
   }
   return yearsArray;

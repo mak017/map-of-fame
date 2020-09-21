@@ -5,5 +5,7 @@ export const isMobile = () => window.innerWidth < MOBILE_BREAKPOINT;
 
 export const validateYear = (year) => getValidDates().includes(year);
 
-export const validateCategory = (category) =>
-  Object.values(CATEGORIES).includes(category);
+export const validateCategory = (categories) =>
+  categories.every((cat) => Object.values(CATEGORIES).includes(cat));
+
+export const getCurrentYear = () => new Date().getFullYear();

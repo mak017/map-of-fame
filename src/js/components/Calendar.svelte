@@ -1,5 +1,5 @@
 <script>
-import { isMobile } from "../utils.js";
+import { getCurrentYear, isMobile } from "../utils.js";
 import { getDatesFilterStub } from "../stubs/datesFilterStub.js";
 import { permalink } from "../mapUtils/permalink.js";
 export let selectedYear;
@@ -9,11 +9,10 @@ selectedYear.subscribe((value) => (selectedYearValue = value));
 const dates = !isMobile()
   ? getDatesFilterStub()
   : getDatesFilterStub().reverse();
-const currentYear = new Date().getFullYear();
 
 const handleClick = (year) => {
   selectedYear.set(year);
-  permalink.update();
+  permalink.update({ clearParams: true });
   showCalendar(false);
 };
 </script>
@@ -26,7 +25,7 @@ const handleClick = (year) => {
         on:click|preventDefault={() => handleClick(date)}
         class="year"
         class:active={date === selectedYearValue}
-        class:disabled={+date > currentYear}>{date}</a>
+        class:disabled={+date > getCurrentYear()}>{date}</a>
     </li>
   {/each}
 </ol>
