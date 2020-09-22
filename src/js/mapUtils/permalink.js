@@ -12,12 +12,13 @@ let prevParams = null;
 
 const setStateFromUrl = (params) => {
   const yearFromUrl = params.get("year");
-  const categoryFromUrl = params.get("category").split(",");
+  const categoryFromUrl = params.get("category");
+  const category = categoryFromUrl && categoryFromUrl.split(",");
   const artistFromUrl = params.get("artist");
   const huntersFromUrl = params.get("hunters");
   if (yearFromUrl && validateYear(yearFromUrl)) selectedYear.set(yearFromUrl);
-  if (categoryFromUrl && validateCategory(categoryFromUrl)) {
-    selectedCategory.set(categoryFromUrl);
+  if (categoryFromUrl && validateCategory(category)) {
+    selectedCategory.set(category);
   }
   if (artistFromUrl) selectedArtist.set(artistFromUrl);
   if (huntersFromUrl) {
@@ -65,17 +66,17 @@ const update = ({ mapContainer, params, clearParams }) => {
   const zoom = map.getZoom();
   if (params) {
     const { category, artist, hunters } = params;
-    prevParams = params;
     paramsToSet = "";
     if (category) {
-      paramsToSet.concat(`&category=${category.join(",")}`);
+      paramsToSet = paramsToSet.concat(`&category=${category.join(",")}`);
     }
     if (artist) {
-      paramsToSet.concat(`&artist=${artist}`);
+      paramsToSet = paramsToSet.concat(`&artist=${artist}`);
     }
-    if (hunters) {
-      paramsToSet.concat(`&hunters=${hunters}`);
+    if (hunters || hunters === false) {
+      paramsToSet = paramsToSet.concat(`&hunters=${hunters}`);
     }
+    prevParams = paramsToSet;
   }
   if (clearParams) {
     prevParams = null;
@@ -97,7 +98,7 @@ const setup = (map) => {
       return;
     }
     const { center, zoom, year, params } = event.state;
-    setParamsFromState(year, params);
+    if (params) setParamsFromState(year, params);
     map.setView(center, zoom);
     shouldUpdate = false;
   };

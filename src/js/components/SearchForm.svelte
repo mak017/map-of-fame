@@ -1,35 +1,107 @@
 <script>
+import { CATEGORIES } from "../constants";
+import { permalink } from "../mapUtils/permalink";
+import {
+  huntersFilter,
+  selectedArtist,
+  selectedCategory,
+  selectedYear,
+} from "../store";
+import { getCurrentYear, validateYear } from "../utils";
 import FormTextInput from "./elements/FormTextInput.svelte";
+
+export let showSearch;
 let year = "";
 let artist = "";
+let selectedCategories = [];
+let isHuntersChecked = true;
+let yearErrorMessage = "";
+let isSubmitDisabled = false;
+const currentYear = getCurrentYear();
+const categoriesOrdered = [
+  CATEGORIES.walls,
+  CATEGORIES.trains,
+  CATEGORIES.other,
+];
+
+const validateYearInput = () => {
+  console.log("year", year);
+  if (!year) {
+    yearErrorMessage = "This field is required";
+  } else if (!validateYear(year, false)) {
+    yearErrorMessage = `Year is not in range of 1967 - ${currentYear}`;
+  } else {
+    yearErrorMessage = "";
+  }
+};
+
+const validateForm = () => {
+  validateYearInput();
+};
+
+const handleSubmit = () => {
+  validateForm();
+  if (!yearErrorMessage) {
+    selectedYear.set(year);
+    selectedCategory.set(selectedCategories);
+    selectedArtist.set(artist);
+    huntersFilter.set(isHuntersChecked);
+    permalink.update({
+      params: {
+        category: selectedCategories,
+        artist,
+        hunters: isHuntersChecked,
+      },
+    });
+    showSearch(false);
+  } else {
+    isSubmitDisabled = true;
+  }
+};
+
+const handleYearBlur = () => {
+  if (isSubmitDisabled) {
+    validateYearInput();
+    isSubmitDisabled = !!yearErrorMessage;
+  }
+};
 </script>
 
-<form on:submit|preventDefault>
-  <FormTextInput placeholder="Year" hint="1970 - 2020" value={year} />
+<form on:submit|preventDefault={handleSubmit}>
+  <FormTextInput
+    placeholder="Year"
+    hint={`1967 - ${currentYear}`}
+    bind:value={year}
+    on:blur={handleYearBlur}
+    errorText={yearErrorMessage} />
   <FormTextInput
     placeholder="Artist/Crew"
     hint="Empty to show all"
-    value={artist} />
+    bind:value={artist} />
   <div class="filter">
-    <div class="checkbox">
-      <input type="checkbox" id="filter-walls" />
-      <label for="filter-walls">Walls</label>
-    </div>
-    <div class="checkbox">
-      <input type="checkbox" id="filter-trains" />
-      <label for="filter-trains">Trains</label>
-    </div>
-    <div class="checkbox">
-      <input type="checkbox" id="filter-other" />
-      <label for="filter-other">Other</label>
-    </div>
+    {#each categoriesOrdered as category}
+      <div class="checkbox">
+        <input
+          type="checkbox"
+          id={`filter-${category.toLowerCase()}`}
+          bind:group={selectedCategories}
+          value={category} />
+        <label for={`filter-${category.toLowerCase()}`}>{category}</label>
+      </div>
+    {/each}
   </div>
   <div class="bottom">
     <div class="checkbox">
-      <input type="checkbox" checked id="search-show-hunters-spots" />
+      <input
+        type="checkbox"
+        bind:checked={isHuntersChecked}
+        id="search-show-hunters-spots" />
       <label for="search-show-hunters-spots">Show Hunter's Spots</label>
     </div>
-    <button type="submit" class="button">Search</button>
+    <button
+      type="submit"
+      class="button"
+      disabled={isSubmitDisabled}>Search</button>
   </div>
 </form>
 
@@ -101,6 +173,9 @@ button {
   font-size: 18px;
   font-weight: 600;
   line-height: 22px;
+  &:disabled {
+    opacity: 0.4;
+  }
 }
 
 @media (max-width: 767px) {

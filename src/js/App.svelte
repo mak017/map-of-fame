@@ -120,7 +120,7 @@ const handleChangeModeClick = () => {
 
 {#if state.showSearchModal}
   <Modal on:close={() => showSearch(false)} title="Search" withAd>
-    <SearchForm />
+    <SearchForm {showSearch} />
   </Modal>
 {/if}
 

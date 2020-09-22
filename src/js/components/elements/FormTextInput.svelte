@@ -1,12 +1,16 @@
 <script>
+import { createEventDispatcher } from "svelte";
+
 export let value = "";
 export let placeholder;
 export let hint;
 export let errorText = "";
+const dispatch = createEventDispatcher();
+const blur = () => dispatch("blur");
 </script>
 
 <label class:error={errorText}>
-  <input type="text" {placeholder} bind:value />
+  <input type="text" {placeholder} bind:value on:blur={blur} />
   {#if errorText || hint}
     <div class="hint">{errorText || hint}</div>
   {/if}
