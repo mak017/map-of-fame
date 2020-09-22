@@ -1,7 +1,8 @@
 import L from "leaflet";
 import "leaflet.markercluster";
+import "leaflet.markercluster.placementstrategies";
 import { clusterIcon, markerWithPhoto } from "../mapUtils/icons";
-const RANDOM_MARKERS_COUNT = 100;
+const RANDOM_MARKERS_COUNT = 10000;
 let arrMarkers = [];
 
 const clearMarkers = (map) => {
@@ -12,7 +13,7 @@ const clearMarkers = (map) => {
 };
 
 const placeMarker = (location, text) => {
-  let marker = L.marker(location, { title: text, icon: markerWithPhoto });
+  const marker = L.marker(location, { title: text, icon: markerWithPhoto });
   return marker;
 };
 
@@ -24,9 +25,26 @@ const plotRandom = (number, map) => {
   const latSpan = northEast.lat - southWest.lat;
   const pointsRand = [];
   const markers = L.markerClusterGroup({
-    spiderfyOnMaxZoom: false,
+    // spiderfyOnMaxZoom: false,
     showCoverageOnHover: false,
     iconCreateFunction: clusterIcon,
+    spiderLegPolylineOptions: { weight: 0 },
+    // clockHelpingCircleOptions: {
+    //   weight: 0.7,
+    //   opacity: 1,
+    //   color: "black",
+    //   fillOpacity: 0,
+    //   dashArray: "10 5",
+    // },
+
+    elementsPlacementStrategy: "default",
+    // helpingCircles: true,
+
+    // spiderfyDistanceSurplus: 50,
+    spiderfyDistanceMultiplier: 2,
+
+    // elementsMultiplier: 1.5,
+    // firstCircleElements: 5,
   });
 
   for (let i = 0; i < number; i += 1) {

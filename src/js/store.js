@@ -1,8 +1,9 @@
 import { writable } from "svelte/store";
+import { getCurrentYear } from "./utils";
 
-export const isLoggedIn = writable(false);
+export const isLoggedIn = writable(true);
 
-export const selectedYear = writable("2020");
+export const selectedYear = writable(`${getCurrentYear()}`);
 
 export const selectedCategory = writable([]);
 

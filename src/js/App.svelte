@@ -1,18 +1,16 @@
 <script>
 import L from "leaflet";
-import { fly } from "svelte/transition";
 import SearchForm from "./components/SearchForm.svelte";
 import { setLocation } from "./mapUtils/locationUtils.js";
 import Modal from "./components/Modal.svelte";
 import { isLoggedIn, selectedYear } from "./store.js";
 import { openRailwayMap, openStreetMapMapnik } from "./mapUtils/tileLayers";
-import { newMarkerIcon } from "./mapUtils/icons";
 import Calendar from "./components/Calendar.svelte";
 import { getCurrentYear } from "./utils";
+import AddSpot from "./components/AddSpot.svelte";
 
 const state = {
   isRailwayMode: false,
-  isAddSpotSidebarVisible: false,
   isLighthouseActive: false,
   showCalendarModal: false,
   showSearchModal: false,
@@ -41,21 +39,6 @@ const initMap = (container) => {
       map = null;
     },
   };
-};
-
-const onNewMarkerMoveEnd = () => {
-  if (!state.isAddSpotSidebarVisible) {
-    state.isAddSpotSidebarVisible = true;
-  }
-};
-
-const onAddSpotBtnClick = () => {
-  const center = map.getCenter();
-  const newMarker = L.marker(center, {
-    draggable: true,
-    icon: newMarkerIcon,
-  }).addTo(map);
-  newMarker.addEventListener("moveend", onNewMarkerMoveEnd);
 };
 
 const handleChangeModeClick = () => {
@@ -106,10 +89,7 @@ const handleChangeModeClick = () => {
   class:active={state.isRailwayMode}
   on:click={handleChangeModeClick} />
 {#if isLoggedInValue}
-  <button class="button button-add_spot" on:click={onAddSpotBtnClick}>Add Spot</button>
-  {#if state.isAddSpotSidebarVisible}
-    <div class="add-spot" transition:fly={{ x: 150, duration: 300 }} />
-  {/if}
+  <AddSpot {map} />
 {/if}
 
 {#if state.showCalendarModal}
@@ -263,18 +243,6 @@ const handleChangeModeClick = () => {
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: 18px 13px;
-  }
-
-  &-add_spot {
-    position: absolute;
-    right: 18px;
-    bottom: 18px;
-    padding: 9px 18px;
-    background-color: var(--color-dark);
-    color: var(--color-light);
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 1.2222222;
   }
 }
 

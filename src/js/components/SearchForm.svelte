@@ -25,7 +25,6 @@ const categoriesOrdered = [
 ];
 
 const validateYearInput = () => {
-  console.log("year", year);
   if (!year) {
     yearErrorMessage = "This field is required";
   } else if (!validateYear(year, false)) {
