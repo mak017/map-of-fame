@@ -18,7 +18,7 @@ const imageminJpegRecompress = require("imagemin-jpeg-recompress");
 
 // Configuration
 //
-let config = extend(
+const config = extend(
   {
     env: process.env.NODE_ENV,
   },

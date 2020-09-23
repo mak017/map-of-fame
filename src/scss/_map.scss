@@ -30,6 +30,7 @@
     &-with-photo,
     &-cluster {
       opacity: 0.4 !important;
+      pointer-events: none;
     }
   }
 }

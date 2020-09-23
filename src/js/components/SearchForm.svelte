@@ -8,6 +8,7 @@ import {
   selectedYear,
 } from "../store";
 import { getCurrentYear, validateYear } from "../utils";
+import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 
 export let showSearch;
@@ -97,10 +98,11 @@ const handleYearBlur = () => {
         id="search-show-hunters-spots" />
       <label for="search-show-hunters-spots">Show Hunter's Spots</label>
     </div>
-    <button
+    <ButtonPrimary
       type="submit"
-      class="button"
-      disabled={isSubmitDisabled}>Search</button>
+      isDisabled={isSubmitDisabled}
+      text="Search"
+      className="wide-on-mobile" />
   </div>
 </form>
 
@@ -161,19 +163,8 @@ const handleYearBlur = () => {
 .bottom {
   display: flex;
   align-items: center;
-}
-
-button {
-  flex: 1 0 auto;
-  margin-left: 68px;
-  padding: 12px 0;
-  background-color: var(--color-accent);
-  color: var(--color-light);
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 22px;
-  &:disabled {
-    opacity: 0.4;
+  .checkbox {
+    margin-right: 68px;
   }
 }
 
@@ -185,12 +176,10 @@ button {
   }
   .bottom {
     flex-flow: wrap;
-    margin-bottom: -28px;
-  }
-  button {
-    width: 100%;
-    max-width: 350px;
-    margin: 28px auto;
+    margin-top: -28px;
+    .checkbox {
+      margin: 28px 0;
+    }
   }
   .checkbox {
     + .checkbox {

@@ -1,15 +1,16 @@
 <script>
-import { fly } from "svelte/transition";
 import { newMarkerIcon } from "../mapUtils/icons";
+import AddSpotSidebar from "./AddSpotSidebar.svelte";
 
 export let map;
+export let isAddSpotMode;
+export let toggleAddSpotMode;
 
 let isAddSpotSidebarVisible = false;
-let isAddSpotDragMode = false;
 
 const onNewMarkerMoveEnd = () => {
-  if (!state.isAddSpotSidebarVisible) {
-    state.isAddSpotSidebarVisible = true;
+  if (!isAddSpotSidebarVisible) {
+    isAddSpotSidebarVisible = true;
   }
 };
 
@@ -20,14 +21,16 @@ const onAddSpotBtnClick = () => {
     icon: newMarkerIcon,
   }).addTo(map);
   newMarker.addEventListener("moveend", onNewMarkerMoveEnd);
-  isAddSpotDragMode = true;
-  window.document.body.classList.add("add-mode");
+  toggleAddSpotMode(true);
 };
 </script>
 
 <button class="button button-add_spot" on:click={onAddSpotBtnClick}>Add Spot</button>
+{#if !isAddSpotSidebarVisible && isAddSpotMode}
+  <div class="drag-to-map">Drag to Map</div>
+{/if}
 {#if isAddSpotSidebarVisible}
-  <div class="add-spot" transition:fly={{ x: 150, duration: 300 }} />
+  <AddSpotSidebar />
 {/if}
 
 <style>
@@ -42,12 +45,18 @@ const onAddSpotBtnClick = () => {
   font-weight: 600;
   line-height: 1.2222222;
 }
-.add-spot {
+
+.drag-to-map {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 150px;
+  top: 67px;
+  left: 50%;
+  padding: 11px 26px;
+  transform: translateX(-50%);
   background-color: var(--color-light);
+  color: var(--color-accent);
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 29px;
+  text-transform: uppercase;
 }
 </style>

@@ -6,27 +6,35 @@ import Modal from "./components/Modal.svelte";
 import { isLoggedIn, selectedYear } from "./store.js";
 import { openRailwayMap, openStreetMapMapnik } from "./mapUtils/tileLayers";
 import Calendar from "./components/Calendar.svelte";
-import { getCurrentYear } from "./utils";
+import {
+  getCurrentYear,
+  loadFromLocalStorage,
+  saveToLocalStorage,
+} from "./utils";
 import AddSpot from "./components/AddSpot.svelte";
+import ButtonPrimary from "./components/elements/ButtonPrimary.svelte";
 
-const state = {
-  isRailwayMode: false,
-  isLighthouseActive: false,
-  showCalendarModal: false,
-  showSearchModal: false,
-};
+let isRailwayMode = loadFromLocalStorage("railwayMode");
+let isLighthouseActive = false;
+let showCalendarModal = false;
+let showSearchModal = false;
+let isAddSpotMode = false;
 
 let map;
 let isLoggedInValue;
 let selectedYearValue;
 isLoggedIn.subscribe((value) => (isLoggedInValue = value));
 selectedYear.subscribe((value) => (selectedYearValue = value));
-const showCalendar = (show) => (state.showCalendarModal = show);
-const showSearch = (show) => (state.showSearchModal = show);
+const showCalendar = (show) => (showCalendarModal = show);
+const showSearch = (show) => (showSearchModal = show);
+const toggleAddSpotMode = (toggle) => (isAddSpotMode = toggle);
 
 // Init leaflet map
 const initMap = (container) => {
-  map = L.map(container, { layers: [openStreetMapMapnik] });
+  const layers = isRailwayMode
+    ? [openStreetMapMapnik, openRailwayMap]
+    : [openStreetMapMapnik];
+  map = L.map(container, { layers });
 
   // Change position of zoom control
   map.zoomControl.setPosition("bottomleft");
@@ -42,63 +50,79 @@ const initMap = (container) => {
 };
 
 const handleChangeModeClick = () => {
-  if (!state.isRailwayMode) {
+  if (!isRailwayMode) {
     map.addLayer(openRailwayMap);
-    state.isRailwayMode = true;
+    isRailwayMode = true;
   } else {
     map.removeLayer(openRailwayMap);
-    state.isRailwayMode = false;
+    isRailwayMode = false;
   }
+  saveToLocalStorage("railwayMode", isRailwayMode);
 };
 </script>
 
-<div class="map" use:initMap />
-<div class="main-top_left_wrapper">
-  <button
-    class="button button-main_screen button-open_calendar"
-    on:click={() => showCalendar(true)}>{selectedYearValue}</button>
-  {#if +selectedYearValue === getCurrentYear()}
+<div class="map" class:add-mode={isAddSpotMode} use:initMap />
+
+{#if !isAddSpotMode}
+  <div class="main-top_left_wrapper">
     <button
-      class="button button-square button-lighthouse"
-      class:active={state.isLighthouseActive}
-      disabled={!isLoggedInValue}>
-      <svg
-        width="9"
-        height="15"
-        viewBox="0 0 9 15"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M8.59095 6.18163H5.20517L8.12795 0.657462C8.20028 0.521392 8.19986 0.354423 8.12678 0.218811C8.05327 0.0833129 7.91861 0 7.77276 0H2.86365C2.68755 0 2.53127 0.121078 2.47576 0.300407L0.0212066 8.23985C-0.020768 8.37374 0.00043238 8.52137 0.0771372 8.63593C0.154268 8.7506 0.277742 8.81835 0.409099 8.81835H3.87967L1.66961 14.3876C1.59046 14.5855 1.65683 14.816 1.82622 14.9313C1.99284 15.0458 2.21667 15.0157 2.35112 14.8525L8.89659 6.91302C9.00366 6.78382 9.03008 6.59877 8.96414 6.4413C8.89819 6.28337 8.75203 6.18163 8.59095 6.18163Z" />
-      </svg>
-    </button>
-  {/if}
-</div>
-<div class="main-top_right_wrapper">
-  <button
-    class="button button-main_screen button-square button-open_search"
-    on:click={() => showSearch(true)} />
-  {#if isLoggedInValue}
-    <button class="button button-main_screen button-square button-burger" />
-  {:else}
-    <button class="button button-main_screen button-square button-open_login" />
-  {/if}
-</div>
-<button
-  class="button button-main_screen button-square button-switch_mode"
-  class:active={state.isRailwayMode}
-  on:click={handleChangeModeClick} />
-{#if isLoggedInValue}
-  <AddSpot {map} />
+      class="button button-main_screen button-open_calendar"
+      on:click={() => showCalendar(true)}>{selectedYearValue}</button>
+    {#if +selectedYearValue === getCurrentYear()}
+      <button
+        class="button button-square button-lighthouse"
+        class:active={isLighthouseActive}
+        disabled={!isLoggedInValue}>
+        <svg
+          width="9"
+          height="15"
+          viewBox="0 0 9 15"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M8.59095 6.18163H5.20517L8.12795 0.657462C8.20028 0.521392 8.19986 0.354423 8.12678 0.218811C8.05327 0.0833129 7.91861 0 7.77276 0H2.86365C2.68755 0 2.53127 0.121078 2.47576 0.300407L0.0212066 8.23985C-0.020768 8.37374 0.00043238 8.52137 0.0771372 8.63593C0.154268 8.7506 0.277742 8.81835 0.409099 8.81835H3.87967L1.66961 14.3876C1.59046 14.5855 1.65683 14.816 1.82622 14.9313C1.99284 15.0458 2.21667 15.0157 2.35112 14.8525L8.89659 6.91302C9.00366 6.78382 9.03008 6.59877 8.96414 6.4413C8.89819 6.28337 8.75203 6.18163 8.59095 6.18163Z" />
+        </svg>
+      </button>
+    {/if}
+  </div>
 {/if}
 
-{#if state.showCalendarModal}
+<div class="main-top_right_wrapper">
+  {#if !isAddSpotMode}
+    <button
+      class="button button-main_screen button-square button-open_search"
+      on:click={() => showSearch(true)} />
+    {#if isLoggedInValue}
+      <button class="button button-main_screen button-square button-burger" />
+    {:else}
+      <button
+        class="button button-main_screen button-square button-open_login" />
+    {/if}
+  {:else}
+    <ButtonPrimary
+      on:click={() => toggleAddSpotMode(false)}
+      text="Cancel"
+      className="add-spot" />
+  {/if}
+</div>
+
+<button
+  class="button button-main_screen button-square button-switch_mode"
+  class:active={isRailwayMode}
+  on:click={handleChangeModeClick}
+  title="Highlight railways" />
+
+{#if isLoggedInValue}
+  <AddSpot {map} {isAddSpotMode} {toggleAddSpotMode} />
+{/if}
+
+{#if showCalendarModal}
   <Modal on:close={() => showCalendar(false)} title="Date" withAd>
     <Calendar {selectedYear} {showCalendar} />
   </Modal>
 {/if}
 
-{#if state.showSearchModal}
+{#if showSearchModal}
   <Modal on:close={() => showSearch(false)} title="Search" withAd>
     <SearchForm {showSearch} />
   </Modal>
