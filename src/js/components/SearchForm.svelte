@@ -1,5 +1,5 @@
 <script>
-import { CATEGORIES } from "../constants";
+import { categoriesOrdered } from "../constants";
 import { permalink } from "../mapUtils/permalink";
 import {
   huntersFilter,
@@ -19,11 +19,6 @@ let isHuntersChecked = true;
 let yearErrorMessage = "";
 let isSubmitDisabled = false;
 const currentYear = getCurrentYear();
-const categoriesOrdered = [
-  CATEGORIES.walls,
-  CATEGORIES.trains,
-  CATEGORIES.other,
-];
 
 const validateYearInput = () => {
   if (!year) {

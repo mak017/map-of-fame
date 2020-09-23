@@ -5,11 +5,14 @@ export let value = "";
 export let placeholder;
 export let hint;
 export let errorText = "";
+export let label = "";
+
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
 </script>
 
-<label class:error={errorText}>
+<label class:with-label={!!label} class:error={!!errorText}>
+  {#if label}<span>{label}</span>{/if}
   <input type="text" {placeholder} bind:value on:blur={blur} />
   {#if errorText || hint}
     <div class="hint">{errorText || hint}</div>
@@ -38,6 +41,18 @@ input {
   &:focus {
     border-bottom-color: var(--color-accent);
     outline: 0;
+  }
+}
+
+.with-label {
+  > span {
+    font-size: 16px;
+    line-height: 1.22;
+  }
+  input {
+    padding: 9px 10px;
+    border: 1px solid var(--color-dark);
+    border-radius: 2px;
   }
 }
 .hint {

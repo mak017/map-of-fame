@@ -7,3 +7,15 @@ export const DEFAULT_ZOOM = 13;
 export const CATEGORIES = { walls: "Walls", trains: "Trains", other: "Other" };
 
 export const STATUSES = { live: "Live", buffed: "Buffed", unknown: "Unknown" };
+
+export const categoriesOrdered = [
+  CATEGORIES.walls,
+  CATEGORIES.trains,
+  CATEGORIES.other,
+];
+
+export const statusesOrdered = [
+  STATUSES.live,
+  STATUSES.buffed,
+  STATUSES.unknown,
+];
