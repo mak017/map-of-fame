@@ -2,8 +2,8 @@
 import { createEventDispatcher } from "svelte";
 
 export let value = "";
-export let placeholder;
-export let hint;
+export let placeholder = "";
+export let hint = "";
 export let errorText = "";
 export let label = "";
 

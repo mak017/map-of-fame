@@ -6,20 +6,33 @@ export let map;
 export let isAddSpotMode;
 export let toggleAddSpotMode;
 
-let isAddSpotSidebarVisible = false;
+let isAddSpotSidebarVisible = true;
+let newMarker;
+
+const toggleAddSpotSidebarVisible = (toggle) =>
+  (isAddSpotSidebarVisible = toggle);
 
 const onNewMarkerMoveEnd = () => {
   if (!isAddSpotSidebarVisible) {
-    isAddSpotSidebarVisible = true;
+    toggleAddSpotSidebarVisible(true);
   }
+};
+
+const onCancel = () => {
+  toggleAddSpotMode(false);
+  toggleAddSpotSidebarVisible(false);
+  newMarker.removeEventListener("moveend", onNewMarkerMoveEnd);
+  map.removeLayer(newMarker);
 };
 
 const onAddSpotBtnClick = () => {
   const center = map.getCenter();
-  const newMarker = L.marker(center, {
+  newMarker = L.marker(center, {
     draggable: true,
     icon: newMarkerIcon,
-  }).addTo(map);
+    zIndexOffset: 10000,
+  });
+  map.addLayer(newMarker);
   newMarker.addEventListener("moveend", onNewMarkerMoveEnd);
   toggleAddSpotMode(true);
 };
@@ -30,7 +43,7 @@ const onAddSpotBtnClick = () => {
   <div class="drag-to-map">Drag to Map</div>
 {/if}
 {#if isAddSpotSidebarVisible}
-  <AddSpotSidebar />
+  <AddSpotSidebar {onCancel} />
 {/if}
 
 <style>
@@ -58,5 +71,8 @@ const onAddSpotBtnClick = () => {
   font-weight: 900;
   line-height: 29px;
   text-transform: uppercase;
+}
+:global(.leaflet-dragging .drag-to-map) {
+  display: none;
 }
 </style>

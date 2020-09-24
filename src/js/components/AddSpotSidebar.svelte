@@ -10,6 +10,8 @@ import { getCurrentYear } from "../utils";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 
+export let onCancel;
+
 let artist = "";
 let crew = "";
 let year = "";
@@ -20,6 +22,12 @@ let description = "";
 let selectedCategory = CATEGORIES.walls;
 let sprayPaintUsed = "";
 let link = "";
+
+let spraysStub = [
+  { id: 1, text: `Spray 1` },
+  { id: 2, text: `Spray 2` },
+  { id: 3, text: `Spray 3` },
+];
 </script>
 
 <div class="add-spot" transition:fly={{ x: 364, duration: 300 }}>
@@ -67,15 +75,17 @@ let link = "";
     </div>
     <div class="spray">
       <select bind:value={sprayPaintUsed}>
-        <option value="" disabled selected hidden>Spray Paint Used</option>
-        <option value="1">Spray 1</option>
-        <option value="2">Spray 2</option>
-        <option value="3">Spray 3</option>
+        <!-- <option value="" disabled hidden>Spray Paint Used</option> -->
+        {#each spraysStub as spray}
+          <option value={spray}>{spray.text}</option>
+        {/each}
       </select>
     </div>
     <FormTextInput label="Link To Work" bind:value={link} />
-    <ButtonPrimary text="Post Spot" type="submit" />
-    <button type="button" class="cancel">Cancel</button>
+    <div class="button_wrap">
+      <ButtonPrimary text="Post Spot" type="submit" />
+    </div>
+    <button type="button" class="cancel" on:click={onCancel}>Cancel</button>
   </form>
 </div>
 
@@ -87,6 +97,7 @@ let link = "";
   bottom: 0;
   width: 364px;
   padding: 36px 20px 16px;
+  overflow-y: auto;
   background-color: var(--color-light);
 }
 
@@ -170,7 +181,9 @@ h2 {
 }
 
 textarea {
+  display: block;
   width: 100%;
+  margin-bottom: 18px;
   padding: 9px 10px;
   border: 1px solid var(--color-dark);
   border-radius: 2px;
@@ -182,5 +195,31 @@ textarea {
     font-size: 17px;
     font-weight: normal;
   }
+}
+
+.spray {
+  margin: 14px 0 24px;
+}
+select {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--color-dark);
+  padding: 10px 0;
+}
+.button_wrap {
+  display: flex;
+  margin-bottom: 12px;
+}
+.cancel {
+  width: 100%;
+  padding: 12px 0;
+  border: 0;
+  border-radius: 2px;
+  background-color: var(--color-light);
+  color: var(--color-accent);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.22;
+  cursor: pointer;
 }
 </style>
