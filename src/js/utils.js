@@ -17,3 +17,5 @@ export const saveToLocalStorage = (key, value) => {
 
 export const loadFromLocalStorage = (key) =>
   JSON.parse(localStorage.getItem(key));
+
+export const isYearLike = (year) => !!year.match(/^\d{0,4}$/);

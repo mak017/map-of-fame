@@ -8,6 +8,8 @@ export const CATEGORIES = { walls: "Walls", trains: "Trains", other: "Other" };
 
 export const STATUSES = { live: "Live", buffed: "Buffed", unknown: "Unknown" };
 
+export const USER_TYPES = { artist: "Artist", hunter: "Hunter" };
+
 export const categoriesOrdered = [
   CATEGORIES.walls,
   CATEGORIES.trains,
@@ -19,3 +21,5 @@ export const statusesOrdered = [
   STATUSES.buffed,
   STATUSES.unknown,
 ];
+
+export const MIN_YEAR = 1967;

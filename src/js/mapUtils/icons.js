@@ -6,11 +6,12 @@ export const newMarkerIcon = L.icon({
   iconAnchor: [22, 60],
 });
 
-export const markerWithPhoto = L.icon({
-  iconUrl: "https://source.unsplash.com/random",
-  iconSize: [56, 56],
-  className: "map-marker-with-photo",
-});
+export const markerWithPhoto = (src) =>
+  L.icon({
+    iconUrl: src,
+    iconSize: [56, 56],
+    className: "map-marker-with-photo",
+  });
 
 export const clusterIcon = (cluster) =>
   L.divIcon({

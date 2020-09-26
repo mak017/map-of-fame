@@ -9,11 +9,12 @@ export let label = "";
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
+const input = () => dispatch("input");
 </script>
 
 <label class:with-label={!!label} class:error={!!errorText}>
   {#if label}<span>{label}</span>{/if}
-  <input type="text" {placeholder} bind:value on:blur={blur} />
+  <input type="text" {placeholder} bind:value on:blur={blur} on:input={input} />
   {#if errorText || hint}
     <div class="hint">{errorText || hint}</div>
   {/if}

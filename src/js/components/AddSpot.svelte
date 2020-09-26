@@ -5,12 +5,15 @@ import AddSpotSidebar from "./AddSpotSidebar.svelte";
 export let map;
 export let isAddSpotMode;
 export let toggleAddSpotMode;
+export let isAddSpotSidebarVisible;
+export let toggleAddSpotSidebarVisible;
 
-let isAddSpotSidebarVisible = true;
 let newMarker;
 
-const toggleAddSpotSidebarVisible = (toggle) =>
-  (isAddSpotSidebarVisible = toggle);
+const quitAddSpot = () => {
+  toggleAddSpotMode(false);
+  toggleAddSpotSidebarVisible(false);
+};
 
 const onNewMarkerMoveEnd = () => {
   if (!isAddSpotSidebarVisible) {
@@ -19,8 +22,7 @@ const onNewMarkerMoveEnd = () => {
 };
 
 const onCancel = () => {
-  toggleAddSpotMode(false);
-  toggleAddSpotSidebarVisible(false);
+  quitAddSpot();
   newMarker.removeEventListener("moveend", onNewMarkerMoveEnd);
   map.removeLayer(newMarker);
 };
@@ -38,12 +40,14 @@ const onAddSpotBtnClick = () => {
 };
 </script>
 
-<button class="button button-add_spot" on:click={onAddSpotBtnClick}>Add Spot</button>
+{#if !isAddSpotMode}
+  <button class="button button-add_spot" on:click={onAddSpotBtnClick}>Add Spot</button>
+{/if}
 {#if !isAddSpotSidebarVisible && isAddSpotMode}
   <div class="drag-to-map">Drag to Map</div>
 {/if}
 {#if isAddSpotSidebarVisible}
-  <AddSpotSidebar {onCancel} />
+  <AddSpotSidebar {onCancel} marker={newMarker} {quitAddSpot} />
 {/if}
 
 <style>

@@ -1,5 +1,5 @@
 <script>
-import { categoriesOrdered } from "../constants";
+import { categoriesOrdered, MIN_YEAR } from "../constants";
 import { permalink } from "../mapUtils/permalink";
 import {
   huntersFilter,
@@ -7,7 +7,7 @@ import {
   selectedCategory,
   selectedYear,
 } from "../store";
-import { getCurrentYear, validateYear } from "../utils";
+import { getCurrentYear, isYearLike, validateYear } from "../utils";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 
@@ -18,13 +18,14 @@ let selectedCategories = [];
 let isHuntersChecked = true;
 let yearErrorMessage = "";
 let isSubmitDisabled = false;
+let prevYearValue = "";
 const currentYear = getCurrentYear();
 
 const validateYearInput = () => {
   if (!year) {
     yearErrorMessage = "This field is required";
   } else if (!validateYear(year, false)) {
-    yearErrorMessage = `Year is not in range of 1967 - ${currentYear}`;
+    yearErrorMessage = `Year is not in range of ${MIN_YEAR} - ${currentYear}`;
   } else {
     yearErrorMessage = "";
   }
@@ -60,14 +61,23 @@ const handleYearBlur = () => {
     isSubmitDisabled = !!yearErrorMessage;
   }
 };
+
+const handleYearChange = () => {
+  if (isYearLike(year)) {
+    prevYearValue = year;
+  } else {
+    year = prevYearValue;
+  }
+};
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
   <FormTextInput
     placeholder="Year"
-    hint={`1967 - ${currentYear}`}
+    hint={`${MIN_YEAR} - ${currentYear}`}
     bind:value={year}
     on:blur={handleYearBlur}
+    on:input={handleYearChange}
     errorText={yearErrorMessage} />
   <FormTextInput
     placeholder="Artist/Crew"

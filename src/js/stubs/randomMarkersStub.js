@@ -13,7 +13,10 @@ const clearMarkers = (map) => {
 };
 
 const placeMarker = (location, text) => {
-  const marker = L.marker(location, { title: text, icon: markerWithPhoto });
+  const marker = L.marker(location, {
+    title: text,
+    icon: markerWithPhoto("https://source.unsplash.com/random"),
+  });
   return marker;
 };
 
