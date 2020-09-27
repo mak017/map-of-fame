@@ -3,6 +3,7 @@ import { fly } from "svelte/transition";
 import {
   CATEGORIES,
   categoriesOrdered,
+  EMPTY_YEAR_STRING,
   MIN_YEAR,
   STATUSES,
   statusesOrdered,
@@ -10,7 +11,7 @@ import {
 } from "../constants";
 import { markerWithPhoto } from "../mapUtils/icons";
 import { selectedYear, userType } from "../store";
-import { getCurrentYear, isYearLike, validateYear } from "../utils";
+import { getCurrentYear, isMobile, isYearLike, validateYear } from "../utils";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 
@@ -111,8 +112,23 @@ const handleYearBlur = () => {
 const handleSubmit = () => {
   validate();
   if (!yearErrorMessage && !imageError && !sprayPaintUsedError) {
-    if (selectedYearValue === year || (!year && selectedYearValue === "????")) {
+    if (
+      selectedYearValue === year ||
+      (!year && selectedYearValue === EMPTY_YEAR_STRING)
+    ) {
       marker.setIcon(markerWithPhoto(imageFilePreview));
+      // console.log({
+      //   artist,
+      //   crew,
+      //   year,
+      //   selectedStatus,
+      //   imageFile,
+      //   linkToVideo,
+      //   description,
+      //   selectedCategory,
+      //   sprayPaintUsed,
+      //   link,
+      // });
       quitAddSpot();
     } else {
       onCancel();
@@ -123,8 +139,11 @@ const handleSubmit = () => {
 };
 </script>
 
-<div class="add-spot" transition:fly={{ x: 364, duration: 300 }}>
+<div
+  class="add-spot"
+  transition:fly={{ x: !isMobile() ? 364 : window.innerWidth, duration: 300 }}>
   <h2>Add Spot</h2>
+  {#if isMobile()}<button class="close-mob" on:click={onCancel} />{/if}
   <form on:submit|preventDefault={handleSubmit}>
     <FormTextInput placeholder="Artist Name" bind:value={artist} />
     <FormTextInput placeholder="Crew Name" bind:value={crew} />
@@ -356,13 +375,27 @@ textarea {
 }
 
 .spray {
+  position: relative;
   margin-bottom: 24px;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    pointer-events: none;
+    width: 8px;
+    height: 5px;
+    background: url(../../images//triangle-down.svg);
+  }
 }
 select {
   width: 100%;
   border: 0;
   border-bottom: 1px solid var(--color-dark);
+  background: var(--color-light);
   padding: 10px 0;
+  appearance: none;
   cursor: pointer;
 }
 .button_wrap {
@@ -380,5 +413,22 @@ select {
   font-weight: 600;
   line-height: 1.22;
   cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .add-spot {
+    width: 100%;
+  }
+  .close-mob {
+    display: block;
+    position: absolute;
+    top: 30px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    background: url(../../images/close-cross.svg);
+    cursor: pointer;
+  }
 }
 </style>

@@ -1,7 +1,7 @@
 import L from "leaflet";
 
 export const newMarkerIcon = L.icon({
-  iconUrl: "../images/new-marker.svg",
+  iconUrl: "./images/new-marker.svg",
   iconSize: [44, 60],
   iconAnchor: [22, 60],
 });

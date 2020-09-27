@@ -2,8 +2,9 @@
 import { isMobile } from "../utils.js";
 import { createEventDispatcher } from "svelte";
 
-export let title;
+export let title = "";
 export let withAd = false;
+export let noLogo = false;
 const dispatch = createEventDispatcher();
 const close = () => dispatch("close");
 let isMobileWidth = isMobile();
@@ -24,8 +25,10 @@ const handleResize = () => {
 
 <div class="modal" class:withAd role="dialog" aria-modal="true">
   <button class="close" on:click={close} />
-  <span class="logo" />
-  <h2>{title}</h2>
+  {#if !noLogo}<span class="logo" />{/if}
+  {#if title}
+    <h2>{title}</h2>
+  {/if}
   <slot />
   {#if withAd && !isMobileWidth}
     <div style="width: 938px">

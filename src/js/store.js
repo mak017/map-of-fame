@@ -13,3 +13,5 @@ export const selectedArtist = writable("");
 export const huntersFilter = writable(false);
 
 export const userType = writable(USER_TYPES.artist);
+
+export const openedMarkerData = writable(null);

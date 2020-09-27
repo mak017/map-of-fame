@@ -2,8 +2,13 @@ import L from "leaflet";
 import "leaflet.markercluster";
 import "leaflet.markercluster.placementstrategies";
 import { clusterIcon, markerWithPhoto } from "../mapUtils/icons";
+import { openedMarkerData } from "../store";
 const RANDOM_MARKERS_COUNT = 10000;
 let arrMarkers = [];
+
+const onMarkerClick = (location, text, img) => {
+  openedMarkerData.set({ location, text, img });
+};
 
 const clearMarkers = (map) => {
   if (arrMarkers) {
@@ -13,10 +18,12 @@ const clearMarkers = (map) => {
 };
 
 const placeMarker = (location, text) => {
+  const img = "https://source.unsplash.com/random";
   const marker = L.marker(location, {
     title: text,
-    icon: markerWithPhoto("https://source.unsplash.com/random"),
+    icon: markerWithPhoto(img),
   });
+  marker.addEventListener("click", () => onMarkerClick(location, text, img));
   return marker;
 };
 

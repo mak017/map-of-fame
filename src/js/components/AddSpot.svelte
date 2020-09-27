@@ -75,8 +75,15 @@ const onAddSpotBtnClick = () => {
   font-weight: 900;
   line-height: 29px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 :global(.leaflet-dragging .drag-to-map) {
   display: none;
+}
+
+@media (max-width: 767px) {
+  .drag-to-map {
+    top: 98px;
+  }
 }
 </style>

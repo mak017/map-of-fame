@@ -3,7 +3,7 @@ import L from "leaflet";
 import SearchForm from "./components/SearchForm.svelte";
 import { setLocation } from "./mapUtils/locationUtils.js";
 import Modal from "./components/Modal.svelte";
-import { isLoggedIn, selectedYear } from "./store.js";
+import { isLoggedIn, openedMarkerData, selectedYear } from "./store.js";
 import { openRailwayMap, openStreetMapMapnik } from "./mapUtils/tileLayers";
 import Calendar from "./components/Calendar.svelte";
 import {
@@ -13,6 +13,7 @@ import {
 } from "./utils";
 import AddSpot from "./components/AddSpot.svelte";
 import ButtonPrimary from "./components/elements/ButtonPrimary.svelte";
+import MarkerCard from "./components/MarkerCard.svelte";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isLighthouseActive = false;
@@ -24,13 +25,16 @@ let isAddSpotSidebarVisible = false;
 let map;
 let isLoggedInValue;
 let selectedYearValue;
+let openedMarker;
 isLoggedIn.subscribe((value) => (isLoggedInValue = value));
 selectedYear.subscribe((value) => (selectedYearValue = value));
+openedMarkerData.subscribe((value) => (openedMarker = value));
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const toggleAddSpotMode = (toggle) => (isAddSpotMode = toggle);
 const toggleAddSpotSidebarVisible = (toggle) =>
   (isAddSpotSidebarVisible = toggle);
+const clearOpenedMarkerData = () => openedMarkerData.set(null);
 
 // Init leaflet map
 const initMap = (container) => {
@@ -133,6 +137,12 @@ const handleChangeModeClick = () => {
 {#if showSearchModal}
   <Modal on:close={() => showSearch(false)} title="Search" withAd>
     <SearchForm {showSearch} />
+  </Modal>
+{/if}
+
+{#if openedMarker}
+  <Modal on:close={clearOpenedMarkerData} withAd noLogo>
+    <MarkerCard data={openedMarker} />
   </Modal>
 {/if}
 

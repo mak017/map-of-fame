@@ -23,3 +23,5 @@ export const statusesOrdered = [
 ];
 
 export const MIN_YEAR = 1967;
+
+export const EMPTY_YEAR_STRING = "????";
