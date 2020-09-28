@@ -51,7 +51,7 @@ const handleResize = () => {
   justify-content: center;
   width: 100%;
   height: 100vh;
-  padding: 5vh 0;
+  padding: 5vh 12px;
   overflow: auto;
   background: var(--color-light);
   &.withAd {
@@ -103,7 +103,7 @@ div {
 
 @media (max-width: 767px) {
   .modal {
-    padding: 50px 0;
+    padding: 50px 12px;
   }
   .close {
     right: 12px;

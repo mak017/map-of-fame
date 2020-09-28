@@ -1,0 +1,61 @@
+<script>
+import { createEventDispatcher } from "svelte";
+
+export let title = "";
+
+const dispatch = createEventDispatcher();
+const close = () => dispatch("close");
+
+const handleKeyDown = (e) => {
+  if (e.key === "Escape") {
+    close();
+    return;
+  }
+};
+</script>
+
+<svelte:window on:keydown|stopPropagation={handleKeyDown} />
+
+<div class="popup-background" on:click={close} />
+<div class="popup" role="dialog" aria-modal="true">
+  <button class="close" on:click={close} />
+  {#if title}
+    <h3>{title}</h3>
+  {/if}
+  <slot />
+</div>
+
+<style>
+.popup-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.45;
+  background: var(--color-dark);
+}
+.popup {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  max-width: 530px;
+  overflow: auto;
+  transform: translate(-50%, -50%);
+  padding: 36px 36px 32px;
+  border-radius: 2px;
+  background: var(--color-light);
+}
+.close {
+  display: block;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: url(../../images/close-cross.svg);
+  cursor: pointer;
+}
+</style>

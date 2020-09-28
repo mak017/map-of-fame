@@ -31,6 +31,6 @@ export const embedVideoCodeFromBasicUrl = (url) =>
       '<iframe src="//player.vimeo.com/video/$1?color=ffffff&portrait=0" frameborder="0" width="100%" height="100%" allow="autoplay; fullscreen" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
     )
     .replace(
-      /(?:http:|https:)?(?:\/\/)(?:dailymotion\.com|dai\.ly)\/([^<.,!():"'\s]+)/g,
+      /(?:http:|https:)?(?:\/\/)(?:www\.)?(?:dailymotion\.com|dai\.ly)(?:\/video)?\/([^<.,!():"'\s]+)/g,
       '<iframe frameborder="0" type="text/html" src="http://www.dailymotion.com/embed/video/$1?logo=0&foreground=ffffff&highlight=1bb4c6&background=000000" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
     );

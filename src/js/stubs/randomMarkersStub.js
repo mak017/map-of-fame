@@ -8,11 +8,16 @@ const RANDOM_MARKERS_COUNT = 10000;
 let arrMarkers = [];
 
 const onMarkerClick = (text, img) => {
+  const artist = ["Artist Name", ""][Math.round(Math.random())];
+  const crew = ["Crew", ""][Math.round(Math.random())];
   const status =
     statusesOrdered[
       Math.floor(Math.random() * Math.floor(statusesOrdered.length))
     ];
-  const description = [text, ""][Math.round(Math.random())];
+  const description = [
+    `${text} Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minima cupiditate, perspiciatis ad fugiat vero suscipit excepturi necessitatibus placeat nemo ab dignissimos laboriosam sapiente commodi quas nulla quae voluptates, accusantium dolor.`,
+    "",
+  ][Math.round(Math.random())];
   const video = [
     "https://www.youtube.com/watch?v=G_Z8mcfBKLE",
     "https://youtu.be/G_Z8mcfBKLE",
@@ -20,15 +25,16 @@ const onMarkerClick = (text, img) => {
     "https://www.dailymotion.com/video/x7tx6t6",
     "https://dai.ly/x7tx6t6",
     "",
-  ][Math.round(Math.random())];
+  ][Math.floor(Math.random() * Math.floor(6))];
+  const link = ["https://www.instagram.com/", ""][Math.round(Math.random())];
   openedMarkerData.set({
-    artist: "Artist Name",
-    crew: "Crew",
+    artist,
+    crew,
     status,
     description,
     img: { src: img, title: text },
     video,
-    user: { name: "Username", link: "https://www.instagram.com/" },
+    user: { name: "Username", link },
   });
 };
 

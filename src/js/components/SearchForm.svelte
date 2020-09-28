@@ -177,7 +177,6 @@ const handleYearChange = () => {
   form {
     width: 100%;
     max-width: 530px;
-    padding: 0 12px;
   }
   .bottom {
     flex-flow: wrap;
