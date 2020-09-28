@@ -1,18 +1,43 @@
 import L from "leaflet";
 import "leaflet.markercluster";
 import "leaflet.markercluster.placementstrategies";
+import { statusesOrdered } from "../constants";
 import { clusterIcon, markerWithPhoto } from "../mapUtils/icons";
 import { openedMarkerData } from "../store";
 const RANDOM_MARKERS_COUNT = 10000;
 let arrMarkers = [];
 
-const onMarkerClick = (location, text, img) => {
-  openedMarkerData.set({ location, text, img });
+const onMarkerClick = (text, img) => {
+  const status =
+    statusesOrdered[
+      Math.floor(Math.random() * Math.floor(statusesOrdered.length))
+    ];
+  const description = [text, ""][Math.round(Math.random())];
+  const video = [
+    "https://www.youtube.com/watch?v=G_Z8mcfBKLE",
+    "https://youtu.be/G_Z8mcfBKLE",
+    "https://vimeo.com/111591953",
+    "https://www.dailymotion.com/video/x7tx6t6",
+    "https://dai.ly/x7tx6t6",
+    "",
+  ][Math.round(Math.random())];
+  openedMarkerData.set({
+    artist: "Artist Name",
+    crew: "Crew",
+    status,
+    description,
+    img: { src: img, title: text },
+    video,
+    user: { name: "Username", link: "https://www.instagram.com/" },
+  });
 };
 
 const clearMarkers = (map) => {
   if (arrMarkers) {
-    arrMarkers.forEach((marker) => marker.removeFrom(map));
+    arrMarkers.forEach((marker) => {
+      marker.removeEventListener("click");
+      marker.removeFrom(map);
+    });
   }
   arrMarkers = [];
 };
@@ -23,7 +48,7 @@ const placeMarker = (location, text) => {
     title: text,
     icon: markerWithPhoto(img),
   });
-  marker.addEventListener("click", () => onMarkerClick(location, text, img));
+  marker.addEventListener("click", () => onMarkerClick(text, img));
   return marker;
 };
 
