@@ -1,6 +1,5 @@
 <script>
 import { embedVideoCodeFromBasicUrl } from "../utils";
-import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import Popup from "./Popup.svelte";
 import ShareMarker from "./ShareMarker.svelte";
@@ -54,7 +53,7 @@ const onComplainOpen = () => {
     <div class="buttons">
       {#if user.link}
         <div class="link">
-          <a href={user.link}>{`${user.name}'s Portfolio`}</a>
+          <a href={user.link} target="_blank">{`${user.name}'s Portfolio`}</a>
         </div>
       {/if}
       <div class="share"><button type="button" on:click={onShareOpen} /></div>
@@ -66,7 +65,7 @@ const onComplainOpen = () => {
 </div>
 {#if isShareOpened}
   <Popup on:close={() => (isShareOpened = false)} title="Share Link">
-    <ShareMarker />
+    <ShareMarker {data} />
   </Popup>
 {/if}
 {#if isComplainOpened}

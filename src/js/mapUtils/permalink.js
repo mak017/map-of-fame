@@ -1,14 +1,22 @@
 import {
   huntersFilter,
+  markersStore,
   selectedArtist,
   selectedCategory,
   selectedYear,
 } from "../store";
 import { validateCategory, validateYear } from "../utils";
+import { setMarkerDataById } from "../stubs/randomMarkersStub";
+import { normalizeCoords } from "./locationUtils";
 
 let shouldUpdate = true;
 let mapInstance = null;
 let prevParams = null;
+let arrMarkers = [];
+
+markersStore.subscribe((values) => {
+  arrMarkers = values;
+});
 
 const setStateFromUrl = (params) => {
   const yearFromUrl = params.get("year");
@@ -16,6 +24,7 @@ const setStateFromUrl = (params) => {
   const category = categoryFromUrl && categoryFromUrl.split(",");
   const artistFromUrl = params.get("artist");
   const huntersFromUrl = params.get("hunters");
+  const markerFromUrl = params.get("marker");
   if (yearFromUrl && validateYear(yearFromUrl)) selectedYear.set(yearFromUrl);
   if (categoryFromUrl && validateCategory(category)) {
     selectedCategory.set(category);
@@ -24,14 +33,26 @@ const setStateFromUrl = (params) => {
   if (huntersFromUrl) {
     huntersFilter.set(JSON.parse(huntersFromUrl.toLowerCase()));
   }
+  if (markerFromUrl && !Number.isNaN(+markerFromUrl)) {
+    window.addEventListener(
+      "markersReady",
+      () => {
+        setMarkerDataById(+markerFromUrl);
+      },
+      false
+    );
+  }
 };
 
 const setParamsFromState = (year, params) => {
-  const { category, artist, hunters } = params;
+  const { category, artist, hunters, marker } = params;
   selectedYear.set(year);
   if (category) selectedCategory.set(category);
   if (artist) selectedArtist.set(artist);
-  if (category) huntersFilter.set(hunters);
+  if (hunters) huntersFilter.set(hunters);
+  if (marker && arrMarkers && arrMarkers.length) {
+    setMarkerDataById(arrMarkers[+marker]);
+  }
 };
 
 const getMapLocation = (zoom, center) => {
@@ -60,14 +81,14 @@ const update = ({ mapContainer, params, clearParams }) => {
     year = value;
   });
 
-  const center = map.getCenter();
-  const latitude = Math.round(center.lat * 100000) / 100000;
-  const longitude = Math.round(center.lng * 100000) / 100000;
-  const zoom = map.getZoom();
+  const center = map?.getCenter();
+  const latitude = center && normalizeCoords(center.lat);
+  const longitude = center && normalizeCoords(center.lng);
+  const zoom = map?.getZoom();
   if (params) {
-    const { category, artist, hunters } = params;
+    const { category, artist, hunters, marker } = params;
     paramsToSet = "";
-    if (category) {
+    if (category?.length) {
       paramsToSet = paramsToSet.concat(`&category=${category.join(",")}`);
     }
     if (artist) {
@@ -76,15 +97,49 @@ const update = ({ mapContainer, params, clearParams }) => {
     if (hunters || hunters === false) {
       paramsToSet = paramsToSet.concat(`&hunters=${hunters}`);
     }
+    if (marker) {
+      const paramsStr = prevParams || paramsToSet;
+      paramsToSet = paramsStr.concat(`&marker=${marker}`);
+    }
     prevParams = paramsToSet;
   }
-  if (clearParams) {
+  if (clearParams === "all") {
     prevParams = null;
     paramsToSet = "";
+  }
+  if (clearParams && Array.isArray(clearParams)) {
+    paramsToSet = new URLSearchParams(prevParams.substring(1));
+    clearParams.forEach((param) => {
+      paramsToSet.delete(param);
+    });
+    paramsToSet = paramsToSet.toString() ? `&${paramsToSet}` : "";
+    prevParams = paramsToSet;
   }
   const search = `?coords=${latitude},${longitude}&zoom=${zoom}&year=${year}${paramsToSet}`;
   const state = { zoom, center, year, params };
   window.history.pushState(state, "map", search);
+};
+const getSearchUrlFromParams = (coords, zoom, year, params) => {
+  let paramsToSet = "";
+  if (params) {
+    Object.keys(params).forEach((param) => {
+      paramsToSet = paramsToSet.concat(`&${param}=${params[param]}`);
+    });
+  }
+  return `?coords=${coords.lat},${coords.lng}&zoom=${zoom}&year=${year}${paramsToSet}`;
+};
+const set = (coords, zoom, year, params) => {
+  const state = { zoom, center: coords, year, params };
+  window.history.pushState(
+    state,
+    "map",
+    getSearchUrlFromParams(coords, zoom, year, params)
+  );
+};
+const getCustomUrl = (coords, zoom, year, params) => {
+  const { origin, pathname } = window.location;
+  const search = getSearchUrlFromParams(coords, zoom, year, params);
+  return `${origin}${pathname}${search}`;
 };
 const setup = (map) => {
   shouldUpdate = true;
@@ -112,4 +167,6 @@ export const permalink = {
   getMapLocation,
   setup,
   update,
+  set,
+  getCustomUrl,
 };

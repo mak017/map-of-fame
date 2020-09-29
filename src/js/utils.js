@@ -34,3 +34,14 @@ export const embedVideoCodeFromBasicUrl = (url) =>
       /(?:http:|https:)?(?:\/\/)(?:www\.)?(?:dailymotion\.com|dai\.ly)(?:\/video)?\/([^<.,!():"'\s]+)/g,
       '<iframe frameborder="0" type="text/html" src="http://www.dailymotion.com/embed/video/$1?logo=0&foreground=ffffff&highlight=1bb4c6&background=000000" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
     );
+
+export const markersReadyEvent = new Event("markersReady");
+
+export const copyToClipboard = (str) => {
+  const temp = document.createElement("textarea");
+  temp.innerHTML = str;
+  document.body.appendChild(temp);
+  temp.select();
+  document.execCommand("copy");
+  temp.remove();
+};

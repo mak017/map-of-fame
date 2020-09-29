@@ -49,3 +49,6 @@ export const setLocation = (map) => {
       permalink.setup(map);
     });
 };
+
+export const normalizeCoords = (coordinate) =>
+  Math.round(coordinate * 100000) / 100000;

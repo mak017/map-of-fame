@@ -1,8 +1,30 @@
 <script>
+import { MAX_ZOOM } from "../constants";
+import { permalink } from "../mapUtils/permalink";
+import { copyToClipboard } from "../utils";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
+
+export let data;
+
+const { coords, year, id } = data;
+
+const link = permalink.getCustomUrl(coords, MAX_ZOOM, year, { marker: id });
+
+const onClick = () => copyToClipboard(link);
 </script>
 
-<!-- <input type="text" readonly /> -->
-<FormTextInput label=" " />
-<ButtonPrimary type="button" text="Copy Link" />
+<div class="input">
+  <FormTextInput label=" " isReadOnly value={link} />
+</div>
+<ButtonPrimary
+  type="button"
+  text="Copy Link"
+  className="wide"
+  on:click={onClick} />
+
+<style>
+.input {
+  margin-bottom: 24px;
+}
+</style>

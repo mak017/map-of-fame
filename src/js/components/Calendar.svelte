@@ -12,7 +12,7 @@ const dates = !isMobile()
 
 const handleClick = (year) => {
   selectedYear.set(year);
-  permalink.update({ clearParams: true });
+  permalink.update({ clearParams: "all" });
   showCalendar(false);
 };
 </script>

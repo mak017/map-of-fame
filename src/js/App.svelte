@@ -14,6 +14,7 @@ import {
 import AddSpot from "./components/AddSpot.svelte";
 import ButtonPrimary from "./components/elements/ButtonPrimary.svelte";
 import MarkerCard from "./components/MarkerCard.svelte";
+import { permalink } from "./mapUtils/permalink";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isLighthouseActive = false;
@@ -34,7 +35,10 @@ const showSearch = (show) => (showSearchModal = show);
 const toggleAddSpotMode = (toggle) => (isAddSpotMode = toggle);
 const toggleAddSpotSidebarVisible = (toggle) =>
   (isAddSpotSidebarVisible = toggle);
-const clearOpenedMarkerData = () => openedMarkerData.set(null);
+const clearOpenedMarkerData = () => {
+  openedMarkerData.set(null);
+  permalink.update({ clearParams: ["marker"] });
+};
 
 // Init leaflet map
 const initMap = (container) => {

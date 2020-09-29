@@ -3,19 +3,29 @@ import "leaflet.markercluster";
 import "leaflet.markercluster.placementstrategies";
 import { statusesOrdered } from "../constants";
 import { clusterIcon, markerWithPhoto } from "../mapUtils/icons";
-import { openedMarkerData } from "../store";
+import { normalizeCoords } from "../mapUtils/locationUtils";
+import { permalink } from "../mapUtils/permalink";
+import { markersStore, openedMarkerData } from "../store";
+import { markersReadyEvent } from "../utils";
 const RANDOM_MARKERS_COUNT = 10000;
 let arrMarkers = [];
 
-const onMarkerClick = (text, img) => {
+markersStore.subscribe((values) => {
+  arrMarkers = values;
+});
+
+export const setMarkerDataById = (id) => {
+  const marker = arrMarkers[id];
+  const { icon, title } = marker?.options;
   const artist = ["Artist Name", ""][Math.round(Math.random())];
   const crew = ["Crew", ""][Math.round(Math.random())];
   const status =
     statusesOrdered[
       Math.floor(Math.random() * Math.floor(statusesOrdered.length))
     ];
+  const img = icon.options.iconUrl;
   const description = [
-    `${text} Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minima cupiditate, perspiciatis ad fugiat vero suscipit excepturi necessitatibus placeat nemo ab dignissimos laboriosam sapiente commodi quas nulla quae voluptates, accusantium dolor.`,
+    `${title} Lorem ipsum dolor sit amet consectetur, adipisicing elit. Minima cupiditate, perspiciatis ad fugiat vero suscipit excepturi necessitatibus placeat nemo ab dignissimos laboriosam sapiente commodi quas nulla quae voluptates, accusantium dolor.`,
     "",
   ][Math.round(Math.random())];
   const video = [
@@ -27,15 +37,25 @@ const onMarkerClick = (text, img) => {
     "",
   ][Math.floor(Math.random() * Math.floor(6))];
   const link = ["https://www.instagram.com/", ""][Math.round(Math.random())];
+  const coords = marker && {
+    // eslint-disable-next-line no-underscore-dangle
+    lat: normalizeCoords(marker._latlng.lat),
+    // eslint-disable-next-line no-underscore-dangle
+    lng: normalizeCoords(marker._latlng.lng),
+  };
   openedMarkerData.set({
+    id,
     artist,
     crew,
     status,
     description,
-    img: { src: img, title: text },
+    img: { src: img, title },
     video,
     user: { name: "Username", link },
+    coords,
+    year: "2020",
   });
+  permalink.update({ params: { marker: id } });
 };
 
 const clearMarkers = (map) => {
@@ -45,16 +65,16 @@ const clearMarkers = (map) => {
       marker.removeFrom(map);
     });
   }
-  arrMarkers = [];
+  markersStore.set([]);
 };
 
-const placeMarker = (location, text) => {
+const placeMarker = (location, text, index) => {
   const img = "https://source.unsplash.com/random";
   const marker = L.marker(location, {
     title: text,
     icon: markerWithPhoto(img),
   });
-  marker.addEventListener("click", () => onMarkerClick(text, img));
+  marker.addEventListener("click", () => setMarkerDataById(index));
   return marker;
 };
 
@@ -88,6 +108,7 @@ const plotRandom = (number, map) => {
     // firstCircleElements: 5,
   });
 
+  const tempMarkersArr = [];
   for (let i = 0; i < number; i += 1) {
     const point = [
       southWest.lat + latSpan * Math.random(),
@@ -95,11 +116,13 @@ const plotRandom = (number, map) => {
     ];
     pointsRand.push(point);
     const strText = `${i} : ${pointsRand[i]}`;
-    const marker = placeMarker(pointsRand[i], strText);
+    const marker = placeMarker(pointsRand[i], strText, i);
     markers.addLayer(marker);
-    arrMarkers.push(marker);
+    tempMarkersArr.push(marker);
   }
+  markersStore.set(tempMarkersArr);
   map.addLayer(markers);
+  window.dispatchEvent(markersReadyEvent);
 };
 
 export const addRandomMarkers = (map) => {

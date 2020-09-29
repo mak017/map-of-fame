@@ -6,6 +6,7 @@ export let placeholder = "";
 export let hint = "";
 export let errorText = "";
 export let label = "";
+export let isReadOnly = false;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
@@ -14,7 +15,13 @@ const input = () => dispatch("input");
 
 <label class:with-label={!!label} class:error={!!errorText}>
   {#if label}<span>{label}</span>{/if}
-  <input type="text" {placeholder} bind:value on:blur={blur} on:input={input} />
+  <input
+    type="text"
+    {placeholder}
+    bind:value
+    on:blur={blur}
+    on:input={input}
+    readonly={isReadOnly} />
   {#if errorText || hint}
     <div class="hint">{errorText || hint}</div>
   {/if}
@@ -36,6 +43,7 @@ input {
   font-size: 16px;
   line-height: 20px;
   &::placeholder {
+    padding-left: 2px;
     color: var(--color-dark);
     font-weight: normal;
   }

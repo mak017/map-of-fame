@@ -27,6 +27,9 @@ button {
   &:disabled {
     opacity: 0.4;
   }
+  &.wide {
+    width: 100%;
+  }
 }
 .add-spot {
   padding: 9px 29px;

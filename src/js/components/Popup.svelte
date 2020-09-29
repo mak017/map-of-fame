@@ -58,4 +58,13 @@ const handleKeyDown = (e) => {
   background: url(../../images/close-cross.svg);
   cursor: pointer;
 }
+h3 {
+  margin-bottom: 36px;
+  color: var(--color-dark);
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.22;
+  text-align: center;
+  text-transform: uppercase;
+}
 </style>
