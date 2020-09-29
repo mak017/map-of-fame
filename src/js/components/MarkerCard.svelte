@@ -1,6 +1,6 @@
 <script>
 import { embedVideoCodeFromBasicUrl } from "../utils";
-import FormTextInput from "./elements/FormTextInput.svelte";
+import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import Popup from "./Popup.svelte";
 import ShareMarker from "./ShareMarker.svelte";
 
@@ -13,16 +13,10 @@ const { artist, crew, status, description, img, video, user } = data;
 
 const artistName = artist || "Unknown";
 const videoEmbed = embedVideoCodeFromBasicUrl(video);
-console.log("data", data);
-console.log("video, videoEmbed", video, videoEmbed);
 
-const onShareOpen = () => {
-  isShareOpened = true;
-};
+const onShareToggle = (toggle) => (isShareOpened = toggle);
 
-const onComplainOpen = () => {
-  isComplainOpened = true;
-};
+const onComplainToggle = (toggle) => (isComplainOpened = toggle);
 </script>
 
 <div class="card">
@@ -56,21 +50,23 @@ const onComplainOpen = () => {
           <a href={user.link} target="_blank">{`${user.name}'s Portfolio`}</a>
         </div>
       {/if}
-      <div class="share"><button type="button" on:click={onShareOpen} /></div>
+      <div class="share">
+        <button type="button" on:click={() => onShareToggle(true)} />
+      </div>
       <div class="complain">
-        <button type="button" on:click={onComplainOpen} />
+        <button type="button" on:click={() => onComplainToggle(true)} />
       </div>
     </div>
   </div>
 </div>
 {#if isShareOpened}
-  <Popup on:close={() => (isShareOpened = false)} title="Share Link">
+  <Popup on:close={() => onShareToggle(false)} title="Share Link">
     <ShareMarker {data} />
   </Popup>
 {/if}
 {#if isComplainOpened}
-  <Popup on:close={() => (isComplainOpened = false)} title="Complaint!">
-    <FormTextInput placeholder="Cause" />
+  <Popup on:close={() => onComplainToggle(false)} title="Complaint!">
+    <MarkerCardComplaint {onComplainToggle} />
   </Popup>
 {/if}
 

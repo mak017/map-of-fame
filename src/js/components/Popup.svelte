@@ -67,4 +67,10 @@ h3 {
   text-align: center;
   text-transform: uppercase;
 }
+
+@media (max-width: 767px) {
+  .popup {
+    padding: 44px 12px 36px;
+  }
+}
 </style>

@@ -13,6 +13,7 @@ import { markerWithPhoto } from "../mapUtils/icons";
 import { selectedYear, userType } from "../store";
 import { getCurrentYear, isMobile, isYearLike, validateYear } from "../utils";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
+import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 
 export let onCancel;
@@ -183,7 +184,10 @@ const handleSubmit = () => {
         type="file" />
     </div>
     <FormTextInput label="Link To Video" bind:value={linkToVideo} />
-    <textarea placeholder="Description" bind:value={description} />
+    <FormTextArea
+      placeholder="Description"
+      bind:value={description}
+      height={84} />
     <div class="category">
       {#each categoriesOrdered as category}
         <div class="radio">
@@ -351,23 +355,6 @@ h2 {
 
 .error {
   color: var(--color-error);
-}
-
-textarea {
-  display: block;
-  width: 100%;
-  margin-bottom: 18px;
-  padding: 9px 10px;
-  border: 1px solid var(--color-dark);
-  border-radius: 2px;
-  resize: none;
-  font-weight: 600;
-  font-size: 16px;
-  &::placeholder {
-    color: var(--color-dark);
-    font-size: 17px;
-    font-weight: normal;
-  }
 }
 
 .category {

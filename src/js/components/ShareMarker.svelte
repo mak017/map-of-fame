@@ -11,7 +11,7 @@ const { coords, year, id } = data;
 
 const link = permalink.getCustomUrl(coords, MAX_ZOOM, year, { marker: id });
 
-const onClick = () => copyToClipboard(link);
+const onButtonClick = () => copyToClipboard(link);
 </script>
 
 <div class="input">
@@ -21,7 +21,7 @@ const onClick = () => copyToClipboard(link);
   type="button"
   text="Copy Link"
   className="wide"
-  on:click={onClick} />
+  on:click={onButtonClick} />
 
 <style>
 .input {

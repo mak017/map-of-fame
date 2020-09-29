@@ -3,28 +3,22 @@ import { createEventDispatcher } from "svelte";
 
 export let value = "";
 export let placeholder = "";
-export let hint = "";
 export let errorText = "";
-export let label = "";
-export let isReadOnly = false;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
 const input = () => dispatch("input");
 </script>
 
-<label class:with-label={!!label} class:error={!!errorText}>
-  {#if label}<span>{label}</span>{/if}
+<label class:error={!!errorText}>
   <input
-    type="text"
+    type="password"
     {placeholder}
     bind:value
     on:blur={blur}
-    on:input={input}
-    on:click={isReadOnly && this.select()}
-    readonly={isReadOnly} />
-  {#if errorText || hint}
-    <div class="hint">{errorText || hint}</div>
+    on:input={input} />
+  {#if errorText}
+    <div class="error-text">{errorText}</div>
   {/if}
 </label>
 
@@ -53,32 +47,16 @@ input {
     outline: 0;
   }
 }
-
-.with-label {
-  > span {
-    font-size: 16px;
-    line-height: 1.22;
-  }
-  input {
-    padding: 9px 10px;
-    border: 1px solid var(--color-dark);
-    border-radius: 2px;
-  }
-}
-.hint {
+.error-text {
   margin-top: 8px;
-  opacity: 0.6;
-  color: var(--color-dark);
+  opacity: 1;
+  color: var(--color-error);
   font-size: 13px;
   line-height: 16px;
 }
 .error {
   input {
     border-bottom-color: var(--color-error);
-  }
-  .hint {
-    opacity: 1;
-    color: var(--color-error);
   }
 }
 
