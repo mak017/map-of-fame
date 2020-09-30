@@ -27,3 +27,5 @@ export const statusesOrdered = [
 export const MIN_YEAR = 1967;
 
 export const EMPTY_YEAR_STRING = "????";
+
+export const ENDPOINT_ORIGIN = "http://1828476.nailhub.web.hosting-test.net";

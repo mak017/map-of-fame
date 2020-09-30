@@ -1,4 +1,5 @@
 <script>
+import { loginRequest } from "./../api/auth.js";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormEmailInput from "./elements/FormEmailInput.svelte";
 import FormPasswordInput from "./elements/FormPasswordInput.svelte";
@@ -9,6 +10,7 @@ let email = "";
 let password = "";
 
 const handleSubmit = () => {
+  loginRequest(email, password).then((data) => console.log("data", data));
   showLogin(false);
 };
 </script>
