@@ -1,17 +1,19 @@
 <script>
-import { loginRequest } from "./../api/auth.js";
-import ButtonPrimary from "./elements/ButtonPrimary.svelte";
-import FormEmailInput from "./elements/FormEmailInput.svelte";
-import FormPasswordInput from "./elements/FormPasswordInput.svelte";
+import { loginRequest } from "../../api/auth.js";
+import { AUTH_MODALS } from "../../constants.js";
+import ButtonPrimary from "../elements/ButtonPrimary.svelte";
+import FormEmailInput from "../elements/FormEmailInput.svelte";
+import FormPasswordInput from "../elements/FormPasswordInput.svelte";
 
-export let showLogin;
+export let showAuth;
+export let changeCurrentModal;
 
 let email = "";
 let password = "";
 
 const handleSubmit = () => {
   loginRequest(email, password).then((data) => console.log("data", data));
-  showLogin(false);
+  showAuth(false);
 };
 </script>
 
@@ -24,7 +26,9 @@ const handleSubmit = () => {
   <ButtonPrimary text="Login" type="submit" className="wide" />
   <div class="switch-to-sign-up">
     <span>Don't have an account?</span>
-    <button type="button">Sign up</button>
+    <button
+      type="button"
+      on:click={() => changeCurrentModal(AUTH_MODALS.registration)}>Sign up</button>
   </div>
 </form>
 

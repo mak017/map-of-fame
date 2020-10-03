@@ -9,6 +9,14 @@ export const validateYear = (year, isFull = true) =>
 export const validateCategory = (categories) =>
   categories.every((cat) => Object.values(CATEGORIES).includes(cat));
 
+export const validateEmail = (email) =>
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+    email
+  );
+
+export const validatePassword = (password) =>
+  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/.test(password);
+
 export const getCurrentYear = () => new Date().getFullYear();
 
 export const saveToLocalStorage = (key, value) => {

@@ -13,6 +13,7 @@ import { markerWithPhoto } from "../mapUtils/icons";
 import { selectedYear, userType } from "../store";
 import { getCurrentYear, isMobile, isYearLike, validateYear } from "../utils";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
+import FormRadioButton from "./elements/FormRadioButton.svelte";
 import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 
@@ -157,14 +158,11 @@ const handleSubmit = () => {
       errorText={yearErrorMessage} />
     <div class="status">
       {#each statusesOrdered as status}
-        <div class="radio">
-          <input
-            type="radio"
-            id={`status-${status.toLowerCase()}`}
-            bind:group={selectedStatus}
-            value={status} />
-          <label for={`status-${status.toLowerCase()}`}>{status}</label>
-        </div>
+        <FormRadioButton
+          id={`status-${status.toLowerCase()}`}
+          bind:group={selectedStatus}
+          value={status}
+          label={status} />
       {/each}
     </div>
     <div class="upload-image">
@@ -190,14 +188,11 @@ const handleSubmit = () => {
       height={84} />
     <div class="category">
       {#each categoriesOrdered as category}
-        <div class="radio">
-          <input
-            type="radio"
-            id={`category-${category.toLowerCase()}`}
-            bind:group={selectedCategory}
-            value={category} />
-          <label for={`category-${category.toLowerCase()}`}>{category}</label>
-        </div>
+        <FormRadioButton
+          id={`category-${category.toLowerCase()}`}
+          bind:group={selectedCategory}
+          value={category}
+          label={category} />
       {/each}
     </div>
     {#if userTypeValue === USER_TYPES.artist}
@@ -248,40 +243,6 @@ h2 {
 .status,
 .category {
   display: flex;
-}
-
-.radio {
-  display: flex;
-  flex: 1 0 0;
-  border: 1px solid var(--color-dark);
-  &:first-child {
-    border-right: 0;
-    border-radius: 2px 0 0 2px;
-  }
-  &:last-child {
-    border-left: 0;
-    border-radius: 0 2px 2px 0;
-  }
-  input {
-    position: absolute;
-    left: -9999px;
-    clip: rect(0 0 0 0);
-    opacity: 0;
-  }
-  label {
-    flex: 1 0 auto;
-    padding: 10px 0;
-    color: var(--color-dark);
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.22;
-    text-align: center;
-    cursor: pointer;
-  }
-  input:checked + label {
-    background-color: var(--color-dark);
-    color: var(--color-light);
-  }
 }
 
 .upload-image {

@@ -15,15 +15,13 @@ import AddSpot from "./components/AddSpot.svelte";
 import ButtonPrimary from "./components/elements/ButtonPrimary.svelte";
 import MarkerCard from "./components/MarkerCard.svelte";
 import { permalink } from "./mapUtils/permalink";
-import LoginForm from "./components/LoginForm.svelte";
-import RegistrationForm from "./components/RegistrationForm.svelte";
+import AuthContainer from "./components/auth/AuthContainer.svelte";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isLighthouseActive = false;
 let showCalendarModal = false;
 let showSearchModal = false;
-let showLoginModal = false;
-let showRegistrationModal = false;
+let showAuthContainer = false;
 let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 
@@ -36,8 +34,7 @@ selectedYear.subscribe((value) => (selectedYearValue = value));
 openedMarkerData.subscribe((value) => (openedMarker = value));
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
-const showLogin = (show) => (showLoginModal = show);
-const showRegistration = (show) => (showRegistrationModal = show);
+const showAuth = (show) => (showAuthContainer = show);
 const toggleAddSpotMode = (toggle) => (isAddSpotMode = toggle);
 const toggleAddSpotSidebarVisible = (toggle) =>
   (isAddSpotSidebarVisible = toggle);
@@ -114,7 +111,7 @@ const handleChangeModeClick = () => {
     {:else}
       <button
         class="button button-main_screen button-square button-open_login"
-        on:click={() => showLogin(true)} />
+        on:click={() => showAuth(true)} />
     {/if}
   {:else}
     <ButtonPrimary
@@ -157,16 +154,8 @@ const handleChangeModeClick = () => {
   </Modal>
 {/if}
 
-{#if showLoginModal}
-  <Modal on:close={() => showLogin(false)} title="Log in">
-    <LoginForm {showLogin} {showRegistration} />
-  </Modal>
-{/if}
-
-{#if showRegistrationModal}
-  <Modal on:close={() => showRegistration(false)} title="Registration">
-    <RegistrationForm {showRegistration} />
-  </Modal>
+{#if showAuthContainer}
+  <AuthContainer {showAuth} />
 {/if}
 
 <style lang="scss">
