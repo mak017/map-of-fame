@@ -11,11 +11,12 @@ import {
   loadFromLocalStorage,
   saveToLocalStorage,
 } from "./utils";
-import AddSpot from "./components/AddSpot.svelte";
+import AddSpot from "./components/addSpot/AddSpot.svelte";
 import ButtonPrimary from "./components/elements/ButtonPrimary.svelte";
-import MarkerCard from "./components/MarkerCard.svelte";
+import MarkerCard from "./components/markerCard/MarkerCard.svelte";
 import { permalink } from "./mapUtils/permalink";
 import AuthContainer from "./components/auth/AuthContainer.svelte";
+import { fade } from "svelte/transition";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isLighthouseActive = false;
@@ -81,13 +82,15 @@ const handleChangeModeClick = () => {
   {#if !isAddSpotMode || (isAddSpotMode && !isAddSpotSidebarVisible)}
     <button
       class="button button-main_screen button-open_calendar"
-      on:click={() => showCalendar(true)}>{selectedYearValue}</button>
+      on:click={() => showCalendar(true)}
+      transition:fade>{selectedYearValue}</button>
   {/if}
   {#if +selectedYearValue === getCurrentYear() && !isAddSpotMode}
     <button
       class="button button-square button-lighthouse"
       class:active={isLighthouseActive}
-      disabled={!isLoggedInValue}>
+      disabled={!isLoggedInValue}
+      transition:fade>
       <svg
         width="9"
         height="15"
@@ -105,9 +108,12 @@ const handleChangeModeClick = () => {
   {#if !isAddSpotMode}
     <button
       class="button button-main_screen button-square button-open_search"
-      on:click={() => showSearch(true)} />
+      on:click={() => showSearch(true)}
+      in:fade />
     {#if isLoggedInValue}
-      <button class="button button-main_screen button-square button-burger" />
+      <button
+        class="button button-main_screen button-square button-burger"
+        in:fade />
     {:else}
       <button
         class="button button-main_screen button-square button-open_login"

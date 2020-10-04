@@ -1,5 +1,5 @@
 <script>
-import { categoriesOrdered, MIN_YEAR } from "../constants";
+import { categoriesOrdered, ERROR_MESSAGES, MIN_YEAR } from "../constants";
 import { permalink } from "../mapUtils/permalink";
 import {
   huntersFilter,
@@ -23,9 +23,9 @@ const currentYear = getCurrentYear();
 
 const validateYearInput = () => {
   if (!year) {
-    yearErrorMessage = "This field is required";
+    yearErrorMessage = ERROR_MESSAGES.genericEmpty;
   } else if (!validateYear(year, false)) {
-    yearErrorMessage = `Year is not in range of ${MIN_YEAR} - ${currentYear}`;
+    yearErrorMessage = ERROR_MESSAGES.yearNotInRange;
   } else {
     yearErrorMessage = "";
   }

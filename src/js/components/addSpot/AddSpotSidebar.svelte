@@ -4,18 +4,24 @@ import {
   CATEGORIES,
   categoriesOrdered,
   EMPTY_YEAR_STRING,
+  ERROR_MESSAGES,
   MIN_YEAR,
   STATUSES,
   statusesOrdered,
   USER_TYPES,
-} from "../constants";
-import { markerWithPhoto } from "../mapUtils/icons";
-import { selectedYear, userType } from "../store";
-import { getCurrentYear, isMobile, isYearLike, validateYear } from "../utils";
-import ButtonPrimary from "./elements/ButtonPrimary.svelte";
-import FormRadioButton from "./elements/FormRadioButton.svelte";
-import FormTextArea from "./elements/FormTextArea.svelte";
-import FormTextInput from "./elements/FormTextInput.svelte";
+} from "../../constants";
+import { markerWithPhoto } from "../../mapUtils/icons";
+import { selectedYear, userType } from "../../store";
+import {
+  getCurrentYear,
+  isMobile,
+  isYearLike,
+  validateYear,
+} from "../../utils";
+import ButtonPrimary from "../elements/ButtonPrimary.svelte";
+import FormRadioButton from "../elements/FormRadioButton.svelte";
+import FormTextArea from "../elements/FormTextArea.svelte";
+import FormTextInput from "../elements/FormTextInput.svelte";
 
 export let onCancel;
 export let marker;
@@ -63,7 +69,7 @@ const onChangeImage = () => {
       imageError = "";
       reader.readAsDataURL(file);
     } else {
-      imageError = "File size must be less than 5 MB";
+      imageError = ERROR_MESSAGES.fileTooLarge;
     }
   }
 };
@@ -72,21 +78,19 @@ const validateYearInput = () => {
   if (!year) {
     yearErrorMessage = "";
   } else if (!validateYear(year, false)) {
-    yearErrorMessage = `Year is not in range of ${MIN_YEAR} - ${currentYear}`;
+    yearErrorMessage = ERROR_MESSAGES.yearNotInRange;
   } else {
     yearErrorMessage = "";
   }
 };
 
 const validateImage = () => {
-  imageError = imageError || !imageFile ? "Please upload image" : "";
+  imageError = imageError || !imageFile ? ERROR_MESSAGES.fileEmpty : "";
 };
 
 const validateFirm = () => {
   if (userTypeValue === USER_TYPES.artist) {
-    sprayPaintUsedError = !sprayPaintUsed
-      ? "Please select spray paint used"
-      : "";
+    sprayPaintUsedError = !sprayPaintUsed ? ERROR_MESSAGES.sprayEmpty : "";
   }
 };
 
@@ -309,7 +313,7 @@ h2 {
     &::after {
       width: 24px;
       height: 24px;
-      background: url(../../images/re-upload.svg);
+      background: url(../../../images/re-upload.svg);
     }
   }
 }
@@ -334,7 +338,7 @@ h2 {
     pointer-events: none;
     width: 8px;
     height: 5px;
-    background: url(../../images//triangle-down.svg);
+    background: url(../../../images//triangle-down.svg);
   }
 }
 select {
@@ -375,7 +379,7 @@ select {
     width: 34px;
     height: 34px;
     border: 0;
-    background: url(../../images/close-cross.svg);
+    background: url(../../../images/close-cross.svg);
     cursor: pointer;
   }
 }

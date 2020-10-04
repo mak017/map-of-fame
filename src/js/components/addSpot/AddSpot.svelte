@@ -1,5 +1,6 @@
 <script>
-import { newMarkerIcon } from "../mapUtils/icons";
+import { fade } from "svelte/transition";
+import { newMarkerIcon } from "../../mapUtils/icons";
 import AddSpotSidebar from "./AddSpotSidebar.svelte";
 
 export let map;
@@ -41,10 +42,13 @@ const onAddSpotBtnClick = () => {
 </script>
 
 {#if !isAddSpotMode}
-  <button class="button button-add_spot" on:click={onAddSpotBtnClick}>Add Spot</button>
+  <button
+    class="button button-add_spot"
+    on:click={onAddSpotBtnClick}
+    transition:fade>Add Spot</button>
 {/if}
 {#if !isAddSpotSidebarVisible && isAddSpotMode}
-  <div class="drag-to-map">Drag to Map</div>
+  <div class="drag-to-map" transition:fade>Drag to Map</div>
 {/if}
 {#if isAddSpotSidebarVisible}
   <AddSpotSidebar {onCancel} marker={newMarker} {quitAddSpot} />

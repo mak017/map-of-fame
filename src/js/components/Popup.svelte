@@ -1,5 +1,6 @@
 <script>
 import { createEventDispatcher } from "svelte";
+import { scale, fade } from "svelte/transition";
 
 export let title = "";
 
@@ -16,8 +17,8 @@ const handleKeyDown = (e) => {
 
 <svelte:window on:keydown|stopPropagation={handleKeyDown} />
 
-<div class="popup-background" on:click={close} />
-<div class="popup" role="dialog" aria-modal="true">
+<div class="popup-background" on:click={close} transition:fade />
+<div class="popup" role="dialog" aria-modal="true" transition:scale>
   <button class="close" on:click={close} />
   {#if title}
     <h3>{title}</h3>

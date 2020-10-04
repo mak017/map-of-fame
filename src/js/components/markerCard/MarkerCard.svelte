@@ -1,7 +1,8 @@
 <script>
-import { embedVideoCodeFromBasicUrl } from "../utils";
+import { blur } from "svelte/transition";
+import { embedVideoCodeFromBasicUrl } from "../../utils";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
-import Popup from "./Popup.svelte";
+import Popup from "../Popup.svelte";
 import ShareMarker from "./ShareMarker.svelte";
 
 export let data;
@@ -30,7 +31,9 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
       <div class={`title ${status.toLowerCase()}`}>{status}</div>
     </div>
   </div>
-  <div class="img"><img src={img.src} alt={img.title} /></div>
+  <div class="img" transition:blur={{ amount: 20 }}>
+    <img src={img.src} alt={img.title} />
+  </div>
   {#if description}
     <div class="description">{description}</div>
   {/if}
@@ -158,13 +161,13 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
 
 .link a {
   font-size: 0;
-  background: url(../../images/link.svg) 50% 50% / auto no-repeat;
+  background: url(../../../images/link.svg) 50% 50% / auto no-repeat;
 }
 .share button {
-  background: url(../../images/share.svg) 50% 50% / auto no-repeat;
+  background: url(../../../images/share.svg) 50% 50% / auto no-repeat;
 }
 .complain button {
-  background: url(../../images/warning.svg) 50% 50% / auto no-repeat;
+  background: url(../../../images/warning.svg) 50% 50% / auto no-repeat;
 }
 
 @media (max-width: 767px) {

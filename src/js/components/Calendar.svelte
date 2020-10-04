@@ -2,9 +2,13 @@
 import { getCurrentYear, isMobile } from "../utils.js";
 import { getDatesFilterStub } from "../stubs/datesFilterStub.js";
 import { permalink } from "../mapUtils/permalink.js";
+import { slide } from "svelte/transition";
+
 export let selectedYear;
 export let showCalendar;
+
 let selectedYearValue;
+
 selectedYear.subscribe((value) => (selectedYearValue = value));
 const dates = !isMobile()
   ? getDatesFilterStub()
@@ -17,7 +21,7 @@ const handleClick = (year) => {
 };
 </script>
 
-<ol class="years-list">
+<ol class="years-list" in:slide>
   {#each dates as date}
     <li>
       <a

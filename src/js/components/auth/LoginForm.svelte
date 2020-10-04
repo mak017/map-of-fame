@@ -1,6 +1,9 @@
 <script>
+import { fade } from "svelte/transition";
+
 import { loginRequest } from "../../api/auth.js";
-import { AUTH_MODALS } from "../../constants.js";
+import { AUTH_MODALS, ERROR_MESSAGES } from "../../constants.js";
+import { validateEmail } from "../../utils.js";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
 import FormPasswordInput from "../elements/FormPasswordInput.svelte";
@@ -10,20 +13,52 @@ export let changeCurrentModal;
 
 let email = "";
 let password = "";
+let errors = { email: "", password: "" };
+let isDisabledSubmit = false;
+
+const validate = () => {
+  const isValidEmail = validateEmail(email);
+  if (!isValidEmail || !password) {
+    if (!email) errors.email = ERROR_MESSAGES.emailEmpty;
+    else if (!isValidEmail) errors.email = ERROR_MESSAGES.emailInvalid;
+    else errors.email = "";
+    errors.password = !password ? ERROR_MESSAGES.passwordEmpty : "";
+    isDisabledSubmit = true;
+    return;
+  }
+  errors.email = "";
+  errors.password = "";
+  isDisabledSubmit = false;
+};
 
 const handleSubmit = () => {
-  loginRequest(email, password).then((data) => console.log("data", data));
-  showAuth(false);
+  validate();
+  if (!errors.email && !errors.password) {
+    loginRequest(email, password).then((data) => console.log("data", data));
+    showAuth(false);
+  }
 };
 </script>
 
-<form on:submit|preventDefault={handleSubmit}>
-  <FormEmailInput placeholder="Email" bind:value={email} />
-  <FormPasswordInput placeholder="Password" bind:value={password} />
+<form on:submit|preventDefault={handleSubmit} novalidate transition:fade>
+  <FormEmailInput
+    placeholder="Email"
+    bind:value={email}
+    errorText={errors.email}
+    on:blur={() => isDisabledSubmit && validate()} />
+  <FormPasswordInput
+    placeholder="Password"
+    bind:value={password}
+    errorText={errors.password}
+    on:blur={() => isDisabledSubmit && validate()} />
   <div class="forgot-password">
     <button type="button">Forgot password</button>
   </div>
-  <ButtonPrimary text="Login" type="submit" className="wide" />
+  <ButtonPrimary
+    text="Login"
+    type="submit"
+    className="wide"
+    isDisabled={isDisabledSubmit} />
   <div class="switch-to-sign-up">
     <span>Don't have an account?</span>
     <button

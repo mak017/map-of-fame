@@ -1,9 +1,9 @@
 <script>
-import { MAX_ZOOM } from "../constants";
-import { permalink } from "../mapUtils/permalink";
-import { copyToClipboard } from "../utils";
-import ButtonPrimary from "./elements/ButtonPrimary.svelte";
-import FormTextInput from "./elements/FormTextInput.svelte";
+import { MAX_ZOOM } from "../../constants";
+import { permalink } from "../../mapUtils/permalink";
+import { copyToClipboard } from "../../utils";
+import ButtonPrimary from "../elements/ButtonPrimary.svelte";
+import FormTextInput from "../elements/FormTextInput.svelte";
 
 export let data;
 

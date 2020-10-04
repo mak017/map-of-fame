@@ -1,12 +1,21 @@
 <script>
+import { createEventDispatcher } from "svelte";
+
 export let placeholder;
 export let value;
 export let height = 84;
 export let errorText = "";
+
+const dispatch = createEventDispatcher();
+const blur = () => dispatch("blur");
 </script>
 
 <div class="container" class:error={!!errorText}>
-  <textarea {placeholder} bind:value style="height: {height}px" />
+  <textarea
+    {placeholder}
+    bind:value
+    style="height: {height}px"
+    on:blur={blur} />
   {#if errorText}
     <div class="error-text">{errorText}</div>
   {/if}

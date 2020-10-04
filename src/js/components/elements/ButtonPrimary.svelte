@@ -1,5 +1,6 @@
 <script>
 import { createEventDispatcher } from "svelte";
+import { fade } from "svelte/transition";
 
 export let isDisabled = false;
 export let type = "button";
@@ -13,7 +14,8 @@ const dispatch = createEventDispatcher();
   {type}
   class={`button${className ? ` ${className}` : ''}`}
   disabled={isDisabled}
-  on:click={() => dispatch('click')}>{text}</button>
+  on:click={() => dispatch('click')}
+  in:fade>{text}</button>
 
 <style lang="scss">
 button {

@@ -1,10 +1,13 @@
 <script>
 import { isMobile } from "../utils.js";
 import { createEventDispatcher } from "svelte";
+import { fade } from "svelte/transition";
 
 export let title = "";
 export let withAd = false;
 export let noLogo = false;
+export let noTransition = false;
+
 const dispatch = createEventDispatcher();
 const close = () => dispatch("close");
 let isMobileWidth = isMobile();
@@ -23,11 +26,16 @@ const handleResize = () => {
 
 <svelte:window on:keydown={handleKeyDown} on:resize={handleResize} />
 
-<div class="modal" class:withAd role="dialog" aria-modal="true">
+<div
+  class="modal"
+  class:withAd
+  role="dialog"
+  aria-modal="true"
+  transition:fade={{ duration: !noTransition ? 400 : 0 }}>
   <button class="close" on:click={close} />
   {#if !noLogo}<span class="logo" />{/if}
   {#if title}
-    <h2>{title}</h2>
+    <h2 transition:fade>{title}</h2>
   {/if}
   <slot />
   {#if withAd && !isMobileWidth}
@@ -112,7 +120,7 @@ div {
     left: 12px;
   }
   h2 {
-    margin-top: 44px;
+    margin-top: 64px;
   }
 }
 </style>
