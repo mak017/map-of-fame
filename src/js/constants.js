@@ -51,4 +51,6 @@ export const ERROR_MESSAGES = {
   yearNotInRange: `Year is not in range of ${MIN_YEAR} - ${getCurrentYear()}`,
   sprayEmpty: "Please select spray paint used",
   genericEmpty: "This is required field",
+  videoLinkInvalid:
+    "Please add correct link to video. Currently we support links to videos only from Youtube, Vimeo and Dailymotion",
 };

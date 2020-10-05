@@ -119,11 +119,6 @@ const handleChangeModeClick = () => {
         class="button button-main_screen button-square button-open_login"
         on:click={() => showAuth(true)} />
     {/if}
-  {:else}
-    <ButtonPrimary
-      on:click={() => toggleAddSpotMode(false)}
-      text="Cancel"
-      className="add-spot" />
   {/if}
 </div>
 

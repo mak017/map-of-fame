@@ -74,7 +74,7 @@ input {
 }
 .error {
   input {
-    border-bottom-color: var(--color-error);
+    border-color: var(--color-error);
   }
   .hint {
     opacity: 1;

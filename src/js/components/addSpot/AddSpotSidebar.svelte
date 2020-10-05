@@ -16,6 +16,7 @@ import {
   getCurrentYear,
   isMobile,
   isYearLike,
+  validateVideoLink,
   validateYear,
 } from "../../utils";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
@@ -30,21 +31,19 @@ export let quitAddSpot;
 let artist = "";
 let crew = "";
 let year = "";
-let yearErrorMessage = "";
 let prevYearValue = "";
 let selectedStatus = STATUSES.live;
 let imageFile;
 let imageFilePreview = "";
-let imageError = "";
 let linkToVideo = "";
 let description = "";
 let selectedCategory = CATEGORIES.walls;
 let sprayPaintUsed = "";
-let sprayPaintUsedError = "";
 let link = "";
 let isSubmitDisabled = false;
 let userTypeValue;
 let selectedYearValue;
+let errors = { year: "", imageFile: "", linkToVideo: "", sprayPaintUsed: "" };
 const currentYear = getCurrentYear();
 userType.subscribe((value) => (userTypeValue = value));
 selectedYear.subscribe((value) => (selectedYearValue = value));
@@ -54,6 +53,8 @@ let spraysStub = [
   { id: 2, text: `Spray 2` },
   { id: 3, text: `Spray 3` },
 ];
+
+const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
 
 const onChangeImage = () => {
   console.log("imageFile", imageFile);
@@ -66,38 +67,53 @@ const onChangeImage = () => {
     };
 
     if (file.size < 5242880) {
-      imageError = "";
+      errors.imageFile = "";
       reader.readAsDataURL(file);
     } else {
-      imageError = ERROR_MESSAGES.fileTooLarge;
+      errors.imageFile = ERROR_MESSAGES.fileTooLarge;
     }
   }
 };
 
 const validateYearInput = () => {
   if (!year) {
-    yearErrorMessage = "";
+    errors.year = "";
   } else if (!validateYear(year, false)) {
-    yearErrorMessage = ERROR_MESSAGES.yearNotInRange;
+    errors.year = ERROR_MESSAGES.yearNotInRange;
   } else {
-    yearErrorMessage = "";
+    errors.year = "";
   }
 };
 
 const validateImage = () => {
-  imageError = imageError || !imageFile ? ERROR_MESSAGES.fileEmpty : "";
+  errors.imageFile =
+    errors.imageFile || !imageFile ? ERROR_MESSAGES.fileEmpty : "";
 };
 
 const validateFirm = () => {
   if (userTypeValue === USER_TYPES.artist) {
-    sprayPaintUsedError = !sprayPaintUsed ? ERROR_MESSAGES.sprayEmpty : "";
+    errors.sprayPaintUsed = !sprayPaintUsed ? ERROR_MESSAGES.sprayEmpty : "";
   }
+};
+
+const validateVideoLinkInput = () => {
+  console.log("linkToVideo", linkToVideo);
+  // console.log("validateVideoLink()", validateVideoLink(linkToVideo));
+  // console.log(
+  //   "validateVideoLink(linkToVideo) || !linkToVideo",
+  //   validateVideoLink(linkToVideo) || !linkToVideo
+  // );
+  errors.linkToVideo =
+    validateVideoLink(linkToVideo) || !linkToVideo
+      ? ""
+      : ERROR_MESSAGES.videoLinkInvalid;
 };
 
 const validate = () => {
   validateYearInput();
   validateImage();
   validateFirm();
+  validateVideoLinkInput();
 };
 
 const handleYearChange = () => {
@@ -111,13 +127,31 @@ const handleYearChange = () => {
 const handleYearBlur = () => {
   if (isSubmitDisabled) {
     validateYearInput();
-    isSubmitDisabled = !!yearErrorMessage;
+    isSubmitDisabled = isFormHasErrors();
+  }
+};
+
+const handleVideoLinkBlur = () => {
+  if (isSubmitDisabled) {
+    validateVideoLinkInput();
+    isSubmitDisabled = isFormHasErrors();
+  }
+};
+
+const handleSpraySelectBlur = () => {
+  if (isSubmitDisabled) {
+    validateFirm();
+    isSubmitDisabled = isFormHasErrors();
   }
 };
 
 const handleSubmit = () => {
   validate();
-  if (!yearErrorMessage && !imageError && !sprayPaintUsedError) {
+  if (
+    !errors.year &&
+    !errors.imageFile &&
+    !errors.sprayPaintUsed & !errors.linkToVideo
+  ) {
     if (
       selectedYearValue === year ||
       (!year && selectedYearValue === EMPTY_YEAR_STRING)
@@ -159,7 +193,7 @@ const handleSubmit = () => {
       hint={`${MIN_YEAR} - ${currentYear}`}
       on:blur={handleYearBlur}
       on:input={handleYearChange}
-      errorText={yearErrorMessage} />
+      errorText={errors.year} />
     <div class="status">
       {#each statusesOrdered as status}
         <FormRadioButton
@@ -177,7 +211,7 @@ const handleSubmit = () => {
         <label for="upload-image" class="first_upload"><span>Add Image</span><span>Max
             5 Mb</span></label>
       {/if}
-      {#if imageError}<span class="error">{imageError}</span>{/if}
+      {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
       <input
         accept="image/png, image/jpeg"
         bind:files={imageFile}
@@ -185,7 +219,11 @@ const handleSubmit = () => {
         id="upload-image"
         type="file" />
     </div>
-    <FormTextInput label="Link To Video" bind:value={linkToVideo} />
+    <FormTextInput
+      label="Link To Video"
+      bind:value={linkToVideo}
+      errorText={errors.linkToVideo}
+      on:blur={handleVideoLinkBlur} />
     <FormTextArea
       placeholder="Description"
       bind:value={description}
@@ -201,14 +239,14 @@ const handleSubmit = () => {
     </div>
     {#if userTypeValue === USER_TYPES.artist}
       <div class="spray">
-        <select bind:value={sprayPaintUsed}>
+        <select bind:value={sprayPaintUsed} on:blur={handleSpraySelectBlur}>
           <option value="" disabled hidden>Spray Paint Used</option>
           {#each spraysStub as spray}
             <option value={spray}>{spray.text}</option>
           {/each}
         </select>
-        {#if sprayPaintUsedError}
-          <span class="error">{sprayPaintUsedError}</span>
+        {#if errors.sprayPaintUsed}
+          <span class="error">{errors.sprayPaintUsed}</span>
         {/if}
       </div>
     {/if}
@@ -332,9 +370,8 @@ h2 {
   &::after {
     content: "";
     position: absolute;
-    top: 50%;
+    top: 22px;
     right: 0;
-    transform: translateY(-50%);
     pointer-events: none;
     width: 8px;
     height: 5px;
