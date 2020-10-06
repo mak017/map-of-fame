@@ -12,17 +12,18 @@ import {
   saveToLocalStorage,
 } from "./utils";
 import AddSpot from "./components/addSpot/AddSpot.svelte";
-import ButtonPrimary from "./components/elements/ButtonPrimary.svelte";
 import MarkerCard from "./components/markerCard/MarkerCard.svelte";
 import { permalink } from "./mapUtils/permalink";
 import AuthContainer from "./components/auth/AuthContainer.svelte";
 import { fade } from "svelte/transition";
+import ResetPassword from "./components/auth/ResetPassword.svelte";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isLighthouseActive = false;
 let showCalendarModal = false;
 let showSearchModal = false;
 let showAuthContainer = false;
+let showResetPasswordModal = false;
 let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 
@@ -36,6 +37,7 @@ openedMarkerData.subscribe((value) => (openedMarker = value));
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
+const showResetPassword = (show) => (showResetPasswordModal = show);
 const toggleAddSpotMode = (toggle) => (isAddSpotMode = toggle);
 const toggleAddSpotSidebarVisible = (toggle) =>
   (isAddSpotSidebarVisible = toggle);
@@ -157,6 +159,12 @@ const handleChangeModeClick = () => {
 
 {#if showAuthContainer}
   <AuthContainer {showAuth} />
+{/if}
+
+{#if showResetPasswordModal}
+  <Modal noClose title="Reset Password">
+    <ResetPassword {showResetPassword} />
+  </Modal>
 {/if}
 
 <style lang="scss">

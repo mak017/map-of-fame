@@ -83,4 +83,10 @@ p {
 .submit-wrapper {
   margin-top: 36px;
 }
+
+@media (max-height: 400px) {
+  p {
+    top: calc(-6vh - 70px);
+  }
+}
 </style>

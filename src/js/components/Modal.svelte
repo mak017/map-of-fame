@@ -8,13 +8,14 @@ export let withAd = false;
 export let noLogo = false;
 export let noTransition = false;
 export let accentTitle = false;
+export let noClose = false;
 
 const dispatch = createEventDispatcher();
 const close = () => dispatch("close");
 let isMobileWidth = isMobile();
 
 const handleKeyDown = (e) => {
-  if (e.key === "Escape") {
+  if (e.key === "Escape" && !noClose) {
     close();
     return;
   }
@@ -34,7 +35,7 @@ const handleResize = () => {
   role="dialog"
   aria-modal="true"
   transition:fade={{ duration: !noTransition ? 400 : 0 }}>
-  <button class="close" on:click={close} />
+  {#if !noClose}<button class="close" on:click={close} />{/if}
   {#if !noLogo}<span class="logo" />{/if}
   {#if title}
     <h2 transition:fade>{title}</h2>
