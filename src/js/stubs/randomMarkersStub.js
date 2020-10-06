@@ -30,12 +30,13 @@ export const setMarkerDataById = (id) => {
   ][Math.round(Math.random())];
   const video = [
     "https://www.youtube.com/watch?v=G_Z8mcfBKLE",
+    "https://m.youtube.com/watch?v=G_Z8mcfBKLE",
     "https://youtu.be/G_Z8mcfBKLE",
     "https://vimeo.com/111591953",
     "https://www.dailymotion.com/video/x7tx6t6",
     "https://dai.ly/x7tx6t6",
     "",
-  ][Math.floor(Math.random() * Math.floor(6))];
+  ][Math.floor(Math.random() * Math.floor(7))];
   const link = ["https://www.instagram.com/", ""][Math.round(Math.random())];
   const coords = marker && {
     // eslint-disable-next-line no-underscore-dangle

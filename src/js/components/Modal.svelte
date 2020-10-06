@@ -7,6 +7,7 @@ export let title = "";
 export let withAd = false;
 export let noLogo = false;
 export let noTransition = false;
+export let accentTitle = false;
 
 const dispatch = createEventDispatcher();
 const close = () => dispatch("close");
@@ -29,6 +30,7 @@ const handleResize = () => {
 <div
   class="modal"
   class:withAd
+  class:accentTitle
   role="dialog"
   aria-modal="true"
   transition:fade={{ duration: !noTransition ? 400 : 0 }}>
@@ -107,6 +109,12 @@ div {
   max-width: 100%;
   margin: auto 0 0;
   overflow: hidden;
+}
+
+.accentTitle {
+  h2 {
+    color: var(--color-accent);
+  }
 }
 
 @media (max-width: 767px) {

@@ -97,12 +97,6 @@ const validateFirm = () => {
 };
 
 const validateVideoLinkInput = () => {
-  console.log("linkToVideo", linkToVideo);
-  // console.log("validateVideoLink()", validateVideoLink(linkToVideo));
-  // console.log(
-  //   "validateVideoLink(linkToVideo) || !linkToVideo",
-  //   validateVideoLink(linkToVideo) || !linkToVideo
-  // );
   errors.linkToVideo =
     validateVideoLink(linkToVideo) || !linkToVideo
       ? ""

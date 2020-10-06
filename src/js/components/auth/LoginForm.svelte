@@ -52,7 +52,10 @@ const handleSubmit = () => {
     errorText={errors.password}
     on:blur={() => isDisabledSubmit && validate()} />
   <div class="forgot-password">
-    <button type="button">Forgot password</button>
+    <button
+      type="button"
+      on:click={() => changeCurrentModal(AUTH_MODALS.forgotPassword)}>Forgot
+      password</button>
   </div>
   <ButtonPrimary
     text="Login"
@@ -69,6 +72,8 @@ const handleSubmit = () => {
 
 <style lang="scss">
 form {
+  width: 100%;
+  max-width: 530px;
   margin-bottom: auto;
 }
 .forgot-password {

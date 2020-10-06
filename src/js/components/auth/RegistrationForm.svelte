@@ -1,6 +1,7 @@
 <script>
 import { validateEmail, validatePassword } from "./../../utils.js";
 import { AUTH_MODALS, ERROR_MESSAGES, USER_TYPES } from "../../constants";
+import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
 import FormPasswordInput from "../elements/FormPasswordInput.svelte";
@@ -65,11 +66,11 @@ const handleSubmit = () => {
 
 <form on:submit|preventDefault={handleSubmit} novalidate transition:fade>
   {#if step === 2}
-    <button
+    <ButtonModalBack
       type="button"
       class="back"
       on:click={() => (step = 1)}
-      transition:fade|local />
+      withTransition />
   {/if}
   {#if step === 1}
     <div class="switcher" in:fade|local>
@@ -145,16 +146,6 @@ form {
   width: 100%;
   max-width: 530px;
   margin-bottom: auto;
-}
-.back {
-  position: absolute;
-  top: calc(-6vh - 25px);
-  left: 0;
-  width: 20px;
-  height: 20px;
-  border: 0;
-  background: url(../../../images/back.svg);
-  cursor: pointer;
 }
 .switcher {
   display: flex;
