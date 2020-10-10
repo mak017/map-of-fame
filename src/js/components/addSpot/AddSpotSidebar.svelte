@@ -11,7 +11,7 @@ import {
   USER_TYPES,
 } from "../../constants";
 import { markerWithPhoto } from "../../mapUtils/icons";
-import { selectedYear, userType } from "../../store";
+import { selectedYear, userData } from "../../store";
 import {
   getCurrentYear,
   isMobile,
@@ -45,7 +45,7 @@ let userTypeValue;
 let selectedYearValue;
 let errors = { year: "", imageFile: "", linkToVideo: "", sprayPaintUsed: "" };
 const currentYear = getCurrentYear();
-userType.subscribe((value) => (userTypeValue = value));
+userData.subscribe((value) => (userTypeValue = value.type));
 selectedYear.subscribe((value) => (selectedYearValue = value));
 
 let spraysStub = [
@@ -91,7 +91,7 @@ const validateImage = () => {
 };
 
 const validateFirm = () => {
-  if (userTypeValue === USER_TYPES.artist) {
+  if (userTypeValue === USER_TYPES.artist.toLowerCase()) {
     errors.sprayPaintUsed = !sprayPaintUsed ? ERROR_MESSAGES.sprayEmpty : "";
   }
 };
@@ -231,7 +231,7 @@ const handleSubmit = () => {
           label={category} />
       {/each}
     </div>
-    {#if userTypeValue === USER_TYPES.artist}
+    {#if userTypeValue === USER_TYPES.artist.toLowerCase()}
       <div class="spray">
         <select bind:value={sprayPaintUsed} on:blur={handleSpraySelectBlur}>
           <option value="" disabled hidden>Spray Paint Used</option>

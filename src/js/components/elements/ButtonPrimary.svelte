@@ -20,7 +20,7 @@ const dispatch = createEventDispatcher();
 <style lang="scss">
 button {
   flex: 1 0 auto;
-  padding: 12px 0;
+  padding: 12px 19px;
   background-color: var(--color-accent);
   color: var(--color-light);
   font-size: 18px;

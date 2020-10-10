@@ -17,6 +17,8 @@ import { permalink } from "./mapUtils/permalink";
 import AuthContainer from "./components/auth/AuthContainer.svelte";
 import { fade } from "svelte/transition";
 import ResetPassword from "./components/auth/ResetPassword.svelte";
+import Profile from "./components/user/Profile.svelte";
+import { newMarkerIcon } from "./mapUtils/icons";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isLighthouseActive = false;
@@ -24,6 +26,7 @@ let showCalendarModal = false;
 let showSearchModal = false;
 let showAuthContainer = false;
 let showResetPasswordModal = false;
+let showUserProfileModal = false;
 let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 
@@ -31,6 +34,7 @@ let map;
 let isLoggedInValue;
 let selectedYearValue;
 let openedMarker;
+let newMarker;
 isLoggedIn.subscribe((value) => (isLoggedInValue = value));
 selectedYear.subscribe((value) => (selectedYearValue = value));
 openedMarkerData.subscribe((value) => (openedMarker = value));
@@ -38,6 +42,7 @@ const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
 const showResetPassword = (show) => (showResetPasswordModal = show);
+const showUserProfile = (show) => (showUserProfileModal = show);
 const toggleAddSpotMode = (toggle) => (isAddSpotMode = toggle);
 const toggleAddSpotSidebarVisible = (toggle) =>
   (isAddSpotSidebarVisible = toggle);
@@ -75,6 +80,35 @@ const handleChangeModeClick = () => {
     isRailwayMode = false;
   }
   saveToLocalStorage("railwayMode", isRailwayMode);
+};
+
+const onNewMarkerMoveEnd = () => {
+  if (!isAddSpotSidebarVisible) {
+    toggleAddSpotSidebarVisible(true);
+  }
+};
+
+const onNewMarkerCancel = () => {
+  quitAddSpot();
+  newMarker.removeEventListener("moveend", onNewMarkerMoveEnd);
+  map.removeLayer(newMarker);
+};
+
+const onAddSpotBtnClick = () => {
+  const center = map.getCenter();
+  newMarker = L.marker(center, {
+    draggable: true,
+    icon: newMarkerIcon,
+    zIndexOffset: 10000,
+  });
+  map.addLayer(newMarker);
+  newMarker.addEventListener("moveend", onNewMarkerMoveEnd);
+  toggleAddSpotMode(true);
+};
+
+const quitAddSpot = () => {
+  toggleAddSpotMode(false);
+  toggleAddSpotSidebarVisible(false);
 };
 </script>
 
@@ -115,6 +149,7 @@ const handleChangeModeClick = () => {
     {#if isLoggedInValue}
       <button
         class="button button-main_screen button-square button-burger"
+        on:click={() => showUserProfile(true)}
         in:fade />
     {:else}
       <button
@@ -132,11 +167,12 @@ const handleChangeModeClick = () => {
 
 {#if isLoggedInValue}
   <AddSpot
-    {map}
     {isAddSpotMode}
-    {toggleAddSpotMode}
     {isAddSpotSidebarVisible}
-    {toggleAddSpotSidebarVisible} />
+    {onAddSpotBtnClick}
+    {newMarker}
+    onCancel={onNewMarkerCancel}
+    {quitAddSpot} />
 {/if}
 
 {#if showCalendarModal}
@@ -164,6 +200,12 @@ const handleChangeModeClick = () => {
 {#if showResetPasswordModal}
   <Modal noClose title="Reset Password">
     <ResetPassword {showResetPassword} />
+  </Modal>
+{/if}
+
+{#if showUserProfileModal}
+  <Modal noLogo on:close={() => showUserProfile(false)}>
+    <Profile {onAddSpotBtnClick} {showUserProfile} />
   </Modal>
 {/if}
 

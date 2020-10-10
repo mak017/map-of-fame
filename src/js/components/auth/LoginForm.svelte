@@ -1,8 +1,9 @@
 <script>
 import { fade } from "svelte/transition";
-
+import { fakeUser } from "./../../stubs/fakeUserData.js";
 import { loginRequest } from "../../api/auth.js";
 import { AUTH_MODALS, ERROR_MESSAGES } from "../../constants.js";
+import { isLoggedIn, userData } from "../../store.js";
 import { validateEmail } from "../../utils.js";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
@@ -34,8 +35,18 @@ const validate = () => {
 const handleSubmit = () => {
   validate();
   if (!errors.email && !errors.password) {
-    loginRequest(email, password).then((data) => console.log("data", data));
-    showAuth(false);
+    loginRequest(email, password)
+      .then((data) => {
+        console.log("data", data);
+        isLoggedIn.set(true);
+        showAuth(false);
+      })
+      .catch((e) => {
+        console.log("e", e);
+        isLoggedIn.set(true);
+        userData.set(fakeUser);
+        showAuth(false);
+      });
   }
 };
 </script>

@@ -1,45 +1,14 @@
 <script>
 import { fade } from "svelte/transition";
-import { newMarkerIcon } from "../../mapUtils/icons";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import AddSpotSidebar from "./AddSpotSidebar.svelte";
 
-export let map;
 export let isAddSpotMode;
-export let toggleAddSpotMode;
 export let isAddSpotSidebarVisible;
-export let toggleAddSpotSidebarVisible;
-
-let newMarker;
-
-const quitAddSpot = () => {
-  toggleAddSpotMode(false);
-  toggleAddSpotSidebarVisible(false);
-};
-
-const onNewMarkerMoveEnd = () => {
-  if (!isAddSpotSidebarVisible) {
-    toggleAddSpotSidebarVisible(true);
-  }
-};
-
-const onCancel = () => {
-  quitAddSpot();
-  newMarker.removeEventListener("moveend", onNewMarkerMoveEnd);
-  map.removeLayer(newMarker);
-};
-
-const onAddSpotBtnClick = () => {
-  const center = map.getCenter();
-  newMarker = L.marker(center, {
-    draggable: true,
-    icon: newMarkerIcon,
-    zIndexOffset: 10000,
-  });
-  map.addLayer(newMarker);
-  newMarker.addEventListener("moveend", onNewMarkerMoveEnd);
-  toggleAddSpotMode(true);
-};
+export let onAddSpotBtnClick;
+export let newMarker;
+export let onCancel;
+export let quitAddSpot;
 </script>
 
 {#if !isAddSpotMode}
