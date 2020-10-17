@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import { USER_TYPES } from "./constants";
-import { fakeUser } from "./stubs/fakeUserData";
+import { fakeUser, fakeUserSpots } from "./stubs/fakeUserData";
 import { getCurrentYear } from "./utils";
 
 export const isLoggedIn = writable(true);
@@ -19,3 +19,6 @@ export const markersStore = writable([]);
 
 // export const userData = writable({});
 export const userData = writable(fakeUser);
+
+// export const userSpots = writable([]);
+export const userSpots = writable(fakeUserSpots);

@@ -1,5 +1,6 @@
 <script>
 import { fly } from "svelte/transition";
+import Select from "svelte-select";
 import {
   CATEGORIES,
   categoriesOrdered,
@@ -38,7 +39,7 @@ let imageFilePreview = "";
 let linkToVideo = "";
 let description = "";
 let selectedCategory = CATEGORIES.walls;
-let sprayPaintUsed = "";
+let sprayPaintUsed;
 let link = "";
 let isSubmitDisabled = false;
 let userTypeValue;
@@ -49,9 +50,21 @@ userData.subscribe((value) => (userTypeValue = value.type));
 selectedYear.subscribe((value) => (selectedYearValue = value));
 
 let spraysStub = [
-  { id: 1, text: `Spray 1` },
-  { id: 2, text: `Spray 2` },
-  { id: 3, text: `Spray 3` },
+  { value: 1, label: `Spray 1` },
+  { value: 2, label: `Spray 2` },
+  { value: 3, label: `Spray 3` },
+  { value: 4, label: `Spray 4` },
+  { value: 5, label: `Spray 5` },
+  { value: 6, label: `Spray 6` },
+  { value: 7, label: `Spray 7` },
+  { value: 8, label: `Spray 8` },
+  { value: 9, label: `Spray 9` },
+  { value: 10, label: `Spray 10` },
+  { value: 11, label: `Spray 11` },
+  { value: 12, label: `Spray 12` },
+  { value: 13, label: `Spray 13` },
+  { value: 14, label: `Spray 14` },
+  { value: 15, label: `Spray 15` },
 ];
 
 const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
@@ -233,12 +246,19 @@ const handleSubmit = () => {
     </div>
     {#if userTypeValue === USER_TYPES.artist.toLowerCase()}
       <div class="spray">
-        <select bind:value={sprayPaintUsed} on:blur={handleSpraySelectBlur}>
+        <Select
+          items={spraysStub}
+          bind:selectedValue={sprayPaintUsed}
+          showChevron
+          listAutoWidth={false}
+          indicatorSvg={`<svg width="8" height="5"viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 5L4.37114e-07 -2.22545e-07L8 4.76837e-07L4 5Z" fill="#393940" /></svg>`}
+          on:select={handleSpraySelectBlur} />
+        <!-- <select bind:value={sprayPaintUsed} on:blur={handleSpraySelectBlur}>
           <option value="" disabled hidden>Spray Paint Used</option>
           {#each spraysStub as spray}
             <option value={spray}>{spray.text}</option>
           {/each}
-        </select>
+        </select> -->
         {#if errors.sprayPaintUsed}
           <span class="error">{errors.sprayPaintUsed}</span>
         {/if}
@@ -359,28 +379,44 @@ h2 {
 }
 
 .spray {
+  --border: 1px solid var(--color-dark);
+  --borderHoverColor: var(--color-dark);
+  --borderRadius: 2px;
+  --borderFocusColor: var(--color-accent);
+  --indicatorTop: 6px;
+  --inputColor: var(--color-dark);
+  --inputFontSize: 16px;
+  --inputPadding: 0 10px;
+  --itemFirstBorderRadius: 0;
+  --itemHoverBG: none;
+  --itemIsActiveBG: none;
+  --itemIsActiveColor: var(--color-accent);
+  --listBorderRadius: 0;
+  // --listShadow: inset 0 0 0 1px var(--color-accent);
+  --listShadow: 0;
+  --placeholderColor: var(--color-dark);
   position: relative;
   margin-bottom: 24px;
-  &::after {
-    content: "";
-    position: absolute;
-    top: 22px;
-    right: 0;
-    pointer-events: none;
-    width: 8px;
-    height: 5px;
-    background: url(../../../images//triangle-down.svg);
-  }
+  // &::after {
+  //   content: "";
+  //   position: absolute;
+  //   top: 22px;
+  //   right: 0;
+  //   pointer-events: none;
+  //   width: 8px;
+  //   height: 5px;
+  //   background: url(../../../images//triangle-down.svg);
+  // }
 }
-select {
-  width: 100%;
-  border: 0;
-  border-bottom: 1px solid var(--color-dark);
-  background: var(--color-light);
-  padding: 10px 0;
-  appearance: none;
-  cursor: pointer;
-}
+// select {
+//   width: 100%;
+//   border: 0;
+//   border-bottom: 1px solid var(--color-dark);
+//   background: var(--color-light);
+//   padding: 10px 0;
+//   appearance: none;
+//   cursor: pointer;
+// }
 .button_wrap {
   display: flex;
   margin-bottom: 12px;

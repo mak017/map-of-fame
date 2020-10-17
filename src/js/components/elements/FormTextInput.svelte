@@ -63,6 +63,9 @@ input {
     padding: 9px 10px;
     border: 1px solid var(--color-dark);
     border-radius: 2px;
+    &:focus {
+      border-color: var(--color-accent);
+    }
   }
 }
 .hint {

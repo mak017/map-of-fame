@@ -34,6 +34,10 @@ textarea {
   resize: none;
   font-weight: 600;
   font-size: 16px;
+  &:focus {
+    border-color: var(--color-accent);
+    outline: none;
+  }
   &::placeholder {
     color: var(--color-dark);
     font-size: 17px;
