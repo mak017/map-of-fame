@@ -24,6 +24,7 @@ import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormRadioButton from "../elements/FormRadioButton.svelte";
 import FormTextArea from "../elements/FormTextArea.svelte";
 import FormTextInput from "../elements/FormTextInput.svelte";
+import CustomSelect from "../elements/CustomSelect.svelte";
 
 export let onCancel;
 export let marker;
@@ -145,7 +146,7 @@ const handleVideoLinkBlur = () => {
   }
 };
 
-const handleSpraySelectBlur = () => {
+const handleSpraySelectBlur = (event) => {
   if (isSubmitDisabled) {
     validateFirm();
     isSubmitDisabled = isFormHasErrors();
@@ -157,7 +158,8 @@ const handleSubmit = () => {
   if (
     !errors.year &&
     !errors.imageFile &&
-    !errors.sprayPaintUsed & !errors.linkToVideo
+    !errors.sprayPaintUsed &&
+    !errors.linkToVideo
   ) {
     if (
       selectedYearValue === year ||
@@ -246,13 +248,17 @@ const handleSubmit = () => {
     </div>
     {#if userTypeValue === USER_TYPES.artist.toLowerCase()}
       <div class="spray">
-        <Select
+        <CustomSelect
+          items={spraysStub}
+          bind:selectedValue={sprayPaintUsed}
+          on:select={handleSpraySelectBlur} />
+        <!-- <Select
           items={spraysStub}
           bind:selectedValue={sprayPaintUsed}
           showChevron
           listAutoWidth={false}
           indicatorSvg={`<svg width="8" height="5"viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 5L4.37114e-07 -2.22545e-07L8 4.76837e-07L4 5Z" fill="#393940" /></svg>`}
-          on:select={handleSpraySelectBlur} />
+          on:select={handleSpraySelectBlur} /> -->
         <!-- <select bind:value={sprayPaintUsed} on:blur={handleSpraySelectBlur}>
           <option value="" disabled hidden>Spray Paint Used</option>
           {#each spraysStub as spray}

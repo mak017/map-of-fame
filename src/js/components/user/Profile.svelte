@@ -1,4 +1,5 @@
 <script>
+import { fade } from "svelte/transition";
 import CustomSelect from "../elements/CustomSelect.svelte";
 import { isLoggedIn, userData, userSpots } from "../../store";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
@@ -8,6 +9,7 @@ export let showUserProfile;
 
 let username = "";
 let spotsData = [];
+let spotsToShow = [];
 let year;
 
 userData.subscribe((value) => (username = value.name));
@@ -15,6 +17,7 @@ userSpots.subscribe((value) => (spotsData = value));
 
 const years = [...new Set(spotsData.map((data) => data.year))];
 year = Math.max(...years);
+const yearsToApply = years.map((year) => ({ label: `${year}`, value: year }));
 console.log("years", years);
 console.log("year", year);
 
@@ -29,8 +32,18 @@ const handleAddSpot = () => {
   showUserProfile(false);
 };
 
-const getSpotsByYear = () => spotsData.filter((data) => data.year === year);
-console.log("getSpotsByYear()", getSpotsByYear());
+const handleYearSelect = (event) => {
+  console.log("event", event);
+  year = event.detail.detail.value;
+  console.log("year", year);
+  spotsToShow = getSpotsByYear(year);
+  console.log("spotsToShow", spotsToShow);
+};
+
+const getSpotsByYear = (year) =>
+  spotsData.filter((data) => data.year === +year);
+spotsToShow = getSpotsByYear(year);
+console.log("getSpotsByYear()", getSpotsByYear(year));
 </script>
 
 <div class="container">
@@ -41,11 +54,22 @@ console.log("getSpotsByYear()", getSpotsByYear());
   {#if !!spotsData.length}
     <div class="data">
       <div class="year-select">
-        <CustomSelect items={years} selectedValue={year} isClearable={false} />
+        <CustomSelect
+          items={yearsToApply}
+          selectedValue={{ value: year, label: `${year}` }}
+          isClearable={false}
+          isYear
+          on:select={handleYearSelect} />
       </div>
       <div class="spots">
-        {#each getSpotsByYear() as spot}
-          <div class="spot-card"><img src={spot.img} alt="" /></div>
+        {#each spotsToShow as spot}
+          <div class="spot-card">
+            <img loading="lazy" src={spot.img} alt="" in:fade />
+            <div class="overlay">
+              <button type="button" class="edit" />
+              <button type="button" class="delete" />
+            </div>
+          </div>
         {/each}
       </div>
     </div>
@@ -127,17 +151,62 @@ console.log("getSpotsByYear()", getSpotsByYear());
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
   grid-auto-rows: 160px;
-  grid-gap: 4vw;
+  grid-gap: 4vmin;
   justify-content: space-between;
   width: 100%;
 }
 
 .spot-card {
+  position: relative;
+  border-radius: 2px;
+  overflow: hidden;
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+  .overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s;
+    background: rgba($color: #000, $alpha: 0.45);
+  }
+  &:hover {
+    .overlay {
+      opacity: 1;
+    }
+  }
+}
+
+.edit,
+.delete {
+  border: 0;
+  background-color: var(--color-accent);
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  width: 54px;
+  height: 54px;
+  margin: 12px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.edit {
+  background-image: url(../../../images/pencil.svg);
+  background-size: 20px 20px;
+}
+
+.delete {
+  background-image: url(../../../images/trash.svg);
+  background-size: 14px 18px;
 }
 
 @media (max-width: 767px) {

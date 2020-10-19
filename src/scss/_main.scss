@@ -70,3 +70,10 @@ body {
     }
   }
 }
+
+.year-select {
+  .indicator + div {
+    min-width: 92px !important;
+    left: 8px !important;
+  }
+}
