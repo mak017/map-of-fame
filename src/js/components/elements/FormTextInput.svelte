@@ -7,13 +7,17 @@ export let hint = "";
 export let errorText = "";
 export let label = "";
 export let isReadOnly = false;
+export let wideOnMobile = false;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
 const input = () => dispatch("input");
 </script>
 
-<label class:with-label={!!label} class:error={!!errorText}>
+<label
+  class:with-label={!!label}
+  class:error={!!errorText}
+  class:wide-on-mobile={wideOnMobile}>
   {#if label}<span>{label}</span>{/if}
   <input
     type="text"
@@ -89,6 +93,11 @@ input {
   input {
     width: 100%;
     max-width: 530px;
+  }
+  .wide-on-mobile {
+    input {
+      max-width: none;
+    }
   }
 }
 </style>

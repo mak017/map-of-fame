@@ -3,7 +3,7 @@ import Select from "svelte-select";
 import { createEventDispatcher } from "svelte";
 import SelectIconCalendar from "./SelectIconCalendar.svelte";
 
-export let selectedValue;
+export let selectedValue = "";
 export let items;
 export let isYear = false;
 

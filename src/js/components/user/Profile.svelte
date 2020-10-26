@@ -3,6 +3,8 @@ import { fade } from "svelte/transition";
 import CustomSelect from "../elements/CustomSelect.svelte";
 import { isLoggedIn, userData, userSpots } from "../../store";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
+import Modal from "../Modal.svelte";
+import EditSpot from "./EditSpot.svelte";
 
 export let onAddSpotBtnClick;
 export let showUserProfile;
@@ -11,6 +13,10 @@ let username = "";
 let spotsData = [];
 let spotsToShow = [];
 let year;
+let currentSpot;
+let showEditModal = false;
+
+const toggleEditModal = (toggle) => (showEditModal = toggle);
 
 userData.subscribe((value) => (username = value.name));
 userSpots.subscribe((value) => (spotsData = value));
@@ -18,8 +24,6 @@ userSpots.subscribe((value) => (spotsData = value));
 const years = [...new Set(spotsData.map((data) => data.year))];
 year = Math.max(...years);
 const yearsToApply = years.map((year) => ({ label: `${year}`, value: year }));
-console.log("years", years);
-console.log("year", year);
 
 const handleLogout = () => {
   isLoggedIn.set(false);
@@ -33,20 +37,21 @@ const handleAddSpot = () => {
 };
 
 const handleYearSelect = (event) => {
-  console.log("event", event);
   year = event.detail.detail.value;
-  console.log("year", year);
   spotsToShow = getSpotsByYear(year);
-  console.log("spotsToShow", spotsToShow);
+};
+
+const handleEdit = (spot) => {
+  currentSpot = spot;
+  toggleEditModal(true);
 };
 
 const getSpotsByYear = (year) =>
   spotsData.filter((data) => data.year === +year);
 spotsToShow = getSpotsByYear(year);
-console.log("getSpotsByYear()", getSpotsByYear(year));
 </script>
 
-<div class="container">
+<div class="container" style={showEditModal ? 'display: none' : ''}>
   <div class="top">
     <div class="username">{username}</div>
     <button class="logout" on:click={handleLogout}>Logout</button>
@@ -57,7 +62,6 @@ console.log("getSpotsByYear()", getSpotsByYear(year));
         <CustomSelect
           items={yearsToApply}
           selectedValue={{ value: year, label: `${year}` }}
-          isClearable={false}
           isYear
           on:select={handleYearSelect} />
       </div>
@@ -66,7 +70,10 @@ console.log("getSpotsByYear()", getSpotsByYear(year));
           <div class="spot-card">
             <img loading="lazy" src={spot.img} alt="" in:fade />
             <div class="overlay">
-              <button type="button" class="edit" />
+              <button
+                type="button"
+                class="edit"
+                on:click={() => handleEdit(spot)} />
               <button type="button" class="delete" />
             </div>
           </div>
@@ -81,6 +88,12 @@ console.log("getSpotsByYear()", getSpotsByYear(year));
     </div>
   {/if}
 </div>
+
+{#if showEditModal}
+  <Modal on:close={() => toggleEditModal(false)} noLogo>
+    <EditSpot editSpotData={currentSpot} {toggleEditModal} />
+  </Modal>
+{/if}
 
 <style lang="scss">
 .container {

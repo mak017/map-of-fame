@@ -25,17 +25,19 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 1",
   },
   {
     img: "https://source.unsplash.com/collection/9454911",
     artist: "Username",
     crew: "Crew name",
-    status: "Live",
+    status: "Buffed",
     year: 2020,
     linkToWork: "https://link-to-work.com",
-    linkToVideo: "",
-    category: "Walls",
-    description: "",
+    linkToVideo: "https://www.youtube.com/watch?v=G_Z8mcfBKLE",
+    category: "Trains",
+    description: "Hkdlkelwdk fklwe;fkew;lk",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/9568384",
@@ -47,6 +49,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/9717149",
@@ -58,6 +61,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/9248817",
@@ -69,6 +73,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/9042806",
@@ -91,6 +96,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/1131562",
@@ -102,6 +108,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/778914",
@@ -113,6 +120,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/209138",
@@ -124,6 +132,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/1758353",
@@ -135,6 +144,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/566331",
@@ -146,6 +156,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/1856142",
@@ -157,6 +168,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/8469893",
@@ -168,6 +180,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/1199299",
@@ -179,6 +192,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/446755",
@@ -190,6 +204,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/1198107",
@@ -201,6 +216,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/8775791",
@@ -212,6 +228,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/762960",
@@ -223,6 +240,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/433313",
@@ -234,6 +252,7 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
   {
     img: "https://source.unsplash.com/collection/219941",
@@ -245,5 +264,6 @@ export const fakeUserSpots = [
     linkToVideo: "",
     category: "Walls",
     description: "",
+    firm: "Spray 2",
   },
 ];
