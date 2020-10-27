@@ -26,7 +26,7 @@ const handleResize = () => {
 };
 </script>
 
-<svelte:window on:keydown={handleKeyDown} on:resize={handleResize} />
+<svelte:window on:resize={handleResize} />
 
 <div
   class="modal"
@@ -34,7 +34,9 @@ const handleResize = () => {
   class:accentTitle
   role="dialog"
   aria-modal="true"
-  transition:fade={{ duration: !noTransition ? 400 : 0 }}>
+  transition:fade={{ duration: !noTransition ? 400 : 0 }}
+  on:keydown|stopPropagation={handleKeyDown}
+  tabindex="-1">
   {#if !noClose}<button class="close" on:click={close} />{/if}
   {#if !noLogo}<span class="logo" />{/if}
   {#if title}

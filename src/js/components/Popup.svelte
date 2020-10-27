@@ -17,8 +17,19 @@ const handleKeyDown = (e) => {
 
 <svelte:window on:keydown|stopPropagation={handleKeyDown} />
 
-<div class="popup-background" on:click={close} transition:fade />
-<div class="popup" role="dialog" aria-modal="true" transition:scale>
+<div
+  class="popup-background"
+  on:click={close}
+  transition:fade
+  on:keydown|stopPropagation={handleKeyDown}
+  tabindex="-1" />
+<div
+  class="popup"
+  role="dialog"
+  aria-modal="true"
+  transition:scale
+  on:keydown|stopPropagation={handleKeyDown}
+  tabindex="-1">
   <button class="close" on:click={close} />
   {#if title}
     <h3>{title}</h3>
