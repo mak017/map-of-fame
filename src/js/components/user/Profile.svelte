@@ -5,6 +5,8 @@ import { isLoggedIn, userData, userSpots } from "../../store";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import Modal from "../Modal.svelte";
 import EditSpot from "./EditSpot.svelte";
+import DeleteSpot from "./DeleteSpot.svelte";
+import Popup from "../Popup.svelte";
 
 export let onAddSpotBtnClick;
 export let showUserProfile;
@@ -15,8 +17,10 @@ let spotsToShow = [];
 let year;
 let currentSpot;
 let showEditModal = false;
+let showDeletePopup = false;
 
 const toggleEditModal = (toggle) => (showEditModal = toggle);
+const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 
 userData.subscribe((value) => (username = value.name));
 userSpots.subscribe((value) => (spotsData = value));
@@ -44,6 +48,11 @@ const handleYearSelect = (event) => {
 const handleEdit = (spot) => {
   currentSpot = spot;
   toggleEditModal(true);
+};
+
+const handleDelete = (spot) => {
+  currentSpot = spot;
+  toggleDeletePopup(true);
 };
 
 const getSpotsByYear = (year) =>
@@ -74,7 +83,10 @@ spotsToShow = getSpotsByYear(year);
                 type="button"
                 class="edit"
                 on:click={() => handleEdit(spot)} />
-              <button type="button" class="delete" />
+              <button
+                type="button"
+                class="delete"
+                on:click={() => handleDelete(spot)} />
             </div>
           </div>
         {/each}
@@ -93,6 +105,12 @@ spotsToShow = getSpotsByYear(year);
   <Modal on:close={() => toggleEditModal(false)} noLogo>
     <EditSpot editSpotData={currentSpot} {toggleEditModal} />
   </Modal>
+{/if}
+
+{#if showDeletePopup}
+  <Popup title="Delete spot?" on:close={() => toggleDeletePopup(false)}>
+    <DeleteSpot close={() => toggleDeletePopup(false)} {currentSpot} />
+  </Popup>
 {/if}
 
 <style lang="scss">
