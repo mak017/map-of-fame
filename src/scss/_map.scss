@@ -35,6 +35,10 @@
   }
 }
 
+.leaflet-container {
+  font: inherit;
+}
+
 .leaflet-touch {
   .leaflet-control-zoom {
     margin-bottom: 18px;
