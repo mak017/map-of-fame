@@ -9,7 +9,7 @@ const getLocationByIp = () =>
       const { loc } = data;
       return {
         center: loc.split(",").map((item) => +item),
-        zoom: DEFAULT_ZOOM,
+        zoom: 11,
       };
     });
 
@@ -25,9 +25,8 @@ const getLocation = async () => {
       });
       const { latitude, longitude } = position.coords;
       return { center: [+latitude, +longitude], zoom: DEFAULT_ZOOM };
-    } catch (e) {
-      const location = await getLocationByIp();
-      return { center: location, zoom: DEFAULT_ZOOM };
+    } catch {
+      return getLocationByIp();
     }
   }
   return getLocationByIp();
