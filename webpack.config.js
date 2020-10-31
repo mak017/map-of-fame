@@ -2,6 +2,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // const autoPreprocess = require("svelte-preprocess");
 import { scss } from "svelte-preprocess";
 const path = require("path");
+const Dotenv = require("dotenv-webpack");
 
 const mode = process.env.NODE_ENV || "development";
 const prod = mode === "production";
@@ -74,10 +75,15 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "[name].css",
     }),
+    new Dotenv(),
   ],
   devtool: prod ? false : "source-map",
   devServer: {
     contentBase: "public",
+    watchOptions: {
+      aggregateTimeout: 100,
+    },
     overlay: true,
+    host: "0.0.0.0",
   },
 };

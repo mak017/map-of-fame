@@ -8,7 +8,7 @@ export let isAddSpotSidebarVisible;
 export let onAddSpotBtnClick;
 export let newMarker;
 export let onCancel;
-export let quitAddSpot;
+export let onSubmit;
 </script>
 
 {#if !isAddSpotMode}
@@ -25,7 +25,7 @@ export let quitAddSpot;
   <div class="drag-to-map" transition:fade>Drag to Map</div>
 {/if}
 {#if isAddSpotSidebarVisible}
-  <AddSpotSidebar {onCancel} marker={newMarker} {quitAddSpot} />
+  <AddSpotSidebar {onCancel} {onSubmit} marker={newMarker} />
 {/if}
 
 <style>

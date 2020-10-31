@@ -24,8 +24,8 @@ import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
 
 export let onCancel;
+export let onSubmit = () => {};
 export let marker = null;
-export let quitAddSpot = () => {};
 export let editSpotData = {};
 
 const isEditSpot = !!editSpotData.img;
@@ -180,7 +180,7 @@ const handleSubmit = () => {
         (!year && selectedYearValue === EMPTY_YEAR_STRING)
       ) {
         marker.setIcon(markerWithPhoto(imageFilePreview));
-        quitAddSpot();
+        onSubmit();
       } else {
         onCancel();
       }

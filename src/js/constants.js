@@ -30,7 +30,7 @@ export const MIN_YEAR = 1967;
 
 export const EMPTY_YEAR_STRING = "????";
 
-export const ENDPOINT_ORIGIN = "http://1828476.nailhub.web.hosting-test.net";
+export const ENDPOINT_ORIGIN = process.env.SVELTE_APP_API_ENTRYPOINT;
 
 export const AUTH_MODALS = {
   login: "login",

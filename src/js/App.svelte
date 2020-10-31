@@ -7,6 +7,7 @@ import { isLoggedIn, openedMarkerData, selectedYear } from "./store.js";
 import { openRailwayMap, openStreetMapMapnik } from "./mapUtils/tileLayers";
 import Calendar from "./components/Calendar.svelte";
 import {
+  adjustVhProp,
   getCurrentYear,
   loadFromLocalStorage,
   saveToLocalStorage,
@@ -51,6 +52,8 @@ const clearOpenedMarkerData = () => {
   permalink.update({ clearParams: ["marker"] });
 };
 
+adjustVhProp();
+
 // Init leaflet map
 const initMap = (container) => {
   const layers = isRailwayMode
@@ -94,6 +97,11 @@ const onNewMarkerCancel = () => {
   map.removeLayer(newMarker);
 };
 
+const onNewMarkerSubmit = () => {
+  quitAddSpot();
+  newMarker.removeEventListener("moveend", onNewMarkerMoveEnd);
+};
+
 const onAddSpotBtnClick = () => {
   const center = map.getCenter();
   newMarker = L.marker(center, {
@@ -111,6 +119,8 @@ const quitAddSpot = () => {
   toggleAddSpotSidebarVisible(false);
 };
 </script>
+
+<svelte:window on:resize={adjustVhProp} />
 
 <div class="map" class:add-mode={isAddSpotMode} use:initMap />
 
@@ -172,7 +182,7 @@ const quitAddSpot = () => {
     {onAddSpotBtnClick}
     {newMarker}
     onCancel={onNewMarkerCancel}
-    {quitAddSpot} />
+    onSubmit={onNewMarkerSubmit} />
 {/if}
 
 {#if showCalendarModal}
@@ -214,6 +224,7 @@ const quitAddSpot = () => {
   z-index: 0;
   width: 100%;
   height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
 }
 .button {
   &-main_screen {

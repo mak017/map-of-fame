@@ -214,6 +214,10 @@ spotsToShow = getSpotsByYear(year);
   &:hover {
     .overlay {
       opacity: 1;
+      .edit,
+      .delete {
+        pointer-events: auto;
+      }
     }
   }
 }
@@ -229,6 +233,7 @@ spotsToShow = getSpotsByYear(year);
   margin: 12px;
   border-radius: 2px;
   cursor: pointer;
+  pointer-events: none;
 }
 
 .edit {

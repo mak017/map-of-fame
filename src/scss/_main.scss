@@ -2,11 +2,27 @@ html,
 body {
   width: 100%;
   min-width: 320px;
+  -webkit-tap-highlight-color: transparent;
 }
 body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
   overflow: hidden;
   font-family: "Montserrat", sans-serif;
   font-size: 16px;
+}
+
+:focus {
+  outline: rgba(#650d97, 0.5) auto 1px;
+}
+
+input {
+  border-radius: 0;
+  &[type="text"],
+  &[type="email"],
+  &[type="password"] {
+    appearance: none;
+  }
 }
 
 .button {

@@ -62,3 +62,8 @@ export const copyToClipboard = (str) => {
   document.execCommand("copy");
   temp.remove();
 };
+
+export const adjustVhProp = () => {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+};
