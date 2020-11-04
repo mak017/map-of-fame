@@ -32,13 +32,7 @@ let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 
 let map;
-let isLoggedInValue;
-let selectedYearValue;
-let openedMarker;
 let newMarker;
-isLoggedIn.subscribe((value) => (isLoggedInValue = value));
-selectedYear.subscribe((value) => (selectedYearValue = value));
-openedMarkerData.subscribe((value) => (openedMarker = value));
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
@@ -100,6 +94,7 @@ const onNewMarkerCancel = () => {
 const onNewMarkerSubmit = () => {
   quitAddSpot();
   newMarker.removeEventListener("moveend", onNewMarkerMoveEnd);
+  newMarker.dragging.disable();
 };
 
 const onAddSpotBtnClick = () => {
@@ -129,13 +124,13 @@ const quitAddSpot = () => {
     <button
       class="button button-main_screen button-open_calendar"
       on:click={() => showCalendar(true)}
-      transition:fade>{selectedYearValue}</button>
+      transition:fade>{$selectedYear}</button>
   {/if}
-  {#if +selectedYearValue === getCurrentYear() && !isAddSpotMode}
+  {#if +$selectedYear === getCurrentYear() && !isAddSpotMode}
     <button
       class="button button-square button-lighthouse"
       class:active={isLighthouseActive}
-      disabled={!isLoggedInValue}
+      disabled={!$isLoggedIn}
       transition:fade>
       <svg
         width="9"
@@ -156,7 +151,7 @@ const quitAddSpot = () => {
       class="button button-main_screen button-square button-open_search"
       on:click={() => showSearch(true)}
       in:fade />
-    {#if isLoggedInValue}
+    {#if $isLoggedIn}
       <button
         class="button button-main_screen button-square button-burger"
         on:click={() => showUserProfile(true)}
@@ -175,7 +170,7 @@ const quitAddSpot = () => {
   on:click={handleChangeModeClick}
   title="Highlight railways" />
 
-{#if isLoggedInValue}
+{#if $isLoggedIn}
   <AddSpot
     {isAddSpotMode}
     {isAddSpotSidebarVisible}
@@ -197,9 +192,9 @@ const quitAddSpot = () => {
   </Modal>
 {/if}
 
-{#if openedMarker}
+{#if $openedMarkerData}
   <Modal on:close={clearOpenedMarkerData} withAd noLogo>
-    <MarkerCard data={openedMarker} />
+    <MarkerCard data={$openedMarkerData} />
   </Modal>
 {/if}
 

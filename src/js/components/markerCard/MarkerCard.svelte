@@ -1,5 +1,4 @@
 <script>
-import { blur } from "svelte/transition";
 import { embedVideoCodeFromBasicUrl } from "../../utils";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import Popup from "../Popup.svelte";
@@ -31,9 +30,7 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
       <div class={`title ${status.toLowerCase()}`}>{status}</div>
     </div>
   </div>
-  <div class="img" transition:blur={{ amount: 20 }}>
-    <img src={img.src} alt={img.title} />
-  </div>
+  <div class="img"><img src={img.src} alt={img.title} /></div>
   {#if description}
     <div class="description">{description}</div>
   {/if}

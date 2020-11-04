@@ -2,7 +2,7 @@ import { writable } from "svelte/store";
 import { fakeUser, fakeUserSpots } from "./stubs/fakeUserData";
 import { getCurrentYear } from "./utils";
 
-export const isLoggedIn = writable(false);
+export const isLoggedIn = writable(true);
 
 export const selectedYear = writable(`${getCurrentYear()}`);
 

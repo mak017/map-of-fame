@@ -7,11 +7,11 @@ import Modal from "../Modal.svelte";
 import EditSpot from "./EditSpot.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import Popup from "../Popup.svelte";
+import { onDestroy } from "svelte";
 
 export let onAddSpotBtnClick;
 export let showUserProfile;
 
-let username = "";
 let spotsData = [];
 let spotsToShow = [];
 let year;
@@ -22,8 +22,11 @@ let showDeletePopup = false;
 const toggleEditModal = (toggle) => (showEditModal = toggle);
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 
-userData.subscribe((value) => (username = value.name));
-userSpots.subscribe((value) => (spotsData = value));
+const unsubscribeUserSpots = userSpots.subscribe(
+  (value) => (spotsData = value)
+);
+
+onDestroy(() => unsubscribeUserSpots());
 
 const years = [...new Set(spotsData.map((data) => data.year))];
 year = Math.max(...years);
@@ -62,7 +65,7 @@ spotsToShow = getSpotsByYear(year);
 
 <div class="container" style={showEditModal ? 'display: none' : ''}>
   <div class="top">
-    <div class="username">{username}</div>
+    <div class="username">{$userData.name}</div>
     <button class="logout" on:click={handleLogout}>Logout</button>
   </div>
   {#if !!spotsData.length}

@@ -22,6 +22,7 @@ import FormRadioButton from "./elements/FormRadioButton.svelte";
 import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
+import { onDestroy } from "svelte";
 
 export let onCancel;
 export let onSubmit = () => {};
@@ -44,11 +45,13 @@ let sprayPaintUsed;
 let link = editSpotData.linkToWork || "";
 let isSubmitDisabled = false;
 let userTypeValue;
-let selectedYearValue;
 let errors = { year: "", imageFile: "", linkToVideo: "", sprayPaintUsed: "" };
 const currentYear = getCurrentYear();
-userData.subscribe((value) => (userTypeValue = value.type));
-selectedYear.subscribe((value) => (selectedYearValue = value));
+const unsubscribeUserData = userData.subscribe(
+  (value) => (userTypeValue = value.type)
+);
+
+onDestroy(() => unsubscribeUserData());
 
 let spraysStub = [
   { value: 1, label: `Spray 1` },
@@ -176,8 +179,8 @@ const handleSubmit = () => {
     });
     if (!isEditSpot) {
       if (
-        selectedYearValue === year ||
-        (!year && selectedYearValue === EMPTY_YEAR_STRING)
+        $selectedYear === year ||
+        (!year && $selectedYear === EMPTY_YEAR_STRING)
       ) {
         marker.setIcon(markerWithPhoto(imageFilePreview));
         onSubmit();
