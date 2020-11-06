@@ -1,4 +1,5 @@
 <script>
+import { fakeArtistsCrews } from "./../stubs/fakeArtistsCrews.js";
 import { categoriesOrdered, ERROR_MESSAGES, MIN_YEAR } from "../constants";
 import { permalink } from "../mapUtils/permalink";
 import {
@@ -8,12 +9,13 @@ import {
   selectedYear,
 } from "../store";
 import { getCurrentYear, isYearLike, validateYear } from "../utils";
+import AutoComplete from "./elements/AutoComplete.svelte";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 
 export let showSearch;
 let year = "";
-let artist = "";
+let artist;
 let selectedCategories = [];
 let isHuntersChecked = true;
 let yearErrorMessage = "";
@@ -69,6 +71,8 @@ const handleYearChange = () => {
     year = prevYearValue;
   }
 };
+
+const getOptionLabel = (option) => option.name;
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
@@ -79,10 +83,13 @@ const handleYearChange = () => {
     on:blur={handleYearBlur}
     on:input={handleYearChange}
     errorText={yearErrorMessage} />
-  <FormTextInput
+  <AutoComplete
+    bind:selectedValue={artist}
+    items={fakeArtistsCrews}
+    optionIdentifier={'name'}
+    {getOptionLabel}
     placeholder="Artist/Crew"
-    hint="Empty to show all"
-    bind:value={artist} />
+    hint="Empty to show all" />
   <div class="filter">
     {#each categoriesOrdered as category}
       <div class="checkbox">

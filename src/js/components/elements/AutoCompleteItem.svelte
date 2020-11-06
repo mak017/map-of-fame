@@ -1,0 +1,33 @@
+<script>
+export let item = undefined;
+</script>
+
+<div class="item">
+  <div class="name">{item.name}</div>
+  <div class="type">{item.type}</div>
+</div>
+
+<style lang="scss">
+.item {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 16px;
+  &:hover {
+    .name {
+      opacity: 0.5;
+    }
+  }
+}
+.name {
+  color: var(--color-dark);
+  font-size: 18px;
+  line-height: 1.22;
+}
+.type {
+  opacity: 0.6;
+  color: var(--color-dark);
+  font-size: 13px;
+  line-height: 1.22;
+  text-transform: capitalize;
+}
+</style>

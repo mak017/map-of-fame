@@ -93,3 +93,26 @@ input {
     left: 8px !important;
   }
 }
+
+.autocomplete {
+  .selectContainer {
+    padding: 0 !important;
+    border-top: 0 !important;
+    border-right: 0 !important;
+    border-left: 0 !important;
+    > div:last-of-type:not(.selectedItem):not(.clearSelect) {
+      top: 41px !important;
+      border: 1px solid var(--color-accent);
+    }
+  }
+  .listContainer {
+    border-right: 8px solid transparent;
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 2px;
+      background-color: var(--color-accent);
+    }
+  }
+}
