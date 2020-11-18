@@ -1,4 +1,6 @@
 <script>
+import { onDestroy } from "svelte";
+import watermark from "watermarkjs";
 import {
   CATEGORIES,
   categoriesOrdered,
@@ -22,7 +24,6 @@ import FormRadioButton from "./elements/FormRadioButton.svelte";
 import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
-import { onDestroy } from "svelte";
 
 export let onCancel;
 export let onSubmit = () => {};
@@ -79,7 +80,18 @@ const onChangeImage = () => {
     const reader = new FileReader();
 
     reader.onload = function (e) {
-      imageFilePreview = e.target.result;
+      const image = new Image();
+      image.src = e.target.result;
+      image.onload = function () {
+        console.log("this :>> ", this);
+        watermark([file])
+          .dataUrl(
+            watermark.text.center("Text", "148px Montserrat", "#fff", 0.5)
+          )
+          .then((url) => {
+            imageFilePreview = url;
+          });
+      };
     };
 
     if (file.size < 5242880) {
