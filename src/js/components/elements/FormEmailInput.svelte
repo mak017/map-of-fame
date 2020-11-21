@@ -18,7 +18,8 @@ const keyDown = () => dispatch("keyDown");
     bind:value
     on:blur={blur}
     on:input={input}
-    on:keydown={keyDown} />
+    on:keydown={keyDown}
+    autocomplete="email" />
   {#if errorText}
     <div class="error-text">{errorText}</div>
   {/if}

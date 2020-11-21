@@ -29,6 +29,7 @@ export const validateVideoLink = (link) =>
 export const getCurrentYear = () => new Date().getFullYear();
 
 export const saveToLocalStorage = (key, value) => {
+  console.log("key, value :>> ", key, value);
   localStorage.setItem(key, JSON.stringify(value));
 };
 

@@ -1,10 +1,9 @@
 <script>
 import { fade } from "svelte/transition";
-import { fakeUser } from "./../../stubs/fakeUserData.js";
 import { loginRequest } from "../../api/auth.js";
 import { AUTH_MODALS, ERROR_MESSAGES } from "../../constants.js";
 import { isLoggedIn, userData } from "../../store.js";
-import { validateEmail } from "../../utils.js";
+import { saveToLocalStorage, validateEmail } from "../../utils.js";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
 import FormPasswordInput from "../elements/FormPasswordInput.svelte";
@@ -36,16 +35,26 @@ const handleSubmit = () => {
   validate();
   if (!errors.email && !errors.password) {
     loginRequest(email, password)
-      .then((data) => {
-        console.log("data", data);
-        isLoggedIn.set(true);
-        showAuth(false);
+      .then((response) => {
+        console.log("data", response);
+        if (response.status && response.data) {
+          userData.set(response.data);
+          isLoggedIn.set(true);
+          saveToLocalStorage("token", response.data.token);
+          showAuth(false);
+        } else {
+          if (response.error?.email) {
+            errors.email = response.error.email;
+          }
+          if (Array.isArray(response.error)) {
+            errors.password = response.error[0];
+          }
+        }
       })
       .catch((e) => {
-        console.log("e", e);
-        isLoggedIn.set(true);
-        userData.set(fakeUser);
-        showAuth(false);
+        console.error(e);
+        isLoggedIn.set(false);
+        errors.password = "Something went wrong";
       });
   }
 };
