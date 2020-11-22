@@ -24,3 +24,5 @@ export const categoryId = (id) => `${ENDPOINT_ORIGIN}/api/category/${id}`;
 export const country = () => `${ENDPOINT_ORIGIN}/api/country`;
 
 export const city = (code) => `${ENDPOINT_ORIGIN}/api/country/${code}/city`;
+
+export const getSettings = () => `${ENDPOINT_ORIGIN}/api/settings`;

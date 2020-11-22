@@ -1,4 +1,5 @@
 <script>
+import { initApp } from "./init.js";
 import L from "leaflet";
 import SearchForm from "./components/SearchForm.svelte";
 import { setLocation } from "./mapUtils/locationUtils.js";
@@ -49,7 +50,7 @@ const clearOpenedMarkerData = () => {
 
 adjustVhProp();
 
-verifyAuth();
+initApp();
 
 // Init leaflet map
 const initMap = (container) => {
