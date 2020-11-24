@@ -8,6 +8,8 @@ export let errorText = "";
 export let label = "";
 export let isReadOnly = false;
 export let wideOnMobile = false;
+export let editSpot = false;
+export let isYear = false;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
@@ -17,7 +19,9 @@ const input = () => dispatch("input");
 <label
   class:with-label={!!label}
   class:error={!!errorText}
-  class:wide-on-mobile={wideOnMobile}>
+  class:wide-on-mobile={wideOnMobile}
+  class:edit-spot={editSpot}
+  class:year={isYear}>
   {#if label}<span>{label}</span>{/if}
   <input
     type="text"
@@ -44,8 +48,8 @@ input {
   border: 0;
   border-bottom: 1px solid var(--color-dark);
   color: var(--color-dark);
-  font-weight: 600;
   font-size: 16px;
+  font-weight: 600;
   line-height: 20px;
   &::placeholder {
     padding-left: 2px;
@@ -86,6 +90,19 @@ input {
   .hint {
     opacity: 1;
     color: var(--color-error);
+  }
+}
+
+.edit-spot {
+  input {
+    line-height: 27px;
+  }
+}
+
+.year {
+  input {
+    font-size: 18px;
+    font-weight: 700;
   }
 }
 

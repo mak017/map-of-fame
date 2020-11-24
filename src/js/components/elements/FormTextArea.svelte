@@ -5,6 +5,7 @@ export let placeholder;
 export let value;
 export let height = 84;
 export let errorText = "";
+export let isResizable = false;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
@@ -15,7 +16,8 @@ const blur = () => dispatch("blur");
     {placeholder}
     bind:value
     style="height: {height}px"
-    on:blur={blur} />
+    on:blur={blur}
+    class:resizable={isResizable} />
   {#if errorText}
     <div class="error-text">{errorText}</div>
   {/if}
@@ -54,5 +56,8 @@ textarea {
     font-size: 13px;
     line-height: 1.22;
   }
+}
+.resizable {
+  resize: both;
 }
 </style>

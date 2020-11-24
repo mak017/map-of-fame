@@ -42,7 +42,7 @@ export const embedVideoCodeFromBasicUrl = (url) =>
   url
     .replace(
       new RegExp(regexYoutube, "g"),
-      '<iframe src="http://www.youtube.com/embed/$1?modestbranding=1&rel=0&wmode=transparent&theme=light&color=white" width="100%" height="100%" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
+      '<iframe src="https://www.youtube.com/embed/$1?modestbranding=1&rel=0&wmode=transparent&theme=light&color=white" width="100%" height="100%" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
     )
     .replace(
       new RegExp(regexVimeo, "g"),
@@ -50,7 +50,7 @@ export const embedVideoCodeFromBasicUrl = (url) =>
     )
     .replace(
       new RegExp(regexDailymotion, "g"),
-      '<iframe frameborder="0" type="text/html" src="http://www.dailymotion.com/embed/video/$1?logo=0&foreground=ffffff&highlight=1bb4c6&background=000000" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
+      '<iframe frameborder="0" type="text/html" src="https://www.dailymotion.com/embed/video/$1?logo=0&foreground=ffffff&highlight=1bb4c6&background=000000" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
     );
 
 export const markersReadyEvent = new Event("markersReady");

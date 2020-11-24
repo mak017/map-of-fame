@@ -105,7 +105,7 @@ spotsToShow = getSpotsByYear(year);
 </div>
 
 {#if showEditModal}
-  <Modal on:close={() => toggleEditModal(false)} noLogo>
+  <Modal on:close={() => toggleEditModal(false)} noLogo noClose>
     <EditSpot editSpotData={currentSpot} {toggleEditModal} />
   </Modal>
 {/if}
@@ -217,10 +217,6 @@ spotsToShow = getSpotsByYear(year);
   &:hover {
     .overlay {
       opacity: 1;
-      .edit,
-      .delete {
-        pointer-events: auto;
-      }
     }
   }
 }
@@ -236,7 +232,6 @@ spotsToShow = getSpotsByYear(year);
   margin: 12px;
   border-radius: 2px;
   cursor: pointer;
-  pointer-events: none;
 }
 
 .edit {

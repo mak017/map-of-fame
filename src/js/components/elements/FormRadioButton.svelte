@@ -32,6 +32,7 @@ export let className = "";
   }
   label {
     flex: 1 0 auto;
+    margin: -0.5px;
     padding: 10px 0;
     color: var(--color-dark);
     font-size: 16px;
@@ -39,6 +40,7 @@ export let className = "";
     line-height: 1.22;
     text-align: center;
     cursor: pointer;
+    user-select: none;
   }
   input:checked + label {
     background-color: var(--color-dark);

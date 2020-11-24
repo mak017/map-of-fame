@@ -21,7 +21,6 @@ import { fade } from "svelte/transition";
 import ResetPassword from "./components/auth/ResetPassword.svelte";
 import Profile from "./components/user/Profile.svelte";
 import { newMarkerIcon } from "./mapUtils/icons";
-import { verifyAuth } from "./api/auth";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isLighthouseActive = false;

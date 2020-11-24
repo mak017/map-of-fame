@@ -82,7 +82,8 @@ const getOptionLabel = (option) => option.name;
     bind:value={year}
     on:blur={handleYearBlur}
     on:input={handleYearChange}
-    errorText={yearErrorMessage} />
+    errorText={yearErrorMessage}
+    isYear />
   <AutoComplete
     bind:selectedValue={artist}
     items={fakeArtistsCrews}

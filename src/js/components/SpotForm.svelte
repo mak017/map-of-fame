@@ -218,8 +218,16 @@ const handleSubmit = () => {
         className="add-spot" />
     </div>
   {/if}
-  <FormTextInput placeholder="Artist Name" bind:value={artist} wideOnMobile />
-  <FormTextInput placeholder="Crew Name" bind:value={crew} wideOnMobile />
+  <FormTextInput
+    placeholder="Artist Name"
+    bind:value={artist}
+    wideOnMobile
+    editSpot={isEditSpot} />
+  <FormTextInput
+    placeholder="Crew Name"
+    bind:value={crew}
+    wideOnMobile
+    editSpot={isEditSpot} />
   <FormTextInput
     placeholder="Year"
     bind:value={year}
@@ -227,7 +235,8 @@ const handleSubmit = () => {
     on:blur={handleYearBlur}
     on:input={handleYearChange}
     errorText={errors.year}
-    wideOnMobile />
+    wideOnMobile
+    editSpot={isEditSpot} />
   <div class="status">
     {#each statusesOrdered as status}
       <FormRadioButton
@@ -260,12 +269,14 @@ const handleSubmit = () => {
     bind:value={linkToVideo}
     errorText={errors.linkToVideo}
     on:blur={handleVideoLinkBlur}
-    wideOnMobile />
+    wideOnMobile
+    editSpot={isEditSpot} />
   <div class="description">
     <FormTextArea
       placeholder="Description"
       bind:value={description}
-      height={84} />
+      height={84}
+      isResizable={isEditSpot} />
   </div>
   <div class="category">
     {#each categoriesOrdered as category}
@@ -288,7 +299,11 @@ const handleSubmit = () => {
     </div>
   {/if}
   <div class="link-to-work">
-    <FormTextInput label="Link To Work" bind:value={link} wideOnMobile />
+    <FormTextInput
+      label="Link To Work"
+      bind:value={link}
+      wideOnMobile
+      editSpot={isEditSpot} />
   </div>
   {#if !editSpotData.img}
     <div class="button_wrap">
@@ -436,6 +451,7 @@ const handleSubmit = () => {
     grid-column: 3;
     grid-row: 5;
     height: 40px;
+    margin-bottom: 10px;
   }
   .link-to-work {
     grid-column: 3;
