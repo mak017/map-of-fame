@@ -48,7 +48,7 @@ input {
   }
 }
 .error-text {
-  margin-top: 8px;
+  margin: 4px 0 -20px;
   opacity: 1;
   color: var(--color-error);
   font-size: 13px;

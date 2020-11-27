@@ -10,6 +10,7 @@ export let isReadOnly = false;
 export let wideOnMobile = false;
 export let editSpot = false;
 export let isYear = false;
+export let addSpot = false;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
@@ -21,6 +22,7 @@ const input = () => dispatch("input");
   class:error={!!errorText}
   class:wide-on-mobile={wideOnMobile}
   class:edit-spot={editSpot}
+  class:add-spot={addSpot}
   class:year={isYear}>
   {#if label}<span>{label}</span>{/if}
   <input
@@ -88,9 +90,14 @@ input {
     border-color: var(--color-error);
   }
   .hint {
+    margin: 4px 0 -20px;
     opacity: 1;
     color: var(--color-error);
   }
+}
+
+.add-spot {
+  margin-bottom: 15px;
 }
 
 .edit-spot {

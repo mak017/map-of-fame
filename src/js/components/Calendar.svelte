@@ -21,7 +21,7 @@ const handleClick = (year) => {
 };
 </script>
 
-<ol class="years-list" in:slide>
+<ol class="years-list" in:slide={{ duration: 300 }}>
   {#each dates as date}
     <li>
       <a

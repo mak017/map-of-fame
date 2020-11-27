@@ -222,12 +222,14 @@ const handleSubmit = () => {
     placeholder="Artist Name"
     bind:value={artist}
     wideOnMobile
-    editSpot={isEditSpot} />
+    editSpot={isEditSpot}
+    addSpot={!isEditSpot} />
   <FormTextInput
     placeholder="Crew Name"
     bind:value={crew}
     wideOnMobile
-    editSpot={isEditSpot} />
+    editSpot={isEditSpot}
+    addSpot={!isEditSpot} />
   <FormTextInput
     placeholder="Year"
     bind:value={year}
@@ -236,7 +238,8 @@ const handleSubmit = () => {
     on:input={handleYearChange}
     errorText={errors.year}
     wideOnMobile
-    editSpot={isEditSpot} />
+    editSpot={isEditSpot}
+    addSpot={!isEditSpot} />
   <div class="status">
     {#each statusesOrdered as status}
       <FormRadioButton
@@ -270,7 +273,8 @@ const handleSubmit = () => {
     errorText={errors.linkToVideo}
     on:blur={handleVideoLinkBlur}
     wideOnMobile
-    editSpot={isEditSpot} />
+    editSpot={isEditSpot}
+    addSpot={!isEditSpot} />
   <div class="description">
     <FormTextArea
       placeholder="Description"
@@ -292,7 +296,8 @@ const handleSubmit = () => {
       <CustomSelect
         items={spraysStub}
         bind:selectedValue={sprayPaintUsed}
-        on:select={handleSpraySelectBlur} />
+        on:select={handleSpraySelectBlur}
+        placeholder="Spray Paint Used" />
       {#if errors.sprayPaintUsed}
         <span class="error">{errors.sprayPaintUsed}</span>
       {/if}
@@ -303,7 +308,8 @@ const handleSubmit = () => {
       label="Link To Work"
       bind:value={link}
       wideOnMobile
-      editSpot={isEditSpot} />
+      editSpot={isEditSpot}
+      addSpot={!isEditSpot} />
   </div>
   {#if !editSpotData.img}
     <div class="button_wrap">
@@ -325,7 +331,7 @@ const handleSubmit = () => {
 .upload-image {
   position: relative;
   height: 140px;
-  margin: 18px 0 24px;
+  margin: 15px 0;
   .first_upload {
     display: flex;
     flex-direction: column;
@@ -396,12 +402,12 @@ const handleSubmit = () => {
 }
 
 .category {
-  margin-bottom: 14px;
+  margin-bottom: 15px;
 }
 
 .spray {
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 15px;
 }
 .button_wrap {
   display: flex;
@@ -441,6 +447,7 @@ const handleSubmit = () => {
     grid-column: 1/3;
     grid-row: 2/6;
     height: 330px;
+    margin: 18px 0 24px;
     border-radius: 2px;
     overflow: hidden;
   }

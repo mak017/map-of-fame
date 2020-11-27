@@ -20,14 +20,14 @@ const handleKeyDown = (e) => {
 <div
   class="popup-background"
   on:click={close}
-  transition:fade
+  transition:fade={{ duration: 300 }}
   on:keydown|stopPropagation={handleKeyDown}
   tabindex="-1" />
 <div
   class="popup"
   role="dialog"
   aria-modal="true"
-  transition:scale
+  transition:scale={{ duration: 300 }}
   on:keydown|stopPropagation={handleKeyDown}
   tabindex="-1">
   <button class="close" on:click={close} />

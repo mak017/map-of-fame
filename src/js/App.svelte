@@ -1,6 +1,7 @@
 <script>
-import { initApp } from "./init.js";
 import L from "leaflet";
+import RailroadSvg from "./components/elements/RailroadSvg.svelte";
+import { initApp } from "./init.js";
 import SearchForm from "./components/SearchForm.svelte";
 import { setLocation } from "./mapUtils/locationUtils.js";
 import Modal from "./components/Modal.svelte";
@@ -171,7 +172,9 @@ const quitAddSpot = () => {
   class="button button-main_screen button-square button-switch_mode"
   class:active={isRailwayMode}
   on:click={handleChangeModeClick}
-  title="Highlight railways" />
+  title="Highlight railways">
+  <RailroadSvg isLight={isRailwayMode} />
+</button>
 
 {#if $isLoggedIn}
   <AddSpot
@@ -227,10 +230,6 @@ const quitAddSpot = () => {
 .button {
   &-main_screen {
     background: var(--color-light);
-
-    &:active {
-      background-color: var(--color-accent);
-    }
   }
 
   &-square {
@@ -339,13 +338,12 @@ const quitAddSpot = () => {
   }
 
   &-switch_mode {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
     bottom: 18px;
     left: 70px;
-    background-image: url(../images/railroad.svg);
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    background-size: 19px 22px;
 
     &.active {
       background-color: var(--color-accent);

@@ -6,6 +6,7 @@ import SelectIconCalendar from "./SelectIconCalendar.svelte";
 export let selectedValue = undefined;
 export let items;
 export let isYear = false;
+export let placeholder = "Select...";
 
 const dispatch = createEventDispatcher();
 </script>
@@ -17,9 +18,11 @@ const dispatch = createEventDispatcher();
     showIndicator
     listAutoWidth={isYear}
     isClearable={false}
+    isSearchable={false}
     indicatorSvg={`<svg width="8" height="5"viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 5L4.37114e-07 -2.22545e-07L8 4.76837e-07L4 5Z" fill="#393940" /></svg>`}
     Icon={isYear ? SelectIconCalendar : false}
-    on:select={(selected) => dispatch('select', selected)} />
+    on:select={(selected) => dispatch('select', selected)}
+    {placeholder} />
 </div>
 
 <style lang="scss">
