@@ -13,9 +13,11 @@ export const markerWithPhoto = (src) =>
     className: "map-marker-with-photo",
   });
 
-export const clusterIcon = (cluster) =>
-  L.divIcon({
-    html: cluster.getChildCount(),
+export const clusterIcon = (cluster) => {
+  const count = cluster.getChildCount();
+  return L.divIcon({
+    html: count < 1000 ? count : `${Math.floor(count / 1000)}K`,
     className: "map-marker-cluster",
     iconSize: [56, 56],
   });
+};
