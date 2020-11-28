@@ -28,13 +28,13 @@ export const validateVideoLink = (link) =>
 
 export const getCurrentYear = () => new Date().getFullYear();
 
-export const saveToLocalStorage = (key, value) => {
-  console.log("key, value :>> ", key, value);
+export const saveToLocalStorage = (key, value) =>
   localStorage.setItem(key, JSON.stringify(value));
-};
 
 export const loadFromLocalStorage = (key) =>
   JSON.parse(localStorage.getItem(key));
+
+export const removeFromLocalStorage = (key) => localStorage.removeItem(key);
 
 export const isYearLike = (year) => /^\d{0,4}$/.test(year);
 

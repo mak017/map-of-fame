@@ -8,6 +8,7 @@ import EditSpot from "./EditSpot.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import Popup from "../Popup.svelte";
 import { onDestroy } from "svelte";
+import { removeFromLocalStorage } from "../../utils";
 
 export let onAddSpotBtnClick;
 export let showUserProfile;
@@ -33,6 +34,7 @@ year = Math.max(...years);
 const yearsToApply = years.map((year) => ({ label: `${year}`, value: year }));
 
 const handleLogout = () => {
+  removeFromLocalStorage("token");
   isLoggedIn.set(false);
   userData.set({});
   showUserProfile(false);

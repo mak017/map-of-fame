@@ -1,4 +1,5 @@
 <script>
+import { createUserRequest } from "./../../api/auth.js";
 import { validateEmail, validatePassword } from "./../../utils.js";
 import { AUTH_MODALS, ERROR_MESSAGES, USER_TYPES } from "../../constants";
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
@@ -20,7 +21,7 @@ let username = "";
 let crew = "";
 let countryCity = "";
 let portfolioLink = "";
-let errors = { email: "", password: "", name: "", countryCity: "" };
+let errors = { email: "", password: "", name: "", countryCity: "", link: "" };
 let isSubmitDisabled = false;
 
 const validate = () => {
@@ -57,8 +58,46 @@ const handleSubmit = () => {
     if (!errors.email && !errors.password) step = 2;
   } else {
     if (username && countryCity) {
-      console.log("Success registration! (send request)");
-      showAuth(false);
+      console.log(
+        "registration data :>> ",
+        username,
+        password,
+        email,
+        countryCity,
+        selectedType,
+        portfolioLink
+      );
+      createUserRequest({
+        name: username,
+        password,
+        email,
+        country: "UA",
+        city: countryCity,
+        type: selectedType.toLowerCase(),
+        crew,
+        link: portfolioLink,
+      })
+        .then((response) => {
+          console.log("data", response);
+          if (response.status && response.data) {
+            // userData.set(response.data);
+            // isLoggedIn.set(true);
+            // saveToLocalStorage("token", response.data.token);
+            showAuth(false);
+          } else {
+            if (response.error?.email) {
+              errors.email = response.error.email;
+              step = 1;
+            }
+            if (Array.isArray(response.error)) {
+              errors.link = response.error[0];
+            }
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+          errors.password = "Something went wrong";
+        });
     }
   }
 };
@@ -66,11 +105,7 @@ const handleSubmit = () => {
 
 <form on:submit|preventDefault={handleSubmit} novalidate transition:fade>
   {#if step === 2}
-    <ButtonModalBack
-      type="button"
-      class="back"
-      on:click={() => (step = 1)}
-      withTransition />
+    <ButtonModalBack on:click={() => (step = 1)} withTransition />
   {/if}
   {#if step === 1}
     <div class="switcher" in:fade|local>
@@ -120,7 +155,9 @@ const handleSubmit = () => {
         on:blur={() => isSubmitDisabled && validate()} />
       <FormTextInput
         placeholder="Link to Your Portfolio: Like Instagram@"
-        bind:value={portfolioLink} />
+        bind:value={portfolioLink}
+        errorText={errors.link}
+        on:blur={() => isSubmitDisabled && validate()} />
     </div>
   {/if}
   <div class="submit-wrapper">

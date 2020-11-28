@@ -1,4 +1,4 @@
-import { authLogin, authVerify } from "./endpoints";
+import { authLogin, authVerify, user } from "./endpoints";
 
 export const loginRequest = async (email, password) => {
   const data = new URLSearchParams();
@@ -19,6 +19,34 @@ export const verifyAuthRequest = async (token) => {
     method: "POST",
     withCredentials: true,
     headers: { Authorization: bearer },
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const createUserRequest = async ({
+  name,
+  email,
+  password,
+  country,
+  city,
+  type,
+  crew,
+  link,
+}) => {
+  const data = new URLSearchParams();
+  data.append("name", name);
+  data.append("email", email);
+  data.append("password", password);
+  data.append("country", country);
+  data.append("city", city);
+  data.append("type", type);
+  data.append("crew", crew);
+  data.append("link", link);
+  const response = await fetch(user(), {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: data,
   });
   const result = await response.json();
   return result;
