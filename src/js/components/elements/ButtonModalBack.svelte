@@ -21,7 +21,7 @@ const dispatch = createEventDispatcher();
   width: 20px;
   height: 20px;
   border: 0;
-  background: url(../../../images/back.svg);
+  background: url(../../../images/back.svg) 50% 50% / auto no-repeat;
   cursor: pointer;
 }
 </style>
