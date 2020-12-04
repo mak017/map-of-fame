@@ -63,6 +63,7 @@ const handleResize = () => {
   align-items: center;
   width: 100%;
   height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   padding: 5vh 12px;
   overflow: auto;
   background: var(--color-light);

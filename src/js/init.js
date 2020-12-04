@@ -1,7 +1,7 @@
 import { verifyAuthRequest } from "./api/auth";
 import { getSettingsRequest } from "./api/settings";
 import { isLoggedIn, userData } from "./store";
-import { loadFromLocalStorage } from "./utils";
+import { loadFromLocalStorage, removeFromLocalStorage } from "./utils";
 
 export const initApp = () => {
   const token = loadFromLocalStorage("token") || null;
@@ -14,6 +14,11 @@ export const initApp = () => {
         getSettingsRequest(token).then((resp) => {
           console.log("getSettingsRequest response :>> ", resp);
         });
+      } else {
+        const error = response.error;
+        if (Array.isArray(error) && error[0] === "Provided token is expired.") {
+          removeFromLocalStorage("token");
+        }
       }
     });
   }

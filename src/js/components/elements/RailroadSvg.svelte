@@ -35,10 +35,6 @@ export let isLight = false;
 </svg>
 
 <style lang="scss">
-svg {
-  width: 20px;
-  height: 22px;
-}
 path {
   fill: var(--color-dark);
 }
