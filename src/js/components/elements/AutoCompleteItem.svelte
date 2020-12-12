@@ -4,7 +4,9 @@ export let item = undefined;
 
 <div class="item">
   <div class="name">{item.name}</div>
-  <div class="type">{item.type}</div>
+  {#if item.type}
+    <div class="type">{item.type}</div>
+  {/if}
 </div>
 
 <style lang="scss">

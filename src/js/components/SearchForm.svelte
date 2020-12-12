@@ -89,7 +89,7 @@ const getOptionLabel = (option) => option.name;
     items={fakeArtistsCrews}
     optionIdentifier={'name'}
     {getOptionLabel}
-    placeholder="Artist/Crew"
+    placeholder="Artist or Crew"
     hint="Empty to show all" />
   <div class="filter">
     {#each categoriesOrdered as category}
