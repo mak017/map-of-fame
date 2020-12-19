@@ -1,4 +1,4 @@
-import { authLogin, authVerify, user } from "./endpoints";
+import { authLogin, authVerify, user, userPassword } from "./endpoints";
 
 export const loginRequest = async (email, password) => {
   const data = new URLSearchParams();
@@ -44,6 +44,18 @@ export const createUserRequest = async ({
   data.append("crew", crew);
   data.append("link", link);
   const response = await fetch(user(), {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: data,
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const changePasswordInit = async (email) => {
+  const data = new URLSearchParams();
+  data.append("email", email);
+  const response = await fetch(userPassword(), {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: data,

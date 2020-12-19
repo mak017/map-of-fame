@@ -23,7 +23,9 @@ const dispatch = createEventDispatcher();
     {placeholder}
     Item={AutoCompleteItem}
     on:select={(selected) => dispatch('select', selected)} />
-  <div class="hint">{hint}</div>
+  {#if hint}
+    <div class="hint">{hint}</div>
+  {/if}
 </div>
 
 <style lang="scss">

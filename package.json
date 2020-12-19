@@ -10,6 +10,11 @@
     "dev-server": "webpack-dev-server --config-register @babel/register",
     "watch-scss-and-images": "gulp"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run build"
+    }
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -40,6 +45,7 @@
     "gulp-rename": "^2.0.0",
     "gulp-sass": "^4.1.0",
     "gulp-sourcemaps": "^2.6.5",
+    "husky": "^4.3.6",
     "imagemin-jpeg-recompress": "^7.0.0",
     "mini-css-extract-plugin": "^0.11.2",
     "minimist": "^1.2.5",

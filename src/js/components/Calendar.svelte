@@ -3,13 +3,19 @@ import { getCurrentYear, isMobile } from "../utils.js";
 import { getDatesFilterStub } from "../stubs/datesFilterStub.js";
 import { permalink } from "../mapUtils/permalink.js";
 import { slide } from "svelte/transition";
+import { onDestroy } from "svelte";
 
 export let selectedYear;
 export let showCalendar;
 
 let selectedYearValue;
 
-selectedYear.subscribe((value) => (selectedYearValue = value));
+const unsubscribeSelectedYear = selectedYear.subscribe(
+  (value) => (selectedYearValue = value)
+);
+
+onDestroy(() => unsubscribeSelectedYear());
+
 const dates = !isMobile()
   ? getDatesFilterStub()
   : getDatesFilterStub().reverse();

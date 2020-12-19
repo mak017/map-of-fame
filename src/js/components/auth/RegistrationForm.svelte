@@ -1,4 +1,7 @@
 <script>
+import { onDestroy, onMount } from "svelte";
+import { getAllCountries } from "./../../api/geo.js";
+import AutoComplete from "./../elements/AutoComplete.svelte";
 import { createUserRequest } from "./../../api/auth.js";
 import { validateEmail, validatePassword } from "./../../utils.js";
 import { AUTH_MODALS, ERROR_MESSAGES, USER_TYPES } from "../../constants";
@@ -9,6 +12,7 @@ import FormPasswordInput from "../elements/FormPasswordInput.svelte";
 import FormRadioButton from "../elements/FormRadioButton.svelte";
 import FormTextInput from "../elements/FormTextInput.svelte";
 import { fade } from "svelte/transition";
+import { countriesList } from "../../store.js";
 
 export let showAuth;
 export let changeCurrentModal;
@@ -19,10 +23,34 @@ let email = "";
 let password = "";
 let username = "";
 let crew = "";
-let countryCity = "";
+let country;
 let portfolioLink = "";
-let errors = { email: "", password: "", name: "", countryCity: "", link: "" };
+let errors = { email: "", password: "", name: "", country: "", link: "" };
 let isSubmitDisabled = false;
+let countries = [];
+
+const unsubscribeCountriesList = countriesList.subscribe(
+  (value) => (countries = value)
+);
+
+onMount(() => {
+  if (!countries || countries.length === 0) {
+    getCountries();
+  }
+});
+
+onDestroy(() => unsubscribeCountriesList());
+
+const getCountries = () => {
+  getAllCountries().then((response) => {
+    console.log("data", response);
+    if (response.status && response.data) {
+      countriesList.set(response.data);
+    }
+  });
+};
+
+const getOptionLabel = (option) => option.name;
 
 const validate = () => {
   if (step === 1) {
@@ -47,8 +75,8 @@ const validate = () => {
     }
   } else {
     errors.name = !username ? ERROR_MESSAGES.usernameEmpty : "";
-    errors.countryCity = !countryCity ? ERROR_MESSAGES.countryCityEmpty : "";
-    isSubmitDisabled = !username || !countryCity;
+    errors.country = !country ? ERROR_MESSAGES.countryCityEmpty : "";
+    isSubmitDisabled = !username || !country;
   }
 };
 
@@ -57,13 +85,13 @@ const handleSubmit = () => {
   if (step === 1) {
     if (!errors.email && !errors.password) step = 2;
   } else {
-    if (username && countryCity) {
+    if (username && country) {
       console.log(
         "registration data :>> ",
         username,
         password,
         email,
-        countryCity,
+        country,
         selectedType,
         portfolioLink
       );
@@ -71,8 +99,7 @@ const handleSubmit = () => {
         name: username,
         password,
         email,
-        country: "UA",
-        city: countryCity,
+        country,
         type: selectedType.toLowerCase(),
         crew,
         link: portfolioLink,
@@ -148,11 +175,17 @@ const handleSubmit = () => {
       {#if selectedType === USER_TYPES.artist}
         <FormTextInput placeholder="Crew" bind:value={crew} />
       {/if}
-      <FormTextInput
-        placeholder="Country/City"
-        bind:value={countryCity}
-        errorText={errors.countryCity}
-        on:blur={() => isSubmitDisabled && validate()} />
+      <!-- <FormTextInput
+        placeholder="Country"
+        bind:value={country}
+        errorText={errors.country}
+        on:blur={() => isSubmitDisabled && validate()} /> -->
+      <AutoComplete
+        bind:selectedValue={country}
+        items={countries}
+        optionIdentifier={'name'}
+        {getOptionLabel}
+        placeholder="Country" />
       <FormTextInput
         placeholder="Link to Your Portfolio: Like Instagram@"
         bind:value={portfolioLink}
