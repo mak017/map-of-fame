@@ -7,7 +7,7 @@ export let toggleEditModal;
 </script>
 
 <div class="edit-spot">
-  <ButtonModalBack on:click={() => toggleEditModal(false)} />
+  <ButtonModalBack on:click={() => toggleEditModal(false)} editSpot />
   <h2>Edit Spot</h2>
   <SpotForm {editSpotData} onCancel={() => toggleEditModal(false)} />
 </div>

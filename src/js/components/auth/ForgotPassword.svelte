@@ -1,5 +1,6 @@
 <script>
 import { fade } from "svelte/transition";
+import { changePasswordInit } from "../../api/auth";
 import { AUTH_MODALS, ERROR_MESSAGES } from "../../constants";
 import { validateEmail } from "../../utils";
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
@@ -32,7 +33,16 @@ const handleSubmit = () => {
   validate();
   if (!errorMessage) {
     // send request
-    setForgotPasswordEmailSent(true);
+    changePasswordInit(email)
+      .then((response) => {
+        if (response.status && response.data) {
+          setForgotPasswordEmailSent(true);
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        errorMessage = "Something went wrong";
+      });
   }
 };
 

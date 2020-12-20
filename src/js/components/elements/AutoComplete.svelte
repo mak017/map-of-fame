@@ -8,7 +8,7 @@ export let items;
 export let optionIdentifier;
 export let getOptionLabel;
 export let placeholder;
-export let hint;
+export let hint = undefined;
 
 const dispatch = createEventDispatcher();
 </script>
