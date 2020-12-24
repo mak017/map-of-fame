@@ -3,25 +3,28 @@ import L from "leaflet";
 import RailroadSvg from "./components/elements/RailroadSvg.svelte";
 import { initApp } from "./init.js";
 import SearchForm from "./components/SearchForm.svelte";
-import { setLocation } from "./mapUtils/locationUtils.js";
+import { setLocation } from "./utils/mapUtils/locationUtils.js";
 import Modal from "./components/Modal.svelte";
 import { isLoggedIn, openedMarkerData, selectedYear } from "./store.js";
-import { openRailwayMap, openStreetMapMapnik } from "./mapUtils/tileLayers";
+import {
+  openRailwayMap,
+  openStreetMapMapnik,
+} from "./utils/mapUtils/tileLayers";
 import Calendar from "./components/Calendar.svelte";
 import {
   adjustVhProp,
   getCurrentYear,
   loadFromLocalStorage,
   saveToLocalStorage,
-} from "./utils";
+} from "./utils/commonUtils";
 import AddSpot from "./components/addSpot/AddSpot.svelte";
 import MarkerCard from "./components/markerCard/MarkerCard.svelte";
-import { permalink } from "./mapUtils/permalink";
+import { permalink } from "./utils/mapUtils/permalink";
 import AuthContainer from "./components/auth/AuthContainer.svelte";
 import { fade } from "svelte/transition";
 import ResetPassword from "./components/auth/ResetPassword.svelte";
 import Profile from "./components/user/Profile.svelte";
-import { newMarkerIcon } from "./mapUtils/icons";
+import { newMarkerIcon } from "./utils/mapUtils/icons";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isLighthouseActive = false;

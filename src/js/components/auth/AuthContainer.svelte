@@ -3,7 +3,7 @@ import Modal from "./../Modal.svelte";
 import { AUTH_MODALS } from "../../constants";
 import LoginForm from "./LoginForm.svelte";
 import RegistrationForm from "./RegistrationForm.svelte";
-import { isMobile } from "../../utils";
+import { isMobile } from "../../utils/commonUtils";
 import ForgotPassword from "./ForgotPassword.svelte";
 
 export let showAuth;

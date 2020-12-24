@@ -11,14 +11,14 @@ import {
   statusesOrdered,
   USER_TYPES,
 } from "../constants";
-import { markerWithPhoto } from "../mapUtils/icons";
+import { markerWithPhoto } from "../utils/mapUtils/icons";
 import { selectedYear, userData } from "../store";
 import {
   getCurrentYear,
   isYearLike,
   validateVideoLink,
   validateYear,
-} from "../utils";
+} from "../utils/commonUtils";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormRadioButton from "./elements/FormRadioButton.svelte";
 import FormTextArea from "./elements/FormTextArea.svelte";

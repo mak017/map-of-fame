@@ -2,7 +2,7 @@
 import { fade } from "svelte/transition";
 import { changePasswordInit } from "../../api/auth";
 import { AUTH_MODALS, ERROR_MESSAGES } from "../../constants";
-import { validateEmail } from "../../utils";
+import { validateEmail } from "../../utils/commonUtils";
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";

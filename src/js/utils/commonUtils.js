@@ -1,5 +1,5 @@
-import { CATEGORIES, MOBILE_BREAKPOINT } from "./constants";
-import { getValidDates } from "./stubs/datesFilterStub";
+import { CATEGORIES, MOBILE_BREAKPOINT } from "../constants";
+import { getValidDates } from "../stubs/datesFilterStub";
 
 const regexYoutube = /(?:https?:)?(?:\/\/)(?:www\.)?(?:m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([^<.,!():"'\s]+)/;
 const regexVimeo = /(?:http:|https:)?(?:\/\/)(?:www\.)?(?:vimeo\.com)\/([^<.,!():"'\s]+)/;

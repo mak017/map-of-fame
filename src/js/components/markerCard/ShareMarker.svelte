@@ -1,7 +1,7 @@
 <script>
 import { MAX_ZOOM } from "../../constants";
-import { permalink } from "../../mapUtils/permalink";
-import { copyToClipboard } from "../../utils";
+import { permalink } from "../../utils/mapUtils/permalink";
+import { copyToClipboard } from "../../utils/commonUtils";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormTextInput from "../elements/FormTextInput.svelte";
 

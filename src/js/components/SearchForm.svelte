@@ -1,14 +1,14 @@
 <script>
 import { fakeArtistsCrews } from "./../stubs/fakeArtistsCrews.js";
 import { categoriesOrdered, ERROR_MESSAGES, MIN_YEAR } from "../constants";
-import { permalink } from "../mapUtils/permalink";
+import { permalink } from "../utils/mapUtils/permalink";
 import {
   huntersFilter,
   selectedArtist,
   selectedCategory,
   selectedYear,
 } from "../store";
-import { getCurrentYear, isYearLike, validateYear } from "../utils";
+import { getCurrentYear, isYearLike, validateYear } from "../utils/commonUtils";
 import AutoComplete from "./elements/AutoComplete.svelte";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";

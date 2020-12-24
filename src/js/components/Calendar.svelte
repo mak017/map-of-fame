@@ -1,7 +1,7 @@
 <script>
-import { getCurrentYear, isMobile } from "../utils.js";
+import { getCurrentYear, isMobile } from "../utils/commonUtils.js";
 import { getDatesFilterStub } from "../stubs/datesFilterStub.js";
-import { permalink } from "../mapUtils/permalink.js";
+import { permalink } from "../utils/mapUtils/permalink.js";
 import { slide } from "svelte/transition";
 import { onDestroy } from "svelte";
 

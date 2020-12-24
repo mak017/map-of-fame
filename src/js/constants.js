@@ -1,4 +1,4 @@
-import { getCurrentYear } from "./utils";
+import { getCurrentYear } from "./utils/commonUtils";
 
 export const MOBILE_BREAKPOINT = 767;
 

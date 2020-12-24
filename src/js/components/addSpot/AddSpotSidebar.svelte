@@ -1,6 +1,6 @@
 <script>
 import { fly } from "svelte/transition";
-import { isMobile } from "../../utils";
+import { isMobile } from "../../utils/commonUtils";
 import SpotForm from "../SpotForm.svelte";
 
 export let onCancel;

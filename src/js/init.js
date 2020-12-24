@@ -5,13 +5,14 @@ import {
   loadFromLocalStorage,
   removeFromLocalStorage,
   saveToLocalStorage,
-} from "./utils";
+} from "./utils/commonUtils";
+import { transformSettings } from "./utils/transformers";
 
 export const getSettings = (token) =>
   getSettingsRequest(token).then((response) => {
     console.log("getSettingsRequest response :>> ", response);
     if (response.status && response.data) {
-      settings.set(response.data);
+      settings.set(transformSettings(response.data));
     }
   });
 

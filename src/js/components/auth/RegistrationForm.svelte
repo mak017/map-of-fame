@@ -3,7 +3,7 @@ import { onDestroy, onMount } from "svelte";
 import { getAllCountries } from "./../../api/geo.js";
 import AutoComplete from "./../elements/AutoComplete.svelte";
 import { createUserRequest } from "./../../api/auth.js";
-import { validateEmail, validatePassword } from "./../../utils.js";
+import { validateEmail, validatePassword } from "../../utils/commonUtils.js";
 import { AUTH_MODALS, ERROR_MESSAGES, USER_TYPES } from "../../constants";
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
@@ -13,6 +13,7 @@ import FormRadioButton from "../elements/FormRadioButton.svelte";
 import FormTextInput from "../elements/FormTextInput.svelte";
 import { fade } from "svelte/transition";
 import { countriesList } from "../../store.js";
+import { transformCountries } from "../../utils/transformers.js";
 
 export let showAuth;
 export let changeCurrentModal;
@@ -44,8 +45,9 @@ onDestroy(() => unsubscribeCountriesList());
 const getCountries = () => {
   getAllCountries().then((response) => {
     console.log("data", response);
-    if (response.status && response.data) {
-      countriesList.set(response.data);
+    const { status, data } = response;
+    if (status && data) {
+      countriesList.set(transformCountries(data));
     }
   });
 };

@@ -1,5 +1,5 @@
 <script>
-import { embedVideoCodeFromBasicUrl } from "../../utils";
+import { embedVideoCodeFromBasicUrl } from "../../utils/commonUtils";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import Popup from "../Popup.svelte";
 import ShareMarker from "./ShareMarker.svelte";

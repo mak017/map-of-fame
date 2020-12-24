@@ -2,11 +2,11 @@ import L from "leaflet";
 import "leaflet.markercluster";
 import "leaflet.markercluster.placementstrategies";
 import { statusesOrdered } from "../constants";
-import { clusterIcon, markerWithPhoto } from "../mapUtils/icons";
-import { normalizeCoords } from "../mapUtils/locationUtils";
-import { permalink } from "../mapUtils/permalink";
+import { clusterIcon, markerWithPhoto } from "../utils/mapUtils/icons";
+import { normalizeCoords } from "../utils/mapUtils/locationUtils";
+import { permalink } from "../utils/mapUtils/permalink";
 import { markersStore, openedMarkerData } from "../store";
-import { markersReadyEvent } from "../utils";
+import { markersReadyEvent } from "../utils/commonUtils";
 const RANDOM_MARKERS_COUNT = 10000;
 let arrMarkers = [];
 

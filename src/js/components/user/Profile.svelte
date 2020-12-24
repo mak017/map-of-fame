@@ -8,7 +8,7 @@ import EditSpot from "./EditSpot.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import Popup from "../Popup.svelte";
 import { onDestroy } from "svelte";
-import { removeFromLocalStorage } from "../../utils";
+import { removeFromLocalStorage } from "../../utils/commonUtils";
 
 export let onAddSpotBtnClick;
 export let showUserProfile;

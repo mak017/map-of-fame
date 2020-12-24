@@ -1,5 +1,5 @@
 <script>
-import { isMobile } from "../utils.js";
+import { isMobile } from "../utils/commonUtils.js";
 import { createEventDispatcher } from "svelte";
 import { fade } from "svelte/transition";
 

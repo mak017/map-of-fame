@@ -1,5 +1,5 @@
-import { DEFAULT_ZOOM, DEFAULT_VIEW } from "../constants";
-import { addRandomMarkers } from "../stubs/randomMarkersStub";
+import { DEFAULT_ZOOM, DEFAULT_VIEW } from "../../constants";
+import { addRandomMarkers } from "../../stubs/randomMarkersStub";
 import { permalink } from "./permalink";
 
 const getLocationByIp = () =>

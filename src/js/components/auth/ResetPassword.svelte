@@ -1,7 +1,7 @@
 <script>
 import { fade } from "svelte/transition";
 import { ERROR_MESSAGES } from "../../constants";
-import { validatePassword } from "../../utils";
+import { validatePassword } from "../../utils/commonUtils";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormPasswordInput from "./../elements/FormPasswordInput.svelte";
 

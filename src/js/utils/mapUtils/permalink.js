@@ -4,9 +4,9 @@ import {
   selectedArtist,
   selectedCategory,
   selectedYear,
-} from "../store";
-import { validateCategory, validateYear } from "../utils";
-import { setMarkerDataById } from "../stubs/randomMarkersStub";
+} from "../../store";
+import { validateCategory, validateYear } from "../commonUtils";
+import { setMarkerDataById } from "../../stubs/randomMarkersStub";
 import { normalizeCoords } from "./locationUtils";
 
 let shouldUpdate = true;

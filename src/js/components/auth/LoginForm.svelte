@@ -1,9 +1,10 @@
 <script>
 import { fade } from "svelte/transition";
+import { getSettings } from "./../../init.js";
 import { loginRequest } from "../../api/auth.js";
 import { AUTH_MODALS, ERROR_MESSAGES } from "../../constants.js";
 import { isLoggedIn, userData } from "../../store.js";
-import { saveToLocalStorage, validateEmail } from "../../utils.js";
+import { saveToLocalStorage, validateEmail } from "../../utils/commonUtils.js";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
 import FormPasswordInput from "../elements/FormPasswordInput.svelte";
@@ -38,9 +39,11 @@ const handleSubmit = () => {
       .then((response) => {
         console.log("data", response);
         if (response.status && response.data) {
+          const { token } = response.data;
           userData.set(response.data);
           isLoggedIn.set(true);
-          saveToLocalStorage("token", response.data.token);
+          saveToLocalStorage("token", token);
+          getSettings(token);
           showAuth(false);
         } else {
           if (response.error?.email) {

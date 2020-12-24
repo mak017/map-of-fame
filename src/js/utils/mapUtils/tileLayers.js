@@ -1,5 +1,5 @@
 import L from "leaflet";
-import { MAX_ZOOM } from "../constants";
+import { MAX_ZOOM } from "../../constants";
 import { grayScaleTileLayer } from "./grayScaleTileLayer";
 
 // export const stamenTerrain = L.tileLayer(
