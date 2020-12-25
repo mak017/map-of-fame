@@ -1,4 +1,5 @@
 <script>
+import { changePasswordCheckToken } from "./api/auth.js";
 import L from "leaflet";
 import RailroadSvg from "./components/elements/RailroadSvg.svelte";
 import { initApp } from "./init.js";
@@ -14,6 +15,7 @@ import Calendar from "./components/Calendar.svelte";
 import {
   adjustVhProp,
   getCurrentYear,
+  getResetPasswordToken,
   loadFromLocalStorage,
   saveToLocalStorage,
 } from "./utils/commonUtils";
@@ -25,6 +27,7 @@ import { fade } from "svelte/transition";
 import ResetPassword from "./components/auth/ResetPassword.svelte";
 import Profile from "./components/user/Profile.svelte";
 import { newMarkerIcon } from "./utils/mapUtils/icons";
+import Loader from "./components/elements/Loader.svelte";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isLighthouseActive = false;
@@ -35,6 +38,8 @@ let showResetPasswordModal = false;
 let showUserProfileModal = false;
 let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
+let isLoading = true;
+let resetPasswordToken = getResetPasswordToken();
 
 let map;
 let newMarker;
@@ -54,6 +59,24 @@ const clearOpenedMarkerData = () => {
 adjustVhProp();
 
 initApp();
+
+if (resetPasswordToken) {
+  changePasswordCheckToken(resetPasswordToken).then((response) => {
+    const { status, data } = response;
+    console.log("response", response);
+    if (status && data && data?.reset_password_token) {
+      isLoading = false;
+      showResetPassword(true);
+      resetPasswordToken = data.reset_password_token;
+    } else {
+      isLoading = false;
+    }
+  });
+} else {
+  setTimeout(() => {
+    isLoading = false;
+  }, 1000);
+}
 
 // Init leaflet map
 const initMap = (container) => {
@@ -123,104 +146,105 @@ const quitAddSpot = () => {
 </script>
 
 <svelte:window on:resize={adjustVhProp} />
-
-<div class="map" class:add-mode={isAddSpotMode} use:initMap />
-
-<div class="main-top_left_wrapper">
-  {#if !isAddSpotMode || (isAddSpotMode && !isAddSpotSidebarVisible)}
-    <button
-      class="button button-main_screen button-open_calendar"
-      on:click={() => showCalendar(true)}
-      transition:fade>{$selectedYear}</button>
-  {/if}
-  {#if +$selectedYear === getCurrentYear() && !isAddSpotMode}
-    <button
-      class="button button-square button-lighthouse"
-      class:active={isLighthouseActive}
-      disabled={!$isLoggedIn}
-      transition:fade>
-      <svg
-        width="9"
-        height="15"
-        viewBox="0 0 9 15"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M8.59095 6.18163H5.20517L8.12795 0.657462C8.20028 0.521392 8.19986 0.354423 8.12678 0.218811C8.05327 0.0833129 7.91861 0 7.77276 0H2.86365C2.68755 0 2.53127 0.121078 2.47576 0.300407L0.0212066 8.23985C-0.020768 8.37374 0.00043238 8.52137 0.0771372 8.63593C0.154268 8.7506 0.277742 8.81835 0.409099 8.81835H3.87967L1.66961 14.3876C1.59046 14.5855 1.65683 14.816 1.82622 14.9313C1.99284 15.0458 2.21667 15.0157 2.35112 14.8525L8.89659 6.91302C9.00366 6.78382 9.03008 6.59877 8.96414 6.4413C8.89819 6.28337 8.75203 6.18163 8.59095 6.18163Z" />
-      </svg>
-    </button>
-  {/if}
-</div>
-
-<div class="main-top_right_wrapper">
-  {#if !isAddSpotMode}
-    <button
-      class="button button-main_screen button-square button-open_search"
-      on:click={() => showSearch(true)}
-      in:fade />
-    {#if $isLoggedIn}
-      <button
-        class="button button-main_screen button-square button-burger"
-        on:click={() => showUserProfile(true)}
-        in:fade />
-    {:else}
-      <button
-        class="button button-main_screen button-square button-open_login"
-        on:click={() => showAuth(true)} />
-    {/if}
-  {/if}
-</div>
-
-<button
-  class="button button-main_screen button-square button-switch_mode"
-  class:active={isRailwayMode}
-  on:click={handleChangeModeClick}
-  title="Highlight railways">
-  <RailroadSvg isLight={isRailwayMode} />
-</button>
-
-{#if $isLoggedIn}
-  <AddSpot
-    {isAddSpotMode}
-    {isAddSpotSidebarVisible}
-    {onAddSpotBtnClick}
-    {newMarker}
-    onCancel={onNewMarkerCancel}
-    onSubmit={onNewMarkerSubmit} />
-{/if}
-
-{#if showCalendarModal}
-  <Modal on:close={() => showCalendar(false)} title="Date" withAd>
-    <Calendar {selectedYear} {showCalendar} />
-  </Modal>
-{/if}
-
-{#if showSearchModal}
-  <Modal on:close={() => showSearch(false)} title="Search" withAd>
-    <SearchForm {showSearch} />
-  </Modal>
-{/if}
-
-{#if $openedMarkerData}
-  <Modal on:close={clearOpenedMarkerData} withAd noLogo>
-    <MarkerCard data={$openedMarkerData} />
-  </Modal>
-{/if}
-
-{#if showAuthContainer}
-  <AuthContainer {showAuth} />
-{/if}
-
-{#if showResetPasswordModal}
+{#if isLoading}
+  <Loader />
+{:else if showResetPasswordModal}
   <Modal noClose title="Reset Password">
-    <ResetPassword {showResetPassword} />
+    <ResetPassword {showResetPassword} {resetPasswordToken} />
   </Modal>
-{/if}
+{:else}
+  <div class="map" class:add-mode={isAddSpotMode} use:initMap />
 
-{#if showUserProfileModal}
-  <Modal noLogo on:close={() => showUserProfile(false)}>
-    <Profile {onAddSpotBtnClick} {showUserProfile} />
-  </Modal>
+  <div class="main-top_left_wrapper">
+    {#if !isAddSpotMode || (isAddSpotMode && !isAddSpotSidebarVisible)}
+      <button
+        class="button button-main_screen button-open_calendar"
+        on:click={() => showCalendar(true)}
+        transition:fade>{$selectedYear}</button>
+    {/if}
+    {#if +$selectedYear === getCurrentYear() && !isAddSpotMode}
+      <button
+        class="button button-square button-lighthouse"
+        class:active={isLighthouseActive}
+        disabled={!$isLoggedIn}
+        transition:fade>
+        <svg
+          width="9"
+          height="15"
+          viewBox="0 0 9 15"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M8.59095 6.18163H5.20517L8.12795 0.657462C8.20028 0.521392 8.19986 0.354423 8.12678 0.218811C8.05327 0.0833129 7.91861 0 7.77276 0H2.86365C2.68755 0 2.53127 0.121078 2.47576 0.300407L0.0212066 8.23985C-0.020768 8.37374 0.00043238 8.52137 0.0771372 8.63593C0.154268 8.7506 0.277742 8.81835 0.409099 8.81835H3.87967L1.66961 14.3876C1.59046 14.5855 1.65683 14.816 1.82622 14.9313C1.99284 15.0458 2.21667 15.0157 2.35112 14.8525L8.89659 6.91302C9.00366 6.78382 9.03008 6.59877 8.96414 6.4413C8.89819 6.28337 8.75203 6.18163 8.59095 6.18163Z" />
+        </svg>
+      </button>
+    {/if}
+  </div>
+
+  <div class="main-top_right_wrapper">
+    {#if !isAddSpotMode}
+      <button
+        class="button button-main_screen button-square button-open_search"
+        on:click={() => showSearch(true)}
+        in:fade />
+      {#if $isLoggedIn}
+        <button
+          class="button button-main_screen button-square button-burger"
+          on:click={() => showUserProfile(true)}
+          in:fade />
+      {:else}
+        <button
+          class="button button-main_screen button-square button-open_login"
+          on:click={() => showAuth(true)} />
+      {/if}
+    {/if}
+  </div>
+
+  <button
+    class="button button-main_screen button-square button-switch_mode"
+    class:active={isRailwayMode}
+    on:click={handleChangeModeClick}
+    title="Highlight railways">
+    <RailroadSvg isLight={isRailwayMode} />
+  </button>
+
+  {#if $isLoggedIn}
+    <AddSpot
+      {isAddSpotMode}
+      {isAddSpotSidebarVisible}
+      {onAddSpotBtnClick}
+      {newMarker}
+      onCancel={onNewMarkerCancel}
+      onSubmit={onNewMarkerSubmit} />
+  {/if}
+
+  {#if showCalendarModal}
+    <Modal on:close={() => showCalendar(false)} title="Date" withAd>
+      <Calendar {selectedYear} {showCalendar} />
+    </Modal>
+  {/if}
+
+  {#if showSearchModal}
+    <Modal on:close={() => showSearch(false)} title="Search" withAd>
+      <SearchForm {showSearch} />
+    </Modal>
+  {/if}
+
+  {#if $openedMarkerData}
+    <Modal on:close={clearOpenedMarkerData} withAd noLogo>
+      <MarkerCard data={$openedMarkerData} />
+    </Modal>
+  {/if}
+
+  {#if showAuthContainer}
+    <AuthContainer {showAuth} />
+  {/if}
+
+  {#if showUserProfileModal}
+    <Modal noLogo on:close={() => showUserProfile(false)}>
+      <Profile {onAddSpotBtnClick} {showUserProfile} />
+    </Modal>
+  {/if}
 {/if}
 
 <style lang="scss">

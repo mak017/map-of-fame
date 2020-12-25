@@ -10,6 +10,9 @@ export const userId = (id) => `${ENDPOINT_ORIGIN}/api/user/${id}`;
 
 export const userPassword = () => `${ENDPOINT_ORIGIN}/api/user/password`;
 
+export const userPasswordToken = () =>
+  `${ENDPOINT_ORIGIN}/api/user/password/token`;
+
 export const firm = () => `${ENDPOINT_ORIGIN}/api/firm`;
 
 export const firmId = (id) => `${ENDPOINT_ORIGIN}/api/firm/${id}`;

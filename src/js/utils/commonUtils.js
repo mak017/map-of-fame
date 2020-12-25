@@ -68,3 +68,12 @@ export const adjustVhProp = () => {
   const vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
 };
+
+export const getResetPasswordToken = () => {
+  const search = window.location.search;
+  if (search) {
+    const params = new URLSearchParams(search);
+    return params.get("reset_password_token");
+  }
+  return null;
+};

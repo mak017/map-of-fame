@@ -3,7 +3,11 @@ import { onDestroy, onMount } from "svelte";
 import { getAllCountries } from "./../../api/geo.js";
 import AutoComplete from "./../elements/AutoComplete.svelte";
 import { createUserRequest } from "./../../api/auth.js";
-import { validateEmail, validatePassword } from "../../utils/commonUtils.js";
+import {
+  saveToLocalStorage,
+  validateEmail,
+  validatePassword,
+} from "../../utils/commonUtils.js";
 import { AUTH_MODALS, ERROR_MESSAGES, USER_TYPES } from "../../constants";
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
@@ -12,7 +16,7 @@ import FormPasswordInput from "../elements/FormPasswordInput.svelte";
 import FormRadioButton from "../elements/FormRadioButton.svelte";
 import FormTextInput from "../elements/FormTextInput.svelte";
 import { fade } from "svelte/transition";
-import { countriesList } from "../../store.js";
+import { countriesList, isLoggedIn, userData } from "../../store.js";
 import { transformCountries } from "../../utils/transformers.js";
 
 export let showAuth;
@@ -109,9 +113,9 @@ const handleSubmit = () => {
         .then((response) => {
           console.log("data", response);
           if (response.status && response.data) {
-            // userData.set(response.data);
-            // isLoggedIn.set(true);
-            // saveToLocalStorage("token", response.data.token);
+            userData.set(response.data);
+            isLoggedIn.set(true);
+            saveToLocalStorage("token", response.data.token);
             showAuth(false);
           } else {
             if (response.error?.email) {

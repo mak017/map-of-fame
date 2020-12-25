@@ -1,11 +1,13 @@
 <script>
 import { fade } from "svelte/transition";
+import { changePasswordReset } from "../../api/auth";
 import { ERROR_MESSAGES } from "../../constants";
 import { validatePassword } from "../../utils/commonUtils";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormPasswordInput from "./../elements/FormPasswordInput.svelte";
 
 export let showResetPassword;
+export let resetPasswordToken;
 
 let password = "";
 let errorMessage = "";
@@ -26,9 +28,22 @@ const validate = () => {
 const handleSubmit = () => {
   validate();
   if (!errorMessage) {
-    // send request
-    showResetPassword(false);
+    changePasswordReset(resetPasswordToken, password).then((response) => {
+      console.log("response", response);
+      const { status, data } = response;
+      if (status && data) {
+        showResetPassword(false);
+      } else {
+      }
+    });
   }
+};
+
+const handleKeyDown = (event) => {
+  const { code } = event.detail;
+  isSubmitDisabled &&
+    (code === "Enter" || code === "NumpadEnter") &&
+    handleSubmit();
 };
 </script>
 
@@ -37,7 +52,8 @@ const handleSubmit = () => {
     placeholder="New Password"
     bind:value={password}
     errorText={errorMessage}
-    on:blur={() => isSubmitDisabled && validate()} />
+    on:blur={() => isSubmitDisabled && validate()}
+    on:keyDown={handleKeyDown} />
   <div class="submit-wrapper">
     <ButtonPrimary
       text="Reset"

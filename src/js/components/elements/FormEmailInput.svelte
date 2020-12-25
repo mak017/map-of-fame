@@ -8,7 +8,7 @@ export let errorText = "";
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
 const input = () => dispatch("input");
-const keyDown = () => dispatch("keyDown");
+const keyDown = (event) => dispatch("keyDown", event);
 </script>
 
 <label class:error={!!errorText}>

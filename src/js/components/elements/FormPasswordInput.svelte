@@ -8,6 +8,7 @@ export let errorText = "";
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
 const input = () => dispatch("input");
+const keyDown = (event) => dispatch("keyDown", event);
 </script>
 
 <label class:error={!!errorText}>
@@ -16,7 +17,8 @@ const input = () => dispatch("input");
     {placeholder}
     bind:value
     on:blur={blur}
-    on:input={input} />
+    on:input={input}
+    on:keydown={keyDown} />
   {#if errorText}
     <div class="error-text">{errorText}</div>
   {/if}

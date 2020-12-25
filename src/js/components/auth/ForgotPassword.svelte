@@ -30,13 +30,17 @@ const validate = () => {
 };
 
 const handleSubmit = () => {
+  console.log("submit");
   validate();
   if (!errorMessage) {
     // send request
     changePasswordInit(email)
       .then((response) => {
-        if (response.status && response.data) {
+        const { status, data, error } = response;
+        if (status && data) {
           setForgotPasswordEmailSent(true);
+        } else {
+          errorMessage = error?.email ? error.email : "Something went wrong";
         }
       })
       .catch((e) => {
@@ -49,6 +53,13 @@ const handleSubmit = () => {
 const handleBackClick = () => {
   changeCurrentModal(AUTH_MODALS.login);
 };
+
+const handleKeyDown = (event) => {
+  const { code } = event.detail;
+  isDisabledSubmit &&
+    (code === "Enter" || code === "NumpadEnter") &&
+    handleSubmit();
+};
 </script>
 
 <form on:submit|preventDefault={handleSubmit} novalidate transition:fade>
@@ -60,7 +71,8 @@ const handleBackClick = () => {
     placeholder="Email"
     bind:value={email}
     errorText={errorMessage}
-    on:blur={() => isDisabledSubmit && validate()} />
+    on:blur={() => isDisabledSubmit && validate()}
+    on:keyDown={handleKeyDown} />
   <div class="submit-wrapper">
     <ButtonPrimary
       text="Send"

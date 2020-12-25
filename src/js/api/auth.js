@@ -1,4 +1,10 @@
-import { authLogin, authVerify, user, userPassword } from "./endpoints";
+import {
+  authLogin,
+  authVerify,
+  user,
+  userPassword,
+  userPasswordToken,
+} from "./endpoints";
 
 export const loginRequest = async (email, password) => {
   const data = new URLSearchParams();
@@ -57,6 +63,33 @@ export const changePasswordInit = async (email) => {
   data.append("email", email);
   const response = await fetch(userPassword(), {
     method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: data,
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const changePasswordCheckToken = async (resetToken) => {
+  const data = new URLSearchParams();
+  data.append("reset_password_token", resetToken);
+  const response = await fetch(userPasswordToken(), {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: data,
+    // body: JSON.stringify({ reset_password_token: resetToken }),
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const changePasswordReset = async (resetToken, password) => {
+  const data = new URLSearchParams();
+  data.append("reset_password_token", resetToken);
+  data.append("password", password);
+  data.append("confirmation", password);
+  const response = await fetch(userPassword(), {
+    method: "PUT",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: data,
   });
