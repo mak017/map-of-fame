@@ -1,14 +1,10 @@
 import { CATEGORIES, MOBILE_BREAKPOINT } from "../constants";
-import { getValidDates } from "../stubs/datesFilterStub";
 
 const regexYoutube = /(?:https?:)?(?:\/\/)(?:www\.)?(?:m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([^<.,!():"'\s]+)/;
 const regexVimeo = /(?:http:|https:)?(?:\/\/)(?:www\.)?(?:vimeo\.com)\/([^<.,!():"'\s]+)/;
 const regexDailymotion = /(?:http:|https:)?(?:\/\/)(?:www\.)?(?:dailymotion\.com|dai\.ly)(?:\/video)?\/([^<.,!():"'\s]+)/;
 
 export const isMobile = () => window.innerWidth < MOBILE_BREAKPOINT;
-
-export const validateYear = (year, isFull = true) =>
-  getValidDates(isFull).includes(year);
 
 export const validateCategory = (categories) =>
   categories.every((cat) => Object.values(CATEGORIES).includes(cat));

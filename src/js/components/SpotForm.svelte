@@ -6,24 +6,25 @@ import {
   categoriesOrdered,
   EMPTY_YEAR_STRING,
   ERROR_MESSAGES,
-  MIN_YEAR,
   STATUSES,
   statusesOrdered,
   USER_TYPES,
 } from "../constants";
 import { markerWithPhoto } from "../utils/mapUtils/icons";
-import { selectedYear, userData } from "../store";
+import { firms, selectedYear, settings, userData } from "../store";
 import {
   getCurrentYear,
   isYearLike,
+  loadFromLocalStorage,
   validateVideoLink,
-  validateYear,
 } from "../utils/commonUtils";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormRadioButton from "./elements/FormRadioButton.svelte";
 import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
+import { validateYear } from "../utils/datesUtils";
+import { getFirmsRequest } from "../api/settings";
 
 export let onCancel;
 export let onSubmit = () => {};
@@ -46,31 +47,36 @@ let sprayPaintUsed;
 let link = editSpotData.linkToWork || "";
 let isSubmitDisabled = false;
 let userTypeValue;
+let settingsValue;
+let sprayFirms;
 let errors = { year: "", imageFile: "", linkToVideo: "", sprayPaintUsed: "" };
 const currentYear = getCurrentYear();
+const token = loadFromLocalStorage("token") || null;
 const unsubscribeUserData = userData.subscribe(
   (value) => (userTypeValue = value.type)
 );
+const unsubscribeSettings = settings.subscribe(
+  (value) => (settingsValue = value)
+);
+const unsubscribeFirms = firms.subscribe((value) => (sprayFirms = value));
 
-onDestroy(() => unsubscribeUserData());
+onDestroy(() => {
+  unsubscribeUserData();
+  unsubscribeSettings();
+  unsubscribeFirms();
+});
 
-let spraysStub = [
-  { value: 1, label: `Spray 1` },
-  { value: 2, label: `Spray 2` },
-  { value: 3, label: `Spray 3` },
-  { value: 4, label: `Spray 4` },
-  { value: 5, label: `Spray 5` },
-  { value: 6, label: `Spray 6` },
-  { value: 7, label: `Spray 7` },
-  { value: 8, label: `Spray 8` },
-  { value: 9, label: `Spray 9` },
-  { value: 10, label: `Spray 10` },
-  { value: 11, label: `Spray 11` },
-  { value: 12, label: `Spray 12` },
-  { value: 13, label: `Spray 13` },
-  { value: 14, label: `Spray 14` },
-  { value: 15, label: `Spray 15` },
-];
+const hasSprays = () => Array.isArray(sprayFirms) && sprayFirms.length;
+
+if (userTypeValue === USER_TYPES.artist.toLowerCase() && !hasSprays()) {
+  getFirmsRequest(token).then((response) => {
+    const { status, data } = response;
+    console.log("firms", response);
+    if (status && data) {
+      firms.set(data);
+    }
+  });
+}
 
 const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
 
@@ -107,8 +113,8 @@ const validateYearInput = () => {
   console.log("year", year);
   if (!year) {
     errors.year = "";
-  } else if (!validateYear(year, false)) {
-    errors.year = ERROR_MESSAGES.yearNotInRange;
+  } else if (!validateYear(year, settingsValue.yearStart, false)) {
+    errors.year = ERROR_MESSAGES.yearNotInRange(settingsValue.yearStart);
   } else {
     errors.year = "";
   }
@@ -206,6 +212,11 @@ const handleSubmit = () => {
     isSubmitDisabled = true;
   }
 };
+
+const getOptionLabel = (option) => option.name;
+const getSelectionLabel = (option) => {
+  if (option) return option.name;
+};
 </script>
 
 <form class:edit={isEditSpot} on:submit|preventDefault={handleSubmit}>
@@ -233,7 +244,7 @@ const handleSubmit = () => {
   <FormTextInput
     placeholder="Year"
     bind:value={year}
-    hint={`${MIN_YEAR} - ${currentYear}`}
+    hint={`${settingsValue.yearStart} - ${currentYear}`}
     on:blur={handleYearBlur}
     on:input={handleYearChange}
     errorText={errors.year}
@@ -292,12 +303,15 @@ const handleSubmit = () => {
     {/each}
   </div>
   {#if userTypeValue === USER_TYPES.artist.toLowerCase() && !isEditSpot}
-    <div class="spray">
+    <div class="spray" class:with-error={errors.sprayPaintUsed}>
       <CustomSelect
-        items={spraysStub}
+        items={sprayFirms}
         bind:selectedValue={sprayPaintUsed}
         on:select={handleSpraySelectBlur}
-        placeholder="Spray Paint Used" />
+        placeholder="Spray Paint Used"
+        optionIdentifier="name"
+        {getOptionLabel}
+        {getSelectionLabel} />
       {#if errors.sprayPaintUsed}
         <span class="error">{errors.sprayPaintUsed}</span>
       {/if}
@@ -408,6 +422,9 @@ const handleSubmit = () => {
 .spray {
   position: relative;
   margin-bottom: 15px;
+  &.with-error {
+    margin: -4px;
+  }
 }
 .button_wrap {
   display: flex;

@@ -1,6 +1,6 @@
 <script>
 import { fakeArtistsCrews } from "./../stubs/fakeArtistsCrews.js";
-import { categoriesOrdered, ERROR_MESSAGES, MIN_YEAR } from "../constants";
+import { categoriesOrdered, ERROR_MESSAGES } from "../constants";
 import { permalink } from "../utils/mapUtils/permalink";
 import {
   huntersFilter,
@@ -8,12 +8,15 @@ import {
   selectedCategory,
   selectedYear,
 } from "../store";
-import { getCurrentYear, isYearLike, validateYear } from "../utils/commonUtils";
+import { getCurrentYear, isYearLike } from "../utils/commonUtils";
 import AutoComplete from "./elements/AutoComplete.svelte";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
+import { validateYear } from "../utils/datesUtils.js";
 
 export let showSearch;
+export let yearStart;
+
 let year = "";
 let artist;
 let selectedCategories = [];
@@ -26,8 +29,8 @@ const currentYear = getCurrentYear();
 const validateYearInput = () => {
   if (!year) {
     yearErrorMessage = ERROR_MESSAGES.genericEmpty;
-  } else if (!validateYear(year, false)) {
-    yearErrorMessage = ERROR_MESSAGES.yearNotInRange;
+  } else if (!validateYear(year, yearStart, false)) {
+    yearErrorMessage = ERROR_MESSAGES.yearNotInRange(yearStart);
   } else {
     yearErrorMessage = "";
   }
@@ -72,16 +75,24 @@ const handleYearChange = () => {
   }
 };
 
+const handleKeyDown = (event) => {
+  const { code } = event.detail;
+  isSubmitDisabled &&
+    (code === "Enter" || code === "NumpadEnter") &&
+    handleSubmit();
+};
+
 const getOptionLabel = (option) => option.name;
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
   <FormTextInput
     placeholder="Year"
-    hint={`${MIN_YEAR} - ${currentYear}`}
+    hint={`${yearStart} - ${currentYear}`}
     bind:value={year}
     on:blur={handleYearBlur}
     on:input={handleYearChange}
+    on:keyDown={handleKeyDown}
     errorText={yearErrorMessage}
     isYear />
   <AutoComplete

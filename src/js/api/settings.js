@@ -1,8 +1,14 @@
-import { getSettings } from "./endpoints";
+import { firm, getSettings } from "./endpoints";
 
-export const getSettingsRequest = async (token) => {
+export const getSettingsRequest = async () => {
+  const response = await fetch(getSettings(), { method: "GET" });
+  const result = await response.json();
+  return result;
+};
+
+export const getFirmsRequest = async (token) => {
   const bearer = `Bearer ${token}`;
-  const response = await fetch(getSettings(), {
+  const response = await fetch(firm(), {
     method: "GET",
     withCredentials: true,
     headers: { Authorization: bearer },

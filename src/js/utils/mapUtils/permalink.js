@@ -4,18 +4,25 @@ import {
   selectedArtist,
   selectedCategory,
   selectedYear,
+  settings,
 } from "../../store";
-import { validateCategory, validateYear } from "../commonUtils";
+import { validateCategory } from "../commonUtils";
 import { setMarkerDataById } from "../../stubs/randomMarkersStub";
 import { normalizeCoords } from "./locationUtils";
+import { validateYear } from "../datesUtils";
 
 let shouldUpdate = true;
 let mapInstance = null;
 let prevParams = null;
 let arrMarkers = [];
+let settingsObj = {};
 
 markersStore.subscribe((values) => {
   arrMarkers = values;
+});
+
+settings.subscribe((value) => {
+  settingsObj = value;
 });
 
 const setStateFromUrl = (params) => {
@@ -25,7 +32,8 @@ const setStateFromUrl = (params) => {
   const artistFromUrl = params.get("artist");
   const huntersFromUrl = params.get("hunters");
   const markerFromUrl = params.get("marker");
-  if (yearFromUrl && validateYear(yearFromUrl)) selectedYear.set(yearFromUrl);
+  if (yearFromUrl && validateYear(yearFromUrl, settingsObj.yearStart))
+    selectedYear.set(yearFromUrl);
   if (categoryFromUrl && validateCategory(category)) {
     selectedCategory.set(category);
   }

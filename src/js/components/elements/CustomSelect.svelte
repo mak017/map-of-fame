@@ -7,6 +7,9 @@ export let selectedValue = undefined;
 export let items;
 export let isYear = false;
 export let placeholder = "Select...";
+export let optionIdentifier;
+export let getOptionLabel;
+export let getSelectionLabel;
 
 const dispatch = createEventDispatcher();
 </script>
@@ -15,6 +18,9 @@ const dispatch = createEventDispatcher();
   <Select
     {items}
     bind:selectedValue
+    {optionIdentifier}
+    {getOptionLabel}
+    {getSelectionLabel}
     showIndicator
     listAutoWidth={isYear}
     isClearable={false}

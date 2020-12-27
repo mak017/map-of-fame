@@ -2,11 +2,16 @@
 import { changePasswordCheckToken } from "./api/auth.js";
 import L from "leaflet";
 import RailroadSvg from "./components/elements/RailroadSvg.svelte";
-import { initApp } from "./init.js";
+import { getSettings, initApp } from "./init.js";
 import SearchForm from "./components/SearchForm.svelte";
 import { setLocation } from "./utils/mapUtils/locationUtils.js";
 import Modal from "./components/Modal.svelte";
-import { isLoggedIn, openedMarkerData, selectedYear } from "./store.js";
+import {
+  isLoggedIn,
+  openedMarkerData,
+  selectedYear,
+  settings,
+} from "./store.js";
 import {
   openRailwayMap,
   openStreetMapMapnik,
@@ -28,6 +33,7 @@ import ResetPassword from "./components/auth/ResetPassword.svelte";
 import Profile from "./components/user/Profile.svelte";
 import { newMarkerIcon } from "./utils/mapUtils/icons";
 import Loader from "./components/elements/Loader.svelte";
+import { onDestroy } from "svelte";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isLighthouseActive = false;
@@ -43,6 +49,7 @@ let resetPasswordToken = getResetPasswordToken();
 
 let map;
 let newMarker;
+let settingsValue;
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
@@ -55,6 +62,12 @@ const clearOpenedMarkerData = () => {
   openedMarkerData.set(null);
   permalink.update({ clearParams: ["marker"] });
 };
+
+const unsubscribeSettings = settings.subscribe(
+  (value) => (settingsValue = value)
+);
+
+onDestroy(() => unsubscribeSettings());
 
 adjustVhProp();
 
@@ -73,9 +86,9 @@ if (resetPasswordToken) {
     }
   });
 } else {
-  setTimeout(() => {
+  getSettings().then(() => {
     isLoading = false;
-  }, 1000);
+  });
 }
 
 // Init leaflet map
@@ -220,13 +233,17 @@ const quitAddSpot = () => {
 
   {#if showCalendarModal}
     <Modal on:close={() => showCalendar(false)} title="Date" withAd>
-      <Calendar {selectedYear} {showCalendar} />
+      <Calendar
+        {selectedYear}
+        {showCalendar}
+        yearStart={settingsValue.yearStart}
+        yearEnd={settingsValue.yearEnd} />
     </Modal>
   {/if}
 
   {#if showSearchModal}
     <Modal on:close={() => showSearch(false)} title="Search" withAd>
-      <SearchForm {showSearch} />
+      <SearchForm {showSearch} yearStart={settingsValue.yearStart} />
     </Modal>
   {/if}
 

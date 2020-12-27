@@ -15,10 +15,12 @@ export let addSpot = false;
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
 const input = () => dispatch("input");
+const keyDown = (event) => dispatch("keyDown", event);
 </script>
 
 <label
   class:with-label={!!label}
+  class:with-hint={!!hint}
   class:error={!!errorText}
   class:wide-on-mobile={wideOnMobile}
   class:edit-spot={editSpot}
@@ -32,6 +34,7 @@ const input = () => dispatch("input");
     on:blur={blur}
     on:input={input}
     on:click={isReadOnly && this.select()}
+    on:keydown={keyDown}
     readonly={isReadOnly} />
   {#if errorText || hint}
     <div class="hint">{errorText || hint}</div>
@@ -90,9 +93,13 @@ input {
     border-color: var(--color-error);
   }
   .hint {
-    margin: 4px 0 -20px;
     opacity: 1;
     color: var(--color-error);
+  }
+  &:not(.with-hint) {
+    .hint {
+      margin: 4px 0 -20px;
+    }
   }
 }
 

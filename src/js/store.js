@@ -25,3 +25,5 @@ export const userSpots = writable(fakeUserSpots);
 export const countriesList = writable([]);
 
 export const settings = writable([]);
+
+export const firms = writable([]);

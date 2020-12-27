@@ -26,8 +26,6 @@ export const statusesOrdered = [
   STATUSES.unknown,
 ];
 
-export const MIN_YEAR = 1967;
-
 export const EMPTY_YEAR_STRING = "????";
 
 export const ENDPOINT_ORIGIN = process.env.SVELTE_APP_API_ENTRYPOINT;
@@ -48,7 +46,8 @@ export const ERROR_MESSAGES = {
   countryCityEmpty: "Please specify where you from",
   fileEmpty: "Please upload image",
   fileTooLarge: "File size must be less than 5 MB",
-  yearNotInRange: `Year is not in range of ${MIN_YEAR} - ${getCurrentYear()}`,
+  yearNotInRange: (yearStart) =>
+    `Year is not in range of ${yearStart} - ${getCurrentYear()}`,
   sprayEmpty: "Please select spray paint used",
   genericEmpty: "This is required field",
   videoLinkInvalid:

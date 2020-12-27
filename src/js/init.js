@@ -8,8 +8,8 @@ import {
 } from "./utils/commonUtils";
 import { transformSettings } from "./utils/transformers";
 
-export const getSettings = (token) =>
-  getSettingsRequest(token).then((response) => {
+export const getSettings = () =>
+  getSettingsRequest().then((response) => {
     console.log("getSettingsRequest response :>> ", response);
     if (response.status && response.data) {
       settings.set(transformSettings(response.data));
@@ -23,7 +23,6 @@ export const verifyAuth = (token) =>
       userData.set(response.data);
       isLoggedIn.set(true);
       saveToLocalStorage("token", response.data.token);
-      getSettings(response.data.token);
     } else {
       const error = response.error;
       if (Array.isArray(error) && error[0] === "Provided token is expired.") {

@@ -1,12 +1,14 @@
 <script>
+import { onDestroy } from "svelte";
 import { getCurrentYear, isMobile } from "../utils/commonUtils.js";
-import { getDatesFilterStub } from "../stubs/datesFilterStub.js";
 import { permalink } from "../utils/mapUtils/permalink.js";
 import { slide } from "svelte/transition";
-import { onDestroy } from "svelte";
+import { getDatesFilter } from "../utils/datesUtils.js";
 
 export let selectedYear;
 export let showCalendar;
+export let yearStart;
+export let yearEnd;
 
 let selectedYearValue;
 
@@ -16,9 +18,9 @@ const unsubscribeSelectedYear = selectedYear.subscribe(
 
 onDestroy(() => unsubscribeSelectedYear());
 
-const dates = !isMobile()
-  ? getDatesFilterStub()
-  : getDatesFilterStub().reverse();
+const datesFilter = getDatesFilter(yearStart, yearEnd);
+
+const dates = !isMobile() ? datesFilter : datesFilter.reverse();
 
 const handleClick = (year) => {
   selectedYear.set(year);
