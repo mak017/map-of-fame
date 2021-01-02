@@ -78,11 +78,14 @@ if (resetPasswordToken) {
     const { status, data } = response;
     console.log("response", response);
     if (status && data && data?.reset_password_token) {
+      getSettings();
       isLoading = false;
       showResetPassword(true);
       resetPasswordToken = data.reset_password_token;
     } else {
-      isLoading = false;
+      getSettings().then(() => {
+        isLoading = false;
+      });
     }
   });
 } else {

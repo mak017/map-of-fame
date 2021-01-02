@@ -11,7 +11,7 @@ import {
   USER_TYPES,
 } from "../constants";
 import { markerWithPhoto } from "../utils/mapUtils/icons";
-import { firms, selectedYear, settings, userData } from "../store";
+import { categories, firms, selectedYear, settings, userData } from "../store";
 import {
   getCurrentYear,
   isYearLike,
@@ -24,7 +24,7 @@ import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
 import { validateYear } from "../utils/datesUtils";
-import { getFirmsRequest } from "../api/settings";
+import { getCategories, getFirmsRequest } from "../api/settings";
 
 export let onCancel;
 export let onSubmit = () => {};
@@ -49,6 +49,7 @@ let isSubmitDisabled = false;
 let userTypeValue;
 let settingsValue;
 let sprayFirms;
+let categoriesList;
 let errors = { year: "", imageFile: "", linkToVideo: "", sprayPaintUsed: "" };
 const currentYear = getCurrentYear();
 const token = loadFromLocalStorage("token") || null;
@@ -59,14 +60,31 @@ const unsubscribeSettings = settings.subscribe(
   (value) => (settingsValue = value)
 );
 const unsubscribeFirms = firms.subscribe((value) => (sprayFirms = value));
+const unsubscribeCategories = categories.subscribe(
+  (value) => (categoriesList = value)
+);
 
 onDestroy(() => {
   unsubscribeUserData();
   unsubscribeSettings();
   unsubscribeFirms();
+  unsubscribeCategories();
 });
 
+const hasCategories = () =>
+  Array.isArray(categoriesList) && categoriesList.length;
+
 const hasSprays = () => Array.isArray(sprayFirms) && sprayFirms.length;
+
+if (!hasCategories()) {
+  getCategories(token).then((response) => {
+    const { status, data } = response;
+    console.log("categories", response);
+    if (status && data) {
+      categories.set(data);
+    }
+  });
+}
 
 if (userTypeValue === USER_TYPES.artist.toLowerCase() && !hasSprays()) {
   getFirmsRequest(token).then((response) => {
@@ -294,12 +312,12 @@ const getSelectionLabel = (option) => {
       isResizable={isEditSpot} />
   </div>
   <div class="category">
-    {#each categoriesOrdered as category}
+    {#each categoriesList as category}
       <FormRadioButton
-        id={`category-${category.toLowerCase()}`}
+        id={category.id}
         bind:group={selectedCategory}
-        value={category}
-        label={category} />
+        value={category.name}
+        label={category.name} />
     {/each}
   </div>
   {#if userTypeValue === USER_TYPES.artist.toLowerCase() && !isEditSpot}
@@ -340,6 +358,7 @@ const getSelectionLabel = (option) => {
 .status,
 .category {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .upload-image {

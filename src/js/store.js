@@ -27,3 +27,5 @@ export const countriesList = writable([]);
 export const settings = writable([]);
 
 export const firms = writable([]);
+
+export const categories = writable([]);

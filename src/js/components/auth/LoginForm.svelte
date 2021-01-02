@@ -43,7 +43,6 @@ const handleSubmit = () => {
           userData.set(response.data);
           isLoggedIn.set(true);
           saveToLocalStorage("token", token);
-          getSettings(token);
           showAuth(false);
         } else {
           if (response.error?.email) {

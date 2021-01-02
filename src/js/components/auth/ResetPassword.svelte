@@ -2,7 +2,8 @@
 import { fade } from "svelte/transition";
 import { changePasswordReset } from "../../api/auth";
 import { ERROR_MESSAGES } from "../../constants";
-import { validatePassword } from "../../utils/commonUtils";
+import { isLoggedIn, userData } from "../../store";
+import { saveToLocalStorage, validatePassword } from "../../utils/commonUtils";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormPasswordInput from "./../elements/FormPasswordInput.svelte";
 
@@ -32,8 +33,13 @@ const handleSubmit = () => {
       console.log("response", response);
       const { status, data } = response;
       if (status && data) {
+        const { token } = data;
+        userData.set(data);
+        isLoggedIn.set(true);
+        saveToLocalStorage("token", token);
         showResetPassword(false);
       } else {
+        errorMessage = "Something went wrong";
       }
     });
   }
