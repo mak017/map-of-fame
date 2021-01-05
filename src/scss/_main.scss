@@ -117,4 +117,13 @@ input {
       background-color: var(--color-accent);
     }
   }
+  &.typed-text:not(.not-empty) {
+    .selectContainer:not(.focused) {
+      + .floating-label {
+        opacity: 1;
+        transform: translateY(0);
+        font-size: 16px;
+      }
+    }
+  }
 }

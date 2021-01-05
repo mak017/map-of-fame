@@ -19,6 +19,9 @@ const keyDown = (event) => dispatch("keyDown", event);
     on:blur={blur}
     on:input={input}
     on:keydown={keyDown} />
+  {#if placeholder}
+    <div class="floating-label">{placeholder}</div>
+  {/if}
   {#if errorText}
     <div class="error-text">{errorText}</div>
   {/if}
@@ -27,6 +30,7 @@ const keyDown = (event) => dispatch("keyDown", event);
 <style lang="scss">
 label {
   display: block;
+  position: relative;
   margin-bottom: 20px;
 }
 input {
@@ -41,6 +45,7 @@ input {
   line-height: 20px;
   &::placeholder {
     padding-left: 2px;
+    opacity: 0;
     color: var(--color-dark);
     font-weight: normal;
   }
@@ -48,6 +53,30 @@ input {
     border-bottom-color: var(--color-accent);
     outline: 0;
   }
+  &:placeholder-shown + .floating-label {
+    overflow: hidden;
+    background: transparent;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: text;
+  }
+  &:not(:placeholder-shown) + .floating-label {
+    transform: translateY(-13px);
+    background: var(--color-light);
+    color: rgba(#393940, 0.6);
+    font-size: 13px;
+  }
+}
+.floating-label {
+  position: absolute;
+  top: 3px;
+  left: -3px;
+  padding: 0px 3px;
+  border-radius: 2px;
+  transition: 0.3s;
+  color: var(--color-dark);
+  line-height: 1.25;
 }
 .error-text {
   margin: 4px 0 -20px;

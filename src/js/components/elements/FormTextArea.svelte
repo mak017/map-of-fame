@@ -18,6 +18,9 @@ const blur = () => dispatch("blur");
     style="height: {height}px"
     on:blur={blur}
     class:resizable={isResizable} />
+  {#if placeholder}
+    <div class="floating-label">{placeholder}</div>
+  {/if}
   {#if errorText}
     <div class="error-text">{errorText}</div>
   {/if}
@@ -25,6 +28,7 @@ const blur = () => dispatch("blur");
 
 <style lang="scss">
 .container {
+  position: relative;
   margin-bottom: 18px;
 }
 textarea {
@@ -41,10 +45,36 @@ textarea {
     outline: none;
   }
   &::placeholder {
+    opacity: 0;
     color: var(--color-dark);
     font-size: 17px;
     font-weight: normal;
   }
+  &:placeholder-shown + .floating-label {
+    overflow: hidden;
+    background: transparent;
+    font-size: 17px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: text;
+  }
+  &:not(:placeholder-shown) + .floating-label {
+    transform: translateY(-20px);
+    background: var(--color-light);
+    color: rgba(#393940, 0.6);
+    font-size: 13px;
+  }
+}
+.floating-label {
+  position: absolute;
+  top: 13px;
+  left: 8px;
+  padding: 0px 3px;
+  border-radius: 2px;
+  transition: 0.3s;
+  color: var(--color-dark);
+  line-height: 1.25;
+  pointer-events: none;
 }
 .error {
   textarea {

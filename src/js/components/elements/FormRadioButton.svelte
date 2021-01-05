@@ -15,7 +15,6 @@ export let className = "";
 .radio {
   display: flex;
   flex: 1 0 0;
-  max-width: 33.3%;
   border: 1px solid var(--color-dark);
   &:nth-child(3n + 1) {
     border-right: 0;

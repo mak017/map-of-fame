@@ -101,7 +101,7 @@ const getOptionLabel = (option) => option.name;
     optionIdentifier={'name'}
     {getOptionLabel}
     placeholder="Artist or Crew"
-    hint="Empty to show all" />
+    hint="Leave empty to show all artists and crews" />
   <div class="filter">
     {#each categoriesOrdered as category}
       <div class="checkbox">
