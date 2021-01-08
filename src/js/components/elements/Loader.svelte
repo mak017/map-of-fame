@@ -141,11 +141,15 @@ $loader-color: invert(#444b54);
 }
 
 .loader {
-  align-items: center;
-  background-color: invert($loader-color);
   display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  align-items: center;
+  justify-content: center;
   flex-flow: column nowrap;
   height: 100vh;
-  justify-content: center;
+  background-color: invert($loader-color);
 }
 </style>

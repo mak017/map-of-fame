@@ -45,6 +45,7 @@ let showUserProfileModal = false;
 let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 let isLoading = true;
+let isRailwayMapLoading = true;
 let resetPasswordToken = getResetPasswordToken();
 
 let map;
@@ -106,6 +107,8 @@ const initMap = (container) => {
 
   setLocation(map);
 
+  openRailwayMap.on("load", () => (isRailwayMapLoading = false));
+
   return {
     destroy: () => {
       map.remove();
@@ -116,6 +119,7 @@ const initMap = (container) => {
 
 const handleChangeModeClick = () => {
   if (!isRailwayMode) {
+    isRailwayMapLoading = true;
     map.addLayer(openRailwayMap);
     isRailwayMode = true;
   } else {
@@ -264,6 +268,9 @@ const quitAddSpot = () => {
     <Modal noLogo on:close={() => showUserProfile(false)}>
       <Profile {onAddSpotBtnClick} {showUserProfile} />
     </Modal>
+  {/if}
+  {#if isRailwayMapLoading}
+    <Loader />
   {/if}
 {/if}
 
