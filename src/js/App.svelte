@@ -45,6 +45,7 @@ let showUserProfileModal = false;
 let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 let isLoading = true;
+let isOpenStreetMapLoading = true;
 let isRailwayMapLoading = true;
 let resetPasswordToken = getResetPasswordToken();
 
@@ -107,6 +108,7 @@ const initMap = (container) => {
 
   setLocation(map);
 
+  openStreetMapMapnik.on("load", () => (isOpenStreetMapLoading = false));
   openRailwayMap.on("load", () => (isRailwayMapLoading = false));
 
   return {
@@ -269,7 +271,7 @@ const quitAddSpot = () => {
       <Profile {onAddSpotBtnClick} {showUserProfile} />
     </Modal>
   {/if}
-  {#if isRailwayMapLoading}
+  {#if isOpenStreetMapLoading || isRailwayMapLoading}
     <Loader />
   {/if}
 {/if}
