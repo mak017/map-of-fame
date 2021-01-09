@@ -169,6 +169,7 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
 
 @media (max-width: 767px) {
   .card {
+    margin-bottom: 0;
     padding-top: 38px;
   }
   .bottom {

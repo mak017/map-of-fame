@@ -1,6 +1,7 @@
 <script>
-import { changePasswordCheckToken } from "./api/auth.js";
 import L from "leaflet";
+import SpinnerSvg from "./components/elements/SpinnerSvg.svelte";
+import { changePasswordCheckToken } from "./api/auth.js";
 import RailroadSvg from "./components/elements/RailroadSvg.svelte";
 import { getSettings, initApp } from "./init.js";
 import SearchForm from "./components/SearchForm.svelte";
@@ -68,6 +69,8 @@ const clearOpenedMarkerData = () => {
 const unsubscribeSettings = settings.subscribe(
   (value) => (settingsValue = value)
 );
+
+document.getElementById("initial-loader").remove();
 
 onDestroy(() => unsubscribeSettings());
 
@@ -184,11 +187,11 @@ const quitAddSpot = () => {
         on:click={() => showCalendar(true)}
         transition:fade>{$selectedYear}</button>
     {/if}
-    {#if +$selectedYear === getCurrentYear() && !isAddSpotMode}
+    {#if !isAddSpotMode}
       <button
         class="button button-square button-lighthouse"
         class:active={isLighthouseActive}
-        disabled={!$isLoggedIn}
+        disabled={!$isLoggedIn || +$selectedYear !== getCurrentYear()}
         transition:fade>
         <svg
           width="9"
@@ -224,10 +227,15 @@ const quitAddSpot = () => {
 
   <button
     class="button button-main_screen button-square button-switch_mode"
-    class:active={isRailwayMode}
+    class:active={!isRailwayMapLoading && isRailwayMode}
+    class:is-loading={isRailwayMapLoading}
     on:click={handleChangeModeClick}
     title="Highlight railways">
-    <RailroadSvg isLight={isRailwayMode} />
+    {#if !isRailwayMapLoading}
+      <RailroadSvg isLight={isRailwayMode} />
+    {:else}
+      <SpinnerSvg />
+    {/if}
   </button>
 
   {#if $isLoggedIn}
@@ -241,7 +249,7 @@ const quitAddSpot = () => {
   {/if}
 
   {#if showCalendarModal}
-    <Modal on:close={() => showCalendar(false)} title="Date" withAd>
+    <Modal on:close={() => showCalendar(false)} title="Date" withAd autoMargin>
       <Calendar
         {selectedYear}
         {showCalendar}
@@ -271,9 +279,6 @@ const quitAddSpot = () => {
       <Profile {onAddSpotBtnClick} {showUserProfile} />
     </Modal>
   {/if}
-  {#if isOpenStreetMapLoading || isRailwayMapLoading}
-    <Loader />
-  {/if}
 {/if}
 
 <style lang="scss">
@@ -298,6 +303,7 @@ const quitAddSpot = () => {
     min-width: 114px;
     height: 40px;
     padding: 0 36px;
+    user-select: none;
 
     &::before {
       content: "";
@@ -403,6 +409,9 @@ const quitAddSpot = () => {
 
     &.active {
       background-color: var(--color-accent);
+    }
+    &.is-loading {
+      pointer-events: none;
     }
   }
 

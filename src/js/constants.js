@@ -6,6 +6,8 @@ export const DEFAULT_VIEW = { coordinates: [49.58223, 19.2041], zoom: 5 };
 
 export const DEFAULT_ZOOM = 13;
 
+export const MIN_ZOOM = 2;
+
 export const MAX_ZOOM = 19;
 
 export const CATEGORIES = { walls: "Walls", trains: "Trains", other: "Other" };
@@ -50,6 +52,5 @@ export const ERROR_MESSAGES = {
     `Year is not in range of ${yearStart} - ${getCurrentYear()}`,
   sprayEmpty: "Please select spray paint used",
   genericEmpty: "This is required field",
-  videoLinkInvalid:
-    "Please add correct link to video. Currently we support links to videos only from Youtube, Vimeo and Dailymotion",
+  videoLinkInvalid: "Youtube, Vimeo or Dailymotion links only",
 };

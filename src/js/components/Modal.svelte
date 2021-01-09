@@ -9,6 +9,7 @@ export let noLogo = false;
 export let noTransition = false;
 export let accentTitle = false;
 export let noClose = false;
+export let autoMargin = false;
 
 const dispatch = createEventDispatcher();
 const close = () => dispatch("close");
@@ -32,6 +33,7 @@ const handleResize = () => {
   class="modal"
   class:withAd
   class:accentTitle
+  class:autoMargin
   role="dialog"
   aria-modal="true"
   transition:fade={{ duration: !noTransition ? 400 : 0 }}
@@ -43,8 +45,8 @@ const handleResize = () => {
     <h2 transition:fade>{title}</h2>
   {/if}
   <slot />
-  {#if withAd && !isMobileWidth}
-    <div style="width: 938px">
+  {#if withAd}
+    <div style={!isMobileWidth ? 'width: 938px' : 'width: 100%'}>
       <img
         src="images/stubs/stubad.jpg"
         alt=""
@@ -97,7 +99,7 @@ const handleResize = () => {
 }
 
 h2 {
-  margin: auto 0 6vh;
+  margin: 20vh 0 6vh;
   color: var(--color-dark);
   font-weight: 900;
   font-size: 24px;
@@ -106,7 +108,7 @@ h2 {
   text-transform: uppercase;
 }
 
-div {
+div > div {
   height: 150px;
   min-height: 150px;
   max-width: 100%;
@@ -117,6 +119,12 @@ div {
 .accentTitle {
   h2 {
     color: var(--color-accent);
+  }
+}
+
+.autoMargin {
+  h2 {
+    margin-top: auto;
   }
 }
 
@@ -132,6 +140,11 @@ div {
   }
   h2 {
     margin-top: 64px;
+  }
+  div > div {
+    height: 106px;
+    min-height: 106px;
+    margin-top: 56px;
   }
 }
 </style>

@@ -22,7 +22,7 @@ export let onSubmit;
   </div>
 {/if}
 {#if !isAddSpotSidebarVisible && isAddSpotMode}
-  <div class="drag-to-map" transition:fade>Drag to Map</div>
+  <div class="drag-to-map" transition:fade>Drag pin to map</div>
 {/if}
 {#if isAddSpotSidebarVisible}
   <AddSpotSidebar {onCancel} {onSubmit} marker={newMarker} />

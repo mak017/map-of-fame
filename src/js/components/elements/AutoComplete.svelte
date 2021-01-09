@@ -10,17 +10,11 @@ export let getOptionLabel;
 export let placeholder;
 export let hint = undefined;
 
-let isNotEmpty = false;
 let typedText = "";
 
 const dispatch = createEventDispatcher();
 
-const onSelect = (selected) => {
-  isNotEmpty = true;
-  dispatch("select", selected);
-};
-
-const onClear = () => (isNotEmpty = false);
+const onSelect = (selected) => dispatch("select", selected);
 
 const onType = (label, filterText) => {
   typedText = filterText;
@@ -30,7 +24,7 @@ const onType = (label, filterText) => {
 
 <div
   class="autocomplete"
-  class:not-empty={isNotEmpty}
+  class:not-empty={selectedValue}
   class:typed-text={typedText}>
   <Select
     {items}
@@ -41,7 +35,6 @@ const onType = (label, filterText) => {
     placeholder=""
     Item={AutoCompleteItem}
     on:select={onSelect}
-    on:clear={onClear}
     itemFilter={onType} />
   {#if placeholder}
     <div class="floating-label">{placeholder}</div>

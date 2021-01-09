@@ -25,6 +25,10 @@ input {
   }
 }
 
+textarea {
+  appearance: none;
+}
+
 .button {
   padding: 0;
   border: 0;
@@ -103,11 +107,12 @@ input {
     border-left: 0 !important;
     > div:last-of-type:not(.selectedItem):not(.clearSelect) {
       top: 41px !important;
+      height: 252px;
       border: 1px solid var(--color-accent);
     }
   }
   .listContainer {
-    padding: 16px 0;
+    padding: 4px 0;
     border-right: 8px solid transparent;
     &::-webkit-scrollbar {
       width: 4px;

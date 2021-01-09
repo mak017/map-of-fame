@@ -17,8 +17,9 @@ export const isHover = undefined;
 <style lang="scss">
 .item {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 7px 16px;
+  padding: 7px 20px;
   &:hover {
     .name {
       opacity: 0.5;

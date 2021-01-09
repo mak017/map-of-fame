@@ -3,7 +3,6 @@ import { onDestroy } from "svelte";
 import watermark from "watermarkjs";
 import {
   CATEGORIES,
-  categoriesOrdered,
   EMPTY_YEAR_STRING,
   ERROR_MESSAGES,
   STATUSES,
@@ -302,8 +301,7 @@ const getSelectionLabel = (option) => {
     errorText={errors.linkToVideo}
     on:blur={handleVideoLinkBlur}
     wideOnMobile
-    editSpot={isEditSpot}
-    addSpot={!isEditSpot} />
+    editSpot={isEditSpot} />
   <div class="description">
     <FormTextArea
       placeholder="Description"
@@ -432,6 +430,7 @@ const getSelectionLabel = (option) => {
 
 .error {
   color: var(--color-error);
+  font-size: 13px;
 }
 
 .category {
@@ -442,7 +441,7 @@ const getSelectionLabel = (option) => {
   position: relative;
   margin-bottom: 15px;
   &.with-error {
-    margin: -4px;
+    margin: -4px 0;
   }
 }
 .button_wrap {

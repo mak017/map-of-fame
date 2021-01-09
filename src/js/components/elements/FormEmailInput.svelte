@@ -33,6 +33,7 @@ label {
   display: block;
   position: relative;
   margin-bottom: 20px;
+  padding-top: 8px;
 }
 input {
   width: 530px;
@@ -71,7 +72,7 @@ input {
 }
 .floating-label {
   position: absolute;
-  top: 3px;
+  top: 13px;
   left: -3px;
   padding: 0px 3px;
   border-radius: 2px;
