@@ -46,8 +46,7 @@ let showUserProfileModal = false;
 let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 let isLoading = true;
-let isOpenStreetMapLoading = true;
-let isRailwayMapLoading = true;
+// let isRailwayMapLoading = true;
 let resetPasswordToken = getResetPasswordToken();
 
 let map;
@@ -111,8 +110,7 @@ const initMap = (container) => {
 
   setLocation(map);
 
-  openStreetMapMapnik.on("load", () => (isOpenStreetMapLoading = false));
-  openRailwayMap.on("load", () => (isRailwayMapLoading = false));
+  // openRailwayMap.on("load", () => (isRailwayMapLoading = false));
 
   return {
     destroy: () => {
@@ -124,7 +122,7 @@ const initMap = (container) => {
 
 const handleChangeModeClick = () => {
   if (!isRailwayMode) {
-    isRailwayMapLoading = true;
+    // isRailwayMapLoading = true;
     map.addLayer(openRailwayMap);
     isRailwayMode = true;
   } else {
@@ -227,15 +225,14 @@ const quitAddSpot = () => {
 
   <button
     class="button button-main_screen button-square button-switch_mode"
-    class:active={!isRailwayMapLoading && isRailwayMode}
-    class:is-loading={isRailwayMapLoading}
+    class:active={isRailwayMode}
     on:click={handleChangeModeClick}
     title="Highlight railways">
-    {#if !isRailwayMapLoading}
-      <RailroadSvg isLight={isRailwayMode} />
-    {:else}
+    <!-- {#if !isRailwayMapLoading} -->
+    <RailroadSvg isLight={isRailwayMode} />
+    <!-- {:else}
       <SpinnerSvg />
-    {/if}
+    {/if} -->
   </button>
 
   {#if $isLoggedIn}
@@ -410,9 +407,9 @@ const quitAddSpot = () => {
     &.active {
       background-color: var(--color-accent);
     }
-    &.is-loading {
-      pointer-events: none;
-    }
+    // &.is-loading {
+    //   pointer-events: none;
+    // }
   }
 
   &-burger {
