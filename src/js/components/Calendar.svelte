@@ -81,8 +81,5 @@ li {
   .years-list {
     columns: 3;
   }
-  .year {
-    padding: 6px 2px;
-  }
 }
 </style>

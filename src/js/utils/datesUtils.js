@@ -1,13 +1,7 @@
 import { EMPTY_YEAR_STRING } from "../constants";
 import { getCurrentYear } from "./commonUtils";
 
-const staticYearsArray = [
-  EMPTY_YEAR_STRING,
-  "13 000 B C",
-  "1904",
-  "1945",
-  "1950",
-];
+const staticYearsArray = [EMPTY_YEAR_STRING, "1300 BC", "1904", "1945", "1950"];
 
 export const getDatesFilter = (yearStart, yearEnd) => {
   const years = [...staticYearsArray];
