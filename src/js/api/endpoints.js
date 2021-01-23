@@ -29,3 +29,6 @@ export const categoryId = (id) => `${ENDPOINT_ORIGIN}/api/category/${id}`;
 export const country = () => `${ENDPOINT_ORIGIN}/api/country`;
 
 export const getSettings = () => `${ENDPOINT_ORIGIN}/api/settings`;
+
+export const searchArtistsCrews = (query) =>
+  `${ENDPOINT_ORIGIN}/api/user/search/?name=${query}`;

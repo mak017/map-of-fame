@@ -1,5 +1,5 @@
 <script>
-import { fakeArtistsCrews } from "./../stubs/fakeArtistsCrews.js";
+import { requestSearchArtistsCrews } from "./../api/search.js";
 import { categoriesOrdered, ERROR_MESSAGES } from "../constants";
 import { permalink } from "../utils/mapUtils/permalink";
 import {
@@ -24,6 +24,7 @@ let isHuntersChecked = true;
 let yearErrorMessage = "";
 let isSubmitDisabled = false;
 let prevYearValue = "";
+let enteredSearchValue = "";
 const currentYear = getCurrentYear();
 
 const validateYearInput = () => {
@@ -83,6 +84,23 @@ const handleKeyDown = (event) => {
 };
 
 const getOptionLabel = (option) => option.name;
+
+const fetchArtistsCrews = (filterText) => {
+  const text = filterText ? filterText.replace(" ", "_") : "";
+  enteredSearchValue = filterText;
+  if (text.length > 2) {
+    return requestSearchArtistsCrews(filterText).then((response) => {
+      const { status, data } = response;
+      if (status && data) {
+        return data;
+      }
+    });
+  } else {
+    return new Promise((_, reject) => {
+      reject();
+    });
+  }
+};
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
@@ -97,9 +115,10 @@ const getOptionLabel = (option) => option.name;
     isYear />
   <AutoComplete
     bind:selectedValue={artist}
-    items={fakeArtistsCrews}
-    optionIdentifier={'name'}
+    optionIdentifier={"name"}
     {getOptionLabel}
+    loadOptions={fetchArtistsCrews}
+    filterValue={enteredSearchValue}
     placeholder="Artist or Crew"
     hint="Leave empty to show all artists and crews" />
   <div class="filter">

@@ -9,6 +9,8 @@ export let optionIdentifier;
 export let getOptionLabel;
 export let placeholder;
 export let hint = undefined;
+export let loadOptions = undefined;
+export let filterValue = "";
 
 let typedText = "";
 
@@ -25,12 +27,13 @@ const onType = (label, filterText) => {
 <div
   class="autocomplete"
   class:not-empty={selectedValue}
-  class:typed-text={typedText}>
+  class:typed-text={typedText || filterValue}>
   <Select
     {items}
     bind:selectedValue
     {optionIdentifier}
     {getOptionLabel}
+    {loadOptions}
     getSelectionLabel={getOptionLabel}
     placeholder=""
     Item={AutoCompleteItem}
@@ -61,6 +64,7 @@ const onType = (label, filterText) => {
   --listBorderRadius: 0;
   --listShadow: 0;
   --placeholderColor: var(--color-dark);
+  --spinnerColor: var(--color-accent);
   position: relative;
   margin-bottom: 20px;
 }

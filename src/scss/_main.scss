@@ -105,15 +105,14 @@ textarea {
     border-top: 0 !important;
     border-right: 0 !important;
     border-left: 0 !important;
-    > div:last-of-type:not(.selectedItem):not(.clearSelect) {
+    > div:not([class]) {
       top: 41px !important;
-      height: 252px;
-      border: 1px solid var(--color-accent);
     }
   }
   .listContainer {
     padding: 4px 0;
     border-right: 8px solid transparent;
+    outline: 1px solid var(--color-accent);
     &::-webkit-scrollbar {
       width: 4px;
     }
