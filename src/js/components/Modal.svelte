@@ -46,7 +46,7 @@ const handleResize = () => {
   {/if}
   <slot />
   {#if withAd}
-    <div style={!isMobileWidth ? 'width: 938px' : 'width: 100%'}>
+    <div style={!isMobileWidth ? "width: 938px" : "width: 100%"}>
       <img
         src="images/stubs/stubad.jpg"
         alt=""
@@ -145,6 +145,11 @@ div > div {
     height: 106px;
     min-height: 106px;
     margin-top: 56px;
+  }
+  .autoMargin {
+    h2 {
+      margin-top: 64px;
+    }
   }
 }
 </style>

@@ -246,7 +246,7 @@ const quitAddSpot = () => {
   {/if}
 
   {#if showCalendarModal}
-    <Modal on:close={() => showCalendar(false)} title="Date" withAd autoMargin>
+    <Modal on:close={() => showCalendar(false)} title="Years" withAd autoMargin>
       <Calendar
         {selectedYear}
         {showCalendar}
