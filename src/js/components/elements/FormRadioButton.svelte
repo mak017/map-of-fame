@@ -6,7 +6,7 @@ export let label;
 export let className = "";
 </script>
 
-<div class={`radio${className ? ` ${className}` : ''}`}>
+<div class={`radio${className ? ` ${className}` : ""}`}>
   <input type="radio" {id} bind:group {value} />
   <label for={id}>{label}</label>
 </div>
@@ -68,6 +68,16 @@ export let className = "";
     input:checked + label {
       background-color: var(--color-accent);
       color: var(--color-light);
+    }
+  }
+}
+
+@media (orientation: landscape) and (max-height: 850px) {
+  .radio {
+    &.addSpot {
+      label {
+        padding: 9px 4px;
+      }
     }
   }
 }

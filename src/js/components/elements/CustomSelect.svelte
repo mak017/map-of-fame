@@ -10,11 +10,12 @@ export let placeholder = "Select...";
 export let optionIdentifier;
 export let getOptionLabel;
 export let getSelectionLabel;
+export let addSpot = false;
 
 const dispatch = createEventDispatcher();
 </script>
 
-<div class={`select${isYear ? ' year' : ''}`}>
+<div class={`select${isYear ? " year" : ""}`} class:add-spot={addSpot}>
   <Select
     {items}
     bind:selectedValue
@@ -27,7 +28,7 @@ const dispatch = createEventDispatcher();
     isSearchable={false}
     indicatorSvg={`<svg width="8" height="5"viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 5L4.37114e-07 -2.22545e-07L8 4.76837e-07L4 5Z" fill="#393940" /></svg>`}
     Icon={isYear ? SelectIconCalendar : false}
-    on:select={(selected) => dispatch('select', selected)}
+    on:select={(selected) => dispatch("select", selected)}
     {placeholder} />
 </div>
 
@@ -54,6 +55,15 @@ const dispatch = createEventDispatcher();
     --listMaxHeight: 468px;
     --padding: 0 16px 0 13px;
     --selectedItemPadding: 0 20px 0 8px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 850px) {
+  .select {
+    &.add-spot {
+      --height: 36px;
+      --indicatorTop: 3px;
+    }
   }
 }
 </style>

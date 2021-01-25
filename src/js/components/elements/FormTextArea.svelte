@@ -6,12 +6,20 @@ export let value;
 export let height = 84;
 export let errorText = "";
 export let isResizable = false;
+export let addSpot = false;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
+if (
+  window.innerHeight < 850 &&
+  window.innerWidth > window.innerHeight &&
+  addSpot
+) {
+  height *= 0.87;
+}
 </script>
 
-<div class="container" class:error={!!errorText}>
+<div class="container" class:error={!!errorText} class:add-spot={addSpot}>
   <textarea
     {placeholder}
     bind:value
@@ -89,5 +97,11 @@ textarea {
 }
 .resizable {
   resize: both;
+}
+
+@media (orientation: landscape) and (max-height: 850px) {
+  .container {
+    margin-bottom: 16px;
+  }
 }
 </style>

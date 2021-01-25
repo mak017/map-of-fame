@@ -11,6 +11,7 @@ export let wideOnMobile = false;
 export let editSpot = false;
 export let isYear = false;
 export let addSpot = false;
+export let linkToVideo = false;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
@@ -25,7 +26,8 @@ const keyDown = (event) => dispatch("keyDown", event);
   class:wide-on-mobile={wideOnMobile}
   class:edit-spot={editSpot}
   class:add-spot={addSpot}
-  class:year={isYear}>
+  class:year={isYear}
+  class:link-to-video={linkToVideo}>
   {#if label}<span>{label}</span>{/if}
   <input
     type="text"
@@ -133,13 +135,15 @@ label:not(.with-label) {
   }
   &:not(.with-hint) {
     .hint {
-      margin: 4px 0 -20px;
+      margin: -1px 0 -15px;
     }
   }
 }
 
 .add-spot {
-  margin-bottom: 15px;
+  &.with-hint {
+    margin-bottom: 15px;
+  }
 }
 
 .edit-spot {
@@ -163,6 +167,31 @@ label:not(.with-label) {
   .wide-on-mobile {
     input {
       max-width: none;
+    }
+  }
+}
+
+@media (orientation: landscape) and (max-height: 850px) {
+  .add-spot {
+    margin-bottom: 13px;
+    input {
+      padding: 5px 0;
+      line-height: 17px;
+    }
+    .hint {
+      font-size: 11px;
+      line-height: 14px;
+    }
+    &.with-label {
+      input {
+        padding: 8px 10px;
+      }
+    }
+    &.error:not(.with-hint) .hint {
+      margin: 0 0 -14px;
+    }
+    &.link-to-video {
+      margin-bottom: 19px;
     }
   }
 }

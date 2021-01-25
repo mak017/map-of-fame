@@ -274,7 +274,8 @@ const getSelectionLabel = (option) => {
         id={`status-${status.toLowerCase()}`}
         bind:group={selectedStatus}
         value={status}
-        label={status} />
+        label={status}
+        className={!isEditSpot ? "addSpot" : ""} />
     {/each}
   </div>
   <div class="upload-image">
@@ -301,13 +302,16 @@ const getSelectionLabel = (option) => {
     errorText={errors.linkToVideo}
     on:blur={handleVideoLinkBlur}
     wideOnMobile
-    editSpot={isEditSpot} />
+    editSpot={isEditSpot}
+    addSpot={!isEditSpot}
+    linkToVideo />
   <div class="description">
     <FormTextArea
       placeholder="Description"
       bind:value={description}
       height={84}
-      isResizable={isEditSpot} />
+      isResizable={isEditSpot}
+      addSpot={!isEditSpot} />
   </div>
   <div class="category">
     {#each categoriesList as category}
@@ -315,7 +319,8 @@ const getSelectionLabel = (option) => {
         id={category.id}
         bind:group={selectedCategory}
         value={category.name}
-        label={category.name} />
+        label={category.name}
+        className={!isEditSpot ? "addSpot" : ""} />
     {/each}
   </div>
   {#if userTypeValue === USER_TYPES.artist.toLowerCase() && !isEditSpot}
@@ -326,6 +331,7 @@ const getSelectionLabel = (option) => {
         on:select={handleSpraySelectBlur}
         placeholder="Spray Paint Used"
         optionIdentifier="name"
+        addSpot={!isEditSpot}
         {getOptionLabel}
         {getSelectionLabel} />
       {#if errors.sprayPaintUsed}
@@ -346,7 +352,8 @@ const getSelectionLabel = (option) => {
       <ButtonPrimary
         text="Post Spot"
         type="submit"
-        isDisabled={isSubmitDisabled} />
+        isDisabled={isSubmitDisabled}
+        className={!isEditSpot ? "addSpot" : ""} />
     </div>
     <button type="button" class="cancel" on:click={onCancel}>Cancel</button>
   {/if}
@@ -441,7 +448,12 @@ const getSelectionLabel = (option) => {
   position: relative;
   margin-bottom: 15px;
   &.with-error {
-    margin: -4px 0;
+    margin: 0;
+  }
+  .error {
+    display: block;
+    line-height: 1.1;
+    margin-top: 1px;
   }
 }
 .button_wrap {
@@ -511,6 +523,26 @@ const getSelectionLabel = (option) => {
     }
     .upload-image {
       height: 140px;
+    }
+  }
+}
+
+@media (orientation: landscape) and (max-height: 850px) {
+  form {
+    &:not(.edit) {
+      .upload-image {
+        height: 108px;
+        margin: 12px 0;
+      }
+      .category {
+        margin-bottom: 12px;
+      }
+      .button_wrap {
+        margin-bottom: 10px;
+      }
+      .cancel {
+        padding: 10px 0;
+      }
     }
   }
 }

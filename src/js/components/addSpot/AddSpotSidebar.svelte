@@ -53,4 +53,10 @@ h2 {
     cursor: pointer;
   }
 }
+
+@media (orientation: landscape) and (max-height: 850px) {
+  .add-spot {
+    padding-top: 16px;
+  }
+}
 </style>

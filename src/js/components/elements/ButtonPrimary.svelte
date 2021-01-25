@@ -12,10 +12,11 @@ const dispatch = createEventDispatcher();
 
 <button
   {type}
-  class={`button${className ? ` ${className}` : ''}`}
+  class={`button${className ? ` ${className}` : ""}`}
   disabled={isDisabled}
-  on:click={() => dispatch('click')}
-  in:fade>{text}</button>
+  on:click={() => dispatch("click")}
+  in:fade>{text}</button
+>
 
 <style lang="scss">
 button {
@@ -41,6 +42,12 @@ button {
     width: 100%;
     max-width: 350px;
     margin: 0 auto;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 850px) {
+  .addSpot {
+    padding: 10px 19px;
   }
 }
 </style>
