@@ -42,8 +42,7 @@ export const ERROR_MESSAGES = {
   emailEmpty: "Please enter your email",
   emailInvalid: "You have entered invalid email",
   passwordEmpty: "Please enter password",
-  passwordInvalid:
-    "Password must be between 8 to 20 characters and contain at least 1 numeric digit, 1 uppercase and 1 lowercase letter",
+  passwordInvalid: "Password must be between 8 to 20 characters",
   usernameEmpty: "Please fill in your name",
   countryCityEmpty: "Please specify where you from",
   fileEmpty: "Please upload image",

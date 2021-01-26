@@ -14,8 +14,7 @@ export const validateEmail = (email) =>
     email
   );
 
-export const validatePassword = (password) =>
-  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/.test(password);
+export const validatePassword = (password) => /^(?=.*).{8,20}$/.test(password);
 
 export const validateVideoLink = (link) =>
   regexYoutube.test(link) ||
