@@ -17,13 +17,8 @@ export const getFirmsRequest = async (token) => {
   return result;
 };
 
-export const getCategories = async (token) => {
-  const bearer = `Bearer ${token}`;
-  const response = await fetch(category(), {
-    method: "GET",
-    withCredentials: true,
-    headers: { Authorization: bearer },
-  });
+export const getCategories = async () => {
+  const response = await fetch(category(), { method: "GET" });
   const result = await response.json();
   return result;
 };

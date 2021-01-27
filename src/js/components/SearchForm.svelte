@@ -3,6 +3,7 @@ import { requestSearchArtistsCrews } from "./../api/search.js";
 import { categoriesOrdered, ERROR_MESSAGES } from "../constants";
 import { permalink } from "../utils/mapUtils/permalink";
 import {
+  categories,
   huntersFilter,
   selectedArtist,
   selectedCategory,
@@ -13,6 +14,8 @@ import AutoComplete from "./elements/AutoComplete.svelte";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import { validateYear } from "../utils/datesUtils.js";
+import { getCategories } from "../api/settings.js";
+import { onDestroy } from "svelte";
 
 export let showSearch;
 export let yearStart;
@@ -25,7 +28,28 @@ let yearErrorMessage = "";
 let isSubmitDisabled = false;
 let prevYearValue = "";
 let enteredSearchValue = "";
+let categoriesList;
 const currentYear = getCurrentYear();
+
+const unsubscribeCategories = categories.subscribe(
+  (value) => (categoriesList = value)
+);
+
+onDestroy(() => {
+  unsubscribeCategories();
+});
+
+const hasCategories = () =>
+  Array.isArray(categoriesList) && categoriesList.length;
+
+if (!hasCategories()) {
+  getCategories().then((response) => {
+    const { status, data } = response;
+    if (status && data) {
+      categories.set(data);
+    }
+  });
+}
 
 const validateYearInput = () => {
   if (!year) {
@@ -85,16 +109,15 @@ const handleKeyDown = (event) => {
 
 const getOptionLabel = (option) => option.name;
 
-const fetchArtistsCrews = (filterText) => {
+const fetchArtistsCrews = async (filterText) => {
   const text = filterText ? filterText.replace(" ", "_") : "";
   enteredSearchValue = filterText;
   if (text.length > 2) {
-    return requestSearchArtistsCrews(filterText).then((response) => {
-      const { status, data } = response;
-      if (status && data) {
-        return data;
-      }
-    });
+    const response = await requestSearchArtistsCrews(filterText);
+    const { status, data } = response;
+    if (status && data) {
+      return data;
+    }
   } else {
     return new Promise((_, reject) => {
       reject();
@@ -115,21 +138,21 @@ const fetchArtistsCrews = (filterText) => {
     isYear />
   <AutoComplete
     bind:selectedValue={artist}
-    optionIdentifier={"name"}
+    optionIdentifier="name"
     {getOptionLabel}
     loadOptions={fetchArtistsCrews}
     filterValue={enteredSearchValue}
     placeholder="Artist or Crew"
     hint="Leave empty to show all artists and crews" />
   <div class="filter">
-    {#each categoriesOrdered as category}
+    {#each categoriesList as category}
       <div class="checkbox">
         <input
           type="checkbox"
-          id={`filter-${category.toLowerCase()}`}
+          id={`filter-${category.name}`}
           bind:group={selectedCategories}
           value={category} />
-        <label for={`filter-${category.toLowerCase()}`}>{category}</label>
+        <label for={`filter-${category.name}`}>{category.name}</label>
       </div>
     {/each}
   </div>

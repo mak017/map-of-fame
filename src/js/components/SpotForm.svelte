@@ -76,9 +76,8 @@ const hasCategories = () =>
 const hasSprays = () => Array.isArray(sprayFirms) && sprayFirms.length;
 
 if (!hasCategories()) {
-  getCategories(token).then((response) => {
+  getCategories().then((response) => {
     const { status, data } = response;
-    console.log("categories", response);
     if (status && data) {
       categories.set(data);
     }
@@ -88,7 +87,6 @@ if (!hasCategories()) {
 if (userTypeValue === USER_TYPES.artist.toLowerCase() && !hasSprays()) {
   getFirmsRequest(token).then((response) => {
     const { status, data } = response;
-    console.log("firms", response);
     if (status && data) {
       firms.set(data);
     }
