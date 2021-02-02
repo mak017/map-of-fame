@@ -1,8 +1,8 @@
 <script>
 import { onDestroy } from "svelte";
 import watermark from "watermarkjs";
+import { createSpot } from "./../api/spot";
 import {
-  CATEGORIES,
   EMPTY_YEAR_STRING,
   ERROR_MESSAGES,
   STATUSES,
@@ -41,7 +41,7 @@ let imageFile;
 let imageFilePreview = editSpotData.img || "";
 let linkToVideo = editSpotData.linkToVideo || "";
 let description = editSpotData.description || "";
-let selectedCategory = editSpotData.category || CATEGORIES.walls;
+let selectedCategory = editSpotData.category || null;
 let sprayPaintUsed;
 let link = editSpotData.linkToWork || "";
 let isSubmitDisabled = false;
@@ -80,6 +80,9 @@ if (!hasCategories()) {
     const { status, data } = response;
     if (status && data) {
       categories.set(data);
+      if (!selectedCategory) {
+        selectedCategory = data[0];
+      }
     }
   });
 }
@@ -211,15 +214,36 @@ const handleSubmit = () => {
       link,
     });
     if (!isEditSpot) {
-      if (
-        $selectedYear === year ||
-        (!year && $selectedYear === EMPTY_YEAR_STRING)
-      ) {
-        marker.setIcon(markerWithPhoto(imageFilePreview));
-        onSubmit();
-      } else {
-        onCancel();
-      }
+      const token = loadFromLocalStorage("token") || null;
+      const markerCoords = marker.getLatLng();
+      const { lat, lng } = markerCoords;
+      createSpot(token, {
+        ltd: lat,
+        lng,
+        artist,
+        crew,
+        year,
+        spotStatus: selectedStatus,
+        img: imageFile[0],
+        videoLink: linkToVideo,
+        description,
+        categoryId: selectedCategory.id,
+        firmId: sprayPaintUsed.id,
+        link,
+      }).then((response) => {
+        const { status, data } = response;
+        if (status && data) {
+          if (
+            $selectedYear === year ||
+            (!year && $selectedYear === EMPTY_YEAR_STRING)
+          ) {
+            marker.setIcon(markerWithPhoto(imageFilePreview));
+            onSubmit();
+          } else {
+            onCancel();
+          }
+        }
+      });
     } else {
       onCancel();
     }
@@ -316,7 +340,7 @@ const getSelectionLabel = (option) => {
       <FormRadioButton
         id={category.id}
         bind:group={selectedCategory}
-        value={category.name}
+        value={category}
         label={category.name}
         className={!isEditSpot ? "addSpot" : ""} />
     {/each}

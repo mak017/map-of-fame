@@ -1,4 +1,5 @@
 import {
+  categories,
   huntersFilter,
   markersStore,
   selectedArtist,
@@ -6,16 +7,21 @@ import {
   selectedYear,
   settings,
 } from "../../store";
-import { validateCategory } from "../commonUtils";
 import { setMarkerDataById } from "../../stubs/randomMarkersStub";
 import { normalizeCoords } from "./locationUtils";
 import { validateYear } from "../datesUtils";
+import { getCategories } from "../../api/settings";
 
 let shouldUpdate = true;
 let mapInstance = null;
 let prevParams = null;
 let arrMarkers = [];
 let settingsObj = {};
+let categoriesList = [];
+let yearFromStore = null;
+let huntersFilterValue = null;
+let selectedCategoryValue = null;
+let selectedArtistValue = null;
 
 markersStore.subscribe((values) => {
   arrMarkers = values;
@@ -24,6 +30,97 @@ markersStore.subscribe((values) => {
 settings.subscribe((value) => {
   settingsObj = value;
 });
+
+categories.subscribe((values) => {
+  categoriesList = values;
+});
+
+selectedYear.subscribe((value) => {
+  yearFromStore = value;
+});
+
+huntersFilter.subscribe((value) => {
+  huntersFilterValue = value;
+});
+
+selectedCategory.subscribe((value) => {
+  selectedCategoryValue = value;
+});
+
+selectedArtist.subscribe((value) => {
+  selectedArtistValue = value;
+});
+
+const update = ({ mapContainer, params, clearParams }) => {
+  if (!shouldUpdate) {
+    // do not update the URL when the view was changed in the 'popstate' handler (browser history navigation)
+    shouldUpdate = true;
+    return;
+  }
+  const map = mapContainer || mapInstance;
+  const year = yearFromStore;
+  let paramsToSet = prevParams || "";
+
+  const center = map?.getCenter();
+  const latitude = center && normalizeCoords(center.lat);
+  const longitude = center && normalizeCoords(center.lng);
+  const zoom = map?.getZoom();
+  if (
+    params ||
+    selectedCategoryValue ||
+    huntersFilterValue ||
+    selectedArtistValue
+  ) {
+    const category = params?.category || selectedCategoryValue;
+    const artist = params?.artist || selectedArtistValue;
+    const hunters = params?.hunters || huntersFilterValue;
+    const marker = params?.marker;
+    paramsToSet = "";
+    if (category?.length) {
+      paramsToSet = paramsToSet.concat(`&category=${category.join(",")}`);
+    }
+    if (artist) {
+      paramsToSet = paramsToSet.concat(`&artist=${artist}`);
+    }
+    if (hunters || hunters === false) {
+      paramsToSet = paramsToSet.concat(`&hunters=${hunters}`);
+    }
+    if (marker) {
+      const paramsStr = prevParams || paramsToSet;
+      paramsToSet = paramsStr.concat(`&marker=${marker}`);
+    }
+    prevParams = paramsToSet;
+  }
+  if (clearParams === "all") {
+    prevParams = null;
+    paramsToSet = "";
+  }
+  if (clearParams && Array.isArray(clearParams)) {
+    paramsToSet = new URLSearchParams(prevParams.substring(1));
+    clearParams.forEach((param) => {
+      paramsToSet.delete(param);
+    });
+    paramsToSet = paramsToSet.toString() ? `&${paramsToSet}` : "";
+    prevParams = paramsToSet;
+  }
+  const search = `?coords=${latitude},${longitude}&zoom=${zoom}&year=${year}${paramsToSet}`;
+  const state = { zoom, center, year, params };
+  window.history.pushState(state, "map", search);
+};
+
+const setSelectedCategoryIfValid = (categoriesFromUrl) => {
+  const categoryIds = categoriesList.map((item) => item.id);
+  const isValidCategories = categoriesFromUrl.every((cat) =>
+    categoryIds.includes(+cat)
+  );
+  if (isValidCategories) {
+    const categoriesToSet = categoriesList.filter((category) =>
+      categoriesFromUrl.includes(`${category.id}`)
+    );
+    selectedCategory.set(categoriesToSet);
+    update({ params: { category: categoriesFromUrl } });
+  }
+};
 
 const setStateFromUrl = (params) => {
   const yearFromUrl = params.get("year");
@@ -34,8 +131,18 @@ const setStateFromUrl = (params) => {
   const markerFromUrl = params.get("marker");
   if (yearFromUrl && validateYear(yearFromUrl, settingsObj.yearStart))
     selectedYear.set(yearFromUrl);
-  if (categoryFromUrl && validateCategory(category)) {
-    selectedCategory.set(category);
+  if (categoryFromUrl) {
+    if (categoriesList.length > 0) {
+      setSelectedCategoryIfValid(category);
+    } else {
+      getCategories().then((response) => {
+        const { status, data } = response;
+        if (status && data) {
+          categories.set(data);
+          setSelectedCategoryIfValid(category);
+        }
+      });
+    }
   }
   if (artistFromUrl) selectedArtist.set(artistFromUrl);
   if (huntersFromUrl) {
@@ -76,57 +183,7 @@ const getMapLocation = (zoom, center) => {
   }
   return newZoom || newCenter ? { zoom: newZoom, center: newCenter } : null;
 };
-const update = ({ mapContainer, params, clearParams }) => {
-  if (!shouldUpdate) {
-    // do not update the URL when the view was changed in the 'popstate' handler (browser history navigation)
-    shouldUpdate = true;
-    return;
-  }
-  const map = mapContainer || mapInstance;
-  let year;
-  let paramsToSet = prevParams || "";
-  selectedYear.subscribe((value) => {
-    year = value;
-  });
 
-  const center = map?.getCenter();
-  const latitude = center && normalizeCoords(center.lat);
-  const longitude = center && normalizeCoords(center.lng);
-  const zoom = map?.getZoom();
-  if (params) {
-    const { category, artist, hunters, marker } = params;
-    paramsToSet = "";
-    if (category?.length) {
-      paramsToSet = paramsToSet.concat(`&category=${category.join(",")}`);
-    }
-    if (artist) {
-      paramsToSet = paramsToSet.concat(`&artist=${artist}`);
-    }
-    if (hunters || hunters === false) {
-      paramsToSet = paramsToSet.concat(`&hunters=${hunters}`);
-    }
-    if (marker) {
-      const paramsStr = prevParams || paramsToSet;
-      paramsToSet = paramsStr.concat(`&marker=${marker}`);
-    }
-    prevParams = paramsToSet;
-  }
-  if (clearParams === "all") {
-    prevParams = null;
-    paramsToSet = "";
-  }
-  if (clearParams && Array.isArray(clearParams)) {
-    paramsToSet = new URLSearchParams(prevParams.substring(1));
-    clearParams.forEach((param) => {
-      paramsToSet.delete(param);
-    });
-    paramsToSet = paramsToSet.toString() ? `&${paramsToSet}` : "";
-    prevParams = paramsToSet;
-  }
-  const search = `?coords=${latitude},${longitude}&zoom=${zoom}&year=${year}${paramsToSet}`;
-  const state = { zoom, center, year, params };
-  window.history.pushState(state, "map", search);
-};
 const getSearchUrlFromParams = (coords, zoom, year, params) => {
   let paramsToSet = "";
   if (params) {

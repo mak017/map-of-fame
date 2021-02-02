@@ -1,3 +1,4 @@
+import { getCountryByIp } from "../../api/geo";
 import { DEFAULT_ZOOM, DEFAULT_VIEW } from "../../constants";
 import { addRandomMarkers } from "../../stubs/randomMarkersStub";
 import { permalink } from "./permalink";
@@ -5,6 +6,7 @@ import { permalink } from "./permalink";
 const getLocationByIp = () =>
   fetch("https://ipinfo.io/json?token=c97eec3767f442")
     .then((response) => response.json())
+    // getCountryByIp()
     .then((data) => {
       const { loc } = data;
       return {

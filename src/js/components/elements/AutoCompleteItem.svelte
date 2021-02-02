@@ -10,7 +10,9 @@ export const isHover = undefined;
 <div class="item">
   <div class="name">{item.name}</div>
   {#if item.type}
-    <div class="type">{item.type}</div>
+    <div class="type">
+      {item.type === "artists" ? item.type.slice(0, -1) : item.type}
+    </div>
   {/if}
 </div>
 

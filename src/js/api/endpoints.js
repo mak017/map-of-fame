@@ -1,34 +1,43 @@
 import { ENDPOINT_ORIGIN } from "../constants";
 
-export const authLogin = () => `${ENDPOINT_ORIGIN}/api/login`;
+export const LOGIN = () => `${ENDPOINT_ORIGIN}/api/login`;
 
-export const authVerify = () => `${ENDPOINT_ORIGIN}/api/verify`;
+export const VERIFY = () => `${ENDPOINT_ORIGIN}/api/verify`;
 
-export const user = () => `${ENDPOINT_ORIGIN}/api/user`;
+export const USER = () => `${ENDPOINT_ORIGIN}/api/user`;
 
-export const userId = (id) => `${ENDPOINT_ORIGIN}/api/user/${id}`;
+export const USER_ID = (id) => `${ENDPOINT_ORIGIN}/api/user/${id}`;
 
-export const userPassword = () => `${ENDPOINT_ORIGIN}/api/user/password`;
+export const USER_PASSWORD = () => `${ENDPOINT_ORIGIN}/api/user/password`;
 
-export const userPasswordToken = () =>
+export const USER_PASSWORD_TOKEN = () =>
   `${ENDPOINT_ORIGIN}/api/user/password/token`;
 
-export const firm = () => `${ENDPOINT_ORIGIN}/api/firm`;
+export const USER_SEARCH = (query) =>
+  `${ENDPOINT_ORIGIN}/api/user/search/?name=${query}`;
 
-export const firmId = (id) => `${ENDPOINT_ORIGIN}/api/firm/${id}`;
+export const FIRM = () => `${ENDPOINT_ORIGIN}/api/firm`;
 
-export const availability = () => `${ENDPOINT_ORIGIN}/api/availability`;
+export const FIRM_ID = (id) => `${ENDPOINT_ORIGIN}/api/firm/${id}`;
 
-export const availabilityId = (id) =>
+export const AVAILABILITY = () => `${ENDPOINT_ORIGIN}/api/availability`;
+
+export const AVAILABILITY_ID = (id) =>
   `${ENDPOINT_ORIGIN}/api/availability/${id}`;
 
-export const category = () => `${ENDPOINT_ORIGIN}/api/category`;
+export const CATEGORY = () => `${ENDPOINT_ORIGIN}/api/category`;
 
-export const categoryId = (id) => `${ENDPOINT_ORIGIN}/api/category/${id}`;
+export const CATEGORY_ID = (id) => `${ENDPOINT_ORIGIN}/api/category/${id}`;
 
-export const country = () => `${ENDPOINT_ORIGIN}/api/country`;
+export const COUNTRY = () => `${ENDPOINT_ORIGIN}/api/country`;
 
-export const getSettings = () => `${ENDPOINT_ORIGIN}/api/settings`;
+export const COUNTRY_SEARCH = (ip) =>
+  `${ENDPOINT_ORIGIN}/api/country/search?ip=${ip}`;
 
-export const searchArtistsCrews = (query) =>
-  `${ENDPOINT_ORIGIN}/api/user/search/?name=${query}`;
+export const SETTINGS = () => `${ENDPOINT_ORIGIN}/api/settings`;
+
+export const SPOT = () => `${ENDPOINT_ORIGIN}/api/spot`;
+
+export const SPOT_ID = (id) => `${ENDPOINT_ORIGIN}/api/spot/${id}`;
+
+export const SPOT_SEARCH = () => `${ENDPOINT_ORIGIN}/api/spot/search`;

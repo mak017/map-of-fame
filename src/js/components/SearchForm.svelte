@@ -1,6 +1,6 @@
 <script>
 import { requestSearchArtistsCrews } from "./../api/search.js";
-import { categoriesOrdered, ERROR_MESSAGES } from "../constants";
+import { ERROR_MESSAGES } from "../constants";
 import { permalink } from "../utils/mapUtils/permalink";
 import {
   categories,
@@ -74,8 +74,8 @@ const handleSubmit = () => {
     huntersFilter.set(isHuntersChecked);
     permalink.update({
       params: {
-        category: selectedCategories,
-        artist,
+        category: selectedCategories.map((cat) => cat.id),
+        artist: artist?.name,
         hunters: isHuntersChecked,
       },
     });

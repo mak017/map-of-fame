@@ -10,17 +10,9 @@ export const MIN_ZOOM = 2;
 
 export const MAX_ZOOM = 19;
 
-export const CATEGORIES = { walls: "Walls", trains: "Trains", other: "Other" };
-
 export const STATUSES = { live: "Live", buffed: "Buffed", unknown: "Unknown" };
 
 export const USER_TYPES = { artist: "Artist", hunter: "Hunter" };
-
-export const categoriesOrdered = [
-  CATEGORIES.walls,
-  CATEGORIES.trains,
-  CATEGORIES.other,
-];
 
 export const statusesOrdered = [
   STATUSES.live,

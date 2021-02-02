@@ -1,16 +1,16 @@
 import {
-  authLogin,
-  authVerify,
-  user,
-  userPassword,
-  userPasswordToken,
+  LOGIN,
+  VERIFY,
+  USER,
+  USER_PASSWORD,
+  USER_PASSWORD_TOKEN,
 } from "./endpoints";
 
 export const loginRequest = async (email, password) => {
   const data = new URLSearchParams();
   data.append("email", email);
   data.append("password", password);
-  const response = await fetch(authLogin(), {
+  const response = await fetch(LOGIN(), {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: data,
@@ -21,7 +21,7 @@ export const loginRequest = async (email, password) => {
 
 export const verifyAuthRequest = async (token) => {
   const bearer = `Bearer ${token}`;
-  const response = await fetch(authVerify(), {
+  const response = await fetch(VERIFY(), {
     method: "POST",
     withCredentials: true,
     headers: { Authorization: bearer },
@@ -49,7 +49,7 @@ export const createUserRequest = async ({
   data.append("type", type);
   data.append("crew", crew);
   data.append("link", link);
-  const response = await fetch(user(), {
+  const response = await fetch(USER(), {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: data,
@@ -61,7 +61,7 @@ export const createUserRequest = async ({
 export const changePasswordInit = async (email) => {
   const data = new URLSearchParams();
   data.append("email", email);
-  const response = await fetch(userPassword(), {
+  const response = await fetch(USER_PASSWORD(), {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: data,
@@ -73,7 +73,7 @@ export const changePasswordInit = async (email) => {
 export const changePasswordCheckToken = async (resetToken) => {
   const data = new URLSearchParams();
   data.append("reset_password_token", resetToken);
-  const response = await fetch(userPasswordToken(), {
+  const response = await fetch(USER_PASSWORD_TOKEN(), {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: data,
@@ -88,7 +88,7 @@ export const changePasswordReset = async (resetToken, password) => {
   data.append("reset_password_token", resetToken);
   data.append("password", password);
   data.append("confirmation", password);
-  const response = await fetch(userPassword(), {
+  const response = await fetch(USER_PASSWORD(), {
     method: "PUT",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: data,
