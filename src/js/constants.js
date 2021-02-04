@@ -44,4 +44,5 @@ export const ERROR_MESSAGES = {
   sprayEmpty: "Please select spray paint used",
   genericEmpty: "This is required field",
   videoLinkInvalid: "Youtube, Vimeo or Dailymotion links only",
+  categoryEmpty: "Please select at least 1 category",
 };

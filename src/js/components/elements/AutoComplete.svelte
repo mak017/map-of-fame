@@ -4,7 +4,7 @@ import { createEventDispatcher } from "svelte";
 import AutoCompleteItem from "./AutoCompleteItem.svelte";
 
 export let selectedValue = undefined;
-export let items;
+export let items = undefined;
 export let optionIdentifier;
 export let getOptionLabel;
 export let placeholder;

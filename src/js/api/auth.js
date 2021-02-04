@@ -77,7 +77,6 @@ export const changePasswordCheckToken = async (resetToken) => {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: data,
-    // body: JSON.stringify({ reset_password_token: resetToken }),
   });
   const result = await response.json();
   return result;

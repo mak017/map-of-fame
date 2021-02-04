@@ -1,5 +1,9 @@
 <script>
-import { requestSearchArtistsCrews } from "./../api/search.js";
+import { onDestroy } from "svelte";
+import {
+  requestSearchArtistsCrews,
+  requestSearchSpots,
+} from "./../api/search.js";
 import { ERROR_MESSAGES } from "../constants";
 import { permalink } from "../utils/mapUtils/permalink";
 import {
@@ -15,7 +19,6 @@ import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import { validateYear } from "../utils/datesUtils.js";
 import { getCategories } from "../api/settings.js";
-import { onDestroy } from "svelte";
 
 export let showSearch;
 export let yearStart;
@@ -25,6 +28,7 @@ let artist;
 let selectedCategories = [];
 let isHuntersChecked = true;
 let yearErrorMessage = "";
+let categoryErrorMessage = "";
 let isSubmitDisabled = false;
 let prevYearValue = "";
 let enteredSearchValue = "";
@@ -61,36 +65,55 @@ const validateYearInput = () => {
   }
 };
 
+const validateCategories = () => {
+  categoryErrorMessage = !selectedCategories.length
+    ? ERROR_MESSAGES.categoryEmpty
+    : "";
+};
+
 const validateForm = () => {
   validateYearInput();
+  validateCategories();
+  isSubmitDisabled = !!yearErrorMessage || !!categoryErrorMessage;
 };
 
 const handleSubmit = () => {
   validateForm();
-  if (!yearErrorMessage) {
-    selectedYear.set(year);
-    selectedCategory.set(selectedCategories);
-    selectedArtist.set(artist);
-    huntersFilter.set(isHuntersChecked);
-    permalink.update({
-      params: {
-        category: selectedCategories.map((cat) => cat.id),
-        artist: artist?.name,
-        hunters: isHuntersChecked,
-      },
+  if (!yearErrorMessage && !categoryErrorMessage) {
+    const category = selectedCategories.map((cat) => cat.id);
+    const { name } = artist || {};
+    requestSearchSpots({
+      year,
+      name,
+      category,
+      showHunters: isHuntersChecked ? 1 : 0,
+    }).then((response) => {
+      const { status, data, error } = response;
+      if (status && data) {
+        selectedYear.set(year);
+        selectedCategory.set(selectedCategories);
+        selectedArtist.set(artist);
+        huntersFilter.set(isHuntersChecked);
+        permalink.update({
+          params: {
+            category,
+            artist: name,
+            hunters: isHuntersChecked,
+          },
+        });
+        showSearch(false);
+      }
+      if (error) {
+        const { category } = error;
+        categoryErrorMessage = category ? ERROR_MESSAGES.categoryEmpty : "";
+      }
     });
-    showSearch(false);
   } else {
     isSubmitDisabled = true;
   }
 };
 
-const handleYearBlur = () => {
-  if (isSubmitDisabled) {
-    validateYearInput();
-    isSubmitDisabled = !!yearErrorMessage;
-  }
-};
+const handleYearBlur = () => isSubmitDisabled && validateForm();
 
 const handleYearChange = () => {
   if (isYearLike(year)) {
@@ -151,10 +174,14 @@ const fetchArtistsCrews = async (filterText) => {
           type="checkbox"
           id={`filter-${category.name}`}
           bind:group={selectedCategories}
-          value={category} />
+          value={category}
+          on:change={isSubmitDisabled && validateForm()} />
         <label for={`filter-${category.name}`}>{category.name}</label>
       </div>
     {/each}
+    {#if categoryErrorMessage}
+      <div class="error">{categoryErrorMessage}</div>
+    {/if}
   </div>
   <div class="bottom">
     <div class="checkbox">
@@ -234,6 +261,13 @@ const fetchArtistsCrews = async (filterText) => {
   }
 }
 
+.error {
+  margin: 4px 0 -20px;
+  color: var(--color-error);
+  font-size: 13px;
+  line-height: 1.25;
+}
+
 @media (max-width: 767px) {
   form {
     width: 100%;
@@ -241,10 +275,12 @@ const fetchArtistsCrews = async (filterText) => {
   }
   .bottom {
     flex-flow: wrap;
-    margin-top: -28px;
     .checkbox {
       margin: 28px 0;
     }
+  }
+  .filter {
+    margin-bottom: 8px;
   }
   .checkbox {
     + .checkbox {
