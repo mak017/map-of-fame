@@ -124,6 +124,7 @@ const onChangeImage = () => {
     } else {
       errors.imageFile = ERROR_MESSAGES.fileTooLarge;
     }
+    isSubmitDisabled = isFormHasErrors();
   }
 };
 
@@ -169,6 +170,10 @@ const handleYearChange = () => {
   } else {
     year = prevYearValue;
   }
+  if (isSubmitDisabled || isFormHasErrors()) {
+    errors.year = "";
+    isSubmitDisabled = isFormHasErrors();
+  }
 };
 
 const handleYearBlur = () => {
@@ -178,16 +183,16 @@ const handleYearBlur = () => {
   }
 };
 
-const handleVideoLinkBlur = () => {
-  if (isSubmitDisabled) {
-    validateVideoLinkInput();
+const handleVideoLinkChange = () => {
+  if (isSubmitDisabled || isFormHasErrors()) {
+    errors.linkToVideo = "";
     isSubmitDisabled = isFormHasErrors();
   }
 };
 
-const handleSpraySelectBlur = () => {
-  if (isSubmitDisabled) {
-    validateFirm();
+const handleSpraySelect = () => {
+  if (isSubmitDisabled || isFormHasErrors()) {
+    errors.sprayPaintUsed = "";
     isSubmitDisabled = isFormHasErrors();
   }
 };
@@ -322,7 +327,7 @@ const getSelectionLabel = (option) => {
     label="Link To Video"
     bind:value={linkToVideo}
     errorText={errors.linkToVideo}
-    on:blur={handleVideoLinkBlur}
+    on:input={handleVideoLinkChange}
     wideOnMobile
     editSpot={isEditSpot}
     addSpot={!isEditSpot}
@@ -350,7 +355,7 @@ const getSelectionLabel = (option) => {
       <CustomSelect
         items={sprayFirms}
         bind:selectedValue={sprayPaintUsed}
-        on:select={handleSpraySelectBlur}
+        on:select={handleSpraySelect}
         placeholder="Spray Paint Used"
         optionIdentifier="name"
         addSpot={!isEditSpot}
@@ -390,7 +395,7 @@ const getSelectionLabel = (option) => {
 
 .upload-image {
   position: relative;
-  height: 140px;
+  height: 136px;
   margin: 15px 0;
   .first_upload {
     display: flex;
@@ -549,11 +554,11 @@ const getSelectionLabel = (option) => {
   }
 }
 
-@media (orientation: landscape) and (max-height: 850px) {
+@media (orientation: landscape) and (max-height: 960px) {
   form {
     &:not(.edit) {
       .upload-image {
-        height: 108px;
+        height: 100px;
         margin: 12px 0;
       }
       .category {

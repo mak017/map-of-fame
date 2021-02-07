@@ -1,6 +1,6 @@
 <script>
-import Select from "svelte-select";
 import { createEventDispatcher } from "svelte";
+import Select from "svelte-select";
 import AutoCompleteItem from "./AutoCompleteItem.svelte";
 
 export let selectedValue = undefined;
@@ -11,6 +11,7 @@ export let placeholder;
 export let hint = undefined;
 export let loadOptions = undefined;
 export let filterValue = "";
+export let errorMessage = "";
 
 let typedText = "";
 
@@ -38,12 +39,16 @@ const onType = (label, filterText) => {
     placeholder=""
     Item={AutoCompleteItem}
     on:select={onSelect}
-    itemFilter={onType} />
+    itemFilter={onType}
+    hideEmptyState />
   {#if placeholder}
     <div class="floating-label">{placeholder}</div>
   {/if}
   {#if hint}
     <div class="hint">{hint}</div>
+  {/if}
+  {#if errorMessage}
+    <div class="error">{errorMessage}</div>
   {/if}
 </div>
 
@@ -93,6 +98,12 @@ const onType = (label, filterText) => {
   margin-top: 8px;
   opacity: 0.6;
   color: var(--color-dark);
+  font-size: 13px;
+  line-height: 16px;
+}
+.error {
+  margin: 4px 0 -20px;
+  color: var(--color-error);
   font-size: 13px;
   line-height: 16px;
 }

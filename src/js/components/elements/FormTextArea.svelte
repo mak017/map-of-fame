@@ -10,6 +10,7 @@ export let addSpot = false;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
+const input = () => dispatch("input");
 if (
   window.innerHeight < 850 &&
   window.innerWidth > window.innerHeight &&
@@ -25,6 +26,7 @@ if (
     bind:value
     style="height: {height}px"
     on:blur={blur}
+    on:input={input}
     class:resizable={isResizable} />
   {#if placeholder}
     <div class="floating-label">{placeholder}</div>
@@ -89,7 +91,7 @@ textarea {
     border-color: var(--color-error);
   }
   &-text {
-    margin-top: 8px;
+    margin: 1px 0 -17px;
     color: var(--color-error);
     font-size: 13px;
     line-height: 1.22;
@@ -99,9 +101,11 @@ textarea {
   resize: both;
 }
 
-@media (orientation: landscape) and (max-height: 850px) {
+@media (orientation: landscape) and (max-height: 960px) {
   .container {
-    margin-bottom: 16px;
+    &.add-spot {
+      margin-bottom: 13px;
+    }
   }
 }
 </style>

@@ -54,7 +54,7 @@ h2 {
   }
 }
 
-@media (orientation: landscape) and (max-height: 850px) {
+@media (orientation: landscape) and (max-height: 960px) {
   .add-spot {
     padding-top: 16px;
   }

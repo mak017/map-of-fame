@@ -12,6 +12,7 @@ export let editSpot = false;
 export let isYear = false;
 export let addSpot = false;
 export let linkToVideo = false;
+export let extraMargin = false;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
@@ -27,7 +28,8 @@ const keyDown = (event) => dispatch("keyDown", event);
   class:edit-spot={editSpot}
   class:add-spot={addSpot}
   class:year={isYear}
-  class:link-to-video={linkToVideo}>
+  class:link-to-video={linkToVideo}
+  class:extra-margin={extraMargin}>
   {#if label}<span>{label}</span>{/if}
   <input
     type="text"
@@ -51,6 +53,7 @@ label {
   display: block;
   position: relative;
   margin-bottom: 20px;
+  padding-top: 8px;
 }
 input {
   width: 530px;
@@ -74,6 +77,7 @@ input {
 }
 
 .with-label {
+  padding-top: 0;
   > span {
     font-size: 16px;
     line-height: 1.22;
@@ -110,7 +114,7 @@ label:not(.with-label) {
 }
 .floating-label {
   position: absolute;
-  top: 3px;
+  top: 13px;
   left: -3px;
   padding: 0px 3px;
   border-radius: 2px;
@@ -135,14 +139,22 @@ label:not(.with-label) {
   }
   &:not(.with-hint) {
     .hint {
-      margin: -1px 0 -15px;
+      margin: 4px 0 -20px;
     }
   }
 }
 
 .add-spot {
-  &.with-hint {
-    margin-bottom: 15px;
+  .hint {
+    margin-top: 4px;
+  }
+  &:not(.with-label) {
+    margin-bottom: 10px;
+  }
+  &.link-to-video {
+    .hint {
+      margin: -1px 0 -15px;
+    }
   }
 }
 
@@ -159,6 +171,10 @@ label:not(.with-label) {
   }
 }
 
+.extra-margin {
+  margin-bottom: 26px;
+}
+
 @media (max-width: 767px) {
   input {
     width: 100%;
@@ -171,18 +187,25 @@ label:not(.with-label) {
   }
 }
 
-@media (orientation: landscape) and (max-height: 850px) {
+@media (orientation: landscape) and (max-height: 960px) {
   .add-spot {
     margin-bottom: 13px;
     input {
       padding: 5px 0;
+      font-size: 14px;
       line-height: 17px;
     }
     .hint {
       font-size: 11px;
       line-height: 14px;
     }
+    &:not(.with-label) {
+      margin-bottom: 6px;
+    }
     &.with-label {
+      > span {
+        font-size: 14px;
+      }
       input {
         padding: 8px 10px;
       }

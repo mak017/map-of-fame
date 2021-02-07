@@ -54,11 +54,11 @@ const handleBackClick = () => {
   changeCurrentModal(AUTH_MODALS.login);
 };
 
-const handleKeyDown = (event) => {
-  const { code } = event.detail;
-  isDisabledSubmit &&
-    (code === "Enter" || code === "NumpadEnter") &&
-    handleSubmit();
+const handleInputChange = () => {
+  if (isDisabledSubmit || errorMessage) {
+    errorMessage = "";
+    isDisabledSubmit = false;
+  }
 };
 </script>
 
@@ -71,8 +71,7 @@ const handleKeyDown = (event) => {
     placeholder="Email"
     bind:value={email}
     errorText={errorMessage}
-    on:blur={() => isDisabledSubmit && validate()}
-    on:keyDown={handleKeyDown} />
+    on:input={handleInputChange} />
   <div class="submit-wrapper">
     <ButtonPrimary
       text="Send"

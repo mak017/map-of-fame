@@ -113,21 +113,23 @@ const handleSubmit = () => {
   }
 };
 
-const handleYearBlur = () => isSubmitDisabled && validateForm();
-
 const handleYearChange = () => {
   if (isYearLike(year)) {
     prevYearValue = year;
   } else {
     year = prevYearValue;
   }
+  if (isSubmitDisabled || yearErrorMessage || categoryErrorMessage) {
+    yearErrorMessage = "";
+    isSubmitDisabled = !!categoryErrorMessage;
+  }
 };
 
-const handleKeyDown = (event) => {
-  const { code } = event.detail;
-  isSubmitDisabled &&
-    (code === "Enter" || code === "NumpadEnter") &&
-    handleSubmit();
+const handleCategoryChange = () => {
+  if (isSubmitDisabled || yearErrorMessage || categoryErrorMessage) {
+    categoryErrorMessage = "";
+    isSubmitDisabled = !!yearErrorMessage;
+  }
 };
 
 const getOptionLabel = (option) => option.name;
@@ -154,9 +156,7 @@ const fetchArtistsCrews = async (filterText) => {
     placeholder="Year"
     hint={`${yearStart} - ${currentYear}`}
     bind:value={year}
-    on:blur={handleYearBlur}
     on:input={handleYearChange}
-    on:keyDown={handleKeyDown}
     errorText={yearErrorMessage}
     isYear />
   <AutoComplete
@@ -188,6 +188,7 @@ const fetchArtistsCrews = async (filterText) => {
       <input
         type="checkbox"
         bind:checked={isHuntersChecked}
+        on:change={handleCategoryChange}
         id="search-show-hunters-spots" />
       <label for="search-show-hunters-spots">Show Hunter's Spots</label>
     </div>

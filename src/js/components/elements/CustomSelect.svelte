@@ -58,7 +58,7 @@ const dispatch = createEventDispatcher();
   }
 }
 
-@media (orientation: landscape) and (max-height: 850px) {
+@media (orientation: landscape) and (max-height: 960px) {
   .select {
     &.add-spot {
       --height: 36px;

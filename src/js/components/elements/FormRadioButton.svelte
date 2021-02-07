@@ -72,7 +72,7 @@ export let className = "";
   }
 }
 
-@media (orientation: landscape) and (max-height: 850px) {
+@media (orientation: landscape) and (max-height: 960px) {
   .radio {
     &.addSpot {
       label {

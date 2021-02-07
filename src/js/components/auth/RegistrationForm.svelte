@@ -58,6 +58,8 @@ const getCountries = () => {
 
 const getOptionLabel = (option) => option.name;
 
+const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
+
 const validate = () => {
   if (step === 1) {
     const isValidEmail = validateEmail(email);
@@ -89,29 +91,22 @@ const validate = () => {
 const handleSubmit = () => {
   validate();
   if (step === 1) {
-    if (!errors.email && !errors.password) step = 2;
+    if (!errors.email && !errors.password) {
+      step = 2;
+      errors = { email: "", password: "", name: "", country: "", link: "" };
+    }
   } else {
     if (username && country) {
-      console.log(
-        "registration data :>> ",
-        username,
-        password,
-        email,
-        country,
-        selectedType,
-        portfolioLink
-      );
       createUserRequest({
         name: username,
         password,
         email,
-        country,
+        country: country.name,
         type: selectedType.toLowerCase(),
         crew,
         link: portfolioLink,
       })
         .then((response) => {
-          console.log("data", response);
           if (response.status && response.data) {
             userData.set(response.data);
             isLoggedIn.set(true);
@@ -134,11 +129,29 @@ const handleSubmit = () => {
     }
   }
 };
+
+const handleInputChange = (input) => {
+  if (
+    isSubmitDisabled ||
+    (step === 1 && (errors.email || errors.password)) ||
+    (step === 2 && (errors.name || errors.country || errors.link))
+  ) {
+    errors[input] = "";
+    isSubmitDisabled = isFormHasErrors();
+  }
+};
+
+const handleBackClick = () => {
+  step = 1;
+  if (isSubmitDisabled) {
+    isSubmitDisabled = false;
+  }
+};
 </script>
 
 <form on:submit|preventDefault={handleSubmit} novalidate transition:fade>
   {#if step === 2}
-    <ButtonModalBack on:click={() => (step = 1)} withTransition />
+    <ButtonModalBack on:click={handleBackClick} withTransition />
   {/if}
   {#if step === 1}
     <div class="switcher" in:fade|local>
@@ -163,12 +176,12 @@ const handleSubmit = () => {
         placeholder="Email"
         bind:value={email}
         errorText={errors.email}
-        on:blur={() => isSubmitDisabled && validate()} />
+        on:input={() => handleInputChange("email")} />
       <FormPasswordInput
         placeholder="Password"
         bind:value={password}
         errorText={errors.password}
-        on:blur={() => isSubmitDisabled && validate()} />
+        on:input={() => handleInputChange("password")} />
     </div>
   {/if}
   {#if step === 2}
@@ -177,31 +190,28 @@ const handleSubmit = () => {
         placeholder="User Name"
         bind:value={username}
         errorText={errors.name}
-        on:blur={() => isSubmitDisabled && validate()} />
+        on:input={() => handleInputChange("name")} />
       {#if selectedType === USER_TYPES.artist}
         <FormTextInput placeholder="Crew" bind:value={crew} />
       {/if}
-      <!-- <FormTextInput
-        placeholder="Country"
-        bind:value={country}
-        errorText={errors.country}
-        on:blur={() => isSubmitDisabled && validate()} /> -->
       <AutoComplete
         bind:selectedValue={country}
         items={countries}
-        optionIdentifier={'name'}
+        optionIdentifier={"name"}
         {getOptionLabel}
-        placeholder="Country" />
+        placeholder="Country"
+        errorMessage={errors.country}
+        on:select={() => handleInputChange("country")} />
       <FormTextInput
         placeholder="Link to Your Portfolio: Like Instagram@"
         bind:value={portfolioLink}
         errorText={errors.link}
-        on:blur={() => isSubmitDisabled && validate()} />
+        on:input={() => handleInputChange("link")} />
     </div>
   {/if}
   <div class="submit-wrapper">
     <ButtonPrimary
-      text={step == 1 ? 'Next' : 'Register'}
+      text={step == 1 ? "Next" : "Register"}
       type="submit"
       className="wide"
       isDisabled={isSubmitDisabled} />

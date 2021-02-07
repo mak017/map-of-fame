@@ -1,6 +1,5 @@
 <script>
 import { fade } from "svelte/transition";
-import { getSettings } from "./../../init.js";
 import { loginRequest } from "../../api/auth.js";
 import { AUTH_MODALS, ERROR_MESSAGES } from "../../constants.js";
 import { isLoggedIn, userData } from "../../store.js";
@@ -60,6 +59,13 @@ const handleSubmit = () => {
       });
   }
 };
+
+const handleInputChange = (input) => {
+  if (isDisabledSubmit || errors.password || errors.email) {
+    errors[input] = "";
+    isDisabledSubmit = !!(errors.password || errors.email);
+  }
+};
 </script>
 
 <form on:submit|preventDefault={handleSubmit} novalidate transition:fade>
@@ -67,17 +73,17 @@ const handleSubmit = () => {
     placeholder="Email"
     bind:value={email}
     errorText={errors.email}
-    on:blur={() => isDisabledSubmit && validate()} />
+    on:input={() => handleInputChange("email")} />
   <FormPasswordInput
     placeholder="Password"
     bind:value={password}
     errorText={errors.password}
-    on:blur={() => isDisabledSubmit && validate()} />
+    on:input={() => handleInputChange("password")} />
   <div class="forgot-password">
     <button
       type="button"
-      on:click={() => changeCurrentModal(AUTH_MODALS.forgotPassword)}>Forgot
-      password</button>
+      on:click={() => changeCurrentModal(AUTH_MODALS.forgotPassword)}
+      >Forgot password</button>
   </div>
   <ButtonPrimary
     text="Login"
@@ -88,7 +94,8 @@ const handleSubmit = () => {
     <span>Don't have an account?</span>
     <button
       type="button"
-      on:click={() => changeCurrentModal(AUTH_MODALS.registration)}>Sign up</button>
+      on:click={() => changeCurrentModal(AUTH_MODALS.registration)}
+      >Sign up</button>
   </div>
 </form>
 

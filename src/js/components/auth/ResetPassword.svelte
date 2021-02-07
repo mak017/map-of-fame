@@ -30,7 +30,6 @@ const handleSubmit = () => {
   validate();
   if (!errorMessage) {
     changePasswordReset(resetPasswordToken, password).then((response) => {
-      console.log("response", response);
       const { status, data } = response;
       if (status && data) {
         const { token } = data;
@@ -45,11 +44,11 @@ const handleSubmit = () => {
   }
 };
 
-const handleKeyDown = (event) => {
-  const { code } = event.detail;
-  isSubmitDisabled &&
-    (code === "Enter" || code === "NumpadEnter") &&
-    handleSubmit();
+const handleInputChange = () => {
+  if (isDisabledSubmit || errorMessage) {
+    errorMessage = "";
+    isDisabledSubmit = false;
+  }
 };
 </script>
 
@@ -59,7 +58,7 @@ const handleKeyDown = (event) => {
     bind:value={password}
     errorText={errorMessage}
     on:blur={() => isSubmitDisabled && validate()}
-    on:keyDown={handleKeyDown} />
+    on:input={handleInputChange} />
   <div class="submit-wrapper">
     <ButtonPrimary
       text="Reset"

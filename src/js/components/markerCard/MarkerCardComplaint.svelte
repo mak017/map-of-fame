@@ -31,6 +31,13 @@ const handleSubmit = () => {
     onComplainToggle(false);
   }
 };
+
+const handleInputChange = (input) => {
+  if (isSubmitDisabled || errors.cause || errors.description) {
+    errors[input] = "";
+    isSubmitDisabled = !!(errors.cause || errors.description);
+  }
+};
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
@@ -38,13 +45,14 @@ const handleSubmit = () => {
     placeholder="Cause"
     bind:value={cause}
     errorText={errors.cause}
-    on:blur={() => isSubmitDisabled && validate()} />
+    on:input={handleInputChange}
+    extraMargin />
   <FormTextArea
     placeholder="Description"
     bind:value={description}
     height={125}
     errorText={errors.description}
-    on:blur={() => isSubmitDisabled && validate()} />
+    on:input={handleInputChange} />
   <ButtonPrimary
     text="Send"
     type="submit"

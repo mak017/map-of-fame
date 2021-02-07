@@ -45,7 +45,7 @@ button {
   }
 }
 
-@media (orientation: landscape) and (max-height: 850px) {
+@media (orientation: landscape) and (max-height: 960px) {
   .addSpot {
     padding: 10px 19px;
   }
