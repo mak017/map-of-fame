@@ -38,6 +38,8 @@ export const SETTINGS = () => `${ENDPOINT_ORIGIN}/api/settings`;
 
 export const SPOT = () => `${ENDPOINT_ORIGIN}/api/spot`;
 
+export const SPOT_YEAR = (year) => `${ENDPOINT_ORIGIN}/api/spot?year=${year}`;
+
 export const SPOT_ID = (id) => `${ENDPOINT_ORIGIN}/api/spot/${id}`;
 
 export const SPOT_SEARCH = () => `${ENDPOINT_ORIGIN}/api/spot/search`;

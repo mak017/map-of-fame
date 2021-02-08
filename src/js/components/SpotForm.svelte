@@ -107,10 +107,9 @@ const onChangeImage = () => {
       const image = new Image();
       image.src = e.target.result;
       image.onload = function () {
-        console.log("this :>> ", this);
         watermark([file])
           .dataUrl(
-            watermark.text.center("Text", "148px Montserrat", "#fff", 0.5)
+            watermark.text.center("MOFF", "148px Montserrat", "#fff", 0.5)
           )
           .then((url) => {
             imageFilePreview = url;
@@ -129,7 +128,6 @@ const onChangeImage = () => {
 };
 
 const validateYearInput = () => {
-  console.log("year", year);
   if (!year) {
     errors.year = "";
   } else if (!validateYear(year, settingsValue.yearStart, false)) {

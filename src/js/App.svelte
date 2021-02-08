@@ -1,6 +1,7 @@
 <script>
 import L from "leaflet";
-import SpinnerSvg from "./components/elements/SpinnerSvg.svelte";
+import { placeMarkers } from "./utils/mapUtils/markersUtils.js";
+// import SpinnerSvg from "./components/elements/SpinnerSvg.svelte";
 import { changePasswordCheckToken } from "./api/auth.js";
 import RailroadSvg from "./components/elements/RailroadSvg.svelte";
 import { getSettings, initApp } from "./init.js";
@@ -9,6 +10,7 @@ import { setLocation } from "./utils/mapUtils/locationUtils.js";
 import Modal from "./components/Modal.svelte";
 import {
   isLoggedIn,
+  markersStore,
   openedMarkerData,
   selectedYear,
   settings,
@@ -52,6 +54,7 @@ let resetPasswordToken = getResetPasswordToken();
 let map;
 let newMarker;
 let settingsValue;
+let markersList = [];
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
@@ -69,13 +72,24 @@ const unsubscribeSettings = settings.subscribe(
   (value) => (settingsValue = value)
 );
 
+const unsubscribeMarkers = markersStore.subscribe(
+  (value) => (markersList = value)
+);
+
 document.getElementById("initial-loader").remove();
 
-onDestroy(() => unsubscribeSettings());
+onDestroy(() => {
+  unsubscribeSettings();
+  unsubscribeMarkers();
+});
 
 adjustVhProp();
 
 initApp();
+
+$: if (markersList) {
+  placeMarkers(map, markersList);
+}
 
 if (resetPasswordToken) {
   changePasswordCheckToken(resetPasswordToken).then((response) => {

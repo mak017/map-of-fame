@@ -12,7 +12,7 @@ let isComplainOpened = false;
 const { artist, crew, status, description, img, video, user } = data;
 
 const artistName = artist || "Unknown";
-const videoEmbed = embedVideoCodeFromBasicUrl(video);
+const videoEmbed = video && embedVideoCodeFromBasicUrl(video);
 
 const onShareToggle = (toggle) => (isShareOpened = toggle);
 
@@ -42,10 +42,10 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
   <div class="bottom">
     <div class="posted-by">
       <div class="subtitle">Posted by</div>
-      <div class="title">{user.name}</div>
+      <div class="title">{user?.name}</div>
     </div>
     <div class="buttons">
-      {#if user.link}
+      {#if user?.link}
         <div class="link">
           <a href={user.link} target="_blank">{`${user.name}'s Portfolio`}</a>
         </div>
@@ -111,6 +111,9 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
 
 .img {
   margin-bottom: 24px;
+  > img {
+    margin: auto;
+  }
 }
 .description {
   margin-bottom: 24px;

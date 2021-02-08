@@ -1,18 +1,22 @@
-import { getCountryByIp } from "../../api/geo";
+// import { getCountryByIp } from "../../api/geo";
+import { getSpots } from "../../api/spot";
 import { DEFAULT_ZOOM, DEFAULT_VIEW } from "../../constants";
-import { addRandomMarkers } from "../../stubs/randomMarkersStub";
+import { getCurrentYear } from "../commonUtils";
 import { permalink } from "./permalink";
+import { markersStore, selectedYear } from "../../store";
+
+let yearFromStore;
+
+selectedYear.subscribe((value) => {
+  yearFromStore = value;
+});
 
 const getLocationByIp = () =>
-  fetch("https://ipinfo.io/json?token=c97eec3767f442")
+  fetch("http://www.geoplugin.net/json.gp")
     .then((response) => response.json())
-    // getCountryByIp()
     .then((data) => {
-      const { loc } = data;
-      return {
-        center: loc.split(",").map((item) => +item),
-        zoom: 11,
-      };
+      const { geoplugin_latitude: lat, geoplugin_longitude: lng } = data;
+      return { center: [lat, lng], zoom: 11 };
     });
 
 const getLocation = async () => {
@@ -46,8 +50,13 @@ export const setLocation = (map) => {
       map.setView(DEFAULT_VIEW.coordinates, DEFAULT_VIEW.zoom);
     })
     .finally(() => {
-      addRandomMarkers(map);
       permalink.setup(map);
+      getSpots(yearFromStore || getCurrentYear()).then((response) => {
+        const { status, data } = response;
+        if (status && data) {
+          markersStore.set(data);
+        }
+      });
     });
 };
 
