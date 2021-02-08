@@ -120,6 +120,7 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
   color: var(--color-dark);
   font-size: 18px;
   line-height: 1.22;
+  white-space: pre-line;
   word-break: break-word;
 }
 .video {

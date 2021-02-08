@@ -12,11 +12,15 @@ selectedYear.subscribe((value) => {
 });
 
 const getLocationByIp = () =>
-  fetch("http://www.geoplugin.net/json.gp")
+  fetch("https://ipinfo.io/json?token=c97eec3767f442")
     .then((response) => response.json())
+    // getCountryByIp()
     .then((data) => {
-      const { geoplugin_latitude: lat, geoplugin_longitude: lng } = data;
-      return { center: [lat, lng], zoom: 11 };
+      const { loc } = data;
+      return {
+        center: loc.split(",").map((item) => +item),
+        zoom: 11,
+      };
     });
 
 const getLocation = async () => {
@@ -50,6 +54,7 @@ export const setLocation = (map) => {
       map.setView(DEFAULT_VIEW.coordinates, DEFAULT_VIEW.zoom);
     })
     .finally(() => {
+      // addRandomMarkers(map);
       permalink.setup(map);
       getSpots(yearFromStore || getCurrentYear()).then((response) => {
         const { status, data } = response;
