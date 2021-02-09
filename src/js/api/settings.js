@@ -7,11 +7,11 @@ export const getSettingsRequest = async () => {
 };
 
 export const getFirmsRequest = async (token) => {
-  const bearer = `Bearer ${token}`;
+  // const bearer = `Bearer ${token}`;
   const response = await fetch(FIRM(), {
     method: "GET",
-    withCredentials: true,
-    headers: { Authorization: bearer },
+    // withCredentials: true,
+    // headers: { Authorization: bearer },
   });
   const result = await response.json();
   return result;
