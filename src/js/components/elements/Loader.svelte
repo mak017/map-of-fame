@@ -146,6 +146,7 @@ $loader-color: invert(#444b54);
   top: 0;
   left: 0;
   right: 0;
+  z-index: 100;
   align-items: center;
   justify-content: center;
   flex-flow: column nowrap;

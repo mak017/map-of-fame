@@ -9,6 +9,8 @@ import { permalink } from "../utils/mapUtils/permalink";
 import {
   categories,
   huntersFilter,
+  isSearchResults,
+  markersStore,
   selectedArtist,
   selectedCategory,
   selectedYear,
@@ -94,6 +96,8 @@ const handleSubmit = () => {
         selectedCategory.set(selectedCategories);
         selectedArtist.set(artist);
         huntersFilter.set(isHuntersChecked);
+        markersStore.set(data);
+        isSearchResults.set(true);
         permalink.update({
           params: {
             category,

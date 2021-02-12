@@ -71,19 +71,20 @@ const update = ({ mapContainer, params, clearParams }) => {
     huntersFilterValue ||
     selectedArtistValue
   ) {
-    const category = params?.category || selectedCategoryValue;
+    const category =
+      params?.category || selectedCategoryValue.map((cat) => cat.id);
     const artist = params?.artist || selectedArtistValue;
     const hunters = params?.hunters || huntersFilterValue;
     const marker = params?.marker;
     paramsToSet = "";
     if (category?.length) {
       paramsToSet = paramsToSet.concat(`&category=${category.join(",")}`);
-    }
-    if (artist) {
-      paramsToSet = paramsToSet.concat(`&artist=${artist}`);
-    }
-    if (hunters || hunters === false) {
-      paramsToSet = paramsToSet.concat(`&hunters=${hunters}`);
+      if (artist) {
+        paramsToSet = paramsToSet.concat(`&artist=${artist}`);
+      }
+      if (hunters || hunters === false) {
+        paramsToSet = paramsToSet.concat(`&hunters=${hunters}`);
+      }
     }
     if (marker) {
       const paramsStr = prevParams || paramsToSet;
@@ -109,15 +110,18 @@ const update = ({ mapContainer, params, clearParams }) => {
 };
 
 const setSelectedCategoryIfValid = (categoriesFromUrl) => {
-  const categoryIds = categoriesList.map((item) => item.id);
+  // Hardcoded category IDs to simplify logic.
+  // Anyway if those IDs not valid request to get all spots will be sent in locationUtils
+  const categoryIds = [1, 2, 3];
+  // const categoryIds = categoriesList.map((item) => item.id);
   const isValidCategories = categoriesFromUrl.every((cat) =>
     categoryIds.includes(+cat)
   );
   if (isValidCategories) {
-    const categoriesToSet = categoriesList.filter((category) =>
-      categoriesFromUrl.includes(`${category.id}`)
-    );
-    selectedCategory.set(categoriesToSet);
+    // const categoriesToSet = categoriesList.filter((category) =>
+    //   categoriesFromUrl.includes(`${category.id}`)
+    // );
+    selectedCategory.set(categoriesFromUrl.map((id) => ({ id: +id })));
     update({ params: { category: categoriesFromUrl } });
   }
 };
@@ -132,21 +136,20 @@ const setStateFromUrl = (params) => {
   if (yearFromUrl && validateYear(yearFromUrl, settingsObj.yearStart))
     selectedYear.set(yearFromUrl);
   if (categoryFromUrl) {
-    if (categoriesList.length > 0) {
-      setSelectedCategoryIfValid(category);
-    } else {
+    setSelectedCategoryIfValid(category);
+    if (categoriesList.length === 0) {
       getCategories().then((response) => {
         const { status, data } = response;
         if (status && data) {
           categories.set(data);
-          setSelectedCategoryIfValid(category);
+          // setSelectedCategoryIfValid(category);
         }
       });
     }
-  }
-  if (artistFromUrl) selectedArtist.set(artistFromUrl);
-  if (huntersFromUrl) {
-    huntersFilter.set(JSON.parse(huntersFromUrl.toLowerCase()));
+    if (artistFromUrl) selectedArtist.set(artistFromUrl);
+    if (huntersFromUrl) {
+      huntersFilter.set(JSON.parse(huntersFromUrl.toLowerCase()));
+    }
   }
   if (markerFromUrl && !Number.isNaN(+markerFromUrl)) {
     window.addEventListener(

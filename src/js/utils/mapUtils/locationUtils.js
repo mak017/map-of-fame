@@ -1,20 +1,42 @@
-// import { getCountryByIp } from "../../api/geo";
-import { getSpots } from "../../api/spot";
 import { DEFAULT_ZOOM, DEFAULT_VIEW } from "../../constants";
 import { getCurrentYear } from "../commonUtils";
 import { permalink } from "./permalink";
-import { markersStore, selectedYear } from "../../store";
+import {
+  huntersFilter,
+  isLoading,
+  isSearchResults,
+  markersStore,
+  selectedArtist,
+  selectedCategory,
+  selectedYear,
+} from "../../store";
+import { requestSearchSpots } from "../../api/search";
+import { requestSpots } from "../../init";
 
 let yearFromStore;
+let selectedHuntersFilter;
+let categoryFromStore;
+let artistFromStore;
 
 selectedYear.subscribe((value) => {
   yearFromStore = value;
 });
 
+huntersFilter.subscribe((value) => {
+  selectedHuntersFilter = value;
+});
+
+selectedCategory.subscribe((value) => {
+  categoryFromStore = value;
+});
+
+selectedArtist.subscribe((value) => {
+  artistFromStore = value;
+});
+
 const getLocationByIp = () =>
   fetch("https://ipinfo.io/json?token=c97eec3767f442")
     .then((response) => response.json())
-    // getCountryByIp()
     .then((data) => {
       const { loc } = data;
       return {
@@ -54,14 +76,29 @@ export const setLocation = (map) => {
       map.setView(DEFAULT_VIEW.coordinates, DEFAULT_VIEW.zoom);
     })
     .finally(() => {
-      // addRandomMarkers(map);
       permalink.setup(map);
-      getSpots(yearFromStore || getCurrentYear()).then((response) => {
-        const { status, data } = response;
-        if (status && data) {
-          markersStore.set(data);
-        }
-      });
+      if (selectedHuntersFilter) {
+        isLoading.set(true);
+        requestSearchSpots({
+          year: yearFromStore,
+          name: artistFromStore,
+          category: categoryFromStore.map((cat) => cat.id),
+          showHunters: selectedHuntersFilter ? 1 : 0,
+        }).then((response) => {
+          const { status, data, error } = response;
+          if (status && data) {
+            isSearchResults.set(true);
+            markersStore.set(data);
+            isLoading.set(false);
+          }
+          if (error) {
+            permalink.update({ clearParams: "all" });
+            requestSpots(yearFromStore);
+          }
+        });
+      } else {
+        requestSpots(yearFromStore || getCurrentYear());
+      }
     });
 };
 

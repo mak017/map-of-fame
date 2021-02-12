@@ -6,13 +6,16 @@ import { markersReadyEvent } from "../commonUtils";
 import { clusterIcon, markerWithPhoto } from "./icons";
 
 let prevMarkers = [];
+let markersLayer = null;
 
 const clearMarkers = (map) => {
   if (prevMarkers.length) {
     prevMarkers.forEach((marker) => {
       marker.removeEventListener("click");
-      marker.removeFrom(map);
     });
+  }
+  if (markersLayer) {
+    map.removeLayer(markersLayer);
   }
   prevMarkers = [];
 };
@@ -46,26 +49,33 @@ const createMarker = (data) => {
   return marker;
 };
 
-const createMarkers = (map, markersData) => {
-  const markers = L.markerClusterGroup({
+const createMarkers = (map, markersData, isSearch) => {
+  markersLayer = L.markerClusterGroup({
     showCoverageOnHover: false,
     iconCreateFunction: clusterIcon,
     spiderLegPolylineOptions: { weight: 0 },
     elementsPlacementStrategy: "default",
     spiderfyDistanceMultiplier: 2,
   });
+  const tempMarkersList = [];
   markersData.forEach((item) => {
     const marker = createMarker(item);
-    markers.addLayer(marker);
+    markersLayer.addLayer(marker);
     prevMarkers.push(marker);
+    tempMarkersList.push(marker);
   });
-  map.addLayer(markers);
+  map.addLayer(markersLayer);
+  if (isSearch) {
+    // eslint-disable-next-line new-cap
+    const group = new L.featureGroup(tempMarkersList);
+    map.fitBounds(group.getBounds());
+  }
   window.dispatchEvent(markersReadyEvent);
 };
 
-export const placeMarkers = (map, markersData) => {
+export const placeMarkers = (map, markersData, isSearch) => {
   clearMarkers(map);
   if (markersData.length > 0) {
-    createMarkers(map, markersData);
+    createMarkers(map, markersData, isSearch);
   }
 };

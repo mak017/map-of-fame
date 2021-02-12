@@ -16,6 +16,8 @@ export const openedMarkerData = writable(null);
 
 export const markersStore = writable([]);
 
+export const isSearchResults = writable(false);
+
 // export const userData = writable({});
 export const userData = writable(fakeUser);
 
@@ -29,3 +31,5 @@ export const settings = writable([]);
 export const firms = writable([]);
 
 export const categories = writable([]);
+
+export const isLoading = writable(false);

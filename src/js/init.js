@@ -1,6 +1,14 @@
 import { verifyAuthRequest } from "./api/auth";
 import { getSettingsRequest } from "./api/settings";
-import { isLoggedIn, settings, userData } from "./store";
+import { getSpots } from "./api/spot";
+import {
+  isLoading,
+  isLoggedIn,
+  isSearchResults,
+  markersStore,
+  settings,
+  userData,
+} from "./store";
 import {
   loadFromLocalStorage,
   removeFromLocalStorage,
@@ -10,7 +18,6 @@ import { transformSettings } from "./utils/transformers";
 
 export const getSettings = () =>
   getSettingsRequest().then((response) => {
-    console.log("getSettingsRequest response :>> ", response);
     if (response.status && response.data) {
       settings.set(transformSettings(response.data));
     }
@@ -19,7 +26,6 @@ export const getSettings = () =>
 export const verifyAuth = (token) =>
   verifyAuthRequest(token).then((response) => {
     if (response.status && response.data) {
-      console.log("verify :>> ", response.data);
       userData.set(response.data);
       isLoggedIn.set(true);
       saveToLocalStorage("token", response.data.token);
@@ -36,4 +42,19 @@ export const initApp = () => {
   if (token) {
     verifyAuth(token);
   }
+};
+
+export const requestSpots = (year) => {
+  isLoading.set(true);
+  return getSpots(year).then((response) => {
+    const { status, data, error } = response;
+    if (status && data) {
+      isLoading.set(false);
+      isSearchResults.set(false);
+      markersStore.set(data);
+    }
+    if (error) {
+      isLoading.set(false);
+    }
+  });
 };
