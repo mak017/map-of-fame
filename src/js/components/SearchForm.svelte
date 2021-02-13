@@ -32,6 +32,7 @@ let isHuntersChecked = true;
 let yearErrorMessage = "";
 let categoryErrorMessage = "";
 let isSubmitDisabled = false;
+let isInProgress = false;
 let prevYearValue = "";
 let enteredSearchValue = "";
 let categoriesList;
@@ -44,6 +45,9 @@ const unsubscribeCategories = categories.subscribe(
 onDestroy(() => {
   unsubscribeCategories();
 });
+
+$: isSubmitDisabled =
+  !!yearErrorMessage || !!categoryErrorMessage || isInProgress;
 
 const hasCategories = () =>
   Array.isArray(categoriesList) && categoriesList.length;
@@ -76,7 +80,6 @@ const validateCategories = () => {
 const validateForm = () => {
   validateYearInput();
   validateCategories();
-  isSubmitDisabled = !!yearErrorMessage || !!categoryErrorMessage;
 };
 
 const handleSubmit = () => {
@@ -84,6 +87,7 @@ const handleSubmit = () => {
   if (!yearErrorMessage && !categoryErrorMessage) {
     const category = selectedCategories.map((cat) => cat.id);
     const { name } = artist || {};
+    isInProgress = true;
     requestSearchSpots({
       year,
       name,
@@ -91,6 +95,7 @@ const handleSubmit = () => {
       showHunters: isHuntersChecked ? 1 : 0,
     }).then((response) => {
       const { status, data, error } = response;
+      isInProgress = false;
       if (status && data) {
         selectedYear.set(year);
         selectedCategory.set(selectedCategories);
@@ -112,8 +117,6 @@ const handleSubmit = () => {
         categoryErrorMessage = category ? ERROR_MESSAGES.categoryEmpty : "";
       }
     });
-  } else {
-    isSubmitDisabled = true;
   }
 };
 
@@ -125,14 +128,12 @@ const handleYearChange = () => {
   }
   if (isSubmitDisabled || yearErrorMessage || categoryErrorMessage) {
     yearErrorMessage = "";
-    isSubmitDisabled = !!categoryErrorMessage;
   }
 };
 
 const handleCategoryChange = () => {
   if (isSubmitDisabled || yearErrorMessage || categoryErrorMessage) {
     categoryErrorMessage = "";
-    isSubmitDisabled = !!yearErrorMessage;
   }
 };
 

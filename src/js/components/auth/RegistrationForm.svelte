@@ -32,6 +32,7 @@ let country;
 let portfolioLink = "";
 let errors = { email: "", password: "", name: "", country: "", link: "" };
 let isSubmitDisabled = false;
+let isInProgress = false;
 let countries = [];
 
 const unsubscribeCountriesList = countriesList.subscribe(
@@ -46,9 +47,13 @@ onMount(() => {
 
 onDestroy(() => unsubscribeCountriesList());
 
+$: isSubmitDisabled =
+  isInProgress ||
+  (step === 1 && (!!errors.email || !!errors.password)) ||
+  (step === 2 && (!!errors.name || !!errors.country || !!errors.link));
+
 const getCountries = () => {
   getAllCountries().then((response) => {
-    console.log("data", response);
     const { status, data } = response;
     if (status && data) {
       countriesList.set(transformCountries(data));
@@ -67,7 +72,6 @@ const validate = () => {
     if (isValidEmail && isValidPassword) {
       errors.email = "";
       errors.password = "";
-      isSubmitDisabled = false;
     } else {
       if (!isValidEmail) {
         errors.email = !email
@@ -79,12 +83,10 @@ const validate = () => {
           ? ERROR_MESSAGES.passwordEmpty
           : ERROR_MESSAGES.passwordInvalid;
       } else errors.password = "";
-      isSubmitDisabled = true;
     }
   } else {
     errors.name = !username ? ERROR_MESSAGES.usernameEmpty : "";
     errors.country = !country ? ERROR_MESSAGES.countryCityEmpty : "";
-    isSubmitDisabled = !username || !country;
   }
 };
 
@@ -97,6 +99,7 @@ const handleSubmit = () => {
     }
   } else {
     if (username && country) {
+      isInProgress = true;
       createUserRequest({
         name: username,
         password,
@@ -107,23 +110,26 @@ const handleSubmit = () => {
         link: portfolioLink,
       })
         .then((response) => {
-          if (response.status && response.data) {
-            userData.set(response.data);
+          const { status, data, error } = response;
+          isInProgress = false;
+          if (status && data) {
+            userData.set(data);
             isLoggedIn.set(true);
-            saveToLocalStorage("token", response.data.token);
+            saveToLocalStorage("token", data.token);
             showAuth(false);
           } else {
-            if (response.error?.email) {
-              errors.email = response.error.email;
+            if (error?.email) {
+              errors.email = error.email;
               step = 1;
             }
-            if (Array.isArray(response.error)) {
-              errors.link = response.error[0];
+            if (Array.isArray(error)) {
+              errors.link = error[0];
             }
           }
         })
         .catch((e) => {
           console.error(e);
+          isInProgress = false;
           errors.password = "Something went wrong";
         });
     }
@@ -143,9 +149,6 @@ const handleInputChange = (input) => {
 
 const handleBackClick = () => {
   step = 1;
-  if (isSubmitDisabled) {
-    isSubmitDisabled = false;
-  }
 };
 </script>
 

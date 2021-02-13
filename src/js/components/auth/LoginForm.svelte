@@ -15,6 +15,9 @@ let email = "";
 let password = "";
 let errors = { email: "", password: "" };
 let isDisabledSubmit = false;
+let isInProgress = false;
+
+$: isDisabledSubmit = !!errors.email || !!errors.password || isInProgress;
 
 const validate = () => {
   const isValidEmail = validateEmail(email);
@@ -23,20 +26,19 @@ const validate = () => {
     else if (!isValidEmail) errors.email = ERROR_MESSAGES.emailInvalid;
     else errors.email = "";
     errors.password = !password ? ERROR_MESSAGES.passwordEmpty : "";
-    isDisabledSubmit = true;
     return;
   }
   errors.email = "";
   errors.password = "";
-  isDisabledSubmit = false;
 };
 
 const handleSubmit = () => {
   validate();
   if (!errors.email && !errors.password) {
+    isInProgress = true;
     loginRequest(email, password)
       .then((response) => {
-        console.log("data", response);
+        isInProgress = false;
         if (response.status && response.data) {
           const { token } = response.data;
           userData.set(response.data);
@@ -54,6 +56,7 @@ const handleSubmit = () => {
       })
       .catch((e) => {
         console.error(e);
+        isInProgress = false;
         isLoggedIn.set(false);
         errors.password = "Something went wrong";
       });

@@ -169,7 +169,6 @@ const onNewMarkerCancel = () => {
 const onNewMarkerSubmit = () => {
   quitAddSpot();
   newMarker.removeEventListener("moveend", onNewMarkerMoveEnd);
-  newMarker.dragging.disable();
 };
 
 const onAddSpotBtnClick = () => {

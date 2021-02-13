@@ -61,6 +61,7 @@ const handleResize = () => {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 1;
   flex-direction: column;
   align-items: center;
   width: 100%;

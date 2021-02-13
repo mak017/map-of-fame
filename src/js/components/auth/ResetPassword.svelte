@@ -12,25 +12,28 @@ export let resetPasswordToken;
 
 let password = "";
 let errorMessage = "";
-let isSubmitDisabled = "";
+let isSubmitDisabled = false;
+let isInProgress = false;
+
+$: isSubmitDisabled = !!errorMessage || isInProgress;
 
 const validate = () => {
   if (!validatePassword(password)) {
     errorMessage = !password
       ? ERROR_MESSAGES.passwordEmpty
       : ERROR_MESSAGES.passwordInvalid;
-    isSubmitDisabled = true;
     return;
   }
   errorMessage = "";
-  isSubmitDisabled = false;
 };
 
 const handleSubmit = () => {
   validate();
   if (!errorMessage) {
+    isInProgress = true;
     changePasswordReset(resetPasswordToken, password).then((response) => {
       const { status, data } = response;
+      isInProgress = false;
       if (status && data) {
         const { token } = data;
         userData.set(data);
@@ -45,9 +48,9 @@ const handleSubmit = () => {
 };
 
 const handleInputChange = () => {
-  if (isDisabledSubmit || errorMessage) {
+  if (isSubmitDisabled || errorMessage) {
     errorMessage = "";
-    isDisabledSubmit = false;
+    // isSubmitDisabled = false;
   }
 };
 </script>

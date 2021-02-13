@@ -15,6 +15,9 @@ export let isMobileWidth;
 let email = "";
 let errorMessage = "";
 let isDisabledSubmit = false;
+let isInProgress = false;
+
+$: isDisabledSubmit = !!errorMessage || isInProgress;
 
 const validate = () => {
   const isValidEmail = validateEmail(email);
@@ -22,21 +25,19 @@ const validate = () => {
     if (!email) errorMessage = ERROR_MESSAGES.emailEmpty;
     else if (!isValidEmail) errorMessage = ERROR_MESSAGES.emailInvalid;
     else errorMessage = "";
-    isDisabledSubmit = true;
     return;
   }
   errorMessage = "";
-  isDisabledSubmit = false;
 };
 
 const handleSubmit = () => {
-  console.log("submit");
   validate();
   if (!errorMessage) {
-    // send request
+    isInProgress = true;
     changePasswordInit(email)
       .then((response) => {
         const { status, data, error } = response;
+        isInProgress = false;
         if (status && data) {
           setForgotPasswordEmailSent(true);
         } else {
@@ -45,6 +46,7 @@ const handleSubmit = () => {
       })
       .catch((e) => {
         console.error(e);
+        isInProgress = false;
         errorMessage = "Something went wrong";
       });
   }

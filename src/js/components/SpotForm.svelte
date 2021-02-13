@@ -45,6 +45,7 @@ let selectedCategory = editSpotData.category || null;
 let sprayPaintUsed;
 let link = editSpotData.linkToWork || "";
 let isSubmitDisabled = false;
+let isInProgress = false;
 let userTypeValue;
 let settingsValue;
 let sprayFirms;
@@ -52,13 +53,17 @@ let categoriesList;
 let errors = { year: "", imageFile: "", linkToVideo: "", sprayPaintUsed: "" };
 const currentYear = getCurrentYear();
 const token = loadFromLocalStorage("token") || null;
+
 const unsubscribeUserData = userData.subscribe(
   (value) => (userTypeValue = value.type)
 );
+
 const unsubscribeSettings = settings.subscribe(
   (value) => (settingsValue = value)
 );
+
 const unsubscribeFirms = firms.subscribe((value) => (sprayFirms = value));
+
 const unsubscribeCategories = categories.subscribe(
   (value) => (categoriesList = value)
 );
@@ -69,6 +74,11 @@ onDestroy(() => {
   unsubscribeFirms();
   unsubscribeCategories();
 });
+
+const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
+
+$: isSubmitDisabled =
+  Object.values(errors).some((err) => !!err) || isInProgress;
 
 const hasCategories = () =>
   Array.isArray(categoriesList) && categoriesList.length;
@@ -85,6 +95,8 @@ if (!hasCategories()) {
       }
     }
   });
+} else {
+  selectedCategory = categoriesList[0];
 }
 
 if (userTypeValue === USER_TYPES.artist.toLowerCase() && !hasSprays()) {
@@ -95,8 +107,6 @@ if (userTypeValue === USER_TYPES.artist.toLowerCase() && !hasSprays()) {
     }
   });
 }
-
-const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
 
 const onChangeImage = () => {
   const file = imageFile[0];
@@ -123,7 +133,6 @@ const onChangeImage = () => {
     } else {
       errors.imageFile = ERROR_MESSAGES.fileTooLarge;
     }
-    isSubmitDisabled = isFormHasErrors();
   }
 };
 
@@ -170,56 +179,47 @@ const handleYearChange = () => {
   }
   if (isSubmitDisabled || isFormHasErrors()) {
     errors.year = "";
-    isSubmitDisabled = isFormHasErrors();
-  }
-};
-
-const handleYearBlur = () => {
-  if (isSubmitDisabled) {
-    validateYearInput();
-    isSubmitDisabled = isFormHasErrors();
   }
 };
 
 const handleVideoLinkChange = () => {
   if (isSubmitDisabled || isFormHasErrors()) {
     errors.linkToVideo = "";
-    isSubmitDisabled = isFormHasErrors();
   }
 };
 
 const handleSpraySelect = () => {
   if (isSubmitDisabled || isFormHasErrors()) {
     errors.sprayPaintUsed = "";
-    isSubmitDisabled = isFormHasErrors();
   }
 };
 
 const handleSubmit = () => {
   validate();
-  console.log("errors", errors);
   if (
     !errors.year &&
     !errors.imageFile &&
     !errors.sprayPaintUsed &&
     !errors.linkToVideo
   ) {
-    console.log({
-      artist,
-      crew,
-      year,
-      selectedStatus,
-      imageFile,
-      linkToVideo,
-      description,
-      selectedCategory,
-      sprayPaintUsed,
-      link,
-    });
+    // console.log({
+    //   artist,
+    //   crew,
+    //   year,
+    //   selectedStatus,
+    //   imageFile,
+    //   linkToVideo,
+    //   description,
+    //   selectedCategory,
+    //   sprayPaintUsed,
+    //   link,
+    // });
     if (!isEditSpot) {
       const token = loadFromLocalStorage("token") || null;
       const markerCoords = marker.getLatLng();
       const { lat, lng } = markerCoords;
+      isInProgress = true;
+      marker.dragging.disable();
       createSpot(token, {
         ltd: lat,
         lng,
@@ -234,7 +234,8 @@ const handleSubmit = () => {
         firmId: sprayPaintUsed.id,
         link,
       }).then((response) => {
-        const { status, data } = response;
+        const { status, data, error } = response;
+        isInProgress = false;
         if (status && data) {
           if (
             $selectedYear === year ||
@@ -246,12 +247,17 @@ const handleSubmit = () => {
             onCancel();
           }
         }
+        if (error) {
+          if (error?.img) {
+            errors.imageFile = error.img[0] || "";
+            imageFilePreview = "";
+          }
+          marker.dragging.enable();
+        }
       });
     } else {
       onCancel();
     }
-  } else {
-    isSubmitDisabled = true;
   }
 };
 
@@ -287,7 +293,6 @@ const getSelectionLabel = (option) => {
     placeholder="Year"
     bind:value={year}
     hint={`${settingsValue.yearStart} - ${currentYear}`}
-    on:blur={handleYearBlur}
     on:input={handleYearChange}
     errorText={errors.year}
     wideOnMobile
@@ -380,7 +385,11 @@ const getSelectionLabel = (option) => {
         isDisabled={isSubmitDisabled}
         className={!isEditSpot ? "addSpot" : ""} />
     </div>
-    <button type="button" class="cancel" on:click={onCancel}>Cancel</button>
+    <button
+      type="button"
+      class="cancel"
+      on:click={onCancel}
+      disabled={isInProgress}>Cancel</button>
   {/if}
 </form>
 
@@ -496,6 +505,10 @@ const getSelectionLabel = (option) => {
   font-weight: 600;
   line-height: 1.22;
   cursor: pointer;
+  &:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
 }
 
 .edit {
