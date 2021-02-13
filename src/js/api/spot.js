@@ -1,7 +1,13 @@
-import { SPOT, SPOT_YEAR } from "./endpoints";
+import { SPOT, SPOT_ID, SPOT_YEAR } from "./endpoints";
 
 export const getSpots = async (year) => {
   const response = await fetch(SPOT_YEAR(year), { method: "GET" });
+  const result = await response.json();
+  return result;
+};
+
+export const getSpotById = async (id) => {
+  const response = await fetch(SPOT_ID(id), { method: "GET" });
   const result = await response.json();
   return result;
 };

@@ -1,6 +1,7 @@
 import { verifyAuthRequest } from "./api/auth";
 import { getSettingsRequest } from "./api/settings";
 import { getSpots } from "./api/spot";
+import { EMPTY_YEAR_STRING } from "./constants";
 import {
   isLoading,
   isLoggedIn,
@@ -45,8 +46,12 @@ export const initApp = () => {
 };
 
 export const requestSpots = (year) => {
+  let yearForRequest = year;
   isLoading.set(true);
-  return getSpots(year).then((response) => {
+  if (year === EMPTY_YEAR_STRING) {
+    yearForRequest = "";
+  }
+  return getSpots(yearForRequest).then((response) => {
     const { status, data, error } = response;
     if (status && data) {
       isLoading.set(false);

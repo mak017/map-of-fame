@@ -4,6 +4,7 @@ import { getAllCountries } from "./../../api/geo.js";
 import AutoComplete from "./../elements/AutoComplete.svelte";
 import { createUserRequest } from "./../../api/auth.js";
 import {
+  isValidHttpUrl,
   saveToLocalStorage,
   validateEmail,
   validatePassword,
@@ -63,8 +64,6 @@ const getCountries = () => {
 
 const getOptionLabel = (option) => option.name;
 
-const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
-
 const validate = () => {
   if (step === 1) {
     const isValidEmail = validateEmail(email);
@@ -85,8 +84,10 @@ const validate = () => {
       } else errors.password = "";
     }
   } else {
+    const isValidLink = portfolioLink ? isValidHttpUrl(portfolioLink) : true;
     errors.name = !username ? ERROR_MESSAGES.usernameEmpty : "";
     errors.country = !country ? ERROR_MESSAGES.countryCityEmpty : "";
+    errors.link = !isValidLink ? ERROR_MESSAGES.linkInvalid : "";
   }
 };
 
@@ -98,7 +99,7 @@ const handleSubmit = () => {
       errors = { email: "", password: "", name: "", country: "", link: "" };
     }
   } else {
-    if (username && country) {
+    if (!errors.name && !errors.country && !errors.link) {
       isInProgress = true;
       createUserRequest({
         name: username,
@@ -143,7 +144,6 @@ const handleInputChange = (input) => {
     (step === 2 && (errors.name || errors.country || errors.link))
   ) {
     errors[input] = "";
-    isSubmitDisabled = isFormHasErrors();
   }
 };
 

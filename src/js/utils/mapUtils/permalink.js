@@ -1,16 +1,17 @@
 import {
   categories,
   huntersFilter,
+  markerIdFromUrl,
   markersStore,
   selectedArtist,
   selectedCategory,
   selectedYear,
   settings,
 } from "../../store";
-import { setMarkerDataById } from "../../stubs/randomMarkersStub";
 import { normalizeCoords } from "./locationUtils";
 import { validateYear } from "../datesUtils";
 import { getCategories } from "../../api/settings";
+import { setMarkerData } from "./markersUtils";
 
 let shouldUpdate = true;
 let mapInstance = null;
@@ -152,13 +153,7 @@ const setStateFromUrl = (params) => {
     }
   }
   if (markerFromUrl && !Number.isNaN(+markerFromUrl)) {
-    window.addEventListener(
-      "markersReady",
-      () => {
-        setMarkerDataById(+markerFromUrl);
-      },
-      false
-    );
+    markerIdFromUrl.set(markerFromUrl);
   }
 };
 
@@ -169,7 +164,10 @@ const setParamsFromState = (year, params) => {
   if (artist) selectedArtist.set(artist);
   if (hunters) huntersFilter.set(hunters);
   if (marker && arrMarkers && arrMarkers.length) {
-    setMarkerDataById(arrMarkers[+marker]);
+    const markerData = arrMarkers.find((item) => item.id === +marker);
+    if (markerData) {
+      setMarkerData(markerData);
+    }
   }
 };
 

@@ -11,7 +11,7 @@ export let wideOnMobile = false;
 export let editSpot = false;
 export let isYear = false;
 export let addSpot = false;
-export let linkToVideo = false;
+export let link = false;
 export let extraMargin = false;
 
 const dispatch = createEventDispatcher();
@@ -28,7 +28,7 @@ const keyDown = (event) => dispatch("keyDown", event);
   class:edit-spot={editSpot}
   class:add-spot={addSpot}
   class:year={isYear}
-  class:link-to-video={linkToVideo}
+  class:link
   class:extra-margin={extraMargin}>
   {#if label}<span>{label}</span>{/if}
   <input
@@ -151,7 +151,7 @@ label:not(.with-label) {
   &:not(.with-label) {
     margin-bottom: 10px;
   }
-  &.link-to-video {
+  &.link {
     .hint {
       margin: -1px 0 -15px;
     }
@@ -213,7 +213,7 @@ label:not(.with-label) {
     &.error:not(.with-hint) .hint {
       margin: 0 0 -14px;
     }
-    &.link-to-video {
+    &.link {
       margin-bottom: 19px;
     }
   }

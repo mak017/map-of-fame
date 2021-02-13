@@ -18,6 +18,16 @@ export const validateVideoLink = (link) =>
   regexVimeo.test(link) ||
   regexDailymotion.test(link);
 
+export const isValidHttpUrl = (string) => {
+  let url;
+  try {
+    url = new URL(string);
+  } catch {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+};
+
 export const getCurrentYear = () => new Date().getFullYear();
 
 export const saveToLocalStorage = (key, value) =>

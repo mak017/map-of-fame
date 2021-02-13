@@ -13,6 +13,7 @@ import { markerWithPhoto } from "../utils/mapUtils/icons";
 import { categories, firms, selectedYear, settings, userData } from "../store";
 import {
   getCurrentYear,
+  isValidHttpUrl,
   isYearLike,
   loadFromLocalStorage,
   validateVideoLink,
@@ -50,7 +51,13 @@ let userTypeValue;
 let settingsValue;
 let sprayFirms;
 let categoriesList;
-let errors = { year: "", imageFile: "", linkToVideo: "", sprayPaintUsed: "" };
+let errors = {
+  year: "",
+  imageFile: "",
+  linkToVideo: "",
+  sprayPaintUsed: "",
+  link: "",
+};
 const currentYear = getCurrentYear();
 const token = loadFromLocalStorage("token") || null;
 
@@ -164,11 +171,16 @@ const validateVideoLinkInput = () => {
       : ERROR_MESSAGES.videoLinkInvalid;
 };
 
+const validateLink = () => {
+  errors.link = isValidHttpUrl(link) || !link ? "" : ERROR_MESSAGES.linkInvalid;
+};
+
 const validate = () => {
   validateYearInput();
   validateImage();
   validateFirm();
   validateVideoLinkInput();
+  validateLink();
 };
 
 const handleYearChange = () => {
@@ -194,13 +206,20 @@ const handleSpraySelect = () => {
   }
 };
 
+const handleLinkChange = () => {
+  if (isSubmitDisabled || isFormHasErrors()) {
+    errors.link = "";
+  }
+};
+
 const handleSubmit = () => {
   validate();
   if (
     !errors.year &&
     !errors.imageFile &&
     !errors.sprayPaintUsed &&
-    !errors.linkToVideo
+    !errors.linkToVideo &&
+    !errors.link
   ) {
     // console.log({
     //   artist,
@@ -334,7 +353,7 @@ const getSelectionLabel = (option) => {
     wideOnMobile
     editSpot={isEditSpot}
     addSpot={!isEditSpot}
-    linkToVideo />
+    link />
   <div class="description">
     <FormTextArea
       placeholder="Description"
@@ -373,9 +392,12 @@ const getSelectionLabel = (option) => {
     <FormTextInput
       label="Link To Work"
       bind:value={link}
+      on:input={handleLinkChange}
       wideOnMobile
+      errorText={errors.link}
       editSpot={isEditSpot}
-      addSpot={!isEditSpot} />
+      addSpot={!isEditSpot}
+      link />
   </div>
   {#if !editSpotData.img}
     <div class="button_wrap">
@@ -580,6 +602,14 @@ const getSelectionLabel = (option) => {
       }
       .cancel {
         padding: 10px 0;
+      }
+      .error {
+        font-size: 11px;
+      }
+      .spray {
+        &.with-error {
+          margin-bottom: 2px;
+        }
       }
     }
   }

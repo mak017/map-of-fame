@@ -45,4 +45,5 @@ export const ERROR_MESSAGES = {
   genericEmpty: "This is required field",
   videoLinkInvalid: "Youtube, Vimeo or Dailymotion links only",
   categoryEmpty: "Please select at least 1 category",
+  linkInvalid: "Link must start with http or https",
 };

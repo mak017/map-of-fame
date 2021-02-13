@@ -4,6 +4,7 @@ import "leaflet.markercluster.placementstrategies";
 import { openedMarkerData } from "../../store";
 import { markersReadyEvent } from "../commonUtils";
 import { clusterIcon, markerWithPhoto } from "./icons";
+import { permalink } from "./permalink";
 
 let prevMarkers = [];
 let markersLayer = null;
@@ -20,7 +21,7 @@ const clearMarkers = (map) => {
   prevMarkers = [];
 };
 
-const setMarkerData = (data) => {
+export const setMarkerData = (data) => {
   const {
     id,
     artist,
@@ -30,6 +31,7 @@ const setMarkerData = (data) => {
     img,
     title,
     video_link: video,
+    user: { name, link },
   } = data;
   openedMarkerData.set({
     id,
@@ -39,7 +41,9 @@ const setMarkerData = (data) => {
     description,
     img: { src: img, title: title || id },
     video,
+    user: { name, link },
   });
+  permalink.update({ params: { marker: id } });
 };
 
 const createMarker = (data) => {

@@ -5,6 +5,7 @@ import {
   huntersFilter,
   isLoading,
   isSearchResults,
+  markerIdFromUrl,
   markersStore,
   selectedArtist,
   selectedCategory,
@@ -12,11 +13,14 @@ import {
 } from "../../store";
 import { requestSearchSpots } from "../../api/search";
 import { requestSpots } from "../../init";
+import { getSpotById } from "../../api/spot";
+import { setMarkerData } from "./markersUtils";
 
 let yearFromStore;
 let selectedHuntersFilter;
 let categoryFromStore;
 let artistFromStore;
+let markerId;
 
 selectedYear.subscribe((value) => {
   yearFromStore = value;
@@ -32,6 +36,10 @@ selectedCategory.subscribe((value) => {
 
 selectedArtist.subscribe((value) => {
   artistFromStore = value;
+});
+
+markerIdFromUrl.subscribe((value) => {
+  markerId = value;
 });
 
 const getLocationByIp = () =>
@@ -91,7 +99,21 @@ export const setLocation = (map) => {
             markersStore.set(data);
             isLoading.set(false);
           }
-          if (error) {
+          if (error && error.length > 0) {
+            permalink.update({ clearParams: "all" });
+            requestSpots(yearFromStore);
+          }
+        });
+      } else if (markerId) {
+        isLoading.set(true);
+        getSpotById(markerId).then((response) => {
+          const { status, data, error } = response;
+          markerIdFromUrl.set(null);
+          if (status && data) {
+            isLoading.set(false);
+            setMarkerData(data);
+          }
+          if (error && error.length > 0) {
             permalink.update({ clearParams: "all" });
             requestSpots(yearFromStore);
           }
