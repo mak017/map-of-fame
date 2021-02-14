@@ -45,8 +45,8 @@ export const createSpot = async (
   formData.append("link", link);
   const response = await fetch(SPOT(), {
     method: "POST",
-    withCredentials: true,
-    headers: { Authorization: bearer },
+    // withCredentials: true,
+    // headers: { Authorization: bearer },
     body: formData,
   });
   const result = await response.json();
