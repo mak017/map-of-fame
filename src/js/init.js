@@ -47,19 +47,19 @@ export const initApp = () => {
 
 export const requestSpots = (year) => {
   let yearForRequest = year;
-  isLoading.set(true);
+  // isLoading.set(true);
   if (year === EMPTY_YEAR_STRING) {
     yearForRequest = "";
   }
   return getSpots(yearForRequest).then((response) => {
     const { status, data, error } = response;
     if (status && data) {
-      isLoading.set(false);
+      // isLoading.set(false);
       isSearchResults.set(false);
       markersStore.set(data);
     }
-    if (error) {
-      isLoading.set(false);
-    }
+    // if (error) {
+    //   isLoading.set(false);
+    // }
   });
 };

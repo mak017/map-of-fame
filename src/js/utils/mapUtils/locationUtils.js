@@ -86,7 +86,7 @@ export const setLocation = (map) => {
     .finally(() => {
       permalink.setup(map);
       if (selectedHuntersFilter) {
-        isLoading.set(true);
+        // isLoading.set(true);
         requestSearchSpots({
           year: yearFromStore,
           name: artistFromStore,
@@ -97,7 +97,7 @@ export const setLocation = (map) => {
           if (status && data) {
             isSearchResults.set(true);
             markersStore.set(data);
-            isLoading.set(false);
+            // isLoading.set(false);
           }
           if (error && error.length > 0) {
             permalink.update({ clearParams: "all" });
@@ -105,12 +105,12 @@ export const setLocation = (map) => {
           }
         });
       } else if (markerId) {
-        isLoading.set(true);
+        // isLoading.set(true);
         getSpotById(markerId).then((response) => {
           const { status, data, error } = response;
           markerIdFromUrl.set(null);
           if (status && data) {
-            isLoading.set(false);
+            // isLoading.set(false);
             setMarkerData(data);
           }
           if (error && error.length > 0) {
