@@ -1,4 +1,3 @@
-import { loadFromLocalStorage } from "../utils/commonUtils";
 import {
   LOGIN,
   VERIFY,
@@ -11,16 +10,10 @@ export const loginRequest = async (email, password) => {
   const data = new URLSearchParams();
   data.append("email", email);
   data.append("password", password);
-  const token = loadFromLocalStorage("token") || null;
-  const bearer = `Bearer ${token}`;
   const response = await fetch(LOGIN(), {
     method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: bearer,
-    },
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: data,
-    withCredentials: true,
   });
   const result = await response.json();
   return result;
