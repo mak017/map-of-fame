@@ -24,7 +24,7 @@ export const verifyAuthRequest = async (token) => {
   const response = await fetch(VERIFY(), {
     method: "POST",
     // withCredentials: true,
-    // credentials: "include",
+    credentials: "same-origin",
     headers: new Headers({ Authorization: bearer }),
   });
   const result = await response.json();
