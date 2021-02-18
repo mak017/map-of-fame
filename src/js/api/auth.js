@@ -21,11 +21,13 @@ export const loginRequest = async (email, password) => {
 
 export const verifyAuthRequest = async (token) => {
   const bearer = `Bearer ${token}`;
+  const headers = new Headers();
+  headers.append("Authorization", bearer);
   const response = await fetch(VERIFY(), {
     method: "POST",
-    // withCredentials: true,
-    credentials: "same-origin",
-    headers: new Headers({ Authorization: bearer }),
+    withCredentials: true,
+    credentials: "include",
+    headers,
   });
   const result = await response.json();
   return result;
