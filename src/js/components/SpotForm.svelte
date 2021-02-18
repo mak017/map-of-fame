@@ -1,4 +1,5 @@
 <script>
+import { addWatermark } from "./../utils/addWatermark.js";
 import { onDestroy } from "svelte";
 import watermark from "watermarkjs";
 import { createSpot } from "./../api/spot";
@@ -40,6 +41,7 @@ let prevYearValue = "";
 let selectedStatus = editSpotData.status || STATUSES.live;
 let imageFile;
 let imageFilePreview = editSpotData.img || "";
+let imageBlob;
 let linkToVideo = editSpotData.linkToVideo || "";
 let description = editSpotData.description || "";
 let selectedCategory = editSpotData.category || null;
@@ -48,6 +50,7 @@ let link = editSpotData.linkToWork || "";
 let isSubmitDisabled = false;
 let isInProgress = false;
 let userTypeValue;
+let userName;
 let settingsValue;
 let sprayFirms;
 let categoriesList;
@@ -61,9 +64,10 @@ let errors = {
 const currentYear = getCurrentYear();
 const token = loadFromLocalStorage("token") || null;
 
-const unsubscribeUserData = userData.subscribe(
-  (value) => (userTypeValue = value.type)
-);
+const unsubscribeUserData = userData.subscribe((value) => {
+  userTypeValue = value.type;
+  userName = value.name;
+});
 
 const unsubscribeSettings = settings.subscribe(
   (value) => (settingsValue = value)
@@ -124,12 +128,11 @@ const onChangeImage = () => {
       const image = new Image();
       image.src = e.target.result;
       image.onload = function () {
-        watermark([file])
-          .dataUrl(
-            watermark.text.center("MOFF", "148px Montserrat", "#fff", 0.5)
-          )
-          .then((url) => {
-            imageFilePreview = url;
+        watermark([file, "images/logo.svg"])
+          .blob((img, logo) => addWatermark(img, logo, userName))
+          .then((blob) => {
+            imageBlob = new File([blob], "image.png");
+            imageFilePreview = URL.createObjectURL(imageBlob);
           });
       };
     };
@@ -246,7 +249,7 @@ const handleSubmit = () => {
         crew,
         year,
         spotStatus: selectedStatus,
-        img: imageFile[0],
+        img: imageBlob,
         videoLink: linkToVideo,
         description,
         categoryId: selectedCategory.id,
