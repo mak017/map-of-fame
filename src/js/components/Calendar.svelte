@@ -4,6 +4,7 @@ import { getCurrentYear, isMobile } from "../utils/commonUtils.js";
 import { permalink } from "../utils/mapUtils/permalink.js";
 import { slide } from "svelte/transition";
 import { getDatesFilter } from "../utils/datesUtils.js";
+import { requestSpots } from "../init.js";
 
 export let selectedYear;
 export let showCalendar;
@@ -24,6 +25,7 @@ const dates = !isMobile() ? datesFilter : datesFilter.reverse();
 
 const handleClick = (year) => {
   selectedYear.set(year);
+  requestSpots(year);
   permalink.update({ clearParams: "all" });
   showCalendar(false);
 };
