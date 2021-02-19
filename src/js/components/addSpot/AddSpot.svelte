@@ -8,7 +8,6 @@ export let isAddSpotSidebarVisible;
 export let onAddSpotBtnClick;
 export let newMarker;
 export let onCancel;
-export let onSubmit;
 </script>
 
 {#if !isAddSpotMode}
@@ -25,7 +24,7 @@ export let onSubmit;
   <div class="drag-to-map" transition:fade>Drag pin to map</div>
 {/if}
 {#if isAddSpotSidebarVisible}
-  <AddSpotSidebar {onCancel} {onSubmit} marker={newMarker} />
+  <AddSpotSidebar {onCancel} marker={newMarker} />
 {/if}
 
 <style>

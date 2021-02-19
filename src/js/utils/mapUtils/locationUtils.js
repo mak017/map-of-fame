@@ -1,9 +1,9 @@
 import { DEFAULT_ZOOM, DEFAULT_VIEW } from "../../constants";
-import { getCurrentYear } from "../commonUtils";
+import { getCurrentYear, isEmpty } from "../commonUtils";
 import { permalink } from "./permalink";
 import {
   huntersFilter,
-  isLoading,
+  // isLoading,
   isSearchResults,
   markerIdFromUrl,
   markersStore,
@@ -99,7 +99,7 @@ export const setLocation = (map) => {
             markersStore.set(data);
             // isLoading.set(false);
           }
-          if (error && error.length > 0) {
+          if (error && !isEmpty(error)) {
             permalink.update({ clearParams: "all" });
             requestSpots(yearFromStore);
           }
@@ -113,10 +113,10 @@ export const setLocation = (map) => {
             // isLoading.set(false);
             setMarkerData(data);
           }
-          if (error && error.length > 0) {
+          if (error && !isEmpty(error)) {
             permalink.update({ clearParams: "all" });
-            requestSpots(yearFromStore);
           }
+          requestSpots(yearFromStore);
         });
       } else {
         requestSpots(yearFromStore || getCurrentYear());

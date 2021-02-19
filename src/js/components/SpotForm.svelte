@@ -10,10 +10,10 @@ import {
   statusesOrdered,
   USER_TYPES,
 } from "../constants";
-import { markerWithPhoto } from "../utils/mapUtils/icons";
 import { categories, firms, selectedYear, settings, userData } from "../store";
 import {
   getCurrentYear,
+  isEmpty,
   isValidHttpUrl,
   isYearLike,
   loadFromLocalStorage,
@@ -26,9 +26,9 @@ import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
 import { validateYear } from "../utils/datesUtils";
 import { getCategories, getFirmsRequest } from "../api/settings";
+import { requestSpots } from "../init.js";
 
 export let onCancel;
-export let onSubmit = () => {};
 export let marker = null;
 export let editSpotData = {};
 
@@ -263,13 +263,11 @@ const handleSubmit = () => {
             $selectedYear === year ||
             (!year && $selectedYear === EMPTY_YEAR_STRING)
           ) {
-            marker.setIcon(markerWithPhoto(imageFilePreview));
-            onSubmit();
-          } else {
-            onCancel();
+            requestSpots($selectedYear);
           }
+          onCancel();
         }
-        if (error) {
+        if (error && !isEmpty(error)) {
           if (error?.img) {
             errors.imageFile = error.img[0] || "";
             imageFilePreview = "";

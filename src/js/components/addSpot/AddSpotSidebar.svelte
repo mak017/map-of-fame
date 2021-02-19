@@ -4,7 +4,6 @@ import { isMobile } from "../../utils/commonUtils";
 import SpotForm from "../SpotForm.svelte";
 
 export let onCancel;
-export let onSubmit;
 export let marker;
 </script>
 
@@ -13,7 +12,7 @@ export let marker;
   transition:fly={{ x: !isMobile() ? 364 : window.innerWidth, duration: 300 }}>
   <h2>Add Spot</h2>
   {#if isMobile()}<button class="close-mob" on:click={onCancel} />{/if}
-  <SpotForm {onCancel} {onSubmit} {marker} />
+  <SpotForm {onCancel} {marker} />
 </div>
 
 <style lang="scss">

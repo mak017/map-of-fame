@@ -3,7 +3,7 @@ import { getSettingsRequest } from "./api/settings";
 import { getSpots } from "./api/spot";
 import { EMPTY_YEAR_STRING } from "./constants";
 import {
-  isLoading,
+  // isLoading,
   isLoggedIn,
   isSearchResults,
   markersStore,
@@ -26,15 +26,16 @@ export const getSettings = () =>
 
 export const verifyAuth = (token) =>
   verifyAuthRequest(token).then((response) => {
-    if (response.status && response.data) {
-      userData.set(response.data);
+    const { status, data, error } = response;
+    if (status && data) {
+      userData.set(data);
       isLoggedIn.set(true);
-      saveToLocalStorage("token", response.data.token);
-    } else {
-      const error = response.error;
-      if (Array.isArray(error) && error[0] === "Provided token is expired.") {
-        removeFromLocalStorage("token");
-      }
+      saveToLocalStorage("token", data.token);
+    } else if (
+      Array.isArray(error) &&
+      error[0] === "Provided token is expired."
+    ) {
+      removeFromLocalStorage("token");
     }
   });
 

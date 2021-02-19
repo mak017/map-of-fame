@@ -166,11 +166,6 @@ const onNewMarkerCancel = () => {
   map.removeLayer(newMarker);
 };
 
-const onNewMarkerSubmit = () => {
-  quitAddSpot();
-  newMarker.removeEventListener("moveend", onNewMarkerMoveEnd);
-};
-
 const onAddSpotBtnClick = () => {
   const center = map.getCenter();
   newMarker = L.marker(center, {
@@ -259,8 +254,7 @@ const quitAddSpot = () => {
       {isAddSpotSidebarVisible}
       {onAddSpotBtnClick}
       {newMarker}
-      onCancel={onNewMarkerCancel}
-      onSubmit={onNewMarkerSubmit} />
+      onCancel={onNewMarkerCancel} />
   {/if}
 
   {#if showCalendarModal}

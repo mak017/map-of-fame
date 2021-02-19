@@ -52,13 +52,6 @@ export const addWatermark = (img, logo, user) => {
   const squareMetrics = ctx.measureText("  ");
   const x = img.width - 13;
   const y = img.height;
-  ctx.drawImage(
-    logo,
-    x - metrics.actualBoundingBoxAscent,
-    y - metrics.actualBoundingBoxRight,
-    metrics.actualBoundingBoxAscent,
-    metrics.actualBoundingBoxAscent * 1.74
-  );
 
   ctx.translate(x, y);
   ctx.globalAlpha = 0.7;
