@@ -1,6 +1,6 @@
 <script>
 import L from "leaflet";
-import { placeMarkers } from "./utils/mapUtils/markersUtils.js";
+import { getLastSpots, placeMarkers } from "./utils/mapUtils/markersUtils.js";
 // import SpinnerSvg from "./components/elements/SpinnerSvg.svelte";
 import { changePasswordCheckToken } from "./api/auth.js";
 import RailroadSvg from "./components/elements/RailroadSvg.svelte";
@@ -9,6 +9,7 @@ import SearchForm from "./components/SearchForm.svelte";
 import { setLocation } from "./utils/mapUtils/locationUtils.js";
 import Modal from "./components/Modal.svelte";
 import {
+  isLighthouseActive,
   isLoading,
   isLoggedIn,
   isSearchResults,
@@ -39,9 +40,9 @@ import Profile from "./components/user/Profile.svelte";
 import { newMarkerIcon } from "./utils/mapUtils/icons";
 import Loader from "./components/elements/Loader.svelte";
 import { onDestroy } from "svelte";
+import { getSpots } from "./api/spot.js";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
-let isLighthouseActive = false;
 let showCalendarModal = false;
 let showSearchModal = false;
 let showAuthContainer = false;
@@ -51,12 +52,14 @@ let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 // let isRailwayMapLoading = true;
 let resetPasswordToken = getResetPasswordToken();
+let prevMarkersList = [];
 
 let map;
 let newMarker;
 let settingsValue;
 let markersList = [];
 let isSearch;
+let isLighthouse;
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
@@ -82,12 +85,17 @@ const unsubscribeIsSearchResults = isSearchResults.subscribe(
   (value) => (isSearch = value)
 );
 
+const unsubscribeIsLighthouse = isLighthouseActive.subscribe(
+  (value) => (isLighthouse = value)
+);
+
 document.getElementById("initial-loader").remove();
 
 onDestroy(() => {
   unsubscribeSettings();
   unsubscribeMarkers();
   unsubscribeIsSearchResults();
+  unsubscribeIsLighthouse();
 });
 
 adjustVhProp();
@@ -178,6 +186,30 @@ const onAddSpotBtnClick = () => {
   toggleAddSpotMode(true);
 };
 
+const onLighthouseClick = () => {
+  if (!isLighthouse) {
+    prevMarkersList = [...markersList];
+    if (!isSearch) {
+      const filteredSpots = getLastSpots(markersList);
+      markersStore.set(filteredSpots);
+      isLighthouseActive.set(true);
+    } else {
+      getSpots(getCurrentYear()).then((response) => {
+        const { status, data } = response;
+        if (status && data) {
+          isSearchResults.set(false);
+          isLighthouseActive.set(true);
+          const filteredSpots = getLastSpots(data);
+          markersStore.set(filteredSpots);
+        }
+      });
+    }
+  } else {
+    markersStore.set(prevMarkersList);
+    isLighthouseActive.set(false);
+  }
+};
+
 const quitAddSpot = () => {
   toggleAddSpotMode(false);
   toggleAddSpotSidebarVisible(false);
@@ -204,8 +236,9 @@ const quitAddSpot = () => {
     {#if !isAddSpotMode}
       <button
         class="button button-square button-lighthouse"
-        class:active={isLighthouseActive}
-        disabled={!$isLoggedIn || +$selectedYear !== getCurrentYear()}
+        class:active={isLighthouse}
+        disabled={+$selectedYear !== getCurrentYear()}
+        on:click={onLighthouseClick}
         transition:fade>
         <svg
           width="9"

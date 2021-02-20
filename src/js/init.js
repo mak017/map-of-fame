@@ -3,6 +3,7 @@ import { getSettingsRequest } from "./api/settings";
 import { getSpots } from "./api/spot";
 import { EMPTY_YEAR_STRING } from "./constants";
 import {
+  isLighthouseActive,
   // isLoading,
   isLoggedIn,
   isSearchResults,
@@ -57,6 +58,7 @@ export const requestSpots = (year) => {
     if (status && data) {
       // isLoading.set(false);
       isSearchResults.set(false);
+      isLighthouseActive.set(false);
       markersStore.set(data);
     }
     // if (error) {

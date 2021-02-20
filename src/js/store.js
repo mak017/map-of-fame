@@ -34,3 +34,5 @@ export const categories = writable([]);
 export const isLoading = writable(false);
 
 export const markerIdFromUrl = writable(null);
+
+export const isLighthouseActive = writable(false);

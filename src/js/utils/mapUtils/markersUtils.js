@@ -83,3 +83,9 @@ export const placeMarkers = (map, markersData, isSearch) => {
     createMarkers(map, markersData, isSearch);
   }
 };
+
+export const getLastSpots = (markersData) => {
+  const last7Days = new Date();
+  last7Days.setDate(last7Days.getDate() - 7);
+  return markersData.filter((item) => new Date(item.created_at) >= last7Days);
+};
