@@ -5,11 +5,12 @@ import Popup from "../Popup.svelte";
 import ShareMarker from "./ShareMarker.svelte";
 
 export let data;
+export let isLoggedIn;
 
 let isShareOpened = false;
 let isComplainOpened = false;
 
-const { artist, crew, status, description, img, video, user } = data;
+const { artist, crew, status, description, img, video, user, id } = data;
 
 const artistName = artist || "Unknown";
 const videoEmbed = video && embedVideoCodeFromBasicUrl(video);
@@ -53,9 +54,11 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
       <div class="share">
         <button type="button" on:click={() => onShareToggle(true)} />
       </div>
-      <div class="complain">
-        <button type="button" on:click={() => onComplainToggle(true)} />
-      </div>
+      {#if isLoggedIn}
+        <div class="complain">
+          <button type="button" on:click={() => onComplainToggle(true)} />
+        </div>
+      {/if}
     </div>
   </div>
 </div>
@@ -66,7 +69,7 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
 {/if}
 {#if isComplainOpened}
   <Popup on:close={() => onComplainToggle(false)} title="Complaint!">
-    <MarkerCardComplaint {onComplainToggle} />
+    <MarkerCardComplaint {onComplainToggle} spotId={id} />
   </Popup>
 {/if}
 

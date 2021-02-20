@@ -1,4 +1,4 @@
-import { SPOT, SPOT_ID, SPOT_YEAR } from "./endpoints";
+import { SPOT, SPOT_ID, SPOT_ID_FEEDBACK, SPOT_YEAR } from "./endpoints";
 
 export const getSpots = async (year) => {
   const response = await fetch(SPOT_YEAR(year), { method: "GET" });
@@ -44,6 +44,26 @@ export const createSpot = async (
   formData.append("firm_id", firmId);
   formData.append("link", link);
   const response = await fetch(SPOT(), {
+    method: "POST",
+    withCredentials: true,
+    headers: { Authorization: bearer },
+    body: formData,
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const feedbackOnSpot = async (
+  token,
+  spotId,
+  { userId, message, reason }
+) => {
+  const bearer = `Bearer ${token}`;
+  const formData = new FormData();
+  formData.append("user_id", userId);
+  formData.append("message", message);
+  formData.append("reason", reason);
+  const response = await fetch(SPOT_ID_FEEDBACK(spotId), {
     method: "POST",
     withCredentials: true,
     headers: { Authorization: bearer },

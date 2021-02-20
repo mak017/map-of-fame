@@ -42,4 +42,7 @@ export const SPOT_YEAR = (year) => `${ENDPOINT_ORIGIN}/api/spot?year=${year}`;
 
 export const SPOT_ID = (id) => `${ENDPOINT_ORIGIN}/api/spot/${id}`;
 
+export const SPOT_ID_FEEDBACK = (id) =>
+  `${ENDPOINT_ORIGIN}/api/spot/${id}/feedback`;
+
 export const SPOT_SEARCH = () => `${ENDPOINT_ORIGIN}/api/spot/search`;

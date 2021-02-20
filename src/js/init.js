@@ -54,7 +54,7 @@ export const requestSpots = (year) => {
     yearForRequest = "";
   }
   return getSpots(yearForRequest).then((response) => {
-    const { status, data, error } = response;
+    const { status, data } = response;
     if (status && data) {
       // isLoading.set(false);
       isSearchResults.set(false);
