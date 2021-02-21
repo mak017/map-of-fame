@@ -159,7 +159,7 @@ const onChangeImage = () => {
 const validateYearInput = () => {
   if (!year) {
     errors.year = "";
-  } else if (!validateYear(year, settingsValue.yearStart, false)) {
+  } else if (!validateYear(year, settingsValue.yearStart)) {
     errors.year = ERROR_MESSAGES.yearNotInRange(settingsValue.yearStart);
   } else {
     errors.year = "";

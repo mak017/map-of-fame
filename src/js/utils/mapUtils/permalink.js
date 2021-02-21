@@ -134,8 +134,16 @@ const setStateFromUrl = (params) => {
   const artistFromUrl = params.get("artist");
   const huntersFromUrl = params.get("hunters");
   const markerFromUrl = params.get("marker");
-  if (yearFromUrl && validateYear(yearFromUrl, settingsObj.yearStart))
+  if (
+    yearFromUrl &&
+    validateYear(
+      yearFromUrl,
+      settingsObj.yearStart,
+      JSON.parse(settingsObj.additionalYears)
+    )
+  ) {
     selectedYear.set(yearFromUrl);
+  }
   if (categoryFromUrl) {
     setSelectedCategoryIfValid(category);
     if (categoriesList.length === 0) {

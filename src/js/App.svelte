@@ -296,7 +296,8 @@ const quitAddSpot = () => {
         {selectedYear}
         {showCalendar}
         yearStart={settingsValue.yearStart}
-        yearEnd={settingsValue.yearEnd} />
+        yearEnd={settingsValue.yearEnd}
+        additionalYears={JSON.parse(settingsValue.additionalYears)} />
     </Modal>
   {/if}
 

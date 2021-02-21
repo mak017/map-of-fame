@@ -64,7 +64,7 @@ if (!hasCategories()) {
 const validateYearInput = () => {
   if (!year) {
     yearErrorMessage = ERROR_MESSAGES.genericEmpty;
-  } else if (!validateYear(year, yearStart, false)) {
+  } else if (!validateYear(year, yearStart)) {
     yearErrorMessage = ERROR_MESSAGES.yearNotInRange(yearStart);
   } else {
     yearErrorMessage = "";

@@ -10,6 +10,7 @@ export let selectedYear;
 export let showCalendar;
 export let yearStart;
 export let yearEnd;
+export let additionalYears;
 
 let selectedYearValue;
 
@@ -19,7 +20,7 @@ const unsubscribeSelectedYear = selectedYear.subscribe(
 
 onDestroy(() => unsubscribeSelectedYear());
 
-const datesFilter = getDatesFilter(yearStart, yearEnd);
+const datesFilter = getDatesFilter(yearStart, yearEnd, additionalYears);
 
 const dates = !isMobile() ? datesFilter : datesFilter.reverse();
 
