@@ -3,6 +3,7 @@ import {
   SPOT,
   SPOT_ID,
   SPOT_ID_FEEDBACK,
+  SPOT_ID_UPDATE,
   SPOT_YEAR,
   USER_ID_SPOTS,
 } from "./endpoints";
@@ -90,6 +91,44 @@ export const getUserSpots = async (
     method: "GET",
     withCredentials: true,
     headers: { Authorization: bearer },
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const updateSpot = async (
+  token,
+  spotId,
+  {
+    artist,
+    crew,
+    year,
+    spotStatus,
+    img,
+    videoLink,
+    description,
+    categoryId,
+    link,
+  }
+) => {
+  const bearer = `Bearer ${token}`;
+  const formData = new FormData();
+  formData.append("artist", artist);
+  formData.append("crew", crew);
+  formData.append("year", year);
+  formData.append("spot_status", spotStatus);
+  if (img) {
+    formData.append("img", img);
+  }
+  formData.append("video_link", videoLink);
+  formData.append("description", description);
+  formData.append("category_id", categoryId);
+  formData.append("link", link);
+  const response = await fetch(SPOT_ID_UPDATE(spotId), {
+    method: "POST",
+    withCredentials: true,
+    headers: { Authorization: bearer },
+    body: formData,
   });
   const result = await response.json();
   return result;

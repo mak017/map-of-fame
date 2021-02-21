@@ -2,6 +2,7 @@
 import { onDestroy, onMount } from "svelte";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
+import { isEmpty } from "./../../utils/commonUtils.js";
 import CustomSelect from "../elements/CustomSelect.svelte";
 import { isLoggedIn, userData } from "../../store";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
@@ -36,17 +37,25 @@ const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 
 const unsubscribeUserData = userData.subscribe((value) => (user = value));
 
-const fetchSpots = ({ year, offset }) => {
+const fetchSpots = ({ year, offset, isNewFetch = false }) => {
+  isLoading = isNewFetch;
   getUserSpots(token, user.id, { year, offset }).then((response) => {
-    const { status, data } = response;
+    const { status, data, error } = response;
     if (status && data) {
       const { spots, years } = data;
+      if (isNewFetch) spotsList = [];
       newBatch = [...spots];
       yearsToApply = years.filter((y) => y);
-      if (!currentYear) {
+      if (!currentYear || !year) {
         currentYear = yearsToApply[0];
       }
     }
+    if (error && !isEmpty(error)) {
+      if (error.year) {
+        fetchSpots({});
+      }
+    }
+    isLoading = false;
   });
 };
 
@@ -75,16 +84,7 @@ const handleAddSpot = () => {
 const handleYearSelect = (event) => {
   const { value } = event.detail.detail;
   currentYear = value !== EMPTY_YEAR_STRING ? value : "";
-  isLoading = true;
-  getUserSpots(token, user.id, { year: currentYear }).then((response) => {
-    const { status, data } = response;
-    if (status && data) {
-      spotsList = [];
-      const { spots } = data;
-      newBatch = [...spots];
-    }
-    isLoading = false;
-  });
+  fetchSpots({ year: currentYear, isNewFetch: true });
 };
 
 const handleEdit = (spot) => {
@@ -100,6 +100,10 @@ const handleDelete = (spot) => {
 const onLoadMore = () => {
   offset += MAX_SPOTS_PER_PAGE;
   fetchSpots({ year: currentYear, offset });
+};
+
+const onSubmitChanges = () => {
+  fetchSpots({ year: currentYear, isNewFetch: true });
 };
 </script>
 
@@ -153,7 +157,10 @@ const onLoadMore = () => {
 
 {#if showEditModal}
   <Modal on:close={() => toggleEditModal(false)} noLogo noClose>
-    <EditSpot editSpotData={currentSpot} {toggleEditModal} />
+    <EditSpot
+      editSpotData={currentSpot}
+      {toggleEditModal}
+      onSubmit={onSubmitChanges} />
   </Modal>
 {/if}
 

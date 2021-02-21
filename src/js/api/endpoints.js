@@ -53,4 +53,7 @@ export const SPOT_ID = (id) => `${ENDPOINT_ORIGIN}/api/spot/${id}`;
 export const SPOT_ID_FEEDBACK = (id) =>
   `${ENDPOINT_ORIGIN}/api/spot/${id}/feedback`;
 
+export const SPOT_ID_UPDATE = (id) =>
+  `${ENDPOINT_ORIGIN}/api/spot/${id}/update`;
+
 export const SPOT_SEARCH = () => `${ENDPOINT_ORIGIN}/api/spot/search`;

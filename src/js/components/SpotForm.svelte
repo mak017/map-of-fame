@@ -2,7 +2,7 @@
 import { addWatermark } from "./../utils/addWatermark.js";
 import { onDestroy } from "svelte";
 import watermark from "watermarkjs";
-import { createSpot } from "./../api/spot";
+import { createSpot, updateSpot } from "./../api/spot";
 import {
   EMPTY_YEAR_STRING,
   ERROR_MESSAGES,
@@ -29,6 +29,7 @@ import { getCategories, getFirmsRequest } from "../api/settings";
 import { requestSpots } from "../init.js";
 
 export let onCancel;
+export let onSubmit;
 export let marker = null;
 export let editSpotData = {};
 
@@ -38,15 +39,15 @@ let artist = editSpotData.artist || "";
 let crew = editSpotData.crew || "";
 let year = editSpotData.year ? `${editSpotData.year}` : "";
 let prevYearValue = "";
-let selectedStatus = editSpotData.status || STATUSES.live;
+let selectedStatus = editSpotData.spot_status || STATUSES.live;
 let imageFile;
 let imageFilePreview = editSpotData.img || "";
 let imageBlob;
-let linkToVideo = editSpotData.linkToVideo || "";
+let linkToVideo = editSpotData.video_link || "";
 let description = editSpotData.description || "";
-let selectedCategory = editSpotData.category || null;
+let selectedCategory = null;
 let sprayPaintUsed;
-let link = editSpotData.linkToWork || "";
+let link = editSpotData.link || "";
 let isSubmitDisabled = false;
 let isInProgress = false;
 let userTypeValue;
@@ -91,6 +92,11 @@ const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
 $: isSubmitDisabled =
   Object.values(errors).some((err) => !!err) || isInProgress;
 
+const getInitialCategory = (categories) =>
+  isEditSpot
+    ? categories.find((cat) => cat.id === editSpotData.category_id)
+    : categories[0];
+
 const hasCategories = () =>
   Array.isArray(categoriesList) && categoriesList.length;
 
@@ -102,15 +108,19 @@ if (!hasCategories()) {
     if (status && data) {
       categories.set(data);
       if (!selectedCategory) {
-        selectedCategory = data[0];
+        selectedCategory = getInitialCategory(data);
       }
     }
   });
 } else {
-  selectedCategory = categoriesList[0];
+  selectedCategory = getInitialCategory(categoriesList);
 }
 
-if (userTypeValue === USER_TYPES.artist.toLowerCase() && !hasSprays()) {
+if (
+  !isEditSpot &&
+  userTypeValue === USER_TYPES.artist.toLowerCase() &&
+  !hasSprays()
+) {
   getFirmsRequest(token).then((response) => {
     const { status, data } = response;
     if (status && data) {
@@ -224,23 +234,11 @@ const handleSubmit = () => {
     !errors.linkToVideo &&
     !errors.link
   ) {
-    // console.log({
-    //   artist,
-    //   crew,
-    //   year,
-    //   selectedStatus,
-    //   imageFile,
-    //   linkToVideo,
-    //   description,
-    //   selectedCategory,
-    //   sprayPaintUsed,
-    //   link,
-    // });
+    const token = loadFromLocalStorage("token") || null;
+    isInProgress = true;
     if (!isEditSpot) {
-      const token = loadFromLocalStorage("token") || null;
       const markerCoords = marker.getLatLng();
       const { lat, lng } = markerCoords;
-      isInProgress = true;
       marker.dragging.disable();
       createSpot(token, {
         ltd: lat,
@@ -276,7 +274,24 @@ const handleSubmit = () => {
         }
       });
     } else {
-      onCancel();
+      updateSpot(token, editSpotData.id, {
+        artist,
+        crew,
+        year,
+        spotStatus: selectedStatus,
+        img: imageBlob,
+        videoLink: linkToVideo,
+        description,
+        categoryId: selectedCategory.id,
+        link,
+      }).then((response) => {
+        const { status, data } = response;
+        isInProgress = false;
+        if (status && data) {
+          onSubmit();
+          onCancel();
+        }
+      });
     }
   }
 };

@@ -4,12 +4,13 @@ import SpotForm from "../SpotForm.svelte";
 
 export let editSpotData;
 export let toggleEditModal;
+export let onSubmit;
 </script>
 
 <div class="edit-spot">
   <ButtonModalBack on:click={() => toggleEditModal(false)} editSpot />
   <h2>Edit Spot</h2>
-  <SpotForm {editSpotData} onCancel={() => toggleEditModal(false)} />
+  <SpotForm {editSpotData} onCancel={() => toggleEditModal(false)} {onSubmit} />
 </div>
 
 <style>
