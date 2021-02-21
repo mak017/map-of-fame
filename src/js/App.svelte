@@ -1,4 +1,6 @@
 <script>
+import { onDestroy } from "svelte";
+import { fade } from "svelte/transition";
 import L from "leaflet";
 import { getLastSpots, placeMarkers } from "./utils/mapUtils/markersUtils.js";
 // import SpinnerSvg from "./components/elements/SpinnerSvg.svelte";
@@ -34,12 +36,10 @@ import AddSpot from "./components/addSpot/AddSpot.svelte";
 import MarkerCard from "./components/markerCard/MarkerCard.svelte";
 import { permalink } from "./utils/mapUtils/permalink";
 import AuthContainer from "./components/auth/AuthContainer.svelte";
-import { fade } from "svelte/transition";
 import ResetPassword from "./components/auth/ResetPassword.svelte";
 import Profile from "./components/user/Profile.svelte";
 import { newMarkerIcon } from "./utils/mapUtils/icons";
 import Loader from "./components/elements/Loader.svelte";
-import { onDestroy } from "svelte";
 import { getSpots } from "./api/spot.js";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");

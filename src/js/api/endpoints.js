@@ -8,6 +8,14 @@ export const USER = () => `${ENDPOINT_ORIGIN}/api/user`;
 
 export const USER_ID = (id) => `${ENDPOINT_ORIGIN}/api/user/${id}`;
 
+export const USER_ID_SPOTS = (id, limit, offset, year) => {
+  let url = `${ENDPOINT_ORIGIN}/api/user/${id}/spots?limit=${limit}&offset=${offset}`;
+  if (typeof year === "string") {
+    url = url.concat(`&year=${year}`);
+  }
+  return url;
+};
+
 export const USER_PASSWORD = () => `${ENDPOINT_ORIGIN}/api/user/password`;
 
 export const USER_PASSWORD_TOKEN = () =>

@@ -1,4 +1,11 @@
-import { SPOT, SPOT_ID, SPOT_ID_FEEDBACK, SPOT_YEAR } from "./endpoints";
+import { MAX_SPOTS_PER_PAGE } from "../constants";
+import {
+  SPOT,
+  SPOT_ID,
+  SPOT_ID_FEEDBACK,
+  SPOT_YEAR,
+  USER_ID_SPOTS,
+} from "./endpoints";
 
 export const getSpots = async (year) => {
   const response = await fetch(SPOT_YEAR(year), { method: "GET" });
@@ -68,6 +75,21 @@ export const feedbackOnSpot = async (
     withCredentials: true,
     headers: { Authorization: bearer },
     body: formData,
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const getUserSpots = async (
+  token,
+  userId,
+  { limit = MAX_SPOTS_PER_PAGE, offset = 0, year = null }
+) => {
+  const bearer = `Bearer ${token}`;
+  const response = await fetch(USER_ID_SPOTS(userId, limit, offset, year), {
+    method: "GET",
+    withCredentials: true,
+    headers: { Authorization: bearer },
   });
   const result = await response.json();
   return result;

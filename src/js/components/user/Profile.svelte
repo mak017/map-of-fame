@@ -1,37 +1,64 @@
 <script>
+import { onDestroy, onMount } from "svelte";
 import { fade } from "svelte/transition";
+import InfiniteScroll from "svelte-infinite-scroll";
 import CustomSelect from "../elements/CustomSelect.svelte";
-import { isLoggedIn, userData, userSpots } from "../../store";
+import { isLoggedIn, userData } from "../../store";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import Modal from "../Modal.svelte";
 import EditSpot from "./EditSpot.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import Popup from "../Popup.svelte";
-import { onDestroy } from "svelte";
-import { removeFromLocalStorage } from "../../utils/commonUtils";
+import {
+  loadFromLocalStorage,
+  removeFromLocalStorage,
+} from "../../utils/commonUtils";
+import { getUserSpots } from "../../api/spot";
+import { EMPTY_YEAR_STRING, MAX_SPOTS_PER_PAGE } from "../../constants";
 
 export let onAddSpotBtnClick;
 export let showUserProfile;
 
-let spotsData = [];
-let spotsToShow = [];
-let year;
+let user;
+let currentYear;
 let currentSpot;
 let showEditModal = false;
 let showDeletePopup = false;
+let offset = 0;
+let yearsToApply = [];
+let spotsList = [];
+let newBatch = [];
+let isLoading = false;
+const token = loadFromLocalStorage("token") || null;
 
 const toggleEditModal = (toggle) => (showEditModal = toggle);
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 
-const unsubscribeUserSpots = userSpots.subscribe(
-  (value) => (spotsData = value)
-);
+const unsubscribeUserData = userData.subscribe((value) => (user = value));
 
-onDestroy(() => unsubscribeUserSpots());
+const fetchSpots = ({ year, offset }) => {
+  getUserSpots(token, user.id, { year, offset }).then((response) => {
+    const { status, data } = response;
+    if (status && data) {
+      const { spots, years } = data;
+      newBatch = [...spots];
+      yearsToApply = years.filter((y) => y);
+      if (!currentYear) {
+        currentYear = yearsToApply[0];
+      }
+    }
+  });
+};
 
-const years = [...new Set(spotsData.map((data) => data.year))];
-year = Math.max(...years);
-const yearsToApply = years.map((year) => ({ label: `${year}`, value: year }));
+onMount(() => {
+  fetchSpots({});
+});
+
+onDestroy(() => {
+  unsubscribeUserData();
+});
+
+$: spotsList = [...spotsList, ...newBatch];
 
 const handleLogout = () => {
   removeFromLocalStorage("token");
@@ -46,8 +73,18 @@ const handleAddSpot = () => {
 };
 
 const handleYearSelect = (event) => {
-  year = event.detail.detail.value;
-  spotsToShow = getSpotsByYear(year);
+  const { value } = event.detail.detail;
+  currentYear = value !== EMPTY_YEAR_STRING ? value : "";
+  isLoading = true;
+  getUserSpots(token, user.id, { year: currentYear }).then((response) => {
+    const { status, data } = response;
+    if (status && data) {
+      spotsList = [];
+      const { spots } = data;
+      newBatch = [...spots];
+    }
+    isLoading = false;
+  });
 };
 
 const handleEdit = (spot) => {
@@ -60,42 +97,50 @@ const handleDelete = (spot) => {
   toggleDeletePopup(true);
 };
 
-const getSpotsByYear = (year) =>
-  spotsData.filter((data) => data.year === +year);
-spotsToShow = getSpotsByYear(year);
+const onLoadMore = () => {
+  offset += MAX_SPOTS_PER_PAGE;
+  fetchSpots({ year: currentYear, offset });
+};
 </script>
 
-<div class="container" style={showEditModal ? 'display: none' : ''}>
+<div class="container" style={showEditModal ? "display: none" : ""}>
   <div class="top">
     <div class="username">{$userData.name}</div>
     <button class="logout" on:click={handleLogout}>Logout</button>
   </div>
-  {#if !!spotsData.length}
+  {#if !!spotsList.length}
     <div class="data">
       <div class="year-select">
         <CustomSelect
           items={yearsToApply}
-          selectedValue={{ value: year, label: `${year}` }}
+          selectedValue={{ value: currentYear, label: currentYear }}
           isYear
           on:select={handleYearSelect} />
       </div>
-      <div class="spots">
-        {#each spotsToShow as spot}
-          <div class="spot-card">
-            <img loading="lazy" src={spot.img} alt="" in:fade />
-            <div class="overlay">
-              <button
-                type="button"
-                class="edit"
-                on:click={() => handleEdit(spot)} />
-              <button
-                type="button"
-                class="delete"
-                on:click={() => handleDelete(spot)} />
+      {#if !isLoading}
+        <div class="spots">
+          {#each spotsList as spot}
+            <div class="spot-card">
+              <img loading="lazy" src={spot.img} alt="" in:fade />
+              <div class="overlay">
+                <button
+                  type="button"
+                  class="edit"
+                  on:click={() => handleEdit(spot)} />
+                <button
+                  type="button"
+                  class="delete"
+                  on:click={() => handleDelete(spot)} />
+              </div>
             </div>
-          </div>
-        {/each}
-      </div>
+          {/each}
+          <InfiniteScroll
+            hasMore={newBatch.length}
+            threshold={100}
+            on:loadMore={onLoadMore}
+            elementScroll={document.querySelector(".modal")} />
+        </div>
+      {/if}
     </div>
   {:else}
     <div class="empty-state">

@@ -10,6 +10,8 @@ export const MIN_ZOOM = 2;
 
 export const MAX_ZOOM = 19;
 
+export const MAX_SPOTS_PER_PAGE = 36;
+
 export const STATUSES = { live: "Live", buffed: "Buffed", unknown: "Unknown" };
 
 export const USER_TYPES = { artist: "Artist", hunter: "Hunter" };
