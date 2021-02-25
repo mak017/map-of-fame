@@ -46,9 +46,15 @@ const handleResize = () => {
   {/if}
   <slot />
   {#if withAd}
-    <div style={!isMobileWidth ? "width: 938px" : "width: 100%"}>
+    <div
+      style={!isMobileWidth ? "width: 938px" : "width: 100%"}
+      on:click={typeof withAd === "object"
+        ? window.open(withAd.url, "_blank")
+        : () => {}}>
       <img
-        src="images/stubs/stubad.jpg"
+        src={typeof withAd === "object"
+          ? withAd.img
+          : "images/stubs/stubad.jpg"}
         alt=""
         style="object-fit: cover;width: 100%;height: 100%;" />
     </div>
@@ -115,6 +121,7 @@ div > div {
   max-width: 100%;
   margin: auto 0 0;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .accentTitle {
