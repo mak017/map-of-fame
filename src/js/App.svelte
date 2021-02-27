@@ -310,11 +310,12 @@ const quitAddSpot = () => {
   {#if $openedMarkerData}
     <Modal
       on:close={clearOpenedMarkerData}
-      withAd={{
-        img: settingsValue.defaultFirmBanner,
-        url: settingsValue.defaultFirmBannerUrl,
-      }}
-      noLogo>
+      withAd
+      noLogo
+      banner={{
+        img: $openedMarkerData.firm?.banner,
+        url: $openedMarkerData.firm?.bannerUrl,
+      }}>
       <MarkerCard data={$openedMarkerData} isLoggedIn={$isLoggedIn} />
     </Modal>
   {/if}

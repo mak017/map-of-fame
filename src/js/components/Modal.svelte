@@ -10,6 +10,7 @@ export let noTransition = false;
 export let accentTitle = false;
 export let noClose = false;
 export let autoMargin = false;
+export let banner = {};
 
 const dispatch = createEventDispatcher();
 const close = () => dispatch("close");
@@ -45,16 +46,12 @@ const handleResize = () => {
     <h2 transition:fade>{title}</h2>
   {/if}
   <slot />
-  {#if withAd}
+  {#if withAd && banner.url}
     <div
       style={!isMobileWidth ? "width: 938px" : "width: 100%"}
-      on:click={typeof withAd === "object"
-        ? window.open(withAd.url, "_blank")
-        : () => {}}>
+      on:click={window.open(banner.url, "_blank")}>
       <img
-        src={typeof withAd === "object"
-          ? withAd.img
-          : "images/stubs/stubad.jpg"}
+        src={banner.img}
         alt=""
         style="object-fit: cover;width: 100%;height: 100%;" />
     </div>
