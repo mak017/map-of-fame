@@ -46,7 +46,7 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
       if (isNewFetch) spotsList = [];
       newBatch = [...spots];
       yearsToApply = years.filter((y) => y);
-      if (!currentYear || !year) {
+      if (currentYear === undefined || year === undefined) {
         currentYear = yearsToApply[0];
       }
     }
