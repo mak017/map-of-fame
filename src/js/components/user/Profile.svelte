@@ -166,7 +166,10 @@ const onSubmitChanges = () => {
 
 {#if showDeletePopup}
   <Popup title="Delete spot?" on:close={() => toggleDeletePopup(false)}>
-    <DeleteSpot close={() => toggleDeletePopup(false)} {currentSpot} />
+    <DeleteSpot
+      close={() => toggleDeletePopup(false)}
+      {currentSpot}
+      onSubmit={onSubmitChanges} />
   </Popup>
 {/if}
 

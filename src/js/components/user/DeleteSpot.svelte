@@ -1,22 +1,42 @@
 <script>
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
+import { deleteSpot } from "../../api/spot";
+import { loadFromLocalStorage } from "../../utils/commonUtils";
 
 export let close;
 export let currentSpot;
+export let onSubmit;
+
+let isInProgress = false;
 
 const handleDelete = () => {
-  console.log("delete", currentSpot);
-  // send request
-  close();
+  const token = loadFromLocalStorage("token") || null;
+  isInProgress = true;
+  deleteSpot(token, currentSpot.id).then((response) => {
+    const { status, data } = response;
+    if (status && data) {
+      onSubmit();
+      close();
+    }
+    isInProgress = false;
+  });
 };
 </script>
 
 <div class="buttons">
-  <button type="button" class="delete" on:click={handleDelete}>Delete</button>
-  <ButtonPrimary type="button" text="Cancel" on:click={close} />
+  <button
+    type="button"
+    class="delete"
+    on:click={handleDelete}
+    disabled={isInProgress}>Delete</button>
+  <ButtonPrimary
+    type="button"
+    text="Cancel"
+    on:click={close}
+    isDisabled={isInProgress} />
 </div>
 
-<style>
+<style lang="scss">
 .buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -32,5 +52,9 @@ const handleDelete = () => {
   font-weight: 600;
   line-height: 1.22;
   cursor: pointer;
+  &:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
 }
 </style>

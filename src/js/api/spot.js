@@ -133,3 +133,14 @@ export const updateSpot = async (
   const result = await response.json();
   return result;
 };
+
+export const deleteSpot = async (token, spotId) => {
+  const bearer = `Bearer ${token}`;
+  const response = await fetch(SPOT_ID(spotId), {
+    method: "DELETE",
+    withCredentials: true,
+    headers: { Authorization: bearer },
+  });
+  const result = await response.json();
+  return result;
+};
