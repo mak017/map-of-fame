@@ -148,7 +148,7 @@ const onSubmitChanges = () => {
     </div>
   {:else}
     <div class="empty-state">
-      <img src="../../../images/empty.png" alt="Empty" />
+      <img src="../../../images/empty.gif" alt="Empty" />
       <p>Spot not</p>
       <ButtonPrimary text="Add spot" type="button" on:click={handleAddSpot} />
     </div>
