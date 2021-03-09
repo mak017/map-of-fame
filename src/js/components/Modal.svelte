@@ -37,7 +37,7 @@ const handleResize = () => {
   class:autoMargin
   role="dialog"
   aria-modal="true"
-  transition:fade={{ duration: !noTransition ? 400 : 0 }}
+  transition:fade={{ duration: !noTransition ? 200 : 0 }}
   on:keydown|stopPropagation={handleKeyDown}
   tabindex="-1">
   {#if !noClose}<button class="close" on:click={close} />{/if}

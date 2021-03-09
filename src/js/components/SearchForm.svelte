@@ -1,5 +1,6 @@
 <script>
 import { onDestroy } from "svelte";
+import FormTelInput from "./elements/FormTelInput.svelte";
 import {
   requestSearchArtistsCrews,
   requestSearchSpots,
@@ -157,7 +158,7 @@ const fetchArtistsCrews = async (filterText) => {
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
-  <FormTextInput
+  <FormTelInput
     placeholder="Year"
     hint={`${yearStart} - ${currentYear}`}
     bind:value={year}

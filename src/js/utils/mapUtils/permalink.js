@@ -200,7 +200,9 @@ const getSearchUrlFromParams = (coords, zoom, year, params) => {
       paramsToSet = paramsToSet.concat(`&${param}=${params[param]}`);
     });
   }
-  return `?coords=${coords.lat},${coords.lng}&zoom=${zoom}&year=${year}${paramsToSet}`;
+  const lat = normalizeCoords(coords.lat);
+  const lng = normalizeCoords(coords.lng);
+  return `?coords=${lat},${lng}&zoom=${zoom}&year=${year}${paramsToSet}`;
 };
 const set = (coords, zoom, year, params) => {
   const state = { zoom, center: coords, year, params };

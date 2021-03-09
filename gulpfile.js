@@ -10,9 +10,9 @@ const sortCSSmq = require("sort-css-media-queries");
 const cleanCSS = require("gulp-clean-css");
 const debug = require("gulp-debug");
 const plumber = require("gulp-plumber");
-const sourcemaps = require("gulp-sourcemaps");
+// const sourcemaps = require("gulp-sourcemaps");
 const imagemin = require("gulp-imagemin");
-const gulpIf = require("gulp-if");
+// const gulpIf = require("gulp-if");
 const extend = require("extend");
 const imageminJpegRecompress = require("imagemin-jpeg-recompress");
 
@@ -48,21 +48,23 @@ gulp.task("sass", function () {
     }),
   ];
 
-  return gulp
-    .src("src/scss/!(_)*.scss")
-    .pipe(
-      plumber(function (error) {
-        console.log("sass:", error.message);
-        this.emit("end");
-      })
-    )
-    .pipe(gulpIf(config.env === "development", sourcemaps.init()))
-    .pipe(sass().on("error", sass.logError))
-    .pipe(postcss(processors))
-    .pipe(cleanCSS())
-    .pipe(gulpIf(config.env === "development", sourcemaps.write()))
-    .pipe(plumber.stop())
-    .pipe(gulp.dest("public"));
+  return (
+    gulp
+      .src("src/scss/!(_)*.scss")
+      .pipe(
+        plumber(function (error) {
+          console.log("sass:", error.message);
+          this.emit("end");
+        })
+      )
+      // .pipe(gulpIf(config.env === "development", sourcemaps.init()))
+      .pipe(sass().on("error", sass.logError))
+      .pipe(postcss(processors))
+      .pipe(cleanCSS())
+      // .pipe(gulpIf(config.env === "development", sourcemaps.write()))
+      .pipe(plumber.stop())
+      .pipe(gulp.dest("public"))
+  );
 });
 
 gulp.task("img", function () {

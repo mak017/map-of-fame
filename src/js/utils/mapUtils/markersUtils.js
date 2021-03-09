@@ -33,6 +33,9 @@ export const setMarkerData = (data) => {
     video_link: video,
     user: { name, link },
     firm: { banner, banner_url: bannerUrl },
+    ltd: lat,
+    lng,
+    year,
   } = data;
   openedMarkerData.set({
     id,
@@ -44,6 +47,8 @@ export const setMarkerData = (data) => {
     video,
     user: { name, link },
     firm: { banner, bannerUrl },
+    coords: { lat, lng },
+    year,
   });
   permalink.update({ params: { marker: id } });
 };

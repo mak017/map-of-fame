@@ -1,7 +1,8 @@
 <script>
-import { addWatermark } from "./../utils/addWatermark.js";
 import { onDestroy } from "svelte";
 import watermark from "watermarkjs";
+import FormTelInput from "./elements/FormTelInput.svelte";
+import { addWatermark } from "./../utils/addWatermark.js";
 import { createSpot, updateSpot } from "./../api/spot";
 import {
   EMPTY_YEAR_STRING,
@@ -324,7 +325,7 @@ const getSelectionLabel = (option) => {
     wideOnMobile
     editSpot={isEditSpot}
     addSpot={!isEditSpot} />
-  <FormTextInput
+  <FormTelInput
     placeholder="Year"
     bind:value={year}
     hint={`${settingsValue.yearStart} - ${currentYear}`}

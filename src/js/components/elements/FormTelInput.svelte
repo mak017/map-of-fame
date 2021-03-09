@@ -5,13 +5,10 @@ export let value = "";
 export let placeholder = "";
 export let hint = "";
 export let errorText = "";
-export let label = "";
-export let isReadOnly = false;
 export let wideOnMobile = false;
 export let editSpot = false;
+export let isYear = false;
 export let addSpot = false;
-export let link = false;
-export let extraMargin = false;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
@@ -20,24 +17,19 @@ const keyDown = (event) => dispatch("keyDown", event);
 </script>
 
 <label
-  class:with-label={!!label}
   class:with-hint={!!hint}
   class:error={!!errorText}
   class:wide-on-mobile={wideOnMobile}
   class:edit-spot={editSpot}
   class:add-spot={addSpot}
-  class:link
-  class:extra-margin={extraMargin}>
-  {#if label}<span>{label}</span>{/if}
+  class:year={isYear}>
   <input
-    type="text"
+    type="tel"
     {placeholder}
     bind:value
     on:blur={blur}
     on:input={input}
-    on:click={isReadOnly && this.select()}
-    on:keydown={keyDown}
-    readonly={isReadOnly} />
+    on:keydown={keyDown} />
   {#if placeholder}
     <div class="floating-label">{placeholder}</div>
   {/if}
@@ -74,22 +66,7 @@ input {
   }
 }
 
-.with-label {
-  padding-top: 0;
-  > span {
-    font-size: 16px;
-    line-height: 1.22;
-  }
-  input {
-    padding: 9px 10px;
-    border: 1px solid var(--color-dark);
-    border-radius: 2px;
-    &:focus {
-      border-color: var(--color-accent);
-    }
-  }
-}
-label:not(.with-label) {
+label {
   input {
     &:placeholder-shown + .floating-label {
       overflow: hidden;
@@ -143,16 +120,9 @@ label:not(.with-label) {
 }
 
 .add-spot {
+  margin-bottom: 10px;
   .hint {
     margin-top: 4px;
-  }
-  &:not(.with-label) {
-    margin-bottom: 10px;
-  }
-  &.link {
-    .hint {
-      margin: -1px 0 -15px;
-    }
   }
 }
 
@@ -162,8 +132,11 @@ label:not(.with-label) {
   }
 }
 
-.extra-margin {
-  margin-bottom: 26px;
+.year {
+  input {
+    font-size: 18px;
+    font-weight: 700;
+  }
 }
 
 @media (max-width: 767px) {
@@ -180,7 +153,7 @@ label:not(.with-label) {
 
 @media (orientation: landscape) and (max-height: 960px) {
   .add-spot {
-    margin-bottom: 13px;
+    margin-bottom: 6px;
     input {
       padding: 5px 0;
       font-size: 14px;
@@ -190,22 +163,8 @@ label:not(.with-label) {
       font-size: 11px;
       line-height: 14px;
     }
-    &:not(.with-label) {
-      margin-bottom: 6px;
-    }
-    &.with-label {
-      > span {
-        font-size: 14px;
-      }
-      input {
-        padding: 8px 10px;
-      }
-    }
     &.error:not(.with-hint) .hint {
       margin: 0 0 -14px;
-    }
-    &.link {
-      margin-bottom: 19px;
     }
   }
 }
