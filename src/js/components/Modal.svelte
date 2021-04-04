@@ -49,6 +49,7 @@ const handleResize = () => {
   {#if withAd && banner.url}
     <div
       style={!isMobileWidth ? "width: 938px" : "width: 100%"}
+      class="bottom-container"
       on:click={window.open(banner.url, "_blank")}>
       <img
         src={banner.img}
@@ -112,7 +113,7 @@ h2 {
   text-transform: uppercase;
 }
 
-div > div {
+.bottom-container {
   height: 150px;
   min-height: 150px;
   max-width: 100%;
@@ -146,7 +147,7 @@ div > div {
   h2 {
     margin-top: 64px;
   }
-  div > div {
+  .bottom-container {
     height: 106px;
     min-height: 106px;
     margin-top: 56px;

@@ -39,8 +39,7 @@ const onType = (label, filterText) => {
     placeholder=""
     Item={AutoCompleteItem}
     on:select={onSelect}
-    itemFilter={onType}
-    hideEmptyState />
+    itemFilter={onType} />
   {#if placeholder}
     <div class="floating-label">{placeholder}</div>
   {/if}

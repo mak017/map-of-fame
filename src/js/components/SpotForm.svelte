@@ -240,8 +240,7 @@ const handleSubmit = () => {
     if (!isEditSpot) {
       const markerCoords = marker.getLatLng();
       const { lat, lng } = markerCoords;
-      marker.dragging.disable();
-      createSpot(token, {
+      const requestObject = {
         ltd: lat,
         lng,
         artist,
@@ -252,9 +251,11 @@ const handleSubmit = () => {
         videoLink: linkToVideo,
         description,
         categoryId: selectedCategory.id,
-        firmId: sprayPaintUsed.id,
         link,
-      }).then((response) => {
+      };
+      if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
+      marker.dragging.disable();
+      createSpot(token, requestObject).then((response) => {
         const { status, data, error } = response;
         isInProgress = false;
         if (status && data) {

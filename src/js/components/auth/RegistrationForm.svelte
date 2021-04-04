@@ -84,10 +84,10 @@ const validate = () => {
       } else errors.password = "";
     }
   } else {
-    const isValidLink = portfolioLink ? isValidHttpUrl(portfolioLink) : true;
+    // const isValidLink = portfolioLink ? isValidHttpUrl(portfolioLink) : true;
     errors.name = !username ? ERROR_MESSAGES.usernameEmpty : "";
     errors.country = !country ? ERROR_MESSAGES.countryCityEmpty : "";
-    errors.link = !isValidLink ? ERROR_MESSAGES.linkInvalid : "";
+    // errors.link = !isValidLink ? ERROR_MESSAGES.linkInvalid : "";
   }
 };
 

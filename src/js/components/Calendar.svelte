@@ -2,7 +2,6 @@
 import { onDestroy } from "svelte";
 import { getCurrentYear, isMobile } from "../utils/commonUtils.js";
 import { permalink } from "../utils/mapUtils/permalink.js";
-import { slide } from "svelte/transition";
 import { getDatesFilter } from "../utils/datesUtils.js";
 import { requestSpots } from "../init.js";
 
@@ -32,7 +31,7 @@ const handleClick = (year) => {
 };
 </script>
 
-<ol class="years-list" in:slide={{ duration: 200 }}>
+<ol class="years-list">
   {#each dates as date}
     <li>
       <a

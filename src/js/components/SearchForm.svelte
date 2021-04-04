@@ -10,6 +10,7 @@ import { permalink } from "../utils/mapUtils/permalink";
 import {
   categories,
   huntersFilter,
+  isLighthouseActive,
   isSearchResults,
   markersStore,
   selectedArtist,
@@ -19,7 +20,6 @@ import {
 import { getCurrentYear, isYearLike } from "../utils/commonUtils";
 import AutoComplete from "./elements/AutoComplete.svelte";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
-import FormTextInput from "./elements/FormTextInput.svelte";
 import { validateYear } from "../utils/datesUtils.js";
 import { getCategories } from "../api/settings.js";
 
@@ -104,6 +104,7 @@ const handleSubmit = () => {
         huntersFilter.set(isHuntersChecked);
         markersStore.set(data);
         isSearchResults.set(true);
+        isLighthouseActive.set(false);
         permalink.update({
           params: {
             category,

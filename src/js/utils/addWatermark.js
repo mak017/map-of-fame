@@ -45,13 +45,14 @@ export const addWatermark = (img, logo, user) => {
   const ctx = img.getContext("2d");
   const siteName = "MOFF.ORG";
   const text = `${siteName}    ${user.toUpperCase()}`;
-  const fontSize = img.height / 29.94;
+  // const fontSize = img.height / 29.94;
+  const fontSize = 20;
   ctx.font = `900 ${fontSize}px Montserrat`;
   const metrics = ctx.measureText(text);
   const siteNameMetrics = ctx.measureText(siteName);
   const squareMetrics = ctx.measureText("  ");
   const x = img.width - 13;
-  const y = img.height;
+  const y = img.height - 13;
 
   ctx.translate(x, y);
   ctx.globalAlpha = 0.7;
@@ -61,7 +62,7 @@ export const addWatermark = (img, logo, user) => {
     ctx,
     0,
     -metrics.fontBoundingBoxAscent,
-    metrics.actualBoundingBoxRight + metrics.actualBoundingBoxAscent * 2.75,
+    metrics.actualBoundingBoxRight + metrics.actualBoundingBoxAscent * 0.2,
     metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxAscent * 0.2,
     { tr: 2, br: 2 },
     true,
@@ -76,12 +77,12 @@ export const addWatermark = (img, logo, user) => {
     siteNameMetrics.actualBoundingBoxAscent
   );
   ctx.rotate((90 * Math.PI) / 180);
-  ctx.drawImage(
-    logo,
-    -metrics.actualBoundingBoxAscent,
-    -metrics.actualBoundingBoxRight - metrics.actualBoundingBoxAscent * 2.5,
-    metrics.actualBoundingBoxAscent,
-    metrics.actualBoundingBoxAscent * 1.74
-  );
+  // ctx.drawImage(
+  //   logo,
+  //   -metrics.actualBoundingBoxAscent,
+  //   -metrics.actualBoundingBoxRight - metrics.actualBoundingBoxAscent * 2.5,
+  //   metrics.actualBoundingBoxAscent,
+  //   metrics.actualBoundingBoxAscent * 1.74
+  // );
   return img;
 };

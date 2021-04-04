@@ -31,11 +31,12 @@ export const setMarkerData = (data) => {
     img,
     title,
     video_link: video,
-    user: { name, link },
+    user: { name },
     firm: { banner, banner_url: bannerUrl },
     ltd: lat,
     lng,
     year,
+    link,
   } = data;
   openedMarkerData.set({
     id,
@@ -45,10 +46,11 @@ export const setMarkerData = (data) => {
     description,
     img: { src: img, title: title || id },
     video,
-    user: { name, link },
+    user: { name },
     firm: { banner, bannerUrl },
     coords: { lat, lng },
     year,
+    link,
   });
   permalink.update({ params: { marker: id } });
 };

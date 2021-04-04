@@ -10,7 +10,7 @@ export let isLoggedIn;
 let isShareOpened = false;
 let isComplainOpened = false;
 
-const { artist, crew, status, description, img, video, user, id } = data;
+const { artist, crew, status, description, img, video, user, id, link } = data;
 
 const artistName = artist || "Unknown";
 const videoEmbed = video && embedVideoCodeFromBasicUrl(video);
@@ -46,9 +46,9 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
       <div class="title">{user?.name}</div>
     </div>
     <div class="buttons">
-      {#if user?.link}
+      {#if link}
         <div class="link">
-          <a href={user.link} target="_blank">{`${user.name}'s Portfolio`}</a>
+          <a href={link} target="_blank">External link to spot</a>
         </div>
       {/if}
       <div class="share">
