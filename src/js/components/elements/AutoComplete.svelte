@@ -10,8 +10,8 @@ export let getOptionLabel;
 export let placeholder;
 export let hint = undefined;
 export let loadOptions = undefined;
-export let filterValue = "";
 export let errorMessage = "";
+export let isSearch = false;
 
 let typedText = "";
 
@@ -28,7 +28,8 @@ const onType = (label, filterText) => {
 <div
   class="autocomplete"
   class:not-empty={selectedValue}
-  class:typed-text={typedText || filterValue}>
+  class:typed-text={typedText}
+  class:is-search={isSearch}>
   <Select
     {items}
     bind:selectedValue

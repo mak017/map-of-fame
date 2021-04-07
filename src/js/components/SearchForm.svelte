@@ -35,7 +35,6 @@ let categoryErrorMessage = "";
 let isSubmitDisabled = false;
 let isInProgress = false;
 let prevYearValue = "";
-let enteredSearchValue = "";
 let categoriesList;
 const currentYear = getCurrentYear();
 
@@ -143,7 +142,6 @@ const getOptionLabel = (option) => option.name;
 
 const fetchArtistsCrews = async (filterText) => {
   const text = filterText ? filterText.replace(" ", "_") : "";
-  enteredSearchValue = filterText;
   if (text.length > 2) {
     const response = await requestSearchArtistsCrews(filterText);
     const { status, data } = response;
@@ -151,8 +149,8 @@ const fetchArtistsCrews = async (filterText) => {
       return data;
     }
   } else {
-    return new Promise((_, reject) => {
-      reject();
+    return new Promise((resolve) => {
+      resolve([]);
     });
   }
 };
@@ -171,9 +169,9 @@ const fetchArtistsCrews = async (filterText) => {
     optionIdentifier="name"
     {getOptionLabel}
     loadOptions={fetchArtistsCrews}
-    filterValue={enteredSearchValue}
     placeholder="Artist or Crew"
-    hint="Leave empty to show all artists and crews" />
+    hint="Leave empty to show all artists and crews"
+    isSearch />
   <div class="filter">
     {#each categoriesList as category}
       <div class="checkbox">

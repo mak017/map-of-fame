@@ -109,6 +109,14 @@ textarea {
       top: 41px !important;
     }
   }
+  &.is-search .focused ~ .floating-label {
+    overflow: hidden;
+    opacity: 0.6;
+    transform: translateY(-15px);
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .listContainer:not(:empty) {
     padding: 4px 0;
     border-right: 8px solid transparent;
