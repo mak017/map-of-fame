@@ -302,7 +302,7 @@ const quitAddSpot = () => {
   {/if}
 
   {#if showSearchModal}
-    <Modal on:close={() => showSearch(false)} title="Search" withAd>
+    <Modal on:close={() => showSearch(false)} title="Search spots" withAd>
       <SearchForm {showSearch} yearStart={settingsValue.yearStart} />
     </Modal>
   {/if}

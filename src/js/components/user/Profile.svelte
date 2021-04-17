@@ -1,4 +1,5 @@
 <script>
+import Spinner from "./../elements/Spinner.svelte";
 import { onDestroy, onMount } from "svelte";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
@@ -30,6 +31,7 @@ let yearsToApply = [];
 let spotsList = [];
 let newBatch = [];
 let isLoading = false;
+let isShowSpinner = true;
 const token = loadFromLocalStorage("token") || null;
 
 const toggleEditModal = (toggle) => (showEditModal = toggle);
@@ -39,6 +41,7 @@ const unsubscribeUserData = userData.subscribe((value) => (user = value));
 
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
   isLoading = isNewFetch;
+  isShowSpinner = true;
   getUserSpots(token, user.id, { year, offset }).then((response) => {
     const { status, data, error } = response;
     if (status && data) {
@@ -62,6 +65,7 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
       }
     }
     isLoading = false;
+    // isShowSpinner = false;
   });
 };
 
@@ -152,11 +156,16 @@ const onSubmitChanges = () => {
         </div>
       {/if}
     </div>
-  {:else}
+  {:else if !isShowSpinner}
     <div class="empty-state">
       <img src="../../../images/empty.gif" alt="Empty" />
       <p>Spot not</p>
       <ButtonPrimary text="Add spot" type="button" on:click={handleAddSpot} />
+    </div>
+  {/if}
+  {#if isShowSpinner}
+    <div class="spinner-container">
+      <Spinner />
     </div>
   {/if}
 </div>
@@ -305,6 +314,10 @@ const onSubmitChanges = () => {
 .delete {
   background-image: url(../../../images/trash.svg);
   background-size: 14px 18px;
+}
+
+.spinner-container {
+  position: relative;
 }
 
 @media (max-width: 767px) {

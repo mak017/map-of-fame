@@ -12,6 +12,7 @@ export let hint = undefined;
 export let loadOptions = undefined;
 export let errorMessage = "";
 export let isSearch = false;
+export let noOptionsMessage = "No options";
 
 let typedText = "";
 
@@ -36,6 +37,7 @@ const onType = (label, filterText) => {
     {optionIdentifier}
     {getOptionLabel}
     {loadOptions}
+    {noOptionsMessage}
     getSelectionLabel={getOptionLabel}
     placeholder=""
     Item={AutoCompleteItem}

@@ -26,6 +26,8 @@ import { getCategories } from "../api/settings.js";
 export let showSearch;
 export let yearStart;
 
+const DEFAULT_NO_OPTIONS_TEXT =
+  "Please type 3 or more characters to search the artists or crews";
 let year = "";
 let artist;
 let selectedCategories = [];
@@ -36,6 +38,7 @@ let isSubmitDisabled = false;
 let isInProgress = false;
 let prevYearValue = "";
 let categoriesList;
+let noOptionsMessage = DEFAULT_NO_OPTIONS_TEXT;
 const currentYear = getCurrentYear();
 
 const unsubscribeCategories = categories.subscribe(
@@ -146,9 +149,11 @@ const fetchArtistsCrews = async (filterText) => {
     const response = await requestSearchArtistsCrews(filterText);
     const { status, data } = response;
     if (status && data) {
+      noOptionsMessage = "🤷‍♂️ No artist or crew";
       return data;
     }
   } else {
+    noOptionsMessage = DEFAULT_NO_OPTIONS_TEXT;
     return new Promise((resolve) => {
       resolve([]);
     });
@@ -171,7 +176,8 @@ const fetchArtistsCrews = async (filterText) => {
     loadOptions={fetchArtistsCrews}
     placeholder="Artist or Crew"
     hint="Leave empty to show all artists and crews"
-    isSearch />
+    isSearch
+    {noOptionsMessage} />
   <div class="filter">
     {#each categoriesList as category}
       <div class="checkbox">
