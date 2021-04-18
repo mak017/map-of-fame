@@ -108,6 +108,10 @@ textarea {
     > div:not([class]) {
       top: 41px !important;
     }
+    .indicator + div,
+    .clearSelect + div {
+      border: 0;
+    }
   }
   &.is-search .focused ~ .floating-label {
     overflow: hidden;

@@ -31,7 +31,7 @@ let yearsToApply = [];
 let spotsList = [];
 let newBatch = [];
 let isLoading = false;
-let isShowSpinner = true;
+let isShowSpinner = false;
 const token = loadFromLocalStorage("token") || null;
 
 const toggleEditModal = (toggle) => (showEditModal = toggle);
@@ -65,7 +65,7 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
       }
     }
     isLoading = false;
-    // isShowSpinner = false;
+    isShowSpinner = false;
   });
 };
 
@@ -119,18 +119,22 @@ const onSubmitChanges = () => {
 
 <div class="container" style={showEditModal ? "display: none" : ""}>
   <div class="top">
-    <div class="username">{$userData.name}</div>
+    {#if $userData.name}
+      <div class="username">{$userData.name}</div>
+    {/if}
     <button class="logout" on:click={handleLogout}>Logout</button>
   </div>
-  {#if !!spotsList.length}
+  {#if !!spotsList.length || isShowSpinner}
     <div class="data">
-      <div class="year-select">
-        <CustomSelect
-          items={yearsToApply}
-          selectedValue={{ value: currentYear, label: currentYear }}
-          isYear
-          on:select={handleYearSelect} />
-      </div>
+      {#if !!spotsList.length}
+        <div class="year-select">
+          <CustomSelect
+            items={yearsToApply}
+            selectedValue={{ value: currentYear, label: currentYear }}
+            isYear
+            on:select={handleYearSelect} />
+        </div>
+      {/if}
       {#if !isLoading}
         <div class="spots">
           {#each spotsList as spot}
@@ -155,17 +159,17 @@ const onSubmitChanges = () => {
             elementScroll={document.querySelector(".modal")} />
         </div>
       {/if}
+      {#if isShowSpinner}
+        <div class="spinner-container">
+          <Spinner margin="20px auto" />
+        </div>
+      {/if}
     </div>
   {:else if !isShowSpinner}
     <div class="empty-state">
       <img src="../../../images/empty.gif" alt="Empty" />
       <p>Spot not</p>
       <ButtonPrimary text="Add spot" type="button" on:click={handleAddSpot} />
-    </div>
-  {/if}
-  {#if isShowSpinner}
-    <div class="spinner-container">
-      <Spinner />
     </div>
   {/if}
 </div>
@@ -266,6 +270,7 @@ const onSubmitChanges = () => {
   position: relative;
   border-radius: 2px;
   overflow: hidden;
+  background-color: #d3d3d3;
   img {
     width: 100%;
     height: 100%;

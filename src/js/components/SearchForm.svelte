@@ -22,6 +22,7 @@ import AutoComplete from "./elements/AutoComplete.svelte";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import { validateYear } from "../utils/datesUtils.js";
 import { getCategories } from "../api/settings.js";
+import Spinner from "./elements/Spinner.svelte";
 
 export let showSearch;
 export let yearStart;
@@ -178,22 +179,26 @@ const fetchArtistsCrews = async (filterText) => {
     hint="Leave empty to show all artists and crews"
     isSearch
     {noOptionsMessage} />
-  <div class="filter">
-    {#each categoriesList as category}
-      <div class="checkbox">
-        <input
-          type="checkbox"
-          id={`filter-${category.name}`}
-          bind:group={selectedCategories}
-          value={category}
-          on:change={isSubmitDisabled && validateForm()} />
-        <label for={`filter-${category.name}`}>{category.name}</label>
-      </div>
-    {/each}
-    {#if categoryErrorMessage}
-      <div class="error">{categoryErrorMessage}</div>
-    {/if}
-  </div>
+  {#if categoriesList.length > 0}
+    <div class="filter">
+      {#each categoriesList as category}
+        <div class="checkbox">
+          <input
+            type="checkbox"
+            id={`filter-${category.name}`}
+            bind:group={selectedCategories}
+            value={category}
+            on:change={isSubmitDisabled && validateForm()} />
+          <label for={`filter-${category.name}`}>{category.name}</label>
+        </div>
+      {/each}
+      {#if categoryErrorMessage}
+        <div class="error">{categoryErrorMessage}</div>
+      {/if}
+    </div>
+  {:else}
+    <Spinner height={30} margin="25px 0" />
+  {/if}
   <div class="bottom">
     <div class="checkbox">
       <input

@@ -38,7 +38,6 @@ const handleSubmit = () => {
     isInProgress = true;
     loginRequest(email, password)
       .then((response) => {
-        isInProgress = false;
         if (response.status && response.data) {
           const { token } = response.data;
           userData.set(response.data);
@@ -46,6 +45,7 @@ const handleSubmit = () => {
           saveToLocalStorage("token", token);
           showAuth(false);
         } else {
+          isInProgress = false;
           if (response.error?.email) {
             errors.email = response.error.email;
           }

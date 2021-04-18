@@ -1,4 +1,11 @@
-<div class="spinner">
+<script>
+export let height = 40;
+export let margin = "10px auto";
+</script>
+
+<div
+  class="spinner"
+  style="width: {height}px; height: {height}px; margin: {margin};">
   <svg class="spinner-icon" viewBox="25 25 50 50">
     <circle
       class="spinner-path"
@@ -14,11 +21,6 @@
 
 <style>
 .spinner {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 40px;
-  height: 40px;
   color: var(--color-accent);
   animation: rotate 0.75s linear infinite;
 }

@@ -28,6 +28,7 @@ import CustomSelect from "./elements/CustomSelect.svelte";
 import { validateYear } from "../utils/datesUtils";
 import { getCategories, getFirmsRequest } from "../api/settings";
 import { requestSpots } from "../init.js";
+import Spinner from "./elements/Spinner.svelte";
 
 export let onCancel;
 export let onSubmit;
@@ -381,14 +382,18 @@ const getSelectionLabel = (option) => {
       addSpot={!isEditSpot} />
   </div>
   <div class="category">
-    {#each categoriesList as category}
-      <FormRadioButton
-        id={category.id}
-        bind:group={selectedCategory}
-        value={category}
-        label={category.name}
-        className={!isEditSpot ? "addSpot" : ""} />
-    {/each}
+    {#if categoriesList.length > 0}
+      {#each categoriesList as category}
+        <FormRadioButton
+          id={category.id}
+          bind:group={selectedCategory}
+          value={category}
+          label={category.name}
+          className={!isEditSpot ? "addSpot" : ""} />
+      {/each}
+    {:else}
+      <Spinner height={30} margin="5px 0 5.5px" />
+    {/if}
   </div>
   {#if userTypeValue === USER_TYPES.artist.toLowerCase() && !isEditSpot}
     <div class="spray" class:with-error={errors.sprayPaintUsed}>
