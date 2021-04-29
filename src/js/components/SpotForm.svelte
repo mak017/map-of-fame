@@ -79,7 +79,11 @@ const unsubscribeSettings = settings.subscribe(
 const unsubscribeFirms = firms.subscribe((value) => (sprayFirms = value));
 
 const unsubscribeCategories = categories.subscribe(
-  (value) => (categoriesList = value)
+  (value) =>
+    (categoriesList = value.filter(
+      (category) =>
+        category.availabilities.find((av) => av.name === userTypeValue)?.active
+    ))
 );
 
 onDestroy(() => {
@@ -97,7 +101,7 @@ $: isSubmitDisabled =
 const getInitialCategory = (categories) =>
   isEditSpot
     ? categories.find((cat) => cat.id === editSpotData.category_id)
-    : categories[0];
+    : categories.find((cat) => cat.default);
 
 const hasCategories = () =>
   Array.isArray(categoriesList) && categoriesList.length;
