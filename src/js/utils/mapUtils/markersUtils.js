@@ -56,8 +56,8 @@ export const setMarkerData = (data) => {
 };
 
 const createMarker = (data) => {
-  const { ltd, lng, thumbnail } = data;
-  const marker = L.marker([ltd, lng], { icon: markerWithPhoto(thumbnail) });
+  const { ltd, lng, icon } = data;
+  const marker = L.marker([ltd, lng], { icon: markerWithPhoto(icon) });
   marker.addEventListener("click", () => setMarkerData(data));
   return marker;
 };
