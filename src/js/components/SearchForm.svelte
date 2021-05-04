@@ -43,7 +43,7 @@ let noOptionsMessage = DEFAULT_NO_OPTIONS_TEXT;
 const currentYear = getCurrentYear();
 
 const unsubscribeCategories = categories.subscribe(
-  (value) => (categoriesList = value)
+  (value) => (categoriesList = value.filter((category) => category.enable))
 );
 
 onDestroy(() => {
