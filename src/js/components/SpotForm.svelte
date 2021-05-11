@@ -144,8 +144,8 @@ const onChangeImage = () => {
       const image = new Image();
       image.src = e.target.result;
       image.onload = function () {
-        watermark([file, "images/logo.svg"])
-          .blob((img, logo) => addWatermark(img, logo, userName))
+        watermark([file])
+          .blob((img) => addWatermark(img, userName))
           .then((blob) => {
             imageBlob = new File([blob], "image.png");
             imageFilePreview = URL.createObjectURL(imageBlob);

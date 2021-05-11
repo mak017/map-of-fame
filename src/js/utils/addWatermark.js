@@ -41,11 +41,10 @@ const roundRect = (
   }
 };
 
-export const addWatermark = (img, logo, user) => {
+export const addWatermark = (img, user) => {
   const ctx = img.getContext("2d");
   const siteName = "MOFF.ORG";
   const text = `${siteName}    ${user.toUpperCase()}`;
-  // const fontSize = img.height / 29.94;
   const fontSize = 20;
   ctx.font = `900 ${fontSize}px Montserrat`;
   const metrics = ctx.measureText(text);
@@ -62,7 +61,7 @@ export const addWatermark = (img, logo, user) => {
     ctx,
     0,
     -metrics.fontBoundingBoxAscent,
-    metrics.actualBoundingBoxRight + metrics.actualBoundingBoxAscent * 0.2,
+    metrics.actualBoundingBoxRight + metrics.actualBoundingBoxAscent * 0.5,
     metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxAscent * 0.2,
     { tr: 2, br: 2 },
     true,
@@ -77,12 +76,5 @@ export const addWatermark = (img, logo, user) => {
     siteNameMetrics.actualBoundingBoxAscent
   );
   ctx.rotate((90 * Math.PI) / 180);
-  // ctx.drawImage(
-  //   logo,
-  //   -metrics.actualBoundingBoxAscent,
-  //   -metrics.actualBoundingBoxRight - metrics.actualBoundingBoxAscent * 2.5,
-  //   metrics.actualBoundingBoxAscent,
-  //   metrics.actualBoundingBoxAscent * 1.74
-  // );
   return img;
 };
