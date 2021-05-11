@@ -101,7 +101,7 @@ $: isSubmitDisabled =
 const getInitialCategory = (categories) =>
   isEditSpot
     ? categories.find((cat) => cat.id === editSpotData.category_id)
-    : categories.find((cat) => cat.default);
+    : categories[0];
 
 const hasCategories = () =>
   Array.isArray(categoriesList) && categoriesList.length;
