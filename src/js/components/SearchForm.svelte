@@ -108,7 +108,7 @@ const handleSubmit = () => {
       if (status && data) {
         selectedYear.set(year);
         selectedCategory.set(selectedCategories);
-        selectedArtist.set(artist);
+        selectedArtist.set(name);
         huntersFilter.set(isHuntersChecked);
         markersStore.set(data);
         isSearchResults.set(true);

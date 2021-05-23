@@ -31,7 +31,7 @@ import { requestSpots } from "../init.js";
 import Spinner from "./elements/Spinner.svelte";
 
 export let onCancel;
-export let onSubmit;
+export let onSubmit = undefined;
 export let marker = null;
 export let editSpotData = {};
 
@@ -258,6 +258,7 @@ const handleSubmit = () => {
         categoryId: selectedCategory.id,
         link,
       };
+      console.log("requestObject :>> ", requestObject);
       if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
       marker.dragging.disable();
       createSpot(token, requestObject).then((response) => {

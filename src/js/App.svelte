@@ -2,6 +2,7 @@
 import { onDestroy } from "svelte";
 import { fade } from "svelte/transition";
 import L from "leaflet";
+import CloseCrossSvg from "./components/elements/CloseCrossSvg.svelte";
 import { getLastSpots, placeMarkers } from "./utils/mapUtils/markersUtils.js";
 // import SpinnerSvg from "./components/elements/SpinnerSvg.svelte";
 import { changePasswordCheckToken } from "./api/auth.js";
@@ -17,6 +18,7 @@ import {
   isSearchResults,
   markersStore,
   openedMarkerData,
+  selectedArtist,
   selectedYear,
   settings,
 } from "./store.js";
@@ -254,7 +256,7 @@ const quitAddSpot = () => {
   </div>
 
   <div class="main-top_right_wrapper">
-    {#if !isAddSpotMode}
+    {#if !isAddSpotMode && !$selectedArtist}
       <button
         class="button button-main_screen button-square button-open_search"
         on:click={() => showSearch(true)}
@@ -269,6 +271,14 @@ const quitAddSpot = () => {
           class="button button-main_screen button-square button-open_login"
           on:click={() => showAuth(true)} />
       {/if}
+    {/if}
+    {#if $selectedArtist}
+      <div class="selected-artist">
+        <span>{$selectedArtist}</span>
+        <button class="button button-square button-clear_search">
+          <CloseCrossSvg isLight />
+        </button>
+      </div>
     {/if}
   </div>
 
@@ -471,6 +481,25 @@ const quitAddSpot = () => {
     background-position: 50% 50%;
     background-size: 18px 13px;
   }
+  &-clear_search {
+    margin-left: 5px;
+    padding: 8px;
+    background-color: transparent;
+  }
+}
+
+.selected-artist {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 186px;
+  height: 40px;
+  padding-left: 16px;
+  border-radius: 2px;
+  background: var(--color-accent);
+  color: var(--color-light);
+  font-size: 14px;
+  line-height: 17px;
 }
 
 @media (max-width: 767px) {

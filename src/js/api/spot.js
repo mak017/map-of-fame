@@ -51,6 +51,9 @@ export const createSpot = async (
   formData.append("category_id", categoryId);
   formData.append("firm_id", firmId);
   formData.append("link", link);
+  // for (const pair of formData.entries()) {
+  //   console.log(pair[0] + ", " + pair[1]);
+  // }
   const response = await fetch(SPOT(), {
     method: "POST",
     withCredentials: true,
