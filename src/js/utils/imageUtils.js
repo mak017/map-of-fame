@@ -1,32 +1,10 @@
 /* eslint-disable no-bitwise */
-// // From https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob, needed for Safari:
-// if (!HTMLCanvasElement.prototype.toBlob) {
-//   Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
-//       value: function(callback, type, quality) {
-
-//           var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
-//               len = binStr.length,
-//               arr = new Uint8Array(len);
-
-//           for (var i = 0; i < len; i++) {
-//               arr[i] = binStr.charCodeAt(i);
-//           }
-
-//           callback(new Blob([arr], {type: type || 'image/png'}));
-//       }
-//   });
-// }
-
-// window.URL = window.URL || window.webkitURL;
 
 // Modified from https://stackoverflow.com/a/32490603, cc by-sa 3.0
 // -2 = not jpeg, -1 = no data, 1..8 = orientations
 function getExifOrientation(file, callback) {
   // Suggestion from http://code.flickr.net/2012/06/01/parsing-exif-client-side-using-javascript-2/:
-  // let fileCopy = {...file}
-  // if (fileCopy.slice) {
   const fileCopy = file.slice(0, 131072);
-  // }
 
   const reader = new FileReader();
   reader.onload = (e) => {
@@ -74,9 +52,9 @@ function imgToCanvasWithOrientation(img, rawWidth, rawHeight, orientation) {
     canvas.height = rawHeight;
   }
 
-  if (orientation > 1) {
-    console.log("EXIF orientation = " + orientation + ", rotating picture");
-  }
+  // if (orientation > 1) {
+  //   console.log("EXIF orientation = " + orientation + ", rotating picture");
+  // }
 
   const ctx = canvas.getContext("2d");
   switch (orientation) {
@@ -102,32 +80,32 @@ function imgToCanvasWithOrientation(img, rawWidth, rawHeight, orientation) {
       ctx.transform(0, -1, 1, 0, 0, rawWidth);
       break;
     default:
-    // intentionally empty
+    // intentionally left empty
   }
   ctx.drawImage(img, 0, 0, rawWidth, rawHeight);
   return canvas;
 }
 
-export function reduceFileSize(
+export const reduceFileSize = (
   file,
   acceptFileSize,
   maxWidth,
   maxHeight,
   quality,
   callback
-) {
+) => {
   if (file.size <= acceptFileSize) {
     callback(file);
     return;
   }
   const img = new Image();
-  img.onerror = function () {
+  function onImgError() {
     URL.revokeObjectURL(this.src);
     callback(file);
-  };
-  img.onload = function () {
+  }
+  function onImgLoad() {
     URL.revokeObjectURL(this.src);
-    getExifOrientation(file, function (orientation) {
+    getExifOrientation(file, (orientation) => {
       let w = img.width;
       let h = img.height;
       const scale =
@@ -139,16 +117,18 @@ export function reduceFileSize(
 
       const canvas = imgToCanvasWithOrientation(img, w, h, orientation);
       canvas.toBlob(
-        function (blob) {
-          console.log(
-            "Resized image to " + w + "x" + h + ", " + (blob.size >> 10) + "kB"
-          );
+        (blob) => {
+          // console.debug(
+          //   "Resized image to " + w + "x" + h + ", " + (blob.size >> 10) + "kB"
+          // );
           callback(blob);
         },
         "image/jpeg",
         quality
       );
     });
-  };
+  }
+  img.onerror = onImgError;
+  img.onload = onImgLoad;
   img.src = URL.createObjectURL(file);
-}
+};

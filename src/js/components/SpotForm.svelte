@@ -150,17 +150,15 @@ const onChangeImage = () => {
           .blob((img) => addWatermark(img, userName))
           .then((blob) => {
             imageBlob = new File([blob], "image.jpg");
-            // console.log("imageBlob :>> ", imageBlob);
             if (imageBlob.size > MAX_IMAGE_FILE_SIZE) {
               reduceFileSize(
                 imageBlob,
                 MAX_IMAGE_FILE_SIZE,
                 Infinity,
                 Infinity,
-                0.9,
+                0.8,
                 (blob) => {
-                  // console.log("blob :>> ", blob);
-                  imageBlob = blob;
+                  imageBlob = new File([blob], "image.jpg");
                 }
               );
             }
@@ -274,7 +272,6 @@ const handleSubmit = () => {
         categoryId: selectedCategory.id,
         link,
       };
-      console.log("requestObject :>> ", requestObject);
       if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
       marker.dragging.disable();
       createSpot(token, requestObject).then((response) => {
