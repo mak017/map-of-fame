@@ -256,29 +256,30 @@ const quitAddSpot = () => {
   </div>
 
   <div class="main-top_right_wrapper">
-    {#if !isAddSpotMode && !$selectedArtist}
-      <button
-        class="button button-main_screen button-square button-open_search"
-        on:click={() => showSearch(true)}
-        in:fade />
-      {#if $isLoggedIn}
+    {#if !isAddSpotMode}
+      {#if !$selectedArtist}
         <button
-          class="button button-main_screen button-square button-burger"
-          on:click={() => showUserProfile(true)}
+          class="button button-main_screen button-square button-open_search"
+          on:click={() => showSearch(true)}
           in:fade />
+        {#if $isLoggedIn}
+          <button
+            class="button button-main_screen button-square button-burger"
+            on:click={() => showUserProfile(true)}
+            in:fade />
+        {:else}
+          <button
+            class="button button-main_screen button-square button-open_login"
+            on:click={() => showAuth(true)} />
+        {/if}
       {:else}
-        <button
-          class="button button-main_screen button-square button-open_login"
-          on:click={() => showAuth(true)} />
+        <div class="selected-artist">
+          <span>{$selectedArtist}</span>
+          <button class="button button-square button-clear_search">
+            <CloseCrossSvg isLight />
+          </button>
+        </div>
       {/if}
-    {/if}
-    {#if $selectedArtist}
-      <div class="selected-artist">
-        <span>{$selectedArtist}</span>
-        <button class="button button-square button-clear_search">
-          <CloseCrossSvg isLight />
-        </button>
-      </div>
     {/if}
   </div>
 
