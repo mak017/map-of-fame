@@ -7,7 +7,7 @@ import { getLastSpots, placeMarkers } from "./utils/mapUtils/markersUtils.js";
 // import SpinnerSvg from "./components/elements/SpinnerSvg.svelte";
 import { changePasswordCheckToken } from "./api/auth.js";
 import RailroadSvg from "./components/elements/RailroadSvg.svelte";
-import { getSettings, initApp } from "./init.js";
+import { getSettings, initApp, requestSpots } from "./init.js";
 import SearchForm from "./components/SearchForm.svelte";
 import { setLocation } from "./utils/mapUtils/locationUtils.js";
 import Modal from "./components/Modal.svelte";
@@ -273,9 +273,14 @@ const quitAddSpot = () => {
             on:click={() => showAuth(true)} />
         {/if}
       {:else}
-        <div class="selected-artist">
+        <div class="selected-artist" on:click={() => showSearch(true)}>
           <span>{$selectedArtist}</span>
-          <button class="button button-square button-clear_search">
+          <button
+            class="button button-square button-clear_search"
+            on:click|stopPropagation={() => {
+              requestSpots($selectedYear);
+              permalink.update({ clearParams: "all" });
+            }}>
             <CloseCrossSvg isLight />
           </button>
         </div>
@@ -501,14 +506,27 @@ const quitAddSpot = () => {
   color: var(--color-light);
   font-size: 14px;
   line-height: 17px;
+  > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 @media (max-width: 767px) {
-  .button-open_calendar {
-    max-width: 130px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  .button {
+    &-open_calendar {
+      max-width: 130px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    &-clear_search {
+      padding: 4px;
+    }
+  }
+  .selected-artist {
+    width: 156px;
   }
 }
 </style>

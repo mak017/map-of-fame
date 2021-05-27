@@ -1,6 +1,7 @@
 <script>
 import { fly } from "svelte/transition";
 import { isMobile } from "../../utils/commonUtils";
+import CloseCrossSvg from "../elements/CloseCrossSvg.svelte";
 import SpotForm from "../SpotForm.svelte";
 
 export let onCancel;
@@ -11,7 +12,11 @@ export let marker;
   class="add-spot"
   transition:fly={{ x: !isMobile() ? 364 : window.innerWidth, duration: 300 }}>
   <h2>Add Spot</h2>
-  {#if isMobile()}<button class="close-mob" on:click={onCancel} />{/if}
+  {#if isMobile()}
+    <button class="close-mob" on:click={onCancel}>
+      <CloseCrossSvg />
+    </button>
+  {/if}
   <SpotForm {onCancel} {marker} />
 </div>
 
@@ -47,8 +52,9 @@ h2 {
     right: 14px;
     width: 34px;
     height: 34px;
+    padding: 0;
     border: 0;
-    background: url(../../../images/close-cross.svg);
+    background: none;
     cursor: pointer;
   }
 }

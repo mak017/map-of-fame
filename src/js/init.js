@@ -8,6 +8,7 @@ import {
   isLoggedIn,
   isSearchResults,
   markersStore,
+  selectedArtist,
   settings,
   userData,
 } from "./store";
@@ -59,6 +60,7 @@ export const requestSpots = (year) => {
       // isLoading.set(false);
       isSearchResults.set(false);
       isLighthouseActive.set(false);
+      selectedArtist.set("");
       markersStore.set(data);
     }
     // if (error) {
