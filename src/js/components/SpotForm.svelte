@@ -1,12 +1,14 @@
 <script>
 import { onDestroy } from "svelte";
 import watermark from "watermarkjs";
+import { reduceFileSize } from "./../utils/imageUtils.js";
 import FormTelInput from "./elements/FormTelInput.svelte";
 import { addWatermark } from "./../utils/addWatermark.js";
 import { createSpot, updateSpot } from "./../api/spot";
 import {
   EMPTY_YEAR_STRING,
   ERROR_MESSAGES,
+  MAX_IMAGE_FILE_SIZE,
   STATUSES,
   statusesOrdered,
   USER_TYPES,
@@ -31,7 +33,7 @@ import { requestSpots } from "../init.js";
 import Spinner from "./elements/Spinner.svelte";
 
 export let onCancel;
-export let onSubmit;
+export let onSubmit = undefined;
 export let marker = null;
 export let editSpotData = {};
 
@@ -147,13 +149,25 @@ const onChangeImage = () => {
         watermark([file])
           .blob((img) => addWatermark(img, userName))
           .then((blob) => {
-            imageBlob = new File([blob], "image.png");
+            imageBlob = new File([blob], "image.jpg");
+            if (imageBlob.size > MAX_IMAGE_FILE_SIZE) {
+              reduceFileSize(
+                imageBlob,
+                MAX_IMAGE_FILE_SIZE,
+                Infinity,
+                Infinity,
+                0.8,
+                (blob) => {
+                  imageBlob = new File([blob], "image.jpg");
+                }
+              );
+            }
             imageFilePreview = URL.createObjectURL(imageBlob);
           });
       };
     };
 
-    if (file.size < 5242880) {
+    if (file.size < MAX_IMAGE_FILE_SIZE) {
       errors.imageFile = "";
       reader.readAsDataURL(file);
     } else {

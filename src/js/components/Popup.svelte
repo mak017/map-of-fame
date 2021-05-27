@@ -1,6 +1,7 @@
 <script>
 import { createEventDispatcher } from "svelte";
 import { scale, fade } from "svelte/transition";
+import CloseCrossSvg from "./elements/CloseCrossSvg.svelte";
 
 export let title = "";
 
@@ -30,7 +31,7 @@ const handleKeyDown = (e) => {
   transition:scale={{ duration: 200 }}
   on:keydown|stopPropagation={handleKeyDown}
   tabindex="-1">
-  <button class="close" on:click={close} />
+  <button class="close" on:click={close}><CloseCrossSvg /></button>
   {#if title}
     <h3>{title}</h3>
   {/if}
@@ -66,8 +67,9 @@ const handleKeyDown = (e) => {
   right: 20px;
   width: 34px;
   height: 34px;
+  padding: 0;
   border: 0;
-  background: url(../../images/close-cross.svg);
+  background: none;
   cursor: pointer;
 }
 h3 {

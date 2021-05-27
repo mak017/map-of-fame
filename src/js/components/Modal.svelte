@@ -1,7 +1,8 @@
 <script>
-import { isMobile } from "../utils/commonUtils.js";
 import { createEventDispatcher } from "svelte";
 import { fade } from "svelte/transition";
+import CloseCrossSvg from "./elements/CloseCrossSvg.svelte";
+import { isMobile } from "../utils/commonUtils.js";
 
 export let title = "";
 export let withAd = false;
@@ -40,7 +41,9 @@ const handleResize = () => {
   transition:fade={{ duration: !noTransition ? 200 : 0 }}
   on:keydown|stopPropagation={handleKeyDown}
   tabindex="-1">
-  {#if !noClose}<button class="close" on:click={close} />{/if}
+  {#if !noClose}
+    <button class="close" on:click={close}><CloseCrossSvg /></button>
+  {/if}
   {#if !noLogo}<span class="logo" />{/if}
   {#if title}
     <h2 transition:fade>{title}</h2>
@@ -86,8 +89,9 @@ const handleResize = () => {
   right: 20px;
   width: 34px;
   height: 34px;
+  padding: 0;
   border: 0;
-  background: url(../../images/close-cross.svg);
+  background: none;
   cursor: pointer;
 }
 

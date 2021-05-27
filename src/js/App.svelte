@@ -2,11 +2,12 @@
 import { onDestroy } from "svelte";
 import { fade } from "svelte/transition";
 import L from "leaflet";
+import CloseCrossSvg from "./components/elements/CloseCrossSvg.svelte";
 import { getLastSpots, placeMarkers } from "./utils/mapUtils/markersUtils.js";
 // import SpinnerSvg from "./components/elements/SpinnerSvg.svelte";
 import { changePasswordCheckToken } from "./api/auth.js";
 import RailroadSvg from "./components/elements/RailroadSvg.svelte";
-import { getSettings, initApp } from "./init.js";
+import { getSettings, initApp, requestSpots } from "./init.js";
 import SearchForm from "./components/SearchForm.svelte";
 import { setLocation } from "./utils/mapUtils/locationUtils.js";
 import Modal from "./components/Modal.svelte";
@@ -17,6 +18,7 @@ import {
   isSearchResults,
   markersStore,
   openedMarkerData,
+  selectedArtist,
   selectedYear,
   settings,
 } from "./store.js";
@@ -255,19 +257,33 @@ const quitAddSpot = () => {
 
   <div class="main-top_right_wrapper">
     {#if !isAddSpotMode}
-      <button
-        class="button button-main_screen button-square button-open_search"
-        on:click={() => showSearch(true)}
-        in:fade />
-      {#if $isLoggedIn}
+      {#if !$selectedArtist}
         <button
-          class="button button-main_screen button-square button-burger"
-          on:click={() => showUserProfile(true)}
+          class="button button-main_screen button-square button-open_search"
+          on:click={() => showSearch(true)}
           in:fade />
+        {#if $isLoggedIn}
+          <button
+            class="button button-main_screen button-square button-burger"
+            on:click={() => showUserProfile(true)}
+            in:fade />
+        {:else}
+          <button
+            class="button button-main_screen button-square button-open_login"
+            on:click={() => showAuth(true)} />
+        {/if}
       {:else}
-        <button
-          class="button button-main_screen button-square button-open_login"
-          on:click={() => showAuth(true)} />
+        <div class="selected-artist" on:click={() => showSearch(true)}>
+          <span>{$selectedArtist}</span>
+          <button
+            class="button button-square button-clear_search"
+            on:click|stopPropagation={() => {
+              requestSpots($selectedYear);
+              permalink.update({ clearParams: "all" });
+            }}>
+            <CloseCrossSvg isLight />
+          </button>
+        </div>
       {/if}
     {/if}
   </div>
@@ -471,14 +487,46 @@ const quitAddSpot = () => {
     background-position: 50% 50%;
     background-size: 18px 13px;
   }
+  &-clear_search {
+    margin-left: 5px;
+    padding: 8px;
+    background-color: transparent;
+  }
+}
+
+.selected-artist {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 186px;
+  height: 40px;
+  padding-left: 16px;
+  border-radius: 2px;
+  background: var(--color-accent);
+  color: var(--color-light);
+  font-size: 14px;
+  line-height: 17px;
+  > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 @media (max-width: 767px) {
-  .button-open_calendar {
-    max-width: 130px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  .button {
+    &-open_calendar {
+      max-width: 130px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    &-clear_search {
+      padding: 4px;
+    }
+  }
+  .selected-artist {
+    width: 156px;
   }
 }
 </style>

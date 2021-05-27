@@ -12,6 +12,8 @@ export const MAX_ZOOM = 19;
 
 export const MAX_SPOTS_PER_PAGE = 36;
 
+export const MAX_IMAGE_FILE_SIZE = 5242880;
+
 export const STATUSES = { live: "Live", buffed: "Buffed", unknown: "Unknown" };
 
 export const USER_TYPES = { artist: "Artist", hunter: "Hunter" };
