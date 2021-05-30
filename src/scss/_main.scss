@@ -1,9 +1,10 @@
-html,
-body {
+html, body {
   width: 100%;
   min-width: 320px;
+
   -webkit-tap-highlight-color: transparent;
 }
+
 body {
   min-height: 100vh;
   min-height: -webkit-fill-available;
@@ -18,9 +19,8 @@ body {
 
 input {
   border-radius: 0;
-  &[type="text"],
-  &[type="email"],
-  &[type="password"] {
+
+  &[type="text"], &[type="email"], &[type="password"] {
     appearance: none;
   }
 }
@@ -66,26 +66,32 @@ textarea {
   input {
     cursor: pointer !important;
   }
-  .indicator + div,
-  .clearSelect + div {
-    border: 1px solid var(--color-accent);
+
+  .indicator +div, .clearSelect +div {
     left: -1px !important;
+    border: 1px solid var(--color-accent);
   }
+
   .listContainer {
     border-right: 8px solid transparent;
+
     &::-webkit-scrollbar {
       width: 4px;
     }
+
     &::-webkit-scrollbar-thumb {
       border-radius: 2px;
       background-color: var(--color-accent);
     }
   }
+
   .listItem {
     border: 1px solid transparent;
   }
+
   .item {
     cursor: pointer !important;
+
     &.hover:not(.active) {
       opacity: 0.5;
     }
@@ -93,9 +99,9 @@ textarea {
 }
 
 .year-select {
-  .indicator + div {
-    min-width: 92px !important;
+  .indicator +div {
     left: 16px !important;
+    min-width: 92px !important;
   }
 }
 
@@ -105,39 +111,59 @@ textarea {
     border-top: 0 !important;
     border-right: 0 !important;
     border-left: 0 !important;
-    > div:not([class]) {
+
+    >div:not([class]) {
       top: 41px !important;
     }
-    .indicator + div,
-    .clearSelect + div {
+
+    .indicator +div, .clearSelect +div {
       border: 0;
     }
   }
-  &.is-search .focused ~ .floating-label {
-    overflow: hidden;
-    opacity: 0.6;
-    transform: translateY(-15px);
-    font-size: 13px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+
+  &.is-search {
+    .focused ~.floating-label {
+      overflow: hidden;
+      transform: translateY(-15px);
+      opacity: 0.6;
+      font-size: 13px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    input {
+      height: 24px !important;
+      line-height: 24px !important;
+    }
+
+    @media (max-width: 767px) {
+      .empty {
+        max-width: 270px;
+        margin: auto;
+      }
+    }
   }
+
   .listContainer:not(:empty) {
     padding: 4px 0;
     border-right: 8px solid transparent;
     outline: 1px solid var(--color-accent);
+
     &::-webkit-scrollbar {
       width: 4px;
     }
+
     &::-webkit-scrollbar-thumb {
       border-radius: 2px;
       background-color: var(--color-accent);
     }
   }
+
   &.typed-text:not(.not-empty) {
     .selectContainer:not(.focused) {
-      + .floating-label {
-        opacity: 1;
+      +.floating-label {
         transform: translateY(0);
+        opacity: 1;
         font-size: 16px;
       }
     }

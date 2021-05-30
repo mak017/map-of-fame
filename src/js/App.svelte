@@ -273,7 +273,7 @@ const quitAddSpot = () => {
             on:click={() => showAuth(true)} />
         {/if}
       {:else}
-        <div class="selected-artist" on:click={() => showSearch(true)}>
+        <div class="selected-artist">
           <span>{$selectedArtist}</span>
           <button
             class="button button-square button-clear_search"
