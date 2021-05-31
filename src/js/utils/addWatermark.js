@@ -45,7 +45,8 @@ export const addWatermark = (img, user) => {
   const ctx = img.getContext("2d");
   const siteName = "MOFF.ORG";
   const text = `${siteName}    ${user.toUpperCase()}`;
-  const fontSize = 20;
+  // base font size is 18px (52.11 = 938 / 18), where 938 is the width of mockup img
+  const fontSize = img.width / 52.11;
   ctx.font = `900 ${fontSize}px Montserrat`;
   const metrics = ctx.measureText(text);
   const siteNameMetrics = ctx.measureText(siteName);
@@ -61,7 +62,7 @@ export const addWatermark = (img, user) => {
     ctx,
     0,
     -metrics.fontBoundingBoxAscent,
-    metrics.actualBoundingBoxRight + metrics.actualBoundingBoxAscent * 0.5,
+    metrics.actualBoundingBoxRight + metrics.actualBoundingBoxAscent * 0.3,
     metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxAscent * 0.2,
     { tr: 2, br: 2 },
     true,
