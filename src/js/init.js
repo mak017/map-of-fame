@@ -21,21 +21,21 @@ import { transformSettings } from "./utils/transformers";
 
 export const getSettings = () =>
   getSettingsRequest().then((response) => {
-    if (response.status && response.data) {
-      settings.set(transformSettings(response.data));
+    if (response.success && response.result) {
+      settings.set(transformSettings(response.result));
     }
   });
 
 export const verifyAuth = (token) =>
   verifyAuthRequest(token).then((response) => {
-    const { status, data, error } = response;
-    if (status && data) {
-      userData.set(data);
+    const { success, result, errors } = response;
+    if (success && result) {
+      userData.set(result);
       isLoggedIn.set(true);
-      saveToLocalStorage("token", data.token);
+      if (result.token) saveToLocalStorage("token", result.token);
     } else if (
-      Array.isArray(error) &&
-      error[0] === "Provided token is expired."
+      Array.isArray(errors) &&
+      errors[0] === "Provided token is expired."
     ) {
       removeFromLocalStorage("token");
     }
@@ -48,13 +48,17 @@ export const initApp = () => {
   }
 };
 
-export const requestSpots = (year) => {
+export const requestSpots = (year, map) => {
   let yearForRequest = year;
+  const bounds = map.getBounds();
+  console.log("bounds :>> ", bounds);
+  const geoRect = [bounds.getNorthWest(), bounds.getSouthEast()];
+  console.log("geoRect :>> ", geoRect);
   // isLoading.set(true);
   if (year === EMPTY_YEAR_STRING) {
     yearForRequest = "";
   }
-  return getSpots(yearForRequest).then((response) => {
+  return getSpots(yearForRequest, geoRect).then((response) => {
     const { status, data } = response;
     if (status && data) {
       // isLoading.set(false);

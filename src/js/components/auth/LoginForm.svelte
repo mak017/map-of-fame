@@ -38,19 +38,22 @@ const handleSubmit = () => {
     isInProgress = true;
     loginRequest(email, password)
       .then((response) => {
-        if (response.status && response.data) {
-          const { token } = response.data;
-          userData.set(response.data);
+        const { success, result } = response || {};
+        if (success && result) {
+          userData.set(result);
           isLoggedIn.set(true);
-          saveToLocalStorage("token", token);
+          saveToLocalStorage("token", result.token);
           showAuth(false);
         } else {
           isInProgress = false;
-          if (response.error?.email) {
-            errors.email = response.error.email;
+          if (response.errors?.email) {
+            errors.email = response.errors.email;
           }
-          if (Array.isArray(response.error)) {
-            errors.password = response.error[0];
+          if (response.errors?.login) {
+            errors.password = response.errors.login;
+          }
+          if (Array.isArray(response.errors)) {
+            errors.password = response.errors[0];
           }
         }
       })

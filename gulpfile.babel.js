@@ -1,20 +1,37 @@
 /* eslint-disable no-console */
 /* eslint-disable func-names */
-const gulp = require("gulp");
-const minimist = require("minimist");
-const sass = require("gulp-sass");
-const postcss = require("gulp-postcss");
-const cssnext = require("postcss-preset-env");
-const mqpacker = require("css-mqpacker");
-const sortCSSmq = require("sort-css-media-queries");
-const cleanCSS = require("gulp-clean-css");
-const debug = require("gulp-debug");
-const plumber = require("gulp-plumber");
+// const gulp = require("gulp");
+import gulp from "gulp";
+// const minimist = require("minimist");
+import minimist from "minimist";
+// const sass = require("gulp-sass");
+import dartSass from "sass";
+import gulpSass from "gulp-sass";
+
+// const postcss = require("gulp-postcss");
+import postcss from "gulp-postcss";
+// const cssnext = require("postcss-preset-env");
+import cssnext from "postcss-preset-env";
+// const mqpacker = require("css-mqpacker");
+import mqpacker from "css-mqpacker";
+// const sortCSSmq = require("sort-css-media-queries");
+import sortCSSmq from "sort-css-media-queries";
+// const cleanCSS = require("gulp-clean-css");
+import cleanCSS from "gulp-clean-css";
+// const debug = require("gulp-debug");
+import debug from "gulp-debug";
+// const plumber = require("gulp-plumber");
+import plumber from "gulp-plumber";
 // const sourcemaps = require("gulp-sourcemaps");
-const imagemin = require("gulp-imagemin");
+import imagemin from "gulp-imagemin";
+// const imagemin = require("gulp-imagemin");
 // const gulpIf = require("gulp-if");
-const extend = require("extend");
-const imageminJpegRecompress = require("imagemin-jpeg-recompress");
+// const extend = require("extend");
+import extend from "extend";
+// const imageminJpegRecompress = require("imagemin-jpeg-recompress");
+import imageminJpegRecompress from "imagemin-jpeg-recompress";
+
+const sass = gulpSass(dartSass);
 
 // Configuration
 //
@@ -101,5 +118,3 @@ gulp.task("watch", function () {
 gulp.task("default", gulp.series("set-dev-node-env", "sass", "watch"));
 
 gulp.task("build", gulp.series(gulp.parallel("set-prod-node-env", "sass")));
-
-console.log("env:", config.env);

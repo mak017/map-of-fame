@@ -1,6 +1,5 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-// const autoPreprocess = require("svelte-preprocess");
-import { scss } from "svelte-preprocess";
+const autoPreprocess = require("svelte-preprocess");
 const path = require("path");
 const Dotenv = require("dotenv-webpack");
 
@@ -33,7 +32,7 @@ module.exports = {
             loader: "svelte-loader",
             options: {
               dev: !prod,
-              preprocess: [scss()],
+              preprocess: [autoPreprocess.scss()],
               emitCss: true,
             },
           },
@@ -62,11 +61,7 @@ module.exports = {
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/,
-        use: [
-          {
-            loader: "url-loader",
-          },
-        ],
+        type: "asset/inline",
       },
     ],
   },
@@ -79,11 +74,9 @@ module.exports = {
   ],
   devtool: prod ? false : "source-map",
   devServer: {
-    contentBase: "public",
-    watchOptions: {
-      aggregateTimeout: 100,
-    },
-    overlay: true,
+    static: "public",
+    historyApiFallback: true,
+    hot: true,
     host: "0.0.0.0",
   },
 };

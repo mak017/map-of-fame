@@ -278,7 +278,7 @@ const quitAddSpot = () => {
           <button
             class="button button-square button-clear_search"
             on:click|stopPropagation={() => {
-              requestSpots($selectedYear);
+              requestSpots($selectedYear, map);
               permalink.update({ clearParams: "all" });
             }}>
             <CloseCrossSvg isLight />

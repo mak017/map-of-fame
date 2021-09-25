@@ -8,8 +8,8 @@ import {
   USER_ID_SPOTS,
 } from "./endpoints";
 
-export const getSpots = async (year) => {
-  const response = await fetch(SPOT_YEAR(year), { method: "GET" });
+export const getSpots = async (year, geoRect) => {
+  const response = await fetch(SPOT_YEAR(year, geoRect), { method: "GET" });
   const result = await response.json();
   return result;
 };

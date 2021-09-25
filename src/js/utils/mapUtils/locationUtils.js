@@ -101,7 +101,7 @@ export const setLocation = (map) => {
           }
           if (error && !isEmpty(error)) {
             permalink.update({ clearParams: "all" });
-            requestSpots(yearFromStore);
+            requestSpots(yearFromStore, map);
           }
         });
       } else if (markerId) {
@@ -116,10 +116,10 @@ export const setLocation = (map) => {
           if (error && !isEmpty(error)) {
             permalink.update({ clearParams: "all" });
           }
-          requestSpots(yearFromStore);
+          requestSpots(yearFromStore, map);
         });
       } else {
-        requestSpots(yearFromStore || getCurrentYear());
+        requestSpots(yearFromStore || getCurrentYear(), map);
       }
     });
 };
