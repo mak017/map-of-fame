@@ -157,9 +157,11 @@ const handleCategoryChange = () => {
 
 const getOptionLabel = (option) => option.name;
 
+let typedText = "";
+
 const fetchArtistsCrews = async (filterText) => {
-  const text = filterText ? filterText.replace(" ", "_") : "";
-  if (text.length > 2) {
+  typedText = filterText ? filterText.replace(" ", "_") : "";
+  if (typedText.length > 2) {
     const response = await requestSearchArtistsCrews(filterText);
     const { success, result } = response;
     if (success && result) {
@@ -191,7 +193,9 @@ const fetchArtistsCrews = async (filterText) => {
     placeholder="Artist or Crew"
     hint="Leave empty to show all artists and crews"
     isSearch
-    {noOptionsMessage} />
+    {noOptionsMessage}
+    externalTypedText={typedText}
+    on:select={() => (typedText = "")} />
   {#if categoriesList.length > 0}
     <div class="filter">
       {#each categoriesList as category}
@@ -233,21 +237,25 @@ const fetchArtistsCrews = async (filterText) => {
 .filter {
   margin-bottom: 36px;
 }
+
 .checkbox {
   display: inline-block;
   position: relative;
   padding-left: 37px;
+
   input {
     position: absolute;
     left: -9999px;
     clip: rect(0 0 0 0);
     opacity: 0;
   }
+
   label {
+    color: var(--color-dark);
     font-size: 14px;
     line-height: 17px;
-    color: var(--color-dark);
     cursor: pointer;
+
     &::before {
       content: "";
       position: absolute;
@@ -258,6 +266,7 @@ const fetchArtistsCrews = async (filterText) => {
       border: 1px solid var(--color-accent);
       border-radius: 2px;
     }
+
     &::after {
       content: "";
       position: absolute;
@@ -265,20 +274,23 @@ const fetchArtistsCrews = async (filterText) => {
       left: 4px;
       width: 14px;
       height: 9px;
-      background: url(../../images/checkbox.svg) 50% 50% / contain no-repeat;
       transform: scale(0);
       transition: transform 0.3s;
+      background: url(../../images/checkbox.svg) 50% 50% / contain no-repeat;
     }
   }
-  input:checked + label {
+
+  input:checked +label {
     &::before {
       background-color: var(--color-accent);
     }
+
     &::after {
       transform: scale(1);
     }
   }
-  + .checkbox {
+
+  +.checkbox {
     margin-left: 48px;
   }
 }
@@ -286,6 +298,7 @@ const fetchArtistsCrews = async (filterText) => {
 .bottom {
   display: flex;
   align-items: center;
+
   .checkbox {
     margin-right: 68px;
   }
@@ -303,19 +316,24 @@ const fetchArtistsCrews = async (filterText) => {
     width: 100%;
     max-width: 530px;
   }
+
   .bottom {
     flex-flow: wrap;
+
     .checkbox {
       margin: 28px 0;
     }
   }
+
   .filter {
     margin-bottom: 8px;
   }
+
   .checkbox {
-    + .checkbox {
+    +.checkbox {
       margin-left: 8vw;
     }
   }
 }
+
 </style>

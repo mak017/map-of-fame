@@ -159,13 +159,13 @@ textarea {
     }
   }
 
-  &.typed-text:not(.not-empty) {
-    .selectContainer:not(.focused) {
-      +.floating-label {
-        transform: translateY(0);
-        opacity: 1;
-        font-size: 16px;
-      }
-    }
-  }
+  // &.typed-text:not(.not-empty) {
+  //   .selectContainer:not(.focused) {
+  //     +.floating-label {
+  //       transform: translateY(0);
+  //       opacity: 1;
+  //       font-size: 16px;
+  //     }
+  //   }
+  // }
 }

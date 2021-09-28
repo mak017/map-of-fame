@@ -91,7 +91,8 @@ export const setLocation = (map) => {
     })
     .finally(() => {
       permalink.setup(map);
-      mapBounds.set(getBounds(map));
+      const bounds = getBounds(map);
+      mapBounds.set(bounds);
       if (selectedHuntersFilter) {
         // isLoading.set(true);
         requestSearchSpots({
@@ -99,6 +100,7 @@ export const setLocation = (map) => {
           name: artistFromStore,
           category: categoryFromStore.map((cat) => cat.id),
           showHunters: selectedHuntersFilter ? 1 : 0,
+          geoRect: bounds,
         }).then((response) => {
           const { status, data, error } = response;
           if (status && data) {

@@ -13,8 +13,13 @@ export let loadOptions = undefined;
 export let errorMessage = "";
 export let isSearch = false;
 export let noOptionsMessage = "No options";
+export let externalTypedText = "";
 
 let typedText = "";
+
+$: {
+  typedText = externalTypedText;
+}
 
 const dispatch = createEventDispatcher();
 
@@ -33,7 +38,7 @@ const onType = (label, filterText) => {
   class:is-search={isSearch}>
   <Select
     {items}
-    bind:selectedValue
+    bind:value={selectedValue}
     {optionIdentifier}
     {getOptionLabel}
     {loadOptions}
@@ -57,10 +62,13 @@ const onType = (label, filterText) => {
 
 <style lang="scss">
 .autocomplete {
+  position: relative;
+  margin-bottom: 20px;
   --border: 1px solid var(--color-dark);
+
+  --borderFocusColor: var(--color-accent);
   --borderHoverColor: var(--color-dark);
   --borderRadius: 0;
-  --borderFocusColor: var(--color-accent);
   --indicatorTop: 6px;
   --inputColor: var(--color-dark);
   --inputFontSize: 16px;
@@ -73,30 +81,30 @@ const onType = (label, filterText) => {
   --listShadow: 0;
   --placeholderColor: var(--color-dark);
   --spinnerColor: var(--color-accent);
-  position: relative;
-  margin-bottom: 20px;
 }
+
 .floating-label {
   position: absolute;
   top: 8px;
+  transform: translateY(0);
   transition: 0.3s;
   opacity: 1;
-  transform: translateY(0);
   color: var(--color-dark);
   font-size: 16px;
   pointer-events: none;
 }
-.not-empty,
-.typed-text {
+
+.not-empty, .typed-text {
   .floating-label {
     overflow: hidden;
-    opacity: 0.6;
     transform: translateY(-15px);
+    opacity: 0.6;
     font-size: 13px;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 }
+
 .hint {
   margin-top: 8px;
   opacity: 0.6;
@@ -104,10 +112,12 @@ const onType = (label, filterText) => {
   font-size: 13px;
   line-height: 16px;
 }
+
 .error {
   margin: 4px 0 -20px;
   color: var(--color-error);
   font-size: 13px;
   line-height: 16px;
 }
+
 </style>
