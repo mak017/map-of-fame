@@ -31,14 +31,13 @@ const handleSubmit = () => {
   validate();
   if (!errorMessage) {
     isInProgress = true;
-    changePasswordReset(resetPasswordToken, password).then((response) => {
-      const { status, data } = response;
+    changePasswordReset(resetPasswordToken.token, password).then((response) => {
+      const { success, result } = response;
       isInProgress = false;
-      if (status && data) {
-        const { token } = data;
-        userData.set(data);
+      if (success && result) {
+        userData.set(resetPasswordToken);
         isLoggedIn.set(true);
-        saveToLocalStorage("token", token);
+        saveToLocalStorage("token", resetPasswordToken.token);
         showResetPassword(false);
       } else {
         errorMessage = "Something went wrong";

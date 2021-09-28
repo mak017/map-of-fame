@@ -7,6 +7,7 @@ import {
   // isLoading,
   isLoggedIn,
   isSearchResults,
+  mapBounds,
   markersStore,
   selectedArtist,
   settings,
@@ -18,6 +19,12 @@ import {
   saveToLocalStorage,
 } from "./utils/commonUtils";
 import { transformSettings } from "./utils/transformers";
+
+let bounds;
+
+mapBounds.subscribe((value) => {
+  bounds = value;
+});
 
 export const getSettings = () =>
   getSettingsRequest().then((response) => {
@@ -48,24 +55,23 @@ export const initApp = () => {
   }
 };
 
-export const requestSpots = (year, map) => {
+export const requestSpots = (year) => {
   let yearForRequest = year;
-  const bounds = map.getBounds();
-  console.log("bounds :>> ", bounds);
-  const geoRect = [bounds.getNorthWest(), bounds.getSouthEast()];
-  console.log("geoRect :>> ", geoRect);
   // isLoading.set(true);
   if (year === EMPTY_YEAR_STRING) {
     yearForRequest = "";
   }
-  return getSpots(yearForRequest, geoRect).then((response) => {
-    const { status, data } = response;
-    if (status && data) {
+  if (!bounds.length) {
+    return null;
+  }
+  return getSpots(yearForRequest, bounds).then((response) => {
+    const { success, result } = response;
+    if (success && result) {
       // isLoading.set(false);
       isSearchResults.set(false);
       isLighthouseActive.set(false);
       selectedArtist.set("");
-      markersStore.set(data);
+      markersStore.set(result);
     }
     // if (error) {
     //   isLoading.set(false);

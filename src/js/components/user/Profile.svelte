@@ -43,24 +43,28 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
   isLoading = isNewFetch;
   isShowSpinner = true;
   getUserSpots(token, user.id, { year, offset }).then((response) => {
-    const { status, data, error } = response;
-    if (status && data) {
-      const { spots, years } = data;
+    const { success, result, errors } = response;
+    if (success && result) {
+      const { spots, years } = result;
       if (isNewFetch) spotsList = [];
-      newBatch = [...spots];
-      yearsToApply = [
-        ...new Set(
-          years
-            .map((y) => (y === "" || y === " " ? EMPTY_YEAR_STRING : y))
-            .filter((y) => y)
-        ),
-      ];
+      newBatch = spots ? [...spots] : [];
+      yearsToApply = years
+        ? [
+            ...new Set(
+              years
+                .map((y) =>
+                  y.year === "" || y.year === " " ? EMPTY_YEAR_STRING : y.year
+                )
+                .filter((y) => y)
+            ),
+          ]
+        : [];
       if (currentYear === undefined || year === undefined) {
         currentYear = yearsToApply[0];
       }
     }
-    if (error && !isEmpty(error)) {
-      if (error.year) {
+    if (errors && !isEmpty(errors)) {
+      if (errors.year) {
         fetchSpots({});
       }
     }
@@ -139,7 +143,7 @@ const onSubmitChanges = () => {
         <div class="spots">
           {#each spotsList as spot}
             <div class="spot-card">
-              <img loading="lazy" src={spot.img} alt="" in:fade />
+              <img loading="lazy" src={spot.img} alt={spot.title} in:fade />
               <div class="overlay">
                 <button
                   type="button"

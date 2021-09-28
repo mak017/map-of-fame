@@ -1,7 +1,7 @@
 import { EMPTY_YEAR_STRING } from "../constants";
 import { getCurrentYear } from "./commonUtils";
 
-export const getDatesFilter = (yearStart, yearEnd, additionalYears) => {
+export const getDatesFilter = (yearStart, yearEnd, additionalYears = []) => {
   const years = [EMPTY_YEAR_STRING, ...additionalYears];
   for (let year = +yearStart; year <= +yearEnd + 1; year += 1) {
     years.push(`${year}`);

@@ -55,9 +55,9 @@ $: isSubmitDisabled =
 
 const getCountries = () => {
   getAllCountries().then((response) => {
-    const { status, data } = response;
-    if (status && data) {
-      countriesList.set(transformCountries(data));
+    const { success, result } = response;
+    if (success && result) {
+      countriesList.set(transformCountries(result));
     }
   });
 };
@@ -111,12 +111,12 @@ const handleSubmit = () => {
         link: portfolioLink,
       })
         .then((response) => {
-          const { status, data, error } = response;
+          const { success, result, errors: error } = response;
           isInProgress = false;
-          if (status && data) {
-            userData.set(data);
+          if (success && result) {
+            userData.set(result);
             isLoggedIn.set(true);
-            saveToLocalStorage("token", data.token);
+            saveToLocalStorage("token", result.token);
             showAuth(false);
           } else {
             if (error?.email) {

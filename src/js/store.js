@@ -32,3 +32,5 @@ export const isLoading = writable(false);
 export const markerIdFromUrl = writable(null);
 
 export const isLighthouseActive = writable(false);
+
+export const mapBounds = writable([]);

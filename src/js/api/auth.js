@@ -69,9 +69,10 @@ export const changePasswordInit = async (email) => {
   return result;
 };
 
-export const changePasswordCheckToken = async (resetToken) => {
+export const changePasswordCheckToken = async (resetToken, id) => {
   const data = new URLSearchParams();
   data.append("reset_password_token", resetToken);
+  data.append("id", id);
   const response = await fetch(USER_PASSWORD_TOKEN(), {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -83,12 +84,15 @@ export const changePasswordCheckToken = async (resetToken) => {
 
 export const changePasswordReset = async (resetToken, password) => {
   const data = new URLSearchParams();
-  data.append("reset_password_token", resetToken);
+  const bearer = `Bearer ${resetToken}`;
   data.append("password", password);
   data.append("confirmation", password);
   const response = await fetch(USER_PASSWORD(), {
     method: "PUT",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: bearer,
+    },
     body: data,
   });
   const result = await response.json();

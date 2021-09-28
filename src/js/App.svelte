@@ -62,6 +62,7 @@ let settingsValue;
 let markersList = [];
 let isSearch;
 let isLighthouse;
+let year;
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
@@ -91,6 +92,10 @@ const unsubscribeIsLighthouse = isLighthouseActive.subscribe(
   (value) => (isLighthouse = value)
 );
 
+const unsubscribeSelectedYear = selectedYear.subscribe(
+  (value) => (year = value)
+);
+
 document.getElementById("initial-loader").remove();
 
 onDestroy(() => {
@@ -98,6 +103,7 @@ onDestroy(() => {
   unsubscribeMarkers();
   unsubscribeIsSearchResults();
   unsubscribeIsLighthouse();
+  unsubscribeSelectedYear();
 });
 
 adjustVhProp();
@@ -109,14 +115,15 @@ $: if (markersList) {
 }
 
 if (resetPasswordToken) {
+  const { token, id } = resetPasswordToken;
   isLoading.set(true);
-  changePasswordCheckToken(resetPasswordToken).then((response) => {
-    const { status, data } = response;
-    if (status && data && data?.reset_password_token) {
+  changePasswordCheckToken(token, id).then((response) => {
+    const { success, result } = response;
+    if (success && result) {
       getSettings();
       isLoading.set(false);
       showResetPassword(true);
-      resetPasswordToken = data.reset_password_token;
+      resetPasswordToken = result;
     } else {
       getSettings().then(() => {
         isLoading.set(false);
@@ -143,6 +150,7 @@ const initMap = (container) => {
   setLocation(map);
 
   // openRailwayMap.on("load", () => (isRailwayMapLoading = false));
+  map.on("zoomend dragend", () => requestSpots(year)); //call search on drag end
 
   return {
     destroy: () => {
@@ -197,11 +205,11 @@ const onLighthouseClick = () => {
       isLighthouseActive.set(true);
     } else {
       getSpots(getCurrentYear()).then((response) => {
-        const { status, data } = response;
-        if (status && data) {
+        const { success, result } = response;
+        if (success && result) {
           isSearchResults.set(false);
           isLighthouseActive.set(true);
-          const filteredSpots = getLastSpots(data);
+          const filteredSpots = getLastSpots(result);
           markersStore.set(filteredSpots);
         }
       });
@@ -278,7 +286,7 @@ const quitAddSpot = () => {
           <button
             class="button button-square button-clear_search"
             on:click|stopPropagation={() => {
-              requestSpots($selectedYear, map);
+              requestSpots($selectedYear);
               permalink.update({ clearParams: "all" });
             }}>
             <CloseCrossSvg isLight />
@@ -313,7 +321,8 @@ const quitAddSpot = () => {
         {showCalendar}
         yearStart={settingsValue.yearStart}
         yearEnd={settingsValue.yearEnd}
-        additionalYears={JSON.parse(settingsValue.additionalYears)} />
+        additionalYears={settingsValue.additionalYears &&
+          JSON.parse(settingsValue.additionalYears)} />
     </Modal>
   {/if}
 

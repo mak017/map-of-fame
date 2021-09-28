@@ -84,7 +84,8 @@ const unsubscribeCategories = categories.subscribe(
   (value) =>
     (categoriesList = value.filter(
       (category) =>
-        category.availabilities.find((av) => av.name === userTypeValue)?.active
+        category.activeAvailability.find((av) => av.name === userTypeValue)
+          ?.active
     ))
 );
 
@@ -112,11 +113,11 @@ const hasSprays = () => Array.isArray(sprayFirms) && sprayFirms.length;
 
 if (!hasCategories()) {
   getCategories().then((response) => {
-    const { status, data } = response;
-    if (status && data) {
-      categories.set(data);
+    const { success, result } = response;
+    if (success && result) {
+      categories.set(result);
       if (!selectedCategory) {
-        selectedCategory = getInitialCategory(data);
+        selectedCategory = getInitialCategory(result);
       }
     }
   });
@@ -130,9 +131,9 @@ if (
   !hasSprays()
 ) {
   getFirmsRequest(token).then((response) => {
-    const { status, data } = response;
-    if (status && data) {
-      firms.set(data);
+    const { success, result } = response;
+    if (success && result) {
+      firms.set(result);
     }
   });
 }
@@ -260,7 +261,7 @@ const handleSubmit = () => {
       const markerCoords = marker.getLatLng();
       const { lat, lng } = markerCoords;
       const requestObject = {
-        ltd: lat,
+        lat,
         lng,
         artist,
         crew,
@@ -275,9 +276,9 @@ const handleSubmit = () => {
       if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
       marker.dragging.disable();
       createSpot(token, requestObject).then((response) => {
-        const { status, data, error } = response;
+        const { success, result, errors: error } = response;
         isInProgress = false;
-        if (status && data) {
+        if (success && result) {
           if (
             $selectedYear === year ||
             (!year && $selectedYear === EMPTY_YEAR_STRING)
@@ -306,9 +307,9 @@ const handleSubmit = () => {
         categoryId: selectedCategory.id,
         link,
       }).then((response) => {
-        const { status, data } = response;
+        const { success, result } = response;
         isInProgress = false;
-        if (status && data) {
+        if (success && result) {
           onSubmit();
           onCancel();
         }

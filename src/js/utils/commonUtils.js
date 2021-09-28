@@ -1,8 +1,11 @@
 import { MOBILE_BREAKPOINT } from "../constants";
 
-const regexYoutube = /(?:https?:)?(?:\/\/)(?:www\.)?(?:m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([^<.,!():"'\s]+)/;
-const regexVimeo = /(?:http:|https:)?(?:\/\/)(?:www\.)?(?:vimeo\.com)\/([^<.,!():"'\s]+)/;
-const regexDailymotion = /(?:http:|https:)?(?:\/\/)(?:www\.)?(?:dailymotion\.com|dai\.ly)(?:\/video)?\/([^<.,!():"'\s]+)/;
+const regexYoutube =
+  /(?:https?:)?(?:\/\/)(?:www\.)?(?:m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([^<.,!():"'\s]+)/;
+const regexVimeo =
+  /(?:http:|https:)?(?:\/\/)(?:www\.)?(?:vimeo\.com)\/([^<.,!():"'\s]+)/;
+const regexDailymotion =
+  /(?:http:|https:)?(?:\/\/)(?:www\.)?(?:dailymotion\.com|dai\.ly)(?:\/video)?\/([^<.,!():"'\s]+)/;
 
 export const isMobile = () => window.innerWidth < MOBILE_BREAKPOINT;
 
@@ -75,7 +78,11 @@ export const getResetPasswordToken = () => {
   const search = window.location.search;
   if (search) {
     const params = new URLSearchParams(search);
-    return params.get("reset_password_token");
+    const token = params.get("reset_password_token");
+    const id = params.get("id");
+    if (token && id) {
+      return { token, id };
+    }
   }
   return null;
 };

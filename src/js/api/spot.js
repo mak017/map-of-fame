@@ -23,7 +23,7 @@ export const getSpotById = async (id) => {
 export const createSpot = async (
   token,
   {
-    ltd,
+    lat,
     lng,
     artist,
     crew,
@@ -39,18 +39,18 @@ export const createSpot = async (
 ) => {
   const bearer = `Bearer ${token}`;
   const formData = new FormData();
-  formData.append("ltd", ltd);
+  formData.append("lat", lat);
   formData.append("lng", lng);
-  formData.append("artist", artist);
-  formData.append("crew", crew);
-  formData.append("year", year);
   formData.append("spot_status", spotStatus);
   formData.append("img", img);
-  formData.append("video_link", videoLink);
-  formData.append("description", description);
   formData.append("category_id", categoryId);
-  formData.append("firm_id", firmId);
-  formData.append("link", link);
+  if (artist) formData.append("artist", artist);
+  if (crew) formData.append("crew", crew);
+  if (year) formData.append("year", year);
+  if (videoLink) formData.append("video_link", videoLink);
+  if (description) formData.append("description", description);
+  if (firmId) formData.append("firm_id", firmId);
+  if (link) formData.append("link", link);
   const response = await fetch(SPOT(), {
     method: "POST",
     withCredentials: true,

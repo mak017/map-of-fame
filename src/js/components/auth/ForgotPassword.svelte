@@ -36,12 +36,12 @@ const handleSubmit = () => {
     isInProgress = true;
     changePasswordInit(email)
       .then((response) => {
-        const { status, data, error } = response;
+        const { success, result, errors } = response;
         isInProgress = false;
-        if (status && data) {
+        if (success && result) {
           setForgotPasswordEmailSent(true);
         } else {
-          errorMessage = error?.email ? error.email : "Something went wrong";
+          errorMessage = errors?.email ?? "Something went wrong";
         }
       })
       .catch((e) => {

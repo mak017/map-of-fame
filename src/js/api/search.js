@@ -11,10 +11,17 @@ export const requestSearchSpots = async ({
   name,
   category,
   showHunters,
+  geoRect,
 }) => {
   const response = await fetch(SPOT_SEARCH(), {
     method: "POST",
-    body: JSON.stringify({ year, name, category, showHunters }),
+    body: JSON.stringify({
+      year,
+      name,
+      category,
+      showHunters,
+      geoRect,
+    }),
     headers: { "Content-Type": "application/json" },
   });
   const result = await response.json();

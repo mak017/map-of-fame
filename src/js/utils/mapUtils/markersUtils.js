@@ -26,15 +26,14 @@ export const setMarkerData = (data) => {
     id,
     artist,
     crew,
-    spot_status: status,
+    spotStatus: status,
     description,
     img,
     title,
-    video_link: video,
+    videoLink: video,
     user: { name },
-    firm: { banner, banner_url: bannerUrl },
-    ltd: lat,
-    lng,
+    firm: { banner, bannerUrl },
+    location: { lat, lng },
     year,
     link,
   } = data;
@@ -56,8 +55,12 @@ export const setMarkerData = (data) => {
 };
 
 const createMarker = (data) => {
-  const { ltd, lng, icon, thumbnail } = data;
-  const marker = L.marker([ltd, lng], {
+  const {
+    location: { lat, lng },
+    icon,
+    thumbnail,
+  } = data;
+  const marker = L.marker([lat, lng], {
     icon: markerWithPhoto(icon || thumbnail),
   });
   marker.addEventListener("click", () => setMarkerData(data));

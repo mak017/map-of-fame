@@ -5,6 +5,7 @@ import {
   huntersFilter,
   // isLoading,
   isSearchResults,
+  mapBounds,
   markerIdFromUrl,
   markersStore,
   selectedArtist,
@@ -72,6 +73,11 @@ const getLocation = async () => {
   return getLocationByIp();
 };
 
+const getBounds = (map) => {
+  const bounds = map.getBounds();
+  return [bounds.getNorthWest(), bounds.getSouthEast()];
+};
+
 export const setLocation = (map) => {
   getLocation()
     .then((response) => {
@@ -85,6 +91,7 @@ export const setLocation = (map) => {
     })
     .finally(() => {
       permalink.setup(map);
+      mapBounds.set(getBounds(map));
       if (selectedHuntersFilter) {
         // isLoading.set(true);
         requestSearchSpots({
@@ -101,7 +108,7 @@ export const setLocation = (map) => {
           }
           if (error && !isEmpty(error)) {
             permalink.update({ clearParams: "all" });
-            requestSpots(yearFromStore, map);
+            requestSpots(yearFromStore);
           }
         });
       } else if (markerId) {
@@ -116,10 +123,10 @@ export const setLocation = (map) => {
           if (error && !isEmpty(error)) {
             permalink.update({ clearParams: "all" });
           }
-          requestSpots(yearFromStore, map);
+          requestSpots(yearFromStore);
         });
       } else {
-        requestSpots(yearFromStore || getCurrentYear(), map);
+        requestSpots(yearFromStore || getCurrentYear());
       }
     });
 };

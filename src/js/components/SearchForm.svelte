@@ -12,6 +12,7 @@ import {
   huntersFilter,
   isLighthouseActive,
   isSearchResults,
+  mapBounds,
   markersStore,
   selectedArtist,
   selectedCategory,
@@ -39,20 +40,26 @@ let isSubmitDisabled = false;
 let isInProgress = false;
 let prevYearValue = "";
 let categoriesList;
+let geoRect;
 let noOptionsMessage = DEFAULT_NO_OPTIONS_TEXT;
 const currentYear = getCurrentYear();
 
 const unsubscribeCategories = categories.subscribe((value) => {
   categoriesList = value.filter((category) => {
-    if (category.enable && category.default) {
+    if (category.enabled && category.default) {
       selectedCategories.push(category);
     }
-    return category.enable;
+    return category.enabled;
   });
+});
+
+const unsubscribeMapBounds = mapBounds.subscribe((value) => {
+  geoRect = value;
 });
 
 onDestroy(() => {
   unsubscribeCategories();
+  unsubscribeMapBounds();
 });
 
 $: isSubmitDisabled =
@@ -63,9 +70,9 @@ const hasCategories = () =>
 
 if (!hasCategories()) {
   getCategories().then((response) => {
-    const { status, data } = response;
-    if (status && data) {
-      categories.set(data);
+    const { success, result } = response;
+    if (success && result) {
+      categories.set(result);
     }
   });
 }
@@ -102,15 +109,16 @@ const handleSubmit = () => {
       name,
       category,
       showHunters: isHuntersChecked ? 1 : 0,
+      geoRect,
     }).then((response) => {
-      const { status, data, error } = response;
+      const { success, result, error } = response;
       isInProgress = false;
-      if (status && data) {
+      if (success && result) {
         selectedYear.set(year);
         selectedCategory.set(selectedCategories);
         selectedArtist.set(name);
         huntersFilter.set(isHuntersChecked);
-        markersStore.set(data);
+        markersStore.set(result);
         isSearchResults.set(true);
         isLighthouseActive.set(false);
         permalink.update({
@@ -153,10 +161,10 @@ const fetchArtistsCrews = async (filterText) => {
   const text = filterText ? filterText.replace(" ", "_") : "";
   if (text.length > 2) {
     const response = await requestSearchArtistsCrews(filterText);
-    const { status, data } = response;
-    if (status && data) {
+    const { success, result } = response;
+    if (success && result) {
       noOptionsMessage = "🤷‍♂️ No artist or crew";
-      return data;
+      return result;
     }
   } else {
     noOptionsMessage = DEFAULT_NO_OPTIONS_TEXT;
