@@ -43,7 +43,7 @@ let artist = editSpotData.artist || "";
 let crew = editSpotData.crew || "";
 let year = editSpotData.year ? `${editSpotData.year}` : "";
 let prevYearValue = "";
-let selectedStatus = editSpotData.spot_status || STATUSES.live;
+let selectedStatus = editSpotData.spotStatus || STATUSES.live;
 let imageFile;
 let imageFilePreview = editSpotData.img || "";
 let imageBlob;
@@ -103,7 +103,7 @@ $: isSubmitDisabled =
 
 const getInitialCategory = (categories) =>
   isEditSpot
-    ? categories.find((cat) => cat.id === editSpotData.category_id)
+    ? categories.find((cat) => cat.id === editSpotData.categoryId)
     : categories[0];
 
 const hasCategories = () =>

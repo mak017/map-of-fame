@@ -18,7 +18,7 @@ const dispatch = createEventDispatcher();
 <div class={`select${isYear ? " year" : ""}`} class:add-spot={addSpot}>
   <Select
     {items}
-    bind:selectedValue
+    bind:value={selectedValue}
     {optionIdentifier}
     {getOptionLabel}
     {getSelectionLabel}

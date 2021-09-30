@@ -13,8 +13,8 @@ const handleDelete = () => {
   const token = loadFromLocalStorage("token") || null;
   isInProgress = true;
   deleteSpot(token, currentSpot.id).then((response) => {
-    const { status, data } = response;
-    if (status && data) {
+    const { success, result } = response;
+    if (success && result) {
       onSubmit();
       close();
     }

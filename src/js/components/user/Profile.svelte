@@ -143,7 +143,11 @@ const onSubmitChanges = () => {
         <div class="spots">
           {#each spotsList as spot}
             <div class="spot-card">
-              <img loading="lazy" src={spot.img} alt={spot.title} in:fade />
+              <img
+                loading="lazy"
+                src={spot.img}
+                alt={spot.title || `${spot.user.name}'s art`}
+                in:fade />
               <div class="overlay">
                 <button
                   type="button"
