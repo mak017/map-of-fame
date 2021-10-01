@@ -50,7 +50,7 @@ const handleSubmit = () => {
             errors.email = response.errors.email;
           }
           if (response.errors?.login) {
-            errors.password = response.errors.login;
+            errors.email = response.errors.login;
           }
           if (Array.isArray(response.errors)) {
             errors.password = response.errors[0];

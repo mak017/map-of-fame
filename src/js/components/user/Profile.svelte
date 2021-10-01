@@ -52,9 +52,7 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
         ? [
             ...new Set(
               years
-                .map((y) =>
-                  y.year === "" || y.year === " " ? EMPTY_YEAR_STRING : y.year
-                )
+                .map((y) => (y === null ? EMPTY_YEAR_STRING : y))
                 .filter((y) => y)
             ),
           ]

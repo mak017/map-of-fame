@@ -34,7 +34,6 @@ export const createUserRequest = async ({
   email,
   password,
   country,
-  city,
   type,
   crew,
   link,
@@ -44,7 +43,6 @@ export const createUserRequest = async ({
   data.append("email", email);
   data.append("password", password);
   data.append("country", country);
-  data.append("city", city);
   data.append("type", type);
   data.append("crew", crew);
   data.append("link", link);
