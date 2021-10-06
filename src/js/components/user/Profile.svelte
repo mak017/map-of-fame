@@ -51,9 +51,15 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
       yearsToApply = years
         ? [
             ...new Set(
-              years
+              Object.values(years)
                 .map((y) => (y === null ? EMPTY_YEAR_STRING : y))
                 .filter((y) => y)
+                .sort(
+                  (a, b) =>
+                    (a === EMPTY_YEAR_STRING) - (b === EMPTY_YEAR_STRING) ||
+                    -(a > b) ||
+                    +(a < b)
+                )
             ),
           ]
         : [];
@@ -96,7 +102,7 @@ const handleAddSpot = () => {
 const handleYearSelect = (event) => {
   const { value } = event.detail.detail;
   currentYear = value !== EMPTY_YEAR_STRING ? value : "";
-  fetchSpots({ year: currentYear, isNewFetch: true });
+  fetchSpots({ year: `${currentYear}`, isNewFetch: true });
 };
 
 const handleEdit = (spot) => {
@@ -111,11 +117,11 @@ const handleDelete = (spot) => {
 
 const onLoadMore = () => {
   offset += MAX_SPOTS_PER_PAGE;
-  fetchSpots({ year: currentYear, offset });
+  fetchSpots({ year: `${currentYear}`, offset });
 };
 
 const onSubmitChanges = () => {
-  fetchSpots({ year: currentYear, isNewFetch: true });
+  fetchSpots({ year: `${currentYear}`, isNewFetch: true });
 };
 </script>
 

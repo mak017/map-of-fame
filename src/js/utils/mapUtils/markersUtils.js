@@ -32,7 +32,7 @@ export const setMarkerData = (data) => {
     title,
     videoLink: video,
     user: { name },
-    firm: { banner, bannerUrl },
+    publicBanner: { banner, bannerUrl },
     location: { lat, lng },
     year,
     link,

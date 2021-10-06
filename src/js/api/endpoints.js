@@ -10,7 +10,7 @@ export const USER_ID = (id) => `${ENDPOINT_ORIGIN}/api/user/${id}`;
 
 export const USER_ID_SPOTS = (id, limit, offset, year) => {
   let url = `${ENDPOINT_ORIGIN}/api/user/${id}/spots?limit=${limit}&offset=${offset}`;
-  if (typeof year === "number") {
+  if (typeof year === "string") {
     url = url.concat(`&year=${year}`);
   }
   return url;

@@ -44,8 +44,8 @@ const handleSubmit = () => {
       message: description,
       reason: cause,
     }).then((response) => {
-      const { status, data } = response;
-      if (status && data) {
+      const { success, result } = response;
+      if (success && result) {
         onComplainToggle(false);
       }
     });

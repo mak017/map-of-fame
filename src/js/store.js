@@ -9,7 +9,7 @@ export const selectedCategory = writable([]);
 
 export const selectedArtist = writable("");
 
-export const huntersFilter = writable(false);
+export const huntersFilter = writable(null);
 
 export const openedMarkerData = writable(null);
 

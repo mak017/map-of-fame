@@ -9,7 +9,10 @@ import { changePasswordCheckToken } from "./api/auth.js";
 import RailroadSvg from "./components/elements/RailroadSvg.svelte";
 import { getSettings, initApp, requestSpots } from "./init.js";
 import SearchForm from "./components/SearchForm.svelte";
-import { setLocation } from "./utils/mapUtils/locationUtils.js";
+import {
+  handleMapViewChange,
+  setLocation,
+} from "./utils/mapUtils/locationUtils.js";
 import Modal from "./components/Modal.svelte";
 import {
   isLighthouseActive,
@@ -150,7 +153,7 @@ const initMap = (container) => {
   setLocation(map);
 
   // openRailwayMap.on("load", () => (isRailwayMapLoading = false));
-  map.on("zoomend dragend", () => requestSpots(year)); //call search on drag end
+  map.on("zoomend dragend", () => handleMapViewChange(map));
 
   return {
     destroy: () => {

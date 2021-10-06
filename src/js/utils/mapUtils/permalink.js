@@ -113,7 +113,7 @@ const update = ({ mapContainer, params, clearParams }) => {
 const setSelectedCategoryIfValid = (categoriesFromUrl) => {
   // Hardcoded category IDs to simplify logic.
   // Anyway if those IDs not valid request to get all spots will be sent in locationUtils
-  const categoryIds = [1, 2, 3];
+  const categoryIds = [1, 2, 3, 4];
   // const categoryIds = categoriesList.map((item) => item.id);
   const isValidCategories = categoriesFromUrl.every((cat) =>
     categoryIds.includes(+cat)
@@ -148,9 +148,9 @@ const setStateFromUrl = (params) => {
     setSelectedCategoryIfValid(category);
     if (categoriesList.length === 0) {
       getCategories().then((response) => {
-        const { status, data } = response;
-        if (status && data) {
-          categories.set(data);
+        const { success, result } = response;
+        if (success && result) {
+          categories.set(result);
           // setSelectedCategoryIfValid(category);
         }
       });

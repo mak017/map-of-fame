@@ -1,5 +1,5 @@
 import { DEFAULT_ZOOM, DEFAULT_VIEW } from "../../constants";
-import { getCurrentYear, isEmpty } from "../commonUtils";
+import { isEmpty } from "../commonUtils";
 import { permalink } from "./permalink";
 import {
   huntersFilter,
@@ -22,6 +22,7 @@ let selectedHuntersFilter;
 let categoryFromStore;
 let artistFromStore;
 let markerId;
+let isSearch;
 
 selectedYear.subscribe((value) => {
   yearFromStore = value;
@@ -41,6 +42,10 @@ selectedArtist.subscribe((value) => {
 
 markerIdFromUrl.subscribe((value) => {
   markerId = value;
+});
+
+isSearchResults.subscribe((value) => {
+  isSearch = value;
 });
 
 const getLocationByIp = () =>
@@ -78,6 +83,15 @@ const getBounds = (map) => {
   return [bounds.getNorthWest(), bounds.getSouthEast()];
 };
 
+export const handleMapViewChange = (map) => {
+  const bounds = getBounds(map);
+  mapBounds.set(bounds);
+
+  if (!isSearch) {
+    requestSpots(yearFromStore);
+  }
+};
+
 export const setLocation = (map) => {
   getLocation()
     .then((response) => {
@@ -93,7 +107,7 @@ export const setLocation = (map) => {
       permalink.setup(map);
       const bounds = getBounds(map);
       mapBounds.set(bounds);
-      if (selectedHuntersFilter) {
+      if (typeof selectedHuntersFilter === "boolean") {
         // isLoading.set(true);
         requestSearchSpots({
           year: yearFromStore,
@@ -102,33 +116,33 @@ export const setLocation = (map) => {
           showHunters: selectedHuntersFilter ? 1 : 0,
           geoRect: bounds,
         }).then((response) => {
-          const { status, data, error } = response;
-          if (status && data) {
+          const { success, result, errors } = response;
+          if (success && result) {
             isSearchResults.set(true);
-            markersStore.set(data);
+            markersStore.set(result);
             // isLoading.set(false);
           }
-          if (error && !isEmpty(error)) {
+          if (errors && !isEmpty(errors)) {
             permalink.update({ clearParams: "all" });
-            requestSpots(yearFromStore);
+            // requestSpots(yearFromStore);
           }
         });
       } else if (markerId) {
         // isLoading.set(true);
         getSpotById(markerId).then((response) => {
-          const { status, data, error } = response;
+          const { success, result, errors } = response;
           markerIdFromUrl.set(null);
-          if (status && data) {
+          if (success && result) {
             // isLoading.set(false);
-            setMarkerData(data);
+            setMarkerData(result);
           }
-          if (error && !isEmpty(error)) {
+          if (errors && !isEmpty(errors)) {
             permalink.update({ clearParams: "all" });
           }
-          requestSpots(yearFromStore);
+          // requestSpots(yearFromStore);
         });
       } else {
-        requestSpots(yearFromStore || getCurrentYear());
+        // requestSpots(yearFromStore || getCurrentYear());
       }
     });
 };
