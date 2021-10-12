@@ -72,10 +72,11 @@ const update = ({ mapContainer, params, clearParams }) => {
     huntersFilterValue ||
     selectedArtistValue
   ) {
-    const category =
-      params?.category || selectedCategoryValue.map((cat) => cat.id);
-    const artist = params?.artist || selectedArtistValue;
-    const hunters = params?.hunters || huntersFilterValue;
+    const category = params
+      ? params.category
+      : selectedCategoryValue.map((cat) => cat.id);
+    const artist = params ? params.artist : selectedArtistValue;
+    const hunters = params ? params.hunters : huntersFilterValue;
     const marker = params?.marker;
     paramsToSet = "";
     if (category?.length) {
