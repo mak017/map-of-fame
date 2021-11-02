@@ -3,7 +3,7 @@ import "leaflet.markercluster";
 import "leaflet.markercluster.placementstrategies";
 import { openedMarkerData } from "../../store";
 import { markersReadyEvent } from "../commonUtils";
-import { clusterIcon, markerWithPhoto } from "./icons";
+import { clusterIcon, markerClusterIcon, markerWithPhoto } from "./icons";
 import { permalink } from "./permalink";
 
 let prevMarkers = [];
@@ -24,8 +24,8 @@ const clearMarkers = (map) => {
 export const setMarkerData = (data) => {
   const {
     id,
-    artist,
-    crew,
+    artists,
+    crews,
     spotStatus: status,
     description,
     img,
@@ -39,8 +39,8 @@ export const setMarkerData = (data) => {
   } = data;
   openedMarkerData.set({
     id,
-    artist,
-    crew,
+    artists,
+    crews,
     status,
     description,
     img: { src: img, title: title || id },
@@ -67,8 +67,23 @@ const createMarker = (data) => {
   return marker;
 };
 
+const createClusterMarker = (data, map) => {
+  const {
+    center: { lat, lng },
+    spotcnt,
+  } = data;
+  const marker = L.marker([lat, lng], {
+    icon: markerClusterIcon(spotcnt),
+  });
+
+  marker.addEventListener("click", () => map.setView([lat, lng], 13));
+  return marker;
+};
+
 const createMarkers = (map, markersData, isSearch) => {
   markersLayer = L.markerClusterGroup({
+    chunkedLoading: true,
+    spiderfyOnMaxZoom: true,
     showCoverageOnHover: false,
     iconCreateFunction: clusterIcon,
     spiderLegPolylineOptions: { weight: 0 },
@@ -76,8 +91,15 @@ const createMarkers = (map, markersData, isSearch) => {
     spiderfyDistanceMultiplier: 2,
   });
   const tempMarkersList = [];
-  markersData.forEach((item) => {
+  markersData?.spots?.forEach((item) => {
     const marker = createMarker(item);
+    markersLayer.addLayer(marker);
+    prevMarkers.push(marker);
+    tempMarkersList.push(marker);
+  });
+  markersData?.clusters?.forEach((item) => {
+    const marker = createClusterMarker(item, map);
+    marker.count = item.spotcnt;
     markersLayer.addLayer(marker);
     prevMarkers.push(marker);
     tempMarkersList.push(marker);
@@ -93,7 +115,7 @@ const createMarkers = (map, markersData, isSearch) => {
 
 export const placeMarkers = (map, markersData, isSearch) => {
   clearMarkers(map);
-  if (markersData.length > 0) {
+  if (markersData?.spots?.length > 0 || markersData?.clusters?.length > 0) {
     createMarkers(map, markersData, isSearch);
   }
 };

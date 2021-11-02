@@ -27,6 +27,8 @@ export const firms = writable([]);
 
 export const categories = writable([]);
 
+export const userCategories = writable([]);
+
 export const isLoading = writable(false);
 
 export const markerIdFromUrl = writable(null);

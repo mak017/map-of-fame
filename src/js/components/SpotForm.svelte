@@ -4,7 +4,7 @@ import watermark from "watermarkjs";
 import { reduceFileSize } from "./../utils/imageUtils.js";
 import FormTelInput from "./elements/FormTelInput.svelte";
 import { addWatermark } from "./../utils/addWatermark.js";
-import { createSpot, updateSpot } from "./../api/spot";
+import { createSpot, getUserCategories, updateSpot } from "./../api/spot";
 import {
   EMPTY_YEAR_STRING,
   ERROR_MESSAGES,
@@ -13,7 +13,13 @@ import {
   statusesOrdered,
   USER_TYPES,
 } from "../constants";
-import { categories, firms, selectedYear, settings, userData } from "../store";
+import {
+  firms,
+  selectedYear,
+  settings,
+  userCategories,
+  userData,
+} from "../store";
 import {
   getCurrentYear,
   isEmpty,
@@ -28,7 +34,7 @@ import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
 import { validateYear } from "../utils/datesUtils";
-import { getCategories, getFirmsRequest } from "../api/settings";
+import { getFirmsRequest } from "../api/settings";
 import { requestSpots } from "../init.js";
 import Spinner from "./elements/Spinner.svelte";
 
@@ -80,13 +86,8 @@ const unsubscribeSettings = settings.subscribe(
 
 const unsubscribeFirms = firms.subscribe((value) => (sprayFirms = value));
 
-const unsubscribeCategories = categories.subscribe(
-  (value) =>
-    (categoriesList = value.filter(
-      (category) =>
-        category.activeAvailability.find((av) => av.name === userTypeValue)
-          ?.active
-    ))
+const unsubscribeCategories = userCategories.subscribe(
+  (value) => (categoriesList = value)
 );
 
 onDestroy(() => {
@@ -112,10 +113,10 @@ const hasCategories = () =>
 const hasSprays = () => Array.isArray(sprayFirms) && sprayFirms.length;
 
 if (!hasCategories()) {
-  getCategories().then((response) => {
+  getUserCategories(token).then((response) => {
     const { success, result } = response;
     if (success && result) {
-      categories.set(result);
+      userCategories.set(result);
       if (!selectedCategory) {
         selectedCategory = getInitialCategory(result);
       }
@@ -263,8 +264,6 @@ const handleSubmit = () => {
       const requestObject = {
         lat,
         lng,
-        artist,
-        crew,
         year,
         spotStatus: selectedStatus,
         img: imageBlob,
@@ -274,6 +273,8 @@ const handleSubmit = () => {
         link,
       };
       if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
+      if (artist) requestObject.artists = [artist];
+      if (crew) requestObject.crews = [crew];
       marker.dragging.disable();
       createSpot(token, requestObject).then((response) => {
         const { success, result, errors: error } = response;

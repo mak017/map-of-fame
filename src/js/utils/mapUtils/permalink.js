@@ -114,7 +114,7 @@ const update = ({ mapContainer, params, clearParams }) => {
 const setSelectedCategoryIfValid = (categoriesFromUrl) => {
   // Hardcoded category IDs to simplify logic.
   // Anyway if those IDs not valid request to get all spots will be sent in locationUtils
-  const categoryIds = [1, 2, 3, 4];
+  const categoryIds = [1, 2, 3, 4, 5, 6];
   // const categoryIds = categoriesList.map((item) => item.id);
   const isValidCategories = categoriesFromUrl.every((cat) =>
     categoryIds.includes(+cat)
@@ -128,24 +128,29 @@ const setSelectedCategoryIfValid = (categoriesFromUrl) => {
   }
 };
 
-const setStateFromUrl = (params) => {
-  const yearFromUrl = params.get("year");
+const getDataFromParams = (params) => {
+  const year = params.get("year");
   const categoryFromUrl = params.get("category");
   const category = categoryFromUrl && categoryFromUrl.split(",");
-  const artistFromUrl = params.get("artist");
-  const huntersFromUrl = params.get("hunters");
-  const markerFromUrl = params.get("marker");
+  const artist = params.get("artist");
+  const hunters = params.get("hunters");
+  const marker = params.get("marker");
+  return { year, category, artist, hunters, marker };
+};
+
+const setStateFromUrl = (params) => {
+  const { year, category, artist, hunters, marker } = getDataFromParams(params);
   if (
-    yearFromUrl &&
+    year &&
     validateYear(
-      yearFromUrl,
+      year,
       settingsObj.yearStart,
       JSON.parse(settingsObj.additionalYears)
     )
   ) {
-    selectedYear.set(yearFromUrl);
+    selectedYear.set(year);
   }
-  if (categoryFromUrl) {
+  if (category) {
     setSelectedCategoryIfValid(category);
     if (categoriesList.length === 0) {
       getCategories().then((response) => {
@@ -156,13 +161,13 @@ const setStateFromUrl = (params) => {
         }
       });
     }
-    if (artistFromUrl) selectedArtist.set(artistFromUrl);
-    if (huntersFromUrl) {
-      huntersFilter.set(JSON.parse(huntersFromUrl.toLowerCase()));
+    if (artist) selectedArtist.set(artist);
+    if (hunters) {
+      huntersFilter.set(JSON.parse(hunters.toLowerCase()));
     }
   }
-  if (markerFromUrl && !Number.isNaN(+markerFromUrl)) {
-    markerIdFromUrl.set(markerFromUrl);
+  if (marker && !Number.isNaN(+marker)) {
+    markerIdFromUrl.set(marker);
   }
 };
 
@@ -246,4 +251,5 @@ export const permalink = {
   update,
   set,
   getCustomUrl,
+  getDataFromParams,
 };

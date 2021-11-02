@@ -4,6 +4,7 @@ import {
   SPOT_ID,
   SPOT_ID_FEEDBACK,
   SPOT_YEAR,
+  USER_CATEGORY,
   USER_ID_SPOTS,
 } from "./endpoints";
 
@@ -24,8 +25,8 @@ export const createSpot = async (
   {
     lat,
     lng,
-    artist,
-    crew,
+    artists,
+    crews,
     year,
     spotStatus,
     img,
@@ -43,8 +44,10 @@ export const createSpot = async (
   formData.append("spot_status", spotStatus);
   formData.append("img", img);
   formData.append("category_id", categoryId);
-  if (artist) formData.append("artist", artist);
-  if (crew) formData.append("crew", crew);
+  if (artists?.length) {
+    artists.forEach((artist) => formData.append("artists[]", artist));
+  }
+  if (crews?.length) crews.forEach((crew) => formData.append("crews[]", crew));
   if (year) formData.append("year", year);
   if (videoLink) formData.append("video_link", videoLink);
   if (description) formData.append("description", description);
@@ -60,20 +63,13 @@ export const createSpot = async (
   return result;
 };
 
-export const feedbackOnSpot = async (
-  token,
-  spotId,
-  { userId, message, reason }
-) => {
-  const bearer = `Bearer ${token}`;
+export const feedbackOnSpot = async (spotId, { userId, message, reason }) => {
   const formData = new FormData();
-  formData.append("user_id", userId);
+  if (userId) formData.append("user_id", userId);
   formData.append("message", message);
   formData.append("reason", reason);
   const response = await fetch(SPOT_ID_FEEDBACK(spotId), {
     method: "POST",
-    withCredentials: true,
-    headers: { Authorization: bearer },
     body: formData,
   });
   const result = await response.json();
@@ -135,6 +131,17 @@ export const deleteSpot = async (token, spotId) => {
   const bearer = `Bearer ${token}`;
   const response = await fetch(SPOT_ID(spotId), {
     method: "DELETE",
+    withCredentials: true,
+    headers: { Authorization: bearer },
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const getUserCategories = async (token) => {
+  const bearer = `Bearer ${token}`;
+  const response = await fetch(USER_CATEGORY(), {
+    method: "GET",
     withCredentials: true,
     headers: { Authorization: bearer },
   });

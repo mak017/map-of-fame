@@ -1,5 +1,7 @@
 <script>
 import { onDestroy } from "svelte";
+import { requestSearchSpots } from "./../api/search.js";
+import { mapBounds, markersStore } from "./../store.js";
 import { getCurrentYear, isMobile } from "../utils/commonUtils.js";
 import { permalink } from "../utils/mapUtils/permalink.js";
 import { getDatesFilter } from "../utils/datesUtils.js";
@@ -10,23 +12,54 @@ export let showCalendar;
 export let yearStart;
 export let yearEnd;
 export let additionalYears;
+export let isSearch;
 
 let selectedYearValue;
+let searchYearsValue;
+let geoRect;
 
 const unsubscribeSelectedYear = selectedYear.subscribe(
   (value) => (selectedYearValue = value)
 );
 
-onDestroy(() => unsubscribeSelectedYear());
+const unsubscribeMarkersStore = markersStore.subscribe(
+  (value) => (searchYearsValue = value.years)
+);
 
-const datesFilter = getDatesFilter(yearStart, yearEnd, additionalYears);
+const unsubscribeMapBounds = mapBounds.subscribe((value) => {
+  geoRect = value;
+});
+
+onDestroy(() => {
+  unsubscribeSelectedYear();
+  unsubscribeMarkersStore();
+  unsubscribeMapBounds();
+});
+
+const datesFilter = searchYearsValue?.length
+  ? searchYearsValue
+  : getDatesFilter(yearStart, yearEnd, additionalYears);
 
 const dates = !isMobile() ? datesFilter : datesFilter.reverse();
 
 const handleClick = (year) => {
+  const search = window.location.search;
+  const params = new URLSearchParams(search);
+  const { category, artist, hunters } = permalink.getDataFromParams(params);
+
   selectedYear.set(year);
-  requestSpots(year);
-  permalink.update({ clearParams: "all" });
+  if (!isSearch) {
+    requestSpots(year);
+    permalink.update({ clearParams: "all" });
+  } else {
+    requestSearchSpots({
+      year,
+      name: artist,
+      category,
+      showHunters: hunters,
+      geoRect,
+    });
+  }
   showCalendar(false);
 };
 </script>
@@ -38,7 +71,7 @@ const handleClick = (year) => {
         href={`#${date}`}
         on:click|preventDefault={() => handleClick(date)}
         class="year"
-        class:active={date === selectedYearValue}
+        class:active={`${date}` === selectedYearValue}
         class:disabled={+date > getCurrentYear()}>{date}</a>
     </li>
   {/each}

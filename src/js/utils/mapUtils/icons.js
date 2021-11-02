@@ -14,10 +14,26 @@ export const markerWithPhoto = (src) =>
   });
 
 export const clusterIcon = (cluster) => {
-  const count = cluster.getChildCount();
+  const markers = cluster.getAllChildMarkers();
+  let count = 0;
+  if (markers[0].count) {
+    markers.forEach((m) => {
+      count += m.count;
+    });
+  }
+  if (Number.isNaN(count) || count === 0) {
+    count = cluster.getChildCount();
+  }
   return L.divIcon({
     html: count < 1000 ? count : `${Math.floor(count / 1000)}K`,
     className: "map-marker-cluster",
     iconSize: [56, 56],
   });
 };
+
+export const markerClusterIcon = (count) =>
+  L.divIcon({
+    html: count < 1000 ? count : `${Math.floor(count / 1000)}K`,
+    className: "map-marker-cluster",
+    iconSize: [56, 56],
+  });

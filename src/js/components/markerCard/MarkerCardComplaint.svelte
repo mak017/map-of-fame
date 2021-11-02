@@ -38,8 +38,7 @@ const validate = () => {
 const handleSubmit = () => {
   validate();
   if (cause && description) {
-    const token = loadFromLocalStorage("token") || null;
-    feedbackOnSpot(token, spotId, {
+    feedbackOnSpot(spotId, {
       userId,
       message: description,
       reason: cause,

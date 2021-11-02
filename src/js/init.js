@@ -70,7 +70,6 @@ export const requestSpots = (year) => {
       // isLoading.set(false);
       isSearchResults.set(false);
       isLighthouseActive.set(false);
-      selectedArtist.set("");
       markersStore.set(result);
     }
     // if (error) {

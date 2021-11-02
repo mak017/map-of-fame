@@ -57,12 +57,12 @@ let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 // let isRailwayMapLoading = true;
 let resetPasswordToken = getResetPasswordToken();
-let prevMarkersList = [];
+let prevMarkersData = {};
 
 let map;
 let newMarker;
 let settingsValue;
-let markersList = [];
+let markersData = {};
 let isSearch;
 let isLighthouse;
 let year;
@@ -84,7 +84,7 @@ const unsubscribeSettings = settings.subscribe(
 );
 
 const unsubscribeMarkers = markersStore.subscribe(
-  (value) => (markersList = value)
+  (value) => (markersData = value)
 );
 
 const unsubscribeIsSearchResults = isSearchResults.subscribe(
@@ -113,8 +113,8 @@ adjustVhProp();
 
 initApp();
 
-$: if (markersList) {
-  placeMarkers(map, markersList, isSearch);
+$: if (markersData) {
+  placeMarkers(map, markersData, isSearch);
 }
 
 if (resetPasswordToken) {
@@ -199,11 +199,12 @@ const onAddSpotBtnClick = () => {
   toggleAddSpotMode(true);
 };
 
+// TODO: Fix lighthouse functionality
 const onLighthouseClick = () => {
   if (!isLighthouse) {
-    prevMarkersList = [...markersList];
+    prevMarkersData = { ...markersData };
     if (!isSearch) {
-      const filteredSpots = getLastSpots(markersList);
+      const filteredSpots = getLastSpots(markersData);
       markersStore.set(filteredSpots);
       isLighthouseActive.set(true);
     } else {
@@ -218,7 +219,7 @@ const onLighthouseClick = () => {
       });
     }
   } else {
-    markersStore.set(prevMarkersList);
+    markersStore.set(prevMarkersData);
     isLighthouseActive.set(false);
   }
 };
@@ -268,7 +269,7 @@ const quitAddSpot = () => {
 
   <div class="main-top_right_wrapper">
     {#if !isAddSpotMode}
-      {#if !$selectedArtist}
+      {#if !(isSearch && $selectedArtist)}
         <button
           class="button button-main_screen button-square button-open_search"
           on:click={() => showSearch(true)}
@@ -322,6 +323,7 @@ const quitAddSpot = () => {
       <Calendar
         {selectedYear}
         {showCalendar}
+        {isSearch}
         yearStart={settingsValue.yearStart}
         yearEnd={settingsValue.yearEnd}
         additionalYears={settingsValue.additionalYears &&
@@ -344,7 +346,7 @@ const quitAddSpot = () => {
         img: $openedMarkerData.firm?.banner,
         url: $openedMarkerData.firm?.bannerUrl,
       }}>
-      <MarkerCard data={$openedMarkerData} isLoggedIn={$isLoggedIn} />
+      <MarkerCard data={$openedMarkerData} />
     </Modal>
   {/if}
 

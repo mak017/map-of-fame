@@ -5,26 +5,32 @@ import Popup from "../Popup.svelte";
 import ShareMarker from "./ShareMarker.svelte";
 
 export let data;
-export let isLoggedIn;
 
 let isShareOpened = false;
 let isComplainOpened = false;
 
-const { artist, crew, status, description, img, video, user, id, link } = data;
+const { artists, crews, status, description, img, video, user, id, link } =
+  data;
 
-const artistName = artist || "Unknown";
+const artistName = artists?.[0] || "Unknown";
 const videoEmbed = video && embedVideoCodeFromBasicUrl(video);
 
 const onShareToggle = (toggle) => (isShareOpened = toggle);
 
 const onComplainToggle = (toggle) => (isComplainOpened = toggle);
+
+// const getArtistsString = () => {
+//   (artists.length > 0) &&
+// }
 </script>
 
 <div class="card">
   <div class="top">
     <div class="artist">
       <div class="subtitle">Artist</div>
-      <div class="title">{crew ? `${artistName} (${crew})` : artistName}</div>
+      <div class="title">
+        {crews?.[0] ? `${artistName} (${crews[0].name})` : artistName}
+      </div>
     </div>
     <div class="status">
       <div class="subtitle">Status</div>
@@ -54,11 +60,9 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
       <div class="share">
         <button type="button" on:click={() => onShareToggle(true)} />
       </div>
-      {#if isLoggedIn}
-        <div class="complain">
-          <button type="button" on:click={() => onComplainToggle(true)} />
-        </div>
-      {/if}
+      <div class="complain">
+        <button type="button" on:click={() => onComplainToggle(true)} />
+      </div>
     </div>
   </div>
 </div>

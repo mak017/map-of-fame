@@ -24,6 +24,8 @@ export const USER_PASSWORD_TOKEN = () =>
 export const USER_SEARCH = (query) =>
   `${ENDPOINT_ORIGIN}/api/user/search/?name=${query}`;
 
+export const USER_CATEGORY = () => `${ENDPOINT_ORIGIN}/api/usercategory`;
+
 export const FIRM = () => `${ENDPOINT_ORIGIN}/api/firm`;
 
 export const FIRM_ID = (id) => `${ENDPOINT_ORIGIN}/api/firm/${id}`;
