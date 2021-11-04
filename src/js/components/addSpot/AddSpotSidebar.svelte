@@ -17,31 +17,54 @@ export let marker;
       <CloseCrossSvg />
     </button>
   {/if}
-  <SpotForm {onCancel} {marker} />
+  <div class="form-wrapper">
+    <SpotForm {onCancel} {marker} />
+  </div>
 </div>
 
 <style lang="scss">
 .add-spot {
+  display: flex;
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
+  flex-direction: column;
   width: 364px;
-  padding: 36px 20px 16px;
-  overflow-y: auto;
+  padding: 36px 0 16px;
   background-color: var(--color-light);
 }
 
 h2 {
-  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  right: 100%;
+  width: 208px;
+  height: 100px;
+  padding: 0 20px;
+  background: #fff;
   color: var(--color-dark);
   font-size: 24px;
   font-weight: 900;
   line-height: 1.22;
   text-transform: uppercase;
 }
+.form-wrapper {
+  padding: 0 20px;
+  overflow-y: auto;
+}
 
 @media (max-width: 767px) {
+  h2 {
+    position: static;
+    justify-content: flex-start;
+    width: 100%;
+    height: auto;
+    margin-bottom: 12px;
+  }
   .add-spot {
     width: 100%;
   }

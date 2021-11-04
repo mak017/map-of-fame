@@ -72,6 +72,7 @@ let errors = {
   sprayPaintUsed: "",
   link: "",
 };
+let artistCrewPairs = [{ artist, crew }];
 const currentYear = getCurrentYear();
 const token = loadFromLocalStorage("token") || null;
 
@@ -323,6 +324,12 @@ const getOptionLabel = (option) => option.name;
 const getSelectionLabel = (option) => {
   if (option) return option.name;
 };
+
+const handleAddMoreClick = () => {
+  if (artistCrewPairs.length < 5) {
+    artistCrewPairs = [...artistCrewPairs, { artist: "", crew: "" }];
+  }
+};
 </script>
 
 <form class:edit={isEditSpot} on:submit|preventDefault={handleSubmit}>
@@ -335,18 +342,26 @@ const getSelectionLabel = (option) => {
         className="add-spot" />
     </div>
   {/if}
-  <FormTextInput
-    placeholder="Artist Name"
-    bind:value={artist}
-    wideOnMobile
-    editSpot={isEditSpot}
-    addSpot={!isEditSpot} />
-  <FormTextInput
-    placeholder="Crew Name"
-    bind:value={crew}
-    wideOnMobile
-    editSpot={isEditSpot}
-    addSpot={!isEditSpot} />
+  {#each artistCrewPairs as pair}
+    <div class="artist-crew-pair">
+      <FormTextInput
+        placeholder="Artist Name"
+        bind:value={pair.artist}
+        wideOnMobile
+        editSpot={isEditSpot}
+        addSpot={!isEditSpot} />
+      <FormTextInput
+        placeholder="Crew Name"
+        bind:value={pair.crew}
+        wideOnMobile
+        editSpot={isEditSpot}
+        addSpot={!isEditSpot} />
+    </div>
+  {/each}
+  {#if !isEditSpot}
+    <button type="button" class="btn-add-more" on:click={handleAddMoreClick}
+      >Add more</button>
+  {/if}
   <FormTelInput
     placeholder="Year"
     bind:value={year}
@@ -459,6 +474,27 @@ const getSelectionLabel = (option) => {
 </form>
 
 <style lang="scss">
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.artist-crew-pair + .artist-crew-pair {
+  margin-top: 18px;
+}
+.btn-add-more {
+  display: inline-flex;
+  margin-left: auto;
+  padding: 4px 0;
+  border: 0;
+  background-color: var(--color-light);
+  color: var(--color-accent);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.22;
+  cursor: pointer;
+}
+
 .status,
 .category {
   display: flex;
@@ -469,6 +505,7 @@ const getSelectionLabel = (option) => {
   position: relative;
   height: 136px;
   margin: 15px 0;
+
   .first_upload {
     display: flex;
     flex-direction: column;
@@ -477,42 +514,50 @@ const getSelectionLabel = (option) => {
     border: 1px dashed rgba($color: #393940, $alpha: 0.4);
     border-radius: 2px;
     cursor: pointer;
+
     span {
       color: var(--color-dark);
       line-height: 1.22;
+
       &:first-child {
         font-size: 18px;
         font-weight: 600;
       }
+
       &:last-child {
         font-size: 11px;
       }
     }
   }
+
   input {
     position: absolute;
     left: -9999px;
     clip: rect(0 0 0 0);
     opacity: 0;
   }
+
   .preview_image {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+
   .re-upload {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
+    transition: opaicty 0.3s;
     opacity: 0;
     background: rgba(0, 0, 0, 0.45);
-    transition: opaicty 0.3s;
     cursor: pointer;
+
     &:hover {
       opacity: 1;
     }
+
     &::before,
     &::after {
       content: "";
@@ -521,11 +566,13 @@ const getSelectionLabel = (option) => {
       left: 50%;
       transform: translate(-50%, -50%);
     }
+
     &::before {
       width: 68px;
       height: 68px;
       background-color: var(--color-accent);
     }
+
     &::after {
       width: 24px;
       height: 24px;
@@ -546,19 +593,23 @@ const getSelectionLabel = (option) => {
 .spray {
   position: relative;
   margin-bottom: 15px;
+
   &.with-error {
     margin: 0;
   }
+
   .error {
     display: block;
-    line-height: 1.1;
     margin-top: 1px;
+    line-height: 1.1;
   }
 }
+
 .button_wrap {
   display: flex;
   margin-bottom: 12px;
 }
+
 .cancel {
   width: 100%;
   padding: 12px 0;
@@ -570,6 +621,7 @@ const getSelectionLabel = (option) => {
   font-weight: 600;
   line-height: 1.22;
   cursor: pointer;
+
   &:disabled {
     opacity: 0.4;
     pointer-events: none;
@@ -579,37 +631,43 @@ const getSelectionLabel = (option) => {
 .edit {
   display: grid;
   position: relative;
-  grid-template-columns: 28% 28% 36%;
   grid-column-gap: 4%;
+  grid-template-columns: 28% 28% 36%;
+
   .save {
     display: flex;
     position: absolute;
-    right: 0;
     top: -150px;
+    right: 0;
     min-width: 122px;
   }
+
   .status {
     grid-column: 3;
     grid-row: 1;
     height: 40px;
   }
+
   .upload-image {
     grid-column: 1/3;
     grid-row: 2/6;
     height: 330px;
     margin: 18px 0 24px;
-    border-radius: 2px;
     overflow: hidden;
+    border-radius: 2px;
   }
+
   .description {
     grid-column: 1/4;
   }
+
   .category {
     grid-column: 3;
     grid-row: 5;
     height: 40px;
     margin-bottom: 10px;
   }
+
   .link-to-work {
     grid-column: 3;
     grid-row: 3;
@@ -620,10 +678,12 @@ const getSelectionLabel = (option) => {
   .edit {
     display: flex;
     flex-direction: column;
+
     .save {
       position: static;
       order: 20;
     }
+
     .upload-image {
       height: 140px;
     }
@@ -637,18 +697,23 @@ const getSelectionLabel = (option) => {
         height: 100px;
         margin: 12px 0;
       }
+
       .category {
         margin-bottom: 12px;
       }
+
       .button_wrap {
         margin-bottom: 10px;
       }
+
       .cancel {
         padding: 10px 0;
       }
+
       .error {
         font-size: 11px;
       }
+
       .spray {
         &.with-error {
           margin-bottom: 2px;
