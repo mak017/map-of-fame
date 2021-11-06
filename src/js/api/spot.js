@@ -25,8 +25,7 @@ export const createSpot = async (
   {
     lat,
     lng,
-    artists,
-    crews,
+    artistsCrews,
     year,
     spotStatus,
     img,
@@ -44,10 +43,15 @@ export const createSpot = async (
   formData.append("spot_status", spotStatus);
   formData.append("img", img);
   formData.append("category_id", categoryId);
-  if (artists?.length) {
-    artists.forEach((artist) => formData.append("artists[]", artist));
+  if (artistsCrews?.length) {
+    artistsCrews.forEach((item, index) => {
+      const { artist, crew } = item;
+      if (artist || crew) {
+        formData.append(`artist_crew[${index}][artist]`, artist);
+        formData.append(`artist_crew[${index}][crew]`, crew);
+      }
+    });
   }
-  if (crews?.length) crews.forEach((crew) => formData.append("crews[]", crew));
   if (year) formData.append("year", year);
   if (videoLink) formData.append("video_link", videoLink);
   if (description) formData.append("description", description);

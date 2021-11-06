@@ -11,6 +11,7 @@ export let wideOnMobile = false;
 export let editSpot = false;
 export let addSpot = false;
 export let link = false;
+export let search = false;
 export let extraMargin = false;
 
 const dispatch = createEventDispatcher();
@@ -27,6 +28,7 @@ const keyDown = (event) => dispatch("keyDown", event);
   class:edit-spot={editSpot}
   class:add-spot={addSpot}
   class:link
+  class:search
   class:extra-margin={extraMargin}>
   {#if label}<span>{label}</span>{/if}
   <input
@@ -162,6 +164,13 @@ label:not(.with-label) {
   }
 }
 
+.search {
+  margin-bottom: 0;
+  input {
+    width: 336px;
+  }
+}
+
 .extra-margin {
   margin-bottom: 26px;
 }
@@ -174,6 +183,12 @@ label:not(.with-label) {
   .wide-on-mobile {
     input {
       max-width: none;
+    }
+  }
+  .search {
+    input {
+      width: 100%;
+      max-width: 530px;
     }
   }
 }

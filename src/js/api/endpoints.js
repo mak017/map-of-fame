@@ -21,8 +21,17 @@ export const USER_PASSWORD = () => `${ENDPOINT_ORIGIN}/api/user/password`;
 export const USER_PASSWORD_TOKEN = () =>
   `${ENDPOINT_ORIGIN}/api/user/password/token`;
 
-export const USER_SEARCH = (query) =>
-  `${ENDPOINT_ORIGIN}/api/user/search/?name=${query}`;
+export const USER_SEARCH = (artist, crew) => {
+  let url = `${ENDPOINT_ORIGIN}/api/user/search/`;
+  if (artist) {
+    url = url.concat(`?artist=${artist}`);
+  }
+  if (crew) {
+    url = artist ? url.concat("&") : url.concat("?");
+    url = url.concat(`crew=${crew}`);
+  }
+  return url;
+};
 
 export const USER_CATEGORY = () => `${ENDPOINT_ORIGIN}/api/usercategory`;
 

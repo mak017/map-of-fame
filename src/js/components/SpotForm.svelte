@@ -71,6 +71,7 @@ let errors = {
   linkToVideo: "",
   sprayPaintUsed: "",
   link: "",
+  artistCrewPairs: "",
 };
 let artistCrewPairs = [{ artist, crew }];
 const currentYear = getCurrentYear();
@@ -272,10 +273,9 @@ const handleSubmit = () => {
         description,
         categoryId: selectedCategory.id,
         link,
+        artistsCrews: artistCrewPairs,
       };
       if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
-      if (artist) requestObject.artists = [artist];
-      if (crew) requestObject.crews = [crew];
       marker.dragging.disable();
       createSpot(token, requestObject).then((response) => {
         const { success, result, errors: error } = response;
@@ -326,9 +326,7 @@ const getSelectionLabel = (option) => {
 };
 
 const handleAddMoreClick = () => {
-  if (artistCrewPairs.length < 5) {
-    artistCrewPairs = [...artistCrewPairs, { artist: "", crew: "" }];
-  }
+  artistCrewPairs = [...artistCrewPairs, { artist: "", crew: "" }];
 };
 </script>
 
@@ -358,7 +356,7 @@ const handleAddMoreClick = () => {
         addSpot={!isEditSpot} />
     </div>
   {/each}
-  {#if !isEditSpot}
+  {#if !isEditSpot && artistCrewPairs.length < 5}
     <button type="button" class="btn-add-more" on:click={handleAddMoreClick}
       >Add more</button>
   {/if}

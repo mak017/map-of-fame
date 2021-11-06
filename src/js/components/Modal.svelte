@@ -11,6 +11,7 @@ export let noTransition = false;
 export let accentTitle = false;
 export let noClose = false;
 export let autoMargin = false;
+export let alwaysOnTop = false;
 export let banner = {};
 
 const dispatch = createEventDispatcher();
@@ -36,6 +37,7 @@ const handleResize = () => {
   class:withAd
   class:accentTitle
   class:autoMargin
+  class:alwaysOnTop
   role="dialog"
   aria-modal="true"
   transition:fade={{ duration: !noTransition ? 200 : 0 }}
@@ -135,6 +137,12 @@ h2 {
 .autoMargin {
   h2 {
     margin-top: auto;
+  }
+}
+
+.alwaysOnTop {
+  h2 {
+    margin-top: 40px;
   }
 }
 

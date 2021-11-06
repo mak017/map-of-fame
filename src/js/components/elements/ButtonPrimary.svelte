@@ -67,6 +67,9 @@ button {
 .add-spot {
   padding: 9px 29px;
 }
+.search {
+  width: 140px;
+}
 
 @keyframes glitch {
   0% {

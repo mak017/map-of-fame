@@ -1,6 +1,5 @@
 <script>
 import { onDestroy } from "svelte";
-import FormTelInput from "./elements/FormTelInput.svelte";
 import {
   requestSearchArtistsCrews,
   requestSearchSpots,
@@ -8,7 +7,6 @@ import {
 import { ERROR_MESSAGES } from "../constants";
 import { permalink } from "../utils/mapUtils/permalink";
 import {
-  categories,
   huntersFilter,
   isLighthouseActive,
   isSearchResults,
@@ -18,88 +16,39 @@ import {
   selectedCategory,
   selectedYear,
 } from "../store";
-import { getCurrentYear, isYearLike } from "../utils/commonUtils";
-import AutoComplete from "./elements/AutoComplete.svelte";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
-import { validateYear } from "../utils/datesUtils.js";
-import { getCategories } from "../api/settings.js";
 import Spinner from "./elements/Spinner.svelte";
+import FormTextInput from "./elements/FormTextInput.svelte";
 
 export let showSearch;
-export let yearStart;
 
-const DEFAULT_NO_OPTIONS_TEXT =
-  "Please type 3 or more characters to search the artists or crews";
-let year = "";
-let artist;
-let selectedCategories = [];
-let isHuntersChecked = true;
-let yearErrorMessage = "";
-let categoryErrorMessage = "";
-let isSubmitDisabled = false;
+let artist = "";
+let crew = "";
+let artistError = "";
+let crewError = "";
+let fetchedList = [];
 let isInProgress = false;
-let prevYearValue = "";
-let categoriesList;
 let geoRect;
-let noOptionsMessage = DEFAULT_NO_OPTIONS_TEXT;
-const currentYear = getCurrentYear();
-
-const unsubscribeCategories = categories.subscribe((value) => {
-  categoriesList = value.filter((category) => {
-    if (category.enabled && category.default) {
-      selectedCategories.push(category);
-    }
-    return category.enabled;
-  });
-});
 
 const unsubscribeMapBounds = mapBounds.subscribe((value) => {
   geoRect = value;
 });
 
 onDestroy(() => {
-  unsubscribeCategories();
   unsubscribeMapBounds();
 });
 
-$: isSubmitDisabled =
-  !!yearErrorMessage || !!categoryErrorMessage || isInProgress;
+$: isSubmitDisabled = !!artistError || !!crewError;
 
-const hasCategories = () =>
-  Array.isArray(categoriesList) && categoriesList.length;
-
-if (!hasCategories()) {
-  getCategories().then((response) => {
-    const { success, result } = response;
-    if (success && result) {
-      categories.set(result);
-    }
-  });
-}
-
-const validateYearInput = () => {
-  if (!year) {
-    yearErrorMessage = ERROR_MESSAGES.genericEmpty;
-  } else if (!validateYear(year, yearStart)) {
-    yearErrorMessage = ERROR_MESSAGES.yearNotInRange(yearStart);
-  } else {
-    yearErrorMessage = "";
+const validateForm = () => {
+  if (artist.length > 0 && artist.length < 3) {
+    artistError = ERROR_MESSAGES.fieldMinLength("artist", 3);
+  } else if (crew.length > 0 && crew.length < 3) {
+    crewError = ERROR_MESSAGES.fieldMinLength("crew", 3);
   }
 };
 
-const validateCategories = () => {
-  categoryErrorMessage = !selectedCategories.length
-    ? ERROR_MESSAGES.categoryEmpty
-    : "";
-};
-
-const validateForm = () => {
-  validateYearInput();
-  validateCategories();
-};
-
 const handleSubmit = () => {
-  validateForm();
   if (!yearErrorMessage && !categoryErrorMessage) {
     const category = selectedCategories.map((cat) => cat.id);
     const { name } = artist || {};
@@ -138,177 +87,57 @@ const handleSubmit = () => {
   }
 };
 
-const handleYearChange = () => {
-  if (isYearLike(year)) {
-    prevYearValue = year;
-  } else {
-    year = prevYearValue;
-  }
-  if (isSubmitDisabled || yearErrorMessage || categoryErrorMessage) {
-    yearErrorMessage = "";
-  }
-};
-
-const handleCategoryChange = () => {
-  if (isSubmitDisabled || yearErrorMessage || categoryErrorMessage) {
-    categoryErrorMessage = "";
-  }
-};
-
-const getOptionLabel = (option) => option.name;
-
-let typedText = "";
-
-const fetchArtistsCrews = async (filterText) => {
-  typedText = filterText ? filterText.replace(" ", "_") : "";
-  if (typedText.length > 2) {
-    const response = await requestSearchArtistsCrews(filterText);
-    const { success, result } = response;
+const fetchArtistsCrews = async () => {
+  validateForm();
+  if (!artistError && !crewError) {
+    const response = await requestSearchArtistsCrews(artist, crew);
+    const { success, result, errors } = response;
     if (success && result) {
-      noOptionsMessage = "🤷‍♂️ No artist or crew";
-      return result;
+      console.log("result :>> ", result);
+      fetchedList = result;
     }
-  } else {
-    noOptionsMessage = DEFAULT_NO_OPTIONS_TEXT;
-    return new Promise((resolve) => {
-      resolve([]);
-    });
+    if (!success && errors) {
+      artistError = errors.artist?.[0] ?? "";
+      crewError = errors.crew?.[0] ?? "";
+    }
   }
 };
 </script>
 
-<form on:submit|preventDefault={handleSubmit}>
-  <FormTelInput
-    placeholder="Year"
-    hint={`${yearStart} - ${currentYear}`}
-    bind:value={year}
-    on:input={handleYearChange}
-    errorText={yearErrorMessage}
-    isYear />
-  <AutoComplete
-    bind:selectedValue={artist}
-    optionIdentifier="name"
-    {getOptionLabel}
-    loadOptions={fetchArtistsCrews}
-    placeholder="Artist or Crew"
-    hint="Leave empty to show all artists and crews"
-    isSearch
-    {noOptionsMessage}
-    externalTypedText={typedText}
-    on:select={() => (typedText = "")} />
-  {#if categoriesList.length > 0}
-    <div class="filter">
-      {#each categoriesList as category}
-        <div class="checkbox">
-          <input
-            type="checkbox"
-            id={`filter-${category.name}`}
-            bind:group={selectedCategories}
-            value={category}
-            on:change={isSubmitDisabled && validateForm()} />
-          <label for={`filter-${category.name}`}>{category.name}</label>
-        </div>
-      {/each}
-      {#if categoryErrorMessage}
-        <div class="error">{categoryErrorMessage}</div>
-      {/if}
-    </div>
-  {:else}
-    <Spinner height={30} margin="25px 0" />
-  {/if}
-  <div class="bottom">
-    <div class="checkbox">
-      <input
-        type="checkbox"
-        bind:checked={isHuntersChecked}
-        on:change={handleCategoryChange}
-        id="search-show-hunters-spots" />
-      <label for="search-show-hunters-spots">Show Hunter's Spots</label>
-    </div>
+<form on:submit|preventDefault={fetchArtistsCrews}>
+  <div class="input-wrapper">
+    <FormTextInput
+      placeholder="Artist"
+      bind:value={artist}
+      errorText={artistError}
+      search={true} />
+  </div>
+  <div class="input-wrapper">
+    <FormTextInput
+      placeholder="Crew"
+      bind:value={crew}
+      errorText={crewError}
+      search={true} />
+  </div>
+  <div class="button-wrapper">
     <ButtonPrimary
       type="submit"
       isDisabled={isSubmitDisabled}
       text="Search"
-      className="wide-on-mobile" />
+      className="wide-on-mobile search" />
   </div>
 </form>
 
 <style lang="scss">
-.filter {
-  margin-bottom: 36px;
-}
-
-.checkbox {
-  display: inline-block;
-  position: relative;
-  padding-left: 37px;
-
-  input {
-    position: absolute;
-    left: -9999px;
-    clip: rect(0 0 0 0);
-    opacity: 0;
-  }
-
-  label {
-    color: var(--color-dark);
-    font-size: 14px;
-    line-height: 17px;
-    cursor: pointer;
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 22px;
-      height: 22px;
-      border: 1px solid var(--color-accent);
-      border-radius: 2px;
-    }
-
-    &::after {
-      content: "";
-      position: absolute;
-      top: 7px;
-      left: 4px;
-      width: 14px;
-      height: 9px;
-      transform: scale(0);
-      transition: transform 0.3s;
-      background: url(../../images/checkbox.svg) 50% 50% / contain no-repeat;
-    }
-  }
-
-  input:checked +label {
-    &::before {
-      background-color: var(--color-accent);
-    }
-
-    &::after {
-      transform: scale(1);
-    }
-  }
-
-  +.checkbox {
-    margin-left: 48px;
-  }
-}
-
-.bottom {
+form {
   display: flex;
-  align-items: center;
-
-  .checkbox {
-    margin-right: 68px;
-  }
+  max-width: 860px;
 }
-
-.error {
-  margin: 4px 0 -20px;
-  color: var(--color-error);
-  font-size: 13px;
-  line-height: 1.25;
+.input-wrapper {
+  margin: 0 12px;
+}
+.button-wrapper {
+  margin-left: 12px;
 }
 
 @media (max-width: 767px) {
@@ -316,24 +145,5 @@ const fetchArtistsCrews = async (filterText) => {
     width: 100%;
     max-width: 530px;
   }
-
-  .bottom {
-    flex-flow: wrap;
-
-    .checkbox {
-      margin: 28px 0;
-    }
-  }
-
-  .filter {
-    margin-bottom: 8px;
-  }
-
-  .checkbox {
-    +.checkbox {
-      margin-left: 8vw;
-    }
-  }
 }
-
 </style>

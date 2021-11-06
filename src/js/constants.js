@@ -50,4 +50,6 @@ export const ERROR_MESSAGES = {
   videoLinkInvalid: "Youtube, Vimeo or Dailymotion links only",
   categoryEmpty: "Please select at least 1 category",
   linkInvalid: "Link must start with http or https",
+  fieldMinLength: (field, min) =>
+    `The ${field} must be at least ${min} characters`,
 };
