@@ -340,26 +340,28 @@ const handleAddMoreClick = () => {
         className="add-spot" />
     </div>
   {/if}
-  {#each artistCrewPairs as pair}
-    <div class="artist-crew-pair">
-      <FormTextInput
-        placeholder="Artist Name"
-        bind:value={pair.artist}
-        wideOnMobile
-        editSpot={isEditSpot}
-        addSpot={!isEditSpot} />
-      <FormTextInput
-        placeholder="Crew Name"
-        bind:value={pair.crew}
-        wideOnMobile
-        editSpot={isEditSpot}
-        addSpot={!isEditSpot} />
-    </div>
-  {/each}
-  {#if !isEditSpot && artistCrewPairs.length < 5}
-    <button type="button" class="btn-add-more" on:click={handleAddMoreClick}
-      >Add more</button>
-  {/if}
+  <div class="artists-area">
+    {#each artistCrewPairs as pair}
+      <div class="artist-crew-pair">
+        <FormTextInput
+          placeholder="Artist Name"
+          bind:value={pair.artist}
+          wideOnMobile
+          editSpot={isEditSpot}
+          addSpot={!isEditSpot} />
+        <FormTextInput
+          placeholder="Crew Name"
+          bind:value={pair.crew}
+          wideOnMobile
+          editSpot={isEditSpot}
+          addSpot={!isEditSpot} />
+      </div>
+    {/each}
+    {#if artistCrewPairs.length < 5}
+      <button type="button" class="btn-add-more" on:click={handleAddMoreClick}
+        >Add more</button>
+    {/if}
+  </div>
   <FormTelInput
     placeholder="Year"
     bind:value={year}
@@ -473,6 +475,11 @@ const handleAddMoreClick = () => {
 
 <style lang="scss">
 form {
+  display: flex;
+  flex-direction: column;
+}
+
+.artists-area {
   display: flex;
   flex-direction: column;
 }
@@ -640,6 +647,22 @@ form {
     min-width: 122px;
   }
 
+  .artists-area {
+    grid-column: 1/3;
+    grid-row: 5/10;
+    margin-top: -9px;
+  }
+
+  .artist-crew-pair {
+    display: grid;
+    grid-template-columns: 47.15% 47.15%;
+    grid-column-gap: 5.7%;
+
+    + .artist-crew-pair {
+      margin-top: 4px;
+    }
+  }
+
   .status {
     grid-column: 3;
     grid-row: 1;
@@ -648,15 +671,17 @@ form {
 
   .upload-image {
     grid-column: 1/3;
-    grid-row: 2/6;
+    grid-row: 1/5;
     height: 330px;
-    margin: 18px 0 24px;
+    margin: 0 0 24px;
     overflow: hidden;
     border-radius: 2px;
   }
 
   .description {
-    grid-column: 1/4;
+    grid-column: 3;
+    grid-row: 6;
+    margin-top: 24px;
   }
 
   .category {
@@ -684,6 +709,7 @@ form {
 
     .upload-image {
       height: 140px;
+      margin-top: 18px;
     }
   }
 }

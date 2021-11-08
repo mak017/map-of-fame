@@ -142,8 +142,16 @@ form {
 
 @media (max-width: 767px) {
   form {
+    flex-direction: column;
     width: 100%;
     max-width: 530px;
+  }
+  .input-wrapper {
+    margin: 0 0 4px 0;
+  }
+  .button-wrapper {
+    display: flex;
+    margin: 20px 0 0;
   }
 }
 </style>
