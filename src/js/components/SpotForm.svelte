@@ -53,7 +53,7 @@ let selectedStatus = editSpotData.spotStatus || STATUSES.live;
 let imageFile;
 let imageFilePreview = editSpotData.img || "";
 let imageBlob;
-let linkToVideo = editSpotData.video_link || "";
+let linkToVideo = editSpotData.videoLink || "";
 let description = editSpotData.description || "";
 let selectedCategory = null;
 let sprayPaintUsed;
@@ -73,7 +73,14 @@ let errors = {
   link: "",
   artistCrewPairs: "",
 };
-let artistCrewPairs = [{ artist, crew }];
+const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
+  artist: data.artist?.name ?? "",
+  crew: data.crew?.name ?? "",
+}));
+let artistCrewPairs =
+  editArtistCrewPairs?.length > 0
+    ? editArtistCrewPairs
+    : [{ artist: "", crew: "" }];
 const currentYear = getCurrentYear();
 const token = loadFromLocalStorage("token") || null;
 
@@ -299,8 +306,6 @@ const handleSubmit = () => {
       });
     } else {
       updateSpot(token, editSpotData.id, {
-        artist,
-        crew,
         year,
         spotStatus: selectedStatus,
         img: imageBlob,
@@ -308,6 +313,7 @@ const handleSubmit = () => {
         description,
         categoryId: selectedCategory.id,
         link,
+        artistsCrews: artistCrewPairs,
       }).then((response) => {
         const { success, result } = response;
         isInProgress = false;

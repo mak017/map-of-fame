@@ -99,8 +99,6 @@ export const updateSpot = async (
   token,
   spotId,
   {
-    artist,
-    crew,
     year,
     spotStatus,
     img,
@@ -108,19 +106,27 @@ export const updateSpot = async (
     description,
     categoryId,
     link,
+    artistsCrews,
   }
 ) => {
   const bearer = `Bearer ${token}`;
   const formData = new FormData();
   formData.append("spot_status", spotStatus);
   formData.append("category_id", categoryId);
-  if (artist) formData.append("artist", artist);
-  if (crew) formData.append("crew", crew);
   if (year) formData.append("year", year);
   if (img) formData.append("img", img);
   if (videoLink) formData.append("video_link", videoLink);
   if (description) formData.append("description", description);
   if (link) formData.append("link", link);
+  if (artistsCrews?.length) {
+    artistsCrews.forEach((item, index) => {
+      const { artist, crew } = item;
+      if (artist || crew) {
+        formData.append(`artist_crew[${index}][artist]`, artist);
+        formData.append(`artist_crew[${index}][crew]`, crew);
+      }
+    });
+  }
   const response = await fetch(SPOT_ID(spotId), {
     method: "POST",
     withCredentials: true,

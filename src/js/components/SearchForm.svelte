@@ -27,6 +27,7 @@ let crew = "";
 let artistError = "";
 let crewError = "";
 let fetchedList = [];
+let isFetched = false;
 let isInProgress = false;
 let geoRect;
 
@@ -95,6 +96,7 @@ const fetchArtistsCrews = async () => {
     if (success && result) {
       console.log("result :>> ", result);
       fetchedList = result;
+      isFetched = true;
     }
     if (!success && errors) {
       artistError = errors.artist?.[0] ?? "";
@@ -127,21 +129,40 @@ const fetchArtistsCrews = async () => {
       className="wide-on-mobile search" />
   </div>
 </form>
+{#if isFetched}
+  <div class="content">
+    <div class="content-caption">
+      <div class="result">Result: {fetchedList.length}</div>
+      <div class="view-controls">
+        <button class="view-as-list" />
+        <button class="view-as-grid" />
+      </div>
+    </div>
+    <div class="list">
+      {#each fetchedList as pair}
+        <div class="artist" />
+        <div class="crew" />
+      {:else}
+        <!-- empty list -->
+      {/each}
+    </div>
+  </div>
+{/if}
 
 <style lang="scss">
 form {
-  display: flex;
+  display: grid;
+  grid-template-columns:
+    minmax(100px, 336px)
+    minmax(100px, 336px)
+    140px;
+  grid-column-gap: 24px;
   max-width: 860px;
-}
-.input-wrapper {
-  margin: 0 12px;
-}
-.button-wrapper {
-  margin-left: 12px;
 }
 
 @media (max-width: 767px) {
   form {
+    display: flex;
     flex-direction: column;
     width: 100%;
     max-width: 530px;
