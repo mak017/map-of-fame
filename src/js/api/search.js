@@ -6,21 +6,15 @@ export const requestSearchArtistsCrews = async (artist, crew) => {
   return result;
 };
 
-export const requestSearchSpots = async ({
-  year,
-  name,
-  category,
-  showHunters,
-  geoRect,
-}) => {
+export const requestSearchSpots = async ({ artist, crew, geoRect }) => {
   const response = await fetch(SPOT_SEARCH(), {
     method: "POST",
     body: JSON.stringify({
-      year,
-      name,
-      category,
-      showHunters,
+      artist,
+      crew,
       geoRect,
+      category: [1, 2, 5],
+      showHunters: true,
     }),
     headers: { "Content-Type": "application/json" },
   });

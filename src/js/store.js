@@ -1,15 +1,15 @@
 import { writable } from "svelte/store";
 import { getCurrentYear } from "./utils/commonUtils";
 
+export const isInitialized = writable(false);
+
 export const isLoggedIn = writable(false);
 
 export const selectedYear = writable(`${getCurrentYear()}`);
 
-export const selectedCategory = writable([]);
-
 export const selectedArtist = writable("");
 
-export const huntersFilter = writable(null);
+export const selectedCrew = writable("");
 
 export const openedMarkerData = writable(null);
 
@@ -24,8 +24,6 @@ export const countriesList = writable([]);
 export const settings = writable([]);
 
 export const firms = writable([]);
-
-export const categories = writable([]);
 
 export const userCategories = writable([]);
 

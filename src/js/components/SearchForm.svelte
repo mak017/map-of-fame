@@ -7,18 +7,18 @@ import {
 import { ERROR_MESSAGES } from "../constants";
 import { permalink } from "../utils/mapUtils/permalink";
 import {
-  huntersFilter,
   isLighthouseActive,
   isSearchResults,
   mapBounds,
   markersStore,
   selectedArtist,
-  selectedCategory,
-  selectedYear,
+  selectedCrew,
 } from "../store";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import Spinner from "./elements/Spinner.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
+import GridViewSvg from "./elements/icons/GridViewSvg.svelte";
+import ListViewSvg from "./elements/icons/ListViewSvg.svelte";
 
 export let showSearch;
 
@@ -26,10 +26,12 @@ let artist = "";
 let crew = "";
 let artistError = "";
 let crewError = "";
+let currentSearchFor = "";
 let fetchedList = [];
 let isFetched = false;
 let isInProgress = false;
 let geoRect;
+let currentView = "list";
 
 const unsubscribeMapBounds = mapBounds.subscribe((value) => {
   geoRect = value;
@@ -42,61 +44,50 @@ onDestroy(() => {
 $: isSubmitDisabled = !!artistError || !!crewError;
 
 const validateForm = () => {
-  if (artist.length > 0 && artist.length < 3) {
-    artistError = ERROR_MESSAGES.fieldMinLength("artist", 3);
-  } else if (crew.length > 0 && crew.length < 3) {
-    crewError = ERROR_MESSAGES.fieldMinLength("crew", 3);
+  if (artist.length === 0 && crew.length === 0) {
+    artistError = ERROR_MESSAGES.artistEmpty;
+    crewError = ERROR_MESSAGES.crewEmpty;
   }
 };
 
-const handleSubmit = () => {
-  if (!yearErrorMessage && !categoryErrorMessage) {
-    const category = selectedCategories.map((cat) => cat.id);
-    const { name } = artist || {};
-    isInProgress = true;
-    requestSearchSpots({
-      year,
-      name,
-      category,
-      showHunters: isHuntersChecked ? 1 : 0,
-      geoRect,
-    }).then((response) => {
-      const { success, result, error } = response;
-      isInProgress = false;
-      if (success && result) {
-        selectedYear.set(year);
-        selectedCategory.set(selectedCategories);
-        selectedArtist.set(name);
-        huntersFilter.set(isHuntersChecked);
-        markersStore.set(result);
-        isSearchResults.set(true);
-        isLighthouseActive.set(false);
-        permalink.update({
-          params: {
-            category,
-            artist: name,
-            hunters: isHuntersChecked,
-          },
-        });
-        showSearch(false);
-      }
-      if (error) {
-        const { category } = error;
-        categoryErrorMessage = category ? ERROR_MESSAGES.categoryEmpty : "";
-      }
-    });
+const handleArtistClick = (artist, crew) => {
+  // isInProgress = true;
+  requestSearchSpots({ artist, crew, geoRect }).then((response) => {
+    const { success, result, error } = response;
+    // isInProgress = false;
+    if (success && result) {
+      selectedArtist.set(artist);
+      selectedCrew.set(crew);
+      markersStore.set(result);
+      isSearchResults.set(true);
+      isLighthouseActive.set(false);
+      permalink.update({ params: { artist, crew } });
+      showSearch(false);
+    }
+    // if (error) {
+    //   const { category } = error;
+    //   categoryErrorMessage = category ? ERROR_MESSAGES.categoryEmpty : "";
+    // }
+  });
+  // }
+};
+
+const handleInputChange = () => {
+  if (isSubmitDisabled) {
+    artistError = "";
+    crewError = "";
   }
 };
 
 const fetchArtistsCrews = async () => {
   validateForm();
-  if (!artistError && !crewError) {
+  if (!artistError || !crewError) {
     const response = await requestSearchArtistsCrews(artist, crew);
     const { success, result, errors } = response;
     if (success && result) {
-      console.log("result :>> ", result);
       fetchedList = result;
       isFetched = true;
+      currentSearchFor = `${artist} ${crew}`;
     }
     if (!success && errors) {
       artistError = errors.artist?.[0] ?? "";
@@ -111,6 +102,7 @@ const fetchArtistsCrews = async () => {
     <FormTextInput
       placeholder="Artist"
       bind:value={artist}
+      on:input={handleInputChange}
       errorText={artistError}
       search={true} />
   </div>
@@ -118,6 +110,7 @@ const fetchArtistsCrews = async () => {
     <FormTextInput
       placeholder="Crew"
       bind:value={crew}
+      on:input={handleInputChange}
       errorText={crewError}
       search={true} />
   </div>
@@ -131,19 +124,44 @@ const fetchArtistsCrews = async () => {
 </form>
 {#if isFetched}
   <div class="content">
-    <div class="content-caption">
-      <div class="result">Result: {fetchedList.length}</div>
-      <div class="view-controls">
-        <button class="view-as-list" />
-        <button class="view-as-grid" />
+    {#if fetchedList.length}
+      <div class="content-caption">
+        <div class="result">Result: {fetchedList.length}</div>
+        <div class="view-controls">
+          <button
+            class="view-as-list"
+            on:click={() => {
+              currentView = "list";
+            }}><ListViewSvg isActive={currentView === "list"} /></button>
+          <button
+            class="view-as-grid"
+            on:click={() => {
+              currentView = "grid";
+            }}><GridViewSvg isActive={currentView === "grid"} /></button>
+        </div>
       </div>
-    </div>
-    <div class="list">
+    {/if}
+    <div class="search-result {currentView}">
       {#each fetchedList as pair}
-        <div class="artist" />
-        <div class="crew" />
+        <div
+          class="pair-wrapper"
+          on:click={() => handleArtistClick(pair.artist, pair.crew)}>
+          {#if currentView === "grid"}
+            <img src={pair.image} alt={`${pair.artist} ${pair.crew}`} />
+          {/if}
+          <div class="pair">
+            <div class="artist">{pair.artist}</div>
+            <div class="crew">{pair.crew}</div>
+          </div>
+        </div>
       {:else}
-        <!-- empty list -->
+        <div class="empty">
+          <img
+            src="../../images/nothing-found.jpg"
+            alt="Artist/Crew Not Found" />
+          <div class="text1">Artist/Crew Not Found</div>
+          <div class="text2">{currentSearchFor}</div>
+        </div>
       {/each}
     </div>
   </div>
@@ -158,6 +176,109 @@ form {
     140px;
   grid-column-gap: 24px;
   max-width: 860px;
+}
+
+.content {
+  width: 100%;
+  max-width: 860px;
+  margin-top: 25px;
+
+  &-caption {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+}
+
+.result {
+  color: var(--color-dark);
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.view-controls {
+  display: flex;
+}
+
+button {
+  padding: 0;
+  border: 0;
+  background: 0;
+  cursor: pointer;
+
+  + button {
+    margin-left: 12px;
+  }
+}
+
+.list {
+  .pair-wrapper + .pair-wrapper {
+    margin-top: 20px;
+  }
+
+  .pair {
+    display: grid;
+    grid-template-columns:
+      minmax(100px, 336px)
+      minmax(100px, 336px)
+      140px;
+    grid-column-gap: 24px;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+  grid-auto-rows: 160px;
+  grid-gap: 4vmin;
+  justify-content: space-between;
+  width: 100%;
+
+  img {
+    border-radius: 2px;
+  }
+
+  .pair {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+  }
+}
+
+.pair-wrapper {
+  transition: color 0.3s;
+  color: var(--color-dark);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-accent);
+  }
+}
+
+.pair {
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 29px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-dark);
+
+  .text1 {
+    margin: 20px 0;
+    font-size: 18px;
+    line-height: 22px;
+  }
+
+  .text2 {
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 29px;
+  }
 }
 
 @media (max-width: 767px) {

@@ -1,16 +1,13 @@
 import {
-  categories,
-  huntersFilter,
   markerIdFromUrl,
   markersStore,
   selectedArtist,
-  selectedCategory,
+  selectedCrew,
   selectedYear,
   settings,
 } from "../../store";
 import { normalizeCoords } from "./locationUtils";
 import { validateYear } from "../datesUtils";
-import { getCategories } from "../../api/settings";
 import { setMarkerData } from "./markersUtils";
 
 let shouldUpdate = true;
@@ -18,11 +15,9 @@ let mapInstance = null;
 let prevParams = null;
 let arrMarkers = [];
 let settingsObj = {};
-let categoriesList = [];
 let yearFromStore = null;
-let huntersFilterValue = null;
-let selectedCategoryValue = null;
 let selectedArtistValue = null;
+let selectedCrewValue = null;
 
 markersStore.subscribe((values) => {
   arrMarkers = values;
@@ -32,24 +27,16 @@ settings.subscribe((value) => {
   settingsObj = value;
 });
 
-categories.subscribe((values) => {
-  categoriesList = values;
-});
-
 selectedYear.subscribe((value) => {
   yearFromStore = value;
 });
 
-huntersFilter.subscribe((value) => {
-  huntersFilterValue = value;
-});
-
-selectedCategory.subscribe((value) => {
-  selectedCategoryValue = value;
-});
-
 selectedArtist.subscribe((value) => {
   selectedArtistValue = value;
+});
+
+selectedCrew.subscribe((value) => {
+  selectedCrewValue = value;
 });
 
 const update = ({ mapContainer, params, clearParams }) => {
@@ -66,27 +53,16 @@ const update = ({ mapContainer, params, clearParams }) => {
   const latitude = center && normalizeCoords(center.lat);
   const longitude = center && normalizeCoords(center.lng);
   const zoom = map?.getZoom();
-  if (
-    params ||
-    selectedCategoryValue ||
-    huntersFilterValue ||
-    selectedArtistValue
-  ) {
-    const category = params
-      ? params.category
-      : selectedCategoryValue.map((cat) => cat.id);
+  if (params || selectedArtistValue || selectedCrewValue) {
     const artist = params ? params.artist : selectedArtistValue;
-    const hunters = params ? params.hunters : huntersFilterValue;
+    const crew = params ? params.crew : selectedCrewValue;
     const marker = params?.marker;
     paramsToSet = "";
-    if (category?.length) {
-      paramsToSet = paramsToSet.concat(`&category=${category.join(",")}`);
-      if (artist) {
-        paramsToSet = paramsToSet.concat(`&artist=${artist}`);
-      }
-      if (hunters || hunters === false) {
-        paramsToSet = paramsToSet.concat(`&hunters=${hunters}`);
-      }
+    if (artist) {
+      paramsToSet = paramsToSet.concat(`&artist=${artist}`);
+    }
+    if (crew) {
+      paramsToSet = paramsToSet.concat(`&crew=${crew}`);
     }
     if (marker) {
       const paramsStr = prevParams || paramsToSet;
@@ -111,35 +87,16 @@ const update = ({ mapContainer, params, clearParams }) => {
   window.history.pushState(state, "map", search);
 };
 
-const setSelectedCategoryIfValid = (categoriesFromUrl) => {
-  // Hardcoded category IDs to simplify logic.
-  // Anyway if those IDs not valid request to get all spots will be sent in locationUtils
-  const categoryIds = [1, 2, 3, 4, 5, 6];
-  // const categoryIds = categoriesList.map((item) => item.id);
-  const isValidCategories = categoriesFromUrl.every((cat) =>
-    categoryIds.includes(+cat)
-  );
-  if (isValidCategories) {
-    // const categoriesToSet = categoriesList.filter((category) =>
-    //   categoriesFromUrl.includes(`${category.id}`)
-    // );
-    selectedCategory.set(categoriesFromUrl.map((id) => ({ id: +id })));
-    update({ params: { category: categoriesFromUrl } });
-  }
-};
-
 const getDataFromParams = (params) => {
   const year = params.get("year");
-  const categoryFromUrl = params.get("category");
-  const category = categoryFromUrl && categoryFromUrl.split(",");
   const artist = params.get("artist");
-  const hunters = params.get("hunters");
+  const crew = params.get("crew");
   const marker = params.get("marker");
-  return { year, category, artist, hunters, marker };
+  return { year, artist, crew, marker };
 };
 
 const setStateFromUrl = (params) => {
-  const { year, category, artist, hunters, marker } = getDataFromParams(params);
+  const { year, artist, crew, marker } = getDataFromParams(params);
   if (
     year &&
     validateYear(
@@ -150,33 +107,18 @@ const setStateFromUrl = (params) => {
   ) {
     selectedYear.set(year);
   }
-  if (category) {
-    setSelectedCategoryIfValid(category);
-    if (categoriesList.length === 0) {
-      getCategories().then((response) => {
-        const { success, result } = response;
-        if (success && result) {
-          categories.set(result);
-          // setSelectedCategoryIfValid(category);
-        }
-      });
-    }
-    if (artist) selectedArtist.set(artist);
-    if (hunters) {
-      huntersFilter.set(JSON.parse(hunters.toLowerCase()));
-    }
-  }
+  if (artist) selectedArtist.set(artist);
+  if (crew) selectedCrew.set(crew);
   if (marker && !Number.isNaN(+marker)) {
     markerIdFromUrl.set(marker);
   }
 };
 
 const setParamsFromState = (year, params) => {
-  const { category, artist, hunters, marker } = params;
+  const { artist, crew, marker } = params;
   selectedYear.set(year);
-  if (category) selectedCategory.set(category);
   if (artist) selectedArtist.set(artist);
-  if (hunters) huntersFilter.set(hunters);
+  if (crew) selectedCrew.set(crew);
   if (marker && arrMarkers && arrMarkers.length) {
     const markerData = arrMarkers.find((item) => item.id === +marker);
     if (markerData) {

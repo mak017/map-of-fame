@@ -9,7 +9,6 @@ import {
   isSearchResults,
   mapBounds,
   markersStore,
-  selectedArtist,
   settings,
   userData,
 } from "./store";

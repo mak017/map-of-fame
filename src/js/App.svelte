@@ -2,11 +2,11 @@
 import { onDestroy } from "svelte";
 import { fade } from "svelte/transition";
 import L from "leaflet";
-import CloseCrossSvg from "./components/elements/CloseCrossSvg.svelte";
+import CloseCrossSvg from "./components/elements/icons/CloseCrossSvg.svelte";
 import { getLastSpots, placeMarkers } from "./utils/mapUtils/markersUtils.js";
 // import SpinnerSvg from "./components/elements/SpinnerSvg.svelte";
 import { changePasswordCheckToken } from "./api/auth.js";
-import RailroadSvg from "./components/elements/RailroadSvg.svelte";
+import RailroadSvg from "./components/elements/icons/RailroadSvg.svelte";
 import { getSettings, initApp, requestSpots } from "./init.js";
 import SearchForm from "./components/SearchForm.svelte";
 import {
@@ -15,6 +15,7 @@ import {
 } from "./utils/mapUtils/locationUtils.js";
 import Modal from "./components/Modal.svelte";
 import {
+  isInitialized,
   isLighthouseActive,
   isLoading,
   isLoggedIn,
@@ -22,6 +23,7 @@ import {
   markersStore,
   openedMarkerData,
   selectedArtist,
+  selectedCrew,
   selectedYear,
   settings,
 } from "./store.js";
@@ -66,6 +68,7 @@ let markersData = {};
 let isSearch;
 let isLighthouse;
 let year;
+let isInitializedValue;
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
@@ -99,6 +102,10 @@ const unsubscribeSelectedYear = selectedYear.subscribe(
   (value) => (year = value)
 );
 
+const unsubscribeIsInitialized = isInitialized.subscribe(
+  (value) => (isInitializedValue = value)
+);
+
 document.getElementById("initial-loader").remove();
 
 onDestroy(() => {
@@ -107,6 +114,7 @@ onDestroy(() => {
   unsubscribeIsSearchResults();
   unsubscribeIsLighthouse();
   unsubscribeSelectedYear();
+  unsubscribeIsInitialized();
 });
 
 adjustVhProp();
@@ -153,7 +161,10 @@ const initMap = (container) => {
   setLocation(map);
 
   // openRailwayMap.on("load", () => (isRailwayMapLoading = false));
-  map.on("zoomend dragend", () => handleMapViewChange(map));
+  map.on(
+    "zoomend dragend",
+    () => isInitializedValue && handleMapViewChange(map)
+  );
 
   return {
     destroy: () => {
@@ -269,7 +280,7 @@ const quitAddSpot = () => {
 
   <div class="main-top_right_wrapper">
     {#if !isAddSpotMode}
-      {#if !(isSearch && $selectedArtist)}
+      {#if !(isSearch && ($selectedArtist || $selectedCrew))}
         <button
           class="button button-main_screen button-square button-open_search"
           on:click={() => showSearch(true)}
@@ -286,7 +297,7 @@ const quitAddSpot = () => {
         {/if}
       {:else}
         <div class="selected-artist">
-          <span>{$selectedArtist}</span>
+          <span>{$selectedArtist} {$selectedCrew}</span>
           <button
             class="button button-square button-clear_search"
             on:click|stopPropagation={() => {

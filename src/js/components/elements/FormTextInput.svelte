@@ -168,6 +168,7 @@ label:not(.with-label) {
   margin-bottom: 0;
   input {
     width: 336px;
+    line-height: 25px;
   }
 }
 

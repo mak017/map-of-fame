@@ -1,7 +1,7 @@
 <script>
 import Select from "svelte-select";
 import { createEventDispatcher } from "svelte";
-import SelectIconCalendar from "./SelectIconCalendar.svelte";
+import SelectIconCalendar from "./icons/SelectIconCalendar.svelte";
 
 export let selectedValue = undefined;
 export let items;

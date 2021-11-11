@@ -45,20 +45,14 @@ const dates = !isMobile() ? datesFilter : datesFilter.reverse();
 const handleClick = (year) => {
   const search = window.location.search;
   const params = new URLSearchParams(search);
-  const { category, artist, hunters } = permalink.getDataFromParams(params);
+  const { artist, crew } = permalink.getDataFromParams(params);
 
   selectedYear.set(year);
   if (!isSearch) {
     requestSpots(year);
     permalink.update({ clearParams: "all" });
   } else {
-    requestSearchSpots({
-      year,
-      name: artist,
-      category,
-      showHunters: hunters,
-      geoRect,
-    });
+    requestSearchSpots({ year, artist, crew, geoRect });
   }
   showCalendar(false);
 };

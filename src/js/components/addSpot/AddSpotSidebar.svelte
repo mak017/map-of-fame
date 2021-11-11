@@ -1,7 +1,7 @@
 <script>
 import { fly } from "svelte/transition";
 import { isMobile } from "../../utils/commonUtils";
-import CloseCrossSvg from "../elements/CloseCrossSvg.svelte";
+import CloseCrossSvg from "../elements/icons/CloseCrossSvg.svelte";
 import SpotForm from "../SpotForm.svelte";
 
 export let onCancel;

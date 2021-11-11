@@ -1,15 +1,15 @@
 import { DEFAULT_ZOOM, DEFAULT_VIEW } from "../../constants";
-import { isEmpty } from "../commonUtils";
+import { getCurrentYear, isEmpty } from "../commonUtils";
 import { permalink } from "./permalink";
 import {
-  huntersFilter,
+  isInitialized,
   // isLoading,
   isSearchResults,
   mapBounds,
   markerIdFromUrl,
   markersStore,
   selectedArtist,
-  selectedCategory,
+  selectedCrew,
   selectedYear,
 } from "../../store";
 import { requestSearchSpots } from "../../api/search";
@@ -18,9 +18,8 @@ import { getSpotById } from "../../api/spot";
 import { setMarkerData } from "./markersUtils";
 
 let yearFromStore;
-let selectedHuntersFilter;
-let categoryFromStore;
 let artistFromStore;
+let crewFromStore;
 let markerId;
 let isSearch;
 
@@ -28,16 +27,12 @@ selectedYear.subscribe((value) => {
   yearFromStore = value;
 });
 
-huntersFilter.subscribe((value) => {
-  selectedHuntersFilter = value;
-});
-
-selectedCategory.subscribe((value) => {
-  categoryFromStore = value;
-});
-
 selectedArtist.subscribe((value) => {
   artistFromStore = value;
+});
+
+selectedCrew.subscribe((value) => {
+  crewFromStore = value;
 });
 
 markerIdFromUrl.subscribe((value) => {
@@ -107,16 +102,16 @@ export const setLocation = (map) => {
       permalink.setup(map);
       const bounds = getBounds(map);
       mapBounds.set(bounds);
-      if (typeof selectedHuntersFilter === "boolean") {
+      if (artistFromStore || crewFromStore) {
         // isLoading.set(true);
         requestSearchSpots({
           year: yearFromStore,
-          name: artistFromStore,
-          category: categoryFromStore.map((cat) => cat.id),
-          showHunters: selectedHuntersFilter ? 1 : 0,
+          artist: artistFromStore,
+          crew: crewFromStore,
           geoRect: bounds,
         }).then((response) => {
           const { success, result, errors } = response;
+          isInitialized.set(true);
           if (success && result) {
             isSearchResults.set(true);
             markersStore.set(result);
@@ -132,6 +127,7 @@ export const setLocation = (map) => {
         getSpotById(markerId).then((response) => {
           const { success, result, errors } = response;
           markerIdFromUrl.set(null);
+          isInitialized.set(true);
           if (success && result) {
             // isLoading.set(false);
             setMarkerData(result);
@@ -142,7 +138,8 @@ export const setLocation = (map) => {
           // requestSpots(yearFromStore);
         });
       } else {
-        // requestSpots(yearFromStore || getCurrentYear());
+        isInitialized.set(true);
+        requestSpots(yearFromStore || getCurrentYear());
       }
     });
 };

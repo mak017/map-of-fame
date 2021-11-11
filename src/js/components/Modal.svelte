@@ -1,7 +1,7 @@
 <script>
 import { createEventDispatcher } from "svelte";
 import { fade } from "svelte/transition";
-import CloseCrossSvg from "./elements/CloseCrossSvg.svelte";
+import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
 import { isMobile } from "../utils/commonUtils.js";
 
 export let title = "";
