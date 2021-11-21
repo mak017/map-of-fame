@@ -102,13 +102,12 @@ export const setLocation = (map) => {
       permalink.setup(map);
       const bounds = getBounds(map);
       mapBounds.set(bounds);
-      if (artistFromStore || crewFromStore) {
+      if ((artistFromStore || crewFromStore) && !markerId) {
         // isLoading.set(true);
         requestSearchSpots({
           year: yearFromStore,
           artist: artistFromStore,
           crew: crewFromStore,
-          geoRect: bounds,
         }).then((response) => {
           const { success, result, errors } = response;
           isInitialized.set(true);

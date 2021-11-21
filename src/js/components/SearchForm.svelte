@@ -1,5 +1,9 @@
 <script>
-import { onDestroy } from "svelte";
+import { selectedYear } from "./../store.js";
+import {
+  loadFromLocalStorage,
+  saveToLocalStorage,
+} from "./../utils/commonUtils.js";
 import {
   requestSearchArtistsCrews,
   requestSearchSpots,
@@ -9,13 +13,12 @@ import { permalink } from "../utils/mapUtils/permalink";
 import {
   isLighthouseActive,
   isSearchResults,
-  mapBounds,
   markersStore,
   selectedArtist,
   selectedCrew,
 } from "../store";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
-import Spinner from "./elements/Spinner.svelte";
+// import Spinner from "./elements/Spinner.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import GridViewSvg from "./elements/icons/GridViewSvg.svelte";
 import ListViewSvg from "./elements/icons/ListViewSvg.svelte";
@@ -29,19 +32,22 @@ let crewError = "";
 let currentSearchFor = "";
 let fetchedList = [];
 let isFetched = false;
-let isInProgress = false;
-let geoRect;
+// let isInProgress = false;
 let currentView = "list";
-
-const unsubscribeMapBounds = mapBounds.subscribe((value) => {
-  geoRect = value;
-});
-
-onDestroy(() => {
-  unsubscribeMapBounds();
-});
+let previousSearches = loadFromLocalStorage("prevSearchResults") || [];
 
 $: isSubmitDisabled = !!artistError || !!crewError;
+
+const saveCurrentSearch = (artist, crew) => {
+  if (
+    !previousSearches.some(
+      (result) => result.artist === artist && result.crew === crew
+    )
+  ) {
+    const updatedSearches = [...previousSearches, { artist, crew }];
+    saveToLocalStorage("prevSearchResults", updatedSearches);
+  }
+};
 
 const validateForm = () => {
   if (artist.length === 0 && crew.length === 0) {
@@ -52,7 +58,8 @@ const validateForm = () => {
 
 const handleArtistClick = (artist, crew) => {
   // isInProgress = true;
-  requestSearchSpots({ artist, crew, geoRect }).then((response) => {
+  saveCurrentSearch(artist, crew);
+  requestSearchSpots({ artist, crew }).then((response) => {
     const { success, result, error } = response;
     // isInProgress = false;
     if (success && result) {
@@ -61,15 +68,13 @@ const handleArtistClick = (artist, crew) => {
       markersStore.set(result);
       isSearchResults.set(true);
       isLighthouseActive.set(false);
+      if (result?.spots?.length) {
+        selectedYear.set(`${result.spots[0].year}`);
+      }
       permalink.update({ params: { artist, crew } });
       showSearch(false);
     }
-    // if (error) {
-    //   const { category } = error;
-    //   categoryErrorMessage = category ? ERROR_MESSAGES.categoryEmpty : "";
-    // }
   });
-  // }
 };
 
 const handleInputChange = () => {
@@ -147,11 +152,13 @@ const fetchArtistsCrews = async () => {
           class="pair-wrapper"
           on:click={() => handleArtistClick(pair.artist, pair.crew)}>
           {#if currentView === "grid"}
-            <img src={pair.image} alt={`${pair.artist} ${pair.crew}`} />
+            <img
+              src={pair.image}
+              alt={`${pair.artist ?? ""} ${pair.crew ?? ""}`} />
           {/if}
           <div class="pair">
-            <div class="artist">{pair.artist}</div>
-            <div class="crew">{pair.crew}</div>
+            <div class="artist">{pair.artist ?? ""}</div>
+            <div class="crew">{pair.crew ?? ""}</div>
           </div>
         </div>
       {:else}
@@ -165,16 +172,36 @@ const fetchArtistsCrews = async () => {
       {/each}
     </div>
   </div>
+{:else}
+  <div class="content">
+    <div class="content-caption">
+      <div class="history-icon">
+        <img src="../../images/history.svg" alt="Search History icon" />
+      </div>
+    </div>
+    <div class="previous-searches list">
+      {#each previousSearches as pair}
+        <div
+          class="pair-wrapper"
+          on:click={() => handleArtistClick(pair.artist, pair.crew)}>
+          <div class="pair">
+            <div class="artist">{pair.artist ?? ""}</div>
+            <div class="crew">{pair.crew ?? ""}</div>
+          </div>
+        </div>
+      {/each}
+    </div>
+  </div>
 {/if}
 
 <style lang="scss">
 form {
   display: grid;
+  grid-column-gap: 24px;
   grid-template-columns:
     minmax(100px, 336px)
     minmax(100px, 336px)
     140px;
-  grid-column-gap: 24px;
   max-width: 860px;
 }
 
@@ -218,24 +245,24 @@ button {
 
   .pair {
     display: grid;
-    grid-template-columns:
-      minmax(100px, 336px)
-      minmax(100px, 336px)
-      140px;
     grid-column-gap: 24px;
+    grid-template-columns: minmax(100px, 336px) minmax(100px, 336px) 140px;
   }
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
   grid-auto-rows: 160px;
   grid-gap: 4vmin;
+  grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
   justify-content: space-between;
   width: 100%;
 
   img {
+    width: 100%;
+    height: calc(100% - 40px);
     border-radius: 2px;
+    object-fit: cover;
   }
 
   .pair {
@@ -264,8 +291,8 @@ button {
 .empty {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   color: var(--color-dark);
 
   .text1 {
@@ -281,6 +308,16 @@ button {
   }
 }
 
+.previous-searches {
+  .pair-wrapper {
+    color: rgba(#b0b0b3, 0.6);
+
+    &:hover {
+      color: var(--color-accent);
+    }
+  }
+}
+
 @media (max-width: 767px) {
   form {
     display: flex;
@@ -288,12 +325,20 @@ button {
     width: 100%;
     max-width: 530px;
   }
+
   .input-wrapper {
     margin: 0 0 4px 0;
   }
+
   .button-wrapper {
     display: flex;
     margin: 20px 0 0;
+  }
+
+  .list {
+    .pair {
+      grid-template-columns: minmax(100px, 336px) minmax(100px, 336px);
+    }
   }
 }
 </style>

@@ -6,6 +6,7 @@ import { getCurrentYear, isMobile } from "../utils/commonUtils.js";
 import { permalink } from "../utils/mapUtils/permalink.js";
 import { getDatesFilter } from "../utils/datesUtils.js";
 import { requestSpots } from "../init.js";
+import { EMPTY_YEAR_STRING } from "../constants.js";
 
 export let selectedYear;
 export let showCalendar;
@@ -23,7 +24,10 @@ const unsubscribeSelectedYear = selectedYear.subscribe(
 );
 
 const unsubscribeMarkersStore = markersStore.subscribe(
-  (value) => (searchYearsValue = value.years)
+  (value) =>
+    (searchYearsValue = value.years.map((year) =>
+      year !== null ? year : EMPTY_YEAR_STRING
+    ))
 );
 
 const unsubscribeMapBounds = mapBounds.subscribe((value) => {
@@ -47,12 +51,21 @@ const handleClick = (year) => {
   const params = new URLSearchParams(search);
   const { artist, crew } = permalink.getDataFromParams(params);
 
-  selectedYear.set(year);
+  selectedYear.set(`${year}`);
   if (!isSearch) {
     requestSpots(year);
     permalink.update({ clearParams: "all" });
   } else {
-    requestSearchSpots({ year, artist, crew, geoRect });
+    const yearForRequest = year !== EMPTY_YEAR_STRING ? `${year}` : "";
+    requestSearchSpots({ year: yearForRequest, artist, crew }).then(
+      (response) => {
+        const { success, result } = response;
+        if (success && result) {
+          markersStore.set(result);
+          permalink.update();
+        }
+      }
+    );
   }
   showCalendar(false);
 };
