@@ -15,6 +15,10 @@ import {
 } from "../constants";
 import {
   firms,
+  isSearchResults,
+  markersStore,
+  selectedArtist,
+  selectedCrew,
   selectedYear,
   settings,
   userCategories,
@@ -37,6 +41,7 @@ import { validateYear } from "../utils/datesUtils";
 import { getFirmsRequest } from "../api/settings";
 import { requestSpots } from "../init.js";
 import Spinner from "./elements/Spinner.svelte";
+import { requestSearchSpots } from "../api/search.js";
 
 export let onCancel;
 export let onSubmit = undefined;
@@ -45,8 +50,6 @@ export let editSpotData = {};
 
 const isEditSpot = !!editSpotData.img;
 
-let artist = editSpotData.artist || "";
-let crew = editSpotData.crew || "";
 let year = editSpotData.year ? `${editSpotData.year}` : "";
 let prevYearValue = "";
 let selectedStatus = editSpotData.spotStatus || STATUSES.live;
@@ -256,6 +259,11 @@ const handleLinkChange = () => {
   }
 };
 
+const isSelectedArtistCrew = () =>
+  artistCrewPairs.some(
+    (pair) => pair.artist === $selectedArtist && pair.crew === $selectedCrew
+  );
+
 const handleSubmit = () => {
   validate();
   if (
@@ -292,7 +300,20 @@ const handleSubmit = () => {
             $selectedYear === year ||
             (!year && $selectedYear === EMPTY_YEAR_STRING)
           ) {
-            requestSpots($selectedYear);
+            if (!$isSearchResults) {
+              requestSpots($selectedYear);
+            } else if (isSelectedArtistCrew()) {
+              requestSearchSpots({
+                artist: $selectedArtist,
+                crew: $selectedCrew,
+                year: $selectedYear,
+              }).then((response) => {
+                const { success, result } = response;
+                if (success && result) {
+                  markersStore.set(result);
+                }
+              });
+            }
           }
           onCancel();
         }
