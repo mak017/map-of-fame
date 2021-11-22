@@ -16,7 +16,7 @@ export let additionalYears;
 export let isSearch;
 
 let selectedYearValue;
-let searchYearsValue;
+let searchYearsValue = [];
 let geoRect;
 
 const unsubscribeSelectedYear = selectedYear.subscribe(
@@ -25,7 +25,7 @@ const unsubscribeSelectedYear = selectedYear.subscribe(
 
 const unsubscribeMarkersStore = markersStore.subscribe(
   (value) =>
-    (searchYearsValue = value.years.map((year) =>
+    (searchYearsValue = value.years?.map((year) =>
       year !== null ? year : EMPTY_YEAR_STRING
     ))
 );
@@ -40,9 +40,7 @@ onDestroy(() => {
   unsubscribeMapBounds();
 });
 
-const datesFilter = searchYearsValue?.length
-  ? searchYearsValue
-  : getDatesFilter(yearStart, yearEnd, additionalYears);
+const datesFilter = getDatesFilter(yearStart, yearEnd, additionalYears);
 
 const dates = !isMobile() ? datesFilter : datesFilter.reverse();
 
@@ -79,7 +77,9 @@ const handleClick = (year) => {
         on:click|preventDefault={() => handleClick(date)}
         class="year"
         class:active={`${date}` === selectedYearValue}
-        class:disabled={+date > getCurrentYear()}>{date}</a>
+        class:disabled={+date > getCurrentYear() ||
+          (searchYearsValue?.length && !searchYearsValue?.includes(+date))}
+        >{date}</a>
     </li>
   {/each}
 </ol>
