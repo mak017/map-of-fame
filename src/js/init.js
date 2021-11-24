@@ -1,10 +1,11 @@
 import { verifyAuthRequest } from "./api/auth";
+import { requestSearchSpots } from "./api/search";
 import { getSettingsRequest } from "./api/settings";
 import { getSpots } from "./api/spot";
 import { EMPTY_YEAR_STRING } from "./constants";
 import {
+  isInitialized,
   isLighthouseActive,
-  // isLoading,
   isLoggedIn,
   isSearchResults,
   mapBounds,
@@ -13,10 +14,12 @@ import {
   userData,
 } from "./store";
 import {
+  isEmpty,
   loadFromLocalStorage,
   removeFromLocalStorage,
   saveToLocalStorage,
 } from "./utils/commonUtils";
+import { permalink } from "./utils/mapUtils/permalink";
 import { transformSettings } from "./utils/transformers";
 
 let bounds;
@@ -66,13 +69,25 @@ export const requestSpots = (year) => {
   return getSpots(yearForRequest, bounds).then((response) => {
     const { success, result } = response;
     if (success && result) {
-      // isLoading.set(false);
       isSearchResults.set(false);
       isLighthouseActive.set(false);
       markersStore.set(result);
     }
-    // if (error) {
-    //   isLoading.set(false);
-    // }
+  });
+};
+
+export const performSearch = ({ artist, crew, year, geoRect, isInitial }) => {
+  requestSearchSpots({ year, artist, crew, geoRect }).then((response) => {
+    const { success, result, errors } = response;
+    if (isInitial) {
+      isInitialized.set(true);
+    }
+    if (success && result) {
+      isSearchResults.set(true);
+      markersStore.set(result);
+    }
+    if (errors && !isEmpty(errors)) {
+      permalink.update({ clearParams: "all" });
+    }
   });
 };

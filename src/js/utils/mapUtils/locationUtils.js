@@ -7,13 +7,11 @@ import {
   isSearchResults,
   mapBounds,
   markerIdFromUrl,
-  markersStore,
   selectedArtist,
   selectedCrew,
   selectedYear,
 } from "../../store";
-import { requestSearchSpots } from "../../api/search";
-import { requestSpots } from "../../init";
+import { performSearch, requestSpots } from "../../init";
 import { getSpotById } from "../../api/spot";
 import { setMarkerData } from "./markersUtils";
 
@@ -101,40 +99,36 @@ export const setLocation = (map) => {
     .finally(() => {
       permalink.setup(map);
       const bounds = getBounds(map);
+      const shouldSearch = artistFromStore || crewFromStore;
       mapBounds.set(bounds);
-      if ((artistFromStore || crewFromStore) && !markerId) {
-        // isLoading.set(true);
-        requestSearchSpots({
-          year: yearFromStore,
+      if (shouldSearch && !markerId) {
+        performSearch({
           artist: artistFromStore,
           crew: crewFromStore,
-        }).then((response) => {
-          const { success, result, errors } = response;
-          isInitialized.set(true);
-          if (success && result) {
-            isSearchResults.set(true);
-            markersStore.set(result);
-            // isLoading.set(false);
-          }
-          if (errors && !isEmpty(errors)) {
-            permalink.update({ clearParams: "all" });
-            // requestSpots(yearFromStore);
-          }
+          year: yearFromStore,
+          isInitial: true,
         });
       } else if (markerId) {
-        // isLoading.set(true);
         getSpotById(markerId).then((response) => {
           const { success, result, errors } = response;
           markerIdFromUrl.set(null);
           isInitialized.set(true);
           if (success && result) {
-            // isLoading.set(false);
             setMarkerData(result);
           }
           if (errors && !isEmpty(errors)) {
             permalink.update({ clearParams: "all" });
           }
-          // requestSpots(yearFromStore);
+          if (!shouldSearch) {
+            requestSpots(yearFromStore);
+          } else {
+            performSearch({
+              artist: artistFromStore,
+              crew: crewFromStore,
+              year: yearFromStore,
+              isInitial: true,
+            });
+          }
         });
       } else {
         isInitialized.set(true);

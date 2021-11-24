@@ -3,34 +3,59 @@ import { embedVideoCodeFromBasicUrl } from "../../utils/commonUtils";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import Popup from "../Popup.svelte";
 import ShareMarker from "./ShareMarker.svelte";
+import { selectedUserProfileData, shouldDisplayShowOnMap } from "../../store";
 
 export let data;
+export let showUserProfile;
+export let clearOpenedMarkerData;
 
 let isShareOpened = false;
 let isComplainOpened = false;
 
-const { artists, crews, status, description, img, video, user, id, link } =
+const { artistCrew, status, description, img, video, user, id, link, year } =
   data;
 
-const artistName = artists?.[0] || "Unknown";
+const EMPTY_ARTIST = "Unknown";
 const videoEmbed = video && embedVideoCodeFromBasicUrl(video);
 
 const onShareToggle = (toggle) => (isShareOpened = toggle);
 
 const onComplainToggle = (toggle) => (isComplainOpened = toggle);
 
-// const getArtistsString = () => {
-//   (artists.length > 0) &&
-// }
+const onUserClick = () => {
+  selectedUserProfileData.set(user ?? {});
+  clearOpenedMarkerData();
+  showUserProfile(true);
+};
+
+const getArtistsString = () => {
+  if (artistCrew.length === 0) {
+    return EMPTY_ARTIST;
+  }
+  return artistCrew.reduce((accumulator, pair, index) => {
+    const { artist, crew } = pair;
+    const artistName = artist?.name ?? EMPTY_ARTIST;
+    const currentName = crew?.name
+      ? `${artistName} (${crew.name})`
+      : artistName;
+    accumulator = accumulator.concat(currentName);
+    if (index < artistCrew.length - 1) {
+      accumulator = accumulator.concat("; ");
+    }
+    return accumulator;
+  }, "");
+};
 </script>
 
 <div class="card">
   <div class="top">
-    <div class="artist">
-      <div class="subtitle">Artist</div>
-      <div class="title">
-        {crews?.[0] ? `${artistName} (${crews[0].name})` : artistName}
-      </div>
+    <div class="posted-by">
+      <div class="subtitle">Posted by</div>
+      <button type="button" on:click={onUserClick}>
+        <div class="title">
+          {user?.name}
+        </div>
+      </button>
     </div>
     <div class="status">
       <div class="subtitle">Status</div>
@@ -38,18 +63,12 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
     </div>
   </div>
   <div class="img"><img src={img.src} alt={img.title} /></div>
-  {#if description}
-    <div class="description">{description}</div>
-  {/if}
-  {#if video}
-    <div class="video">
-      {@html videoEmbed}
-    </div>
-  {/if}
   <div class="bottom">
-    <div class="posted-by">
-      <div class="subtitle">Posted by</div>
-      <div class="title">{user?.name}</div>
+    <div class="year">{year}</div>
+    <div class="show-on-map-wrapper">
+      {#if $shouldDisplayShowOnMap}
+        <button type="button" class="show-on-map">Show on map</button>
+      {/if}
     </div>
     <div class="buttons">
       {#if link}
@@ -65,6 +84,18 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
       </div>
     </div>
   </div>
+  <div class="artist-area">
+    <div class="subtitle">Artist</div>
+    <div class="title">{getArtistsString()}</div>
+  </div>
+  {#if description}
+    <div class="description">{description}</div>
+  {/if}
+  {#if video}
+    <div class="video">
+      {@html videoEmbed}
+    </div>
+  {/if}
 </div>
 {#if isShareOpened}
   <Popup on:close={() => onShareToggle(false)} title="Share Link">
@@ -105,6 +136,32 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
   -webkit-box-orient: vertical;
   text-transform: uppercase;
 }
+
+.posted-by {
+  button {
+    position: relative;
+    border: 0;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 100%;
+      width: 20px;
+      height: 20px;
+      transform: translateY(-50%);
+      background: url(../../../images/back.svg) 50% 50% / auto no-repeat;
+    }
+  }
+
+  .title {
+    color: var(--color-accent);
+  }
+}
+
 .status {
   text-align: right;
   .buffed {
@@ -122,36 +179,38 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
     margin: auto;
   }
 }
-.description {
-  margin-bottom: 24px;
-  color: var(--color-dark);
-  font-size: 18px;
-  line-height: 1.22;
-  white-space: pre-line;
-  word-break: break-word;
-}
-.video {
-  position: relative;
-  margin-bottom: 24px;
-  padding: 30px 0 56.25%;
-  height: 0;
-  overflow: hidden;
-}
 
 .bottom {
-  display: flex;
-  flex-flow: wrap;
-  justify-content: space-between;
+  display: grid;
+  align-items: center;
+  grid-template-columns: repeat(3, 1fr);
+  margin-bottom: 45px;
 }
 
-.posted-by {
-  .title {
-    font-size: 18px;
-  }
+.year {
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: bold;
+}
+
+.show-on-map-wrapper {
+  text-align: center;
+}
+
+.show-on-map {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-accent);
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .buttons {
   display: flex;
+  justify-content: flex-end;
   div + div {
     margin-left: 12px;
   }
@@ -178,16 +237,55 @@ const onComplainToggle = (toggle) => (isComplainOpened = toggle);
   background: url(../../../images/warning.svg) 50% 50% / auto no-repeat;
 }
 
+.artist-area {
+  margin-bottom: 65px;
+  text-align: center;
+}
+
+.description {
+  margin-bottom: 24px;
+  color: var(--color-dark);
+  font-size: 18px;
+  line-height: 1.22;
+  white-space: pre-line;
+  word-break: break-word;
+}
+.video {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 30px 0 56.25%;
+  height: 0;
+  overflow: hidden;
+}
+
 @media (max-width: 767px) {
   .card {
     margin-bottom: 0;
     padding-top: 38px;
   }
-  .bottom {
-    margin-bottom: -16px;
-  }
   .posted-by {
-    margin-bottom: 16px;
+    button {
+      &::before {
+        top: -300%;
+        right: auto;
+        left: 0;
+        transform: none;
+      }
+    }
+  }
+  .bottom {
+    grid-row-gap: 10px;
+    margin-bottom: 20px;
+  }
+  .show-on-map-wrapper {
+    grid-column: 1/4;
+    grid-row: 2;
+  }
+  .buttons {
+    grid-column: 3;
+  }
+  .artist-area {
+    margin-bottom: 40px;
   }
 }
 </style>

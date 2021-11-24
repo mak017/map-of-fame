@@ -1,11 +1,11 @@
 <script>
-import Spinner from "./../elements/Spinner.svelte";
 import { onDestroy, onMount } from "svelte";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
+import Spinner from "./../elements/Spinner.svelte";
 import { isEmpty } from "./../../utils/commonUtils.js";
 import CustomSelect from "../elements/CustomSelect.svelte";
-import { isLoggedIn, userData } from "../../store";
+import { isLoggedIn, userData, selectedUserProfileData } from "../../store";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import Modal from "../Modal.svelte";
 import EditSpot from "./EditSpot.svelte";
@@ -39,10 +39,15 @@ const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 
 const unsubscribeUserData = userData.subscribe((value) => (user = value));
 
+const username = $selectedUserProfileData.name ?? user.name;
+const isCurrentUser =
+  !$selectedUserProfileData.id || $selectedUserProfileData.id === user.id;
+
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
+  const userId = $selectedUserProfileData.id || user.id;
   isLoading = isNewFetch;
   isShowSpinner = true;
-  getUserSpots(token, user.id, { year, offset }).then((response) => {
+  getUserSpots(token, userId, { year, offset }).then((response) => {
     const { success, result, errors } = response;
     if (success && result) {
       const { spots, years } = result;
@@ -127,10 +132,15 @@ const onSubmitChanges = () => {
 
 <div class="container" style={showEditModal ? "display: none" : ""}>
   <div class="top">
-    {#if $userData.name}
-      <div class="username">{$userData.name}</div>
+    {#if username}
+      <div class="username">{username}</div>
     {/if}
-    <button class="logout" on:click={handleLogout}>Logout</button>
+    {#if isCurrentUser}
+      <button type="button" class="logout" on:click={handleLogout}
+        >Logout</button>
+    {:else}
+      <button type="button" class="show-on-map">Show on map</button>
+    {/if}
   </div>
   {#if !!spotsList.length || isShowSpinner}
     <div class="data">
@@ -149,8 +159,8 @@ const onSubmitChanges = () => {
             <div class="spot-card">
               <img
                 loading="lazy"
-                src={spot.img}
-                alt={spot.title || `${spot.user.name}'s art`}
+                src={spot.thumbnail}
+                alt={spot.title || `${username}'s art`}
                 in:fade />
               <div class="overlay">
                 <button

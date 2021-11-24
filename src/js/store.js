@@ -34,3 +34,7 @@ export const markerIdFromUrl = writable(null);
 export const isLighthouseActive = writable(false);
 
 export const mapBounds = writable([]);
+
+export const selectedUserProfileData = writable({});
+
+export const shouldDisplayShowOnMap = writable(false);

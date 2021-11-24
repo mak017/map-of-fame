@@ -1,7 +1,7 @@
 import L from "leaflet";
 import "leaflet.markercluster";
 import "leaflet.markercluster.placementstrategies";
-import { openedMarkerData } from "../../store";
+import { openedMarkerData, shouldDisplayShowOnMap } from "../../store";
 import { markersReadyEvent } from "../commonUtils";
 import { clusterIcon, markerClusterIcon, markerWithPhoto } from "./icons";
 import { permalink } from "./permalink";
@@ -24,14 +24,13 @@ const clearMarkers = (map) => {
 export const setMarkerData = (data) => {
   const {
     id,
-    artists,
-    crews,
+    artistCrew,
     spotStatus: status,
     description,
     img,
     title,
     videoLink: video,
-    user: { name },
+    user,
     publicBanner: { banner, bannerUrl },
     location: { lat, lng },
     year,
@@ -39,19 +38,19 @@ export const setMarkerData = (data) => {
   } = data;
   openedMarkerData.set({
     id,
-    artists,
-    crews,
+    artistCrew,
     status,
     description,
     img: { src: img, title: title || id },
     video,
-    user: { name },
+    user,
     firm: { banner, bannerUrl },
     coords: { lat, lng },
     year,
     link,
   });
   permalink.update({ params: { marker: id } });
+  shouldDisplayShowOnMap.set(false);
 };
 
 const createMarker = (data) => {

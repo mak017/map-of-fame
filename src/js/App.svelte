@@ -26,6 +26,7 @@ import {
   selectedCrew,
   selectedYear,
   settings,
+  selectedUserProfileData,
 } from "./store.js";
 import {
   openRailwayMap,
@@ -357,7 +358,10 @@ const quitAddSpot = () => {
         img: $openedMarkerData.firm?.banner,
         url: $openedMarkerData.firm?.bannerUrl,
       }}>
-      <MarkerCard data={$openedMarkerData} />
+      <MarkerCard
+        data={$openedMarkerData}
+        {showUserProfile}
+        {clearOpenedMarkerData} />
     </Modal>
   {/if}
 
@@ -366,7 +370,12 @@ const quitAddSpot = () => {
   {/if}
 
   {#if showUserProfileModal}
-    <Modal noLogo on:close={() => showUserProfile(false)}>
+    <Modal
+      noLogo
+      on:close={() => {
+        showUserProfile(false);
+        selectedUserProfileData.set({});
+      }}>
       <Profile {onAddSpotBtnClick} {showUserProfile} />
     </Modal>
   {/if}

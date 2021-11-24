@@ -76,7 +76,7 @@ const handleResize = () => {
   width: 100%;
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
-  padding: 5vh 12px;
+  padding: 5vh 32px;
   overflow: auto;
   background: var(--color-light);
   &.withAd {
