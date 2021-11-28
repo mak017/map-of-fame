@@ -3,7 +3,12 @@ import { embedVideoCodeFromBasicUrl } from "../../utils/commonUtils";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import Popup from "../Popup.svelte";
 import ShareMarker from "./ShareMarker.svelte";
-import { selectedUserProfileData, shouldDisplayShowOnMap } from "../../store";
+import {
+  isShowOnMapMode,
+  selectedUserProfileData,
+  selectedYear,
+  shouldDisplayShowOnMap,
+} from "../../store";
 
 export let data;
 export let showUserProfile;
@@ -23,9 +28,25 @@ const onShareToggle = (toggle) => (isShareOpened = toggle);
 const onComplainToggle = (toggle) => (isComplainOpened = toggle);
 
 const onUserClick = () => {
-  selectedUserProfileData.set(user ?? {});
+  if (!$selectedUserProfileData.id) {
+    selectedUserProfileData.set(user ?? {});
+  }
   clearOpenedMarkerData();
   showUserProfile(true);
+};
+
+const handleShowOnMapClick = () => {
+  isShowOnMapMode.set(true);
+  document.getElementById("highlighted").innerHTML = `
+    .marker-id-${id} {
+      min-width: 64px;
+      min-height: 64px;
+      border-color: rgba(101, 13, 151, 0.43);
+      box-shadow: 0 8px 8px var(--color-accent);
+    }
+  `;
+  selectedYear.set(`${year}`);
+  clearOpenedMarkerData();
 };
 
 const getArtistsString = () => {
@@ -53,7 +74,7 @@ const getArtistsString = () => {
       <div class="subtitle">Posted by</div>
       <button type="button" on:click={onUserClick}>
         <div class="title">
-          {user?.name}
+          {user?.name || $selectedUserProfileData?.name || ""}
         </div>
       </button>
     </div>
@@ -64,10 +85,13 @@ const getArtistsString = () => {
   </div>
   <div class="img"><img src={img.src} alt={img.title} /></div>
   <div class="bottom">
-    <div class="year">{year}</div>
+    <div class="year">{year ?? ""}</div>
     <div class="show-on-map-wrapper">
       {#if $shouldDisplayShowOnMap}
-        <button type="button" class="show-on-map">Show on map</button>
+        <button
+          type="button"
+          class="show-on-map"
+          on:click={handleShowOnMapClick}>Show on map</button>
       {/if}
     </div>
     <div class="buttons">
@@ -114,34 +138,38 @@ const getArtistsString = () => {
   max-width: 938px;
   margin-bottom: 64px;
 }
+
 .top {
   display: flex;
   justify-content: space-between;
   margin-bottom: 24px;
 }
+
 .subtitle {
   margin-bottom: 10px;
+  color: var(--color-dark);
   font-size: 13px;
   line-height: 1.22;
-  color: var(--color-dark);
 }
+
 .title {
   display: -webkit-box;
+  overflow: hidden;
   color: var(--color-dark);
   font-size: 24px;
   font-weight: 900;
   line-height: 1.22;
-  overflow: hidden;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   text-transform: uppercase;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .posted-by {
   button {
     position: relative;
-    border: 0;
     padding: 0;
+    border: 0;
     background: none;
     cursor: pointer;
 
@@ -164,10 +192,13 @@ const getArtistsString = () => {
 
 .status {
   text-align: right;
+
   .buffed {
     color: var(--color-error);
+
     text-decoration-line: line-through;
   }
+
   .live {
     color: var(--color-accent);
   }
@@ -175,6 +206,7 @@ const getArtistsString = () => {
 
 .img {
   margin-bottom: 24px;
+
   > img {
     margin: auto;
   }
@@ -182,15 +214,15 @@ const getArtistsString = () => {
 
 .bottom {
   display: grid;
-  align-items: center;
   grid-template-columns: repeat(3, 1fr);
+  align-items: center;
   margin-bottom: 45px;
 }
 
 .year {
   font-size: 13px;
-  line-height: 16px;
   font-weight: bold;
+  line-height: 16px;
 }
 
 .show-on-map-wrapper {
@@ -203,17 +235,19 @@ const getArtistsString = () => {
   background: none;
   color: var(--color-accent);
   font-size: 18px;
-  line-height: 22px;
   font-weight: 600;
+  line-height: 22px;
   cursor: pointer;
 }
 
 .buttons {
   display: flex;
   justify-content: flex-end;
+
   div + div {
     margin-left: 12px;
   }
+
   button,
   a {
     display: block;
@@ -221,18 +255,21 @@ const getArtistsString = () => {
     height: 40px;
     cursor: pointer;
   }
+
   button {
     border: 0;
   }
 }
 
 .link a {
-  font-size: 0;
   background: url(../../../images/link.svg) 50% 50% / auto no-repeat;
+  font-size: 0;
 }
+
 .share button {
   background: url(../../../images/share.svg) 50% 50% / auto no-repeat;
 }
+
 .complain button {
   background: url(../../../images/warning.svg) 50% 50% / auto no-repeat;
 }
@@ -248,13 +285,15 @@ const getArtistsString = () => {
   font-size: 18px;
   line-height: 1.22;
   white-space: pre-line;
+
   word-break: break-word;
 }
+
 .video {
   position: relative;
+  height: 0;
   margin-bottom: 24px;
   padding: 30px 0 56.25%;
-  height: 0;
   overflow: hidden;
 }
 
@@ -263,6 +302,7 @@ const getArtistsString = () => {
     margin-bottom: 0;
     padding-top: 38px;
   }
+
   .posted-by {
     button {
       &::before {
@@ -273,17 +313,21 @@ const getArtistsString = () => {
       }
     }
   }
+
   .bottom {
     grid-row-gap: 10px;
     margin-bottom: 20px;
   }
+
   .show-on-map-wrapper {
     grid-column: 1/4;
     grid-row: 2;
   }
+
   .buttons {
     grid-column: 3;
   }
+
   .artist-area {
     margin-bottom: 40px;
   }

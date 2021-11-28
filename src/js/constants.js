@@ -26,6 +26,8 @@ export const statusesOrdered = [
 
 export const EMPTY_YEAR_STRING = "????";
 
+export const ALL_YEARS_STRING = "All";
+
 export const ENDPOINT_ORIGIN = process.env.SVELTE_APP_API_ENTRYPOINT;
 
 export const AUTH_MODALS = {

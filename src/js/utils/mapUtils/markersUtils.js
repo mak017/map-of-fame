@@ -1,13 +1,22 @@
 import L from "leaflet";
 import "leaflet.markercluster";
 import "leaflet.markercluster.placementstrategies";
-import { openedMarkerData, shouldDisplayShowOnMap } from "../../store";
+import {
+  openedMarkerData,
+  selectedUserProfileData,
+  shouldDisplayShowOnMap,
+} from "../../store";
 import { markersReadyEvent } from "../commonUtils";
 import { clusterIcon, markerClusterIcon, markerWithPhoto } from "./icons";
 import { permalink } from "./permalink";
 
 let prevMarkers = [];
 let markersLayer = null;
+let userProfileData;
+
+selectedUserProfileData.subscribe((value) => {
+  userProfileData = value;
+});
 
 const clearMarkers = (map) => {
   if (prevMarkers.length) {
@@ -50,17 +59,19 @@ export const setMarkerData = (data) => {
     link,
   });
   permalink.update({ params: { marker: id } });
-  shouldDisplayShowOnMap.set(false);
+  shouldDisplayShowOnMap.set(!!userProfileData.id);
+  document.getElementById("highlighted").innerHTML = "";
 };
 
 const createMarker = (data) => {
   const {
+    id,
     location: { lat, lng },
     icon,
     thumbnail,
   } = data;
   const marker = L.marker([lat, lng], {
-    icon: markerWithPhoto(icon || thumbnail),
+    icon: markerWithPhoto(icon || thumbnail, id),
   });
   marker.addEventListener("click", () => setMarkerData(data));
   return marker;

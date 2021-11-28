@@ -1,12 +1,17 @@
 <script>
 import { onDestroy } from "svelte";
 import { requestSearchSpots } from "./../api/search.js";
-import { mapBounds, markersStore } from "./../store.js";
-import { getCurrentYear, isMobile } from "../utils/commonUtils.js";
+import { markersStore, selectedUserProfileData } from "./../store.js";
+import {
+  getCurrentYear,
+  isMobile,
+  loadFromLocalStorage,
+} from "../utils/commonUtils.js";
 import { permalink } from "../utils/mapUtils/permalink.js";
-import { getDatesFilter } from "../utils/datesUtils.js";
+import { getDatesFilter, getProfileYears } from "../utils/datesUtils.js";
 import { requestSpots } from "../init.js";
 import { EMPTY_YEAR_STRING } from "../constants.js";
+import { getUserSpots } from "../api/spot.js";
 
 export let selectedYear;
 export let showCalendar;
@@ -15,13 +20,8 @@ export let yearEnd;
 export let additionalYears;
 export let isSearch;
 
-let selectedYearValue;
 let searchYearsValue = [];
-let geoRect;
-
-const unsubscribeSelectedYear = selectedYear.subscribe(
-  (value) => (selectedYearValue = value)
-);
+const token = loadFromLocalStorage("token") || null;
 
 const unsubscribeMarkersStore = markersStore.subscribe(
   (value) =>
@@ -30,14 +30,8 @@ const unsubscribeMarkersStore = markersStore.subscribe(
     ))
 );
 
-const unsubscribeMapBounds = mapBounds.subscribe((value) => {
-  geoRect = value;
-});
-
 onDestroy(() => {
-  unsubscribeSelectedYear();
   unsubscribeMarkersStore();
-  unsubscribeMapBounds();
 });
 
 const datesFilter = getDatesFilter(yearStart, yearEnd, additionalYears);
@@ -50,20 +44,34 @@ const handleClick = (year) => {
   const { artist, crew } = permalink.getDataFromParams(params);
 
   selectedYear.set(`${year}`);
-  if (!isSearch) {
+  if (!isSearch && !$selectedUserProfileData.id) {
     requestSpots(year);
     permalink.update({ clearParams: "all" });
-  } else {
+  } else if (isSearch) {
     const yearForRequest = year !== EMPTY_YEAR_STRING ? `${year}` : "";
     requestSearchSpots({ year: yearForRequest, artist, crew }).then(
       (response) => {
         const { success, result } = response;
         if (success && result) {
           markersStore.set(result);
-          permalink.update();
+          permalink.update({});
         }
       }
     );
+  } else if ($selectedUserProfileData.id) {
+    getUserSpots(token, $selectedUserProfileData.id, {
+      year,
+      offset: 0,
+      limit: 99999999999999,
+    }).then((response) => {
+      const { success, result } = response;
+      if (success && result) {
+        const { spots, years } = result;
+        markersStore.set({ spots, years: getProfileYears(years) });
+        document.getElementById("highlighted").innerHTML = "";
+        permalink.update({});
+      }
+    });
   }
   showCalendar(false);
 };
@@ -76,7 +84,7 @@ const handleClick = (year) => {
         href={`#${date}`}
         on:click|preventDefault={() => handleClick(date)}
         class="year"
-        class:active={`${date}` === selectedYearValue}
+        class:active={`${date}` === $selectedYear}
         class:disabled={+date > getCurrentYear() ||
           (searchYearsValue?.length && !searchYearsValue?.includes(+date))}
         >{date}</a>
@@ -104,15 +112,18 @@ li {
   line-height: 22px;
   text-decoration: none;
   white-space: nowrap;
+
   &:hover {
     color: var(--color-accent);
   }
+
   &.active {
     background-color: var(--color-accent);
     color: var(--color-light);
     font-weight: 900;
     pointer-events: none;
   }
+
   &.disabled {
     opacity: 0.4;
     pointer-events: none;

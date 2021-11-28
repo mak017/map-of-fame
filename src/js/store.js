@@ -38,3 +38,5 @@ export const mapBounds = writable([]);
 export const selectedUserProfileData = writable({});
 
 export const shouldDisplayShowOnMap = writable(false);
+
+export const isShowOnMapMode = writable(false);

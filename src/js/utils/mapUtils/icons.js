@@ -6,11 +6,11 @@ export const newMarkerIcon = L.icon({
   iconAnchor: [22, 60],
 });
 
-export const markerWithPhoto = (src) =>
+export const markerWithPhoto = (src, id) =>
   L.icon({
     iconUrl: src,
     iconSize: [56, 56],
-    className: "map-marker-with-photo",
+    className: `map-marker-with-photo marker-id-${id}`,
   });
 
 export const clusterIcon = (cluster) => {

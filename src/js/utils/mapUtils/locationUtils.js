@@ -3,8 +3,8 @@ import { getCurrentYear, isEmpty } from "../commonUtils";
 import { permalink } from "./permalink";
 import {
   isInitialized,
-  // isLoading,
   isSearchResults,
+  isShowOnMapMode,
   mapBounds,
   markerIdFromUrl,
   selectedArtist,
@@ -20,6 +20,7 @@ let artistFromStore;
 let crewFromStore;
 let markerId;
 let isSearch;
+let isShowOnMapModeValue;
 
 selectedYear.subscribe((value) => {
   yearFromStore = value;
@@ -39,6 +40,10 @@ markerIdFromUrl.subscribe((value) => {
 
 isSearchResults.subscribe((value) => {
   isSearch = value;
+});
+
+isShowOnMapMode.subscribe((value) => {
+  isShowOnMapModeValue = value;
 });
 
 const getLocationByIp = () =>
@@ -80,7 +85,7 @@ export const handleMapViewChange = (map) => {
   const bounds = getBounds(map);
   mapBounds.set(bounds);
 
-  if (!isSearch) {
+  if (!isSearch && !isShowOnMapModeValue) {
     requestSpots(yearFromStore);
   }
 };

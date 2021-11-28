@@ -19,6 +19,7 @@ import {
   markersStore,
   selectedArtist,
   selectedCrew,
+  selectedUserProfileData,
   selectedYear,
   settings,
   userCategories,
@@ -297,8 +298,9 @@ const handleSubmit = () => {
         isInProgress = false;
         if (success && result) {
           if (
-            $selectedYear === year ||
-            (!year && $selectedYear === EMPTY_YEAR_STRING)
+            ($selectedYear === year ||
+              (!year && $selectedYear === EMPTY_YEAR_STRING)) &&
+            !$selectedUserProfileData.id
           ) {
             if (!$isSearchResults) {
               requestSpots($selectedYear);

@@ -20,6 +20,7 @@ import {
   isLoading,
   isLoggedIn,
   isSearchResults,
+  isShowOnMapMode,
   markersStore,
   openedMarkerData,
   selectedArtist,
@@ -27,6 +28,7 @@ import {
   selectedYear,
   settings,
   selectedUserProfileData,
+  shouldDisplayShowOnMap,
 } from "./store.js";
 import {
   openRailwayMap,
@@ -58,7 +60,6 @@ let showResetPasswordModal = false;
 let showUserProfileModal = false;
 let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
-// let isRailwayMapLoading = true;
 let resetPasswordToken = getResetPasswordToken();
 let prevMarkersData = {};
 
@@ -123,7 +124,7 @@ adjustVhProp();
 initApp();
 
 $: if (markersData) {
-  placeMarkers(map, markersData, isSearch);
+  placeMarkers(map, markersData, isSearch || $isShowOnMapMode);
 }
 
 if (resetPasswordToken) {
@@ -161,7 +162,6 @@ const initMap = (container) => {
 
   setLocation(map);
 
-  // openRailwayMap.on("load", () => (isRailwayMapLoading = false));
   map.on(
     "zoomend dragend",
     () => isInitializedValue && handleMapViewChange(map)
@@ -177,7 +177,6 @@ const initMap = (container) => {
 
 const handleChangeModeClick = () => {
   if (!isRailwayMode) {
-    // isRailwayMapLoading = true;
     map.addLayer(openRailwayMap);
     isRailwayMode = true;
   } else {
@@ -281,7 +280,7 @@ const quitAddSpot = () => {
 
   <div class="main-top_right_wrapper">
     {#if !isAddSpotMode}
-      {#if !(isSearch && ($selectedArtist || $selectedCrew))}
+      {#if !(isSearch && ($selectedArtist || $selectedCrew)) && !$selectedUserProfileData.name}
         <button
           class="button button-main_screen button-square button-open_search"
           on:click={() => showSearch(true)}
@@ -298,11 +297,15 @@ const quitAddSpot = () => {
         {/if}
       {:else}
         <div class="selected-artist">
-          <span>{$selectedArtist} {$selectedCrew}</span>
+          <span
+            >{$selectedArtist || $selectedUserProfileData?.name || ""}
+            {$selectedCrew || $selectedUserProfileData?.crew || ""}</span>
           <button
             class="button button-square button-clear_search"
             on:click|stopPropagation={() => {
               requestSpots($selectedYear);
+              selectedUserProfileData.set({});
+              isShowOnMapMode.set(false);
               permalink.update({ clearParams: "all" });
             }}>
             <CloseCrossSvg isLight />
@@ -317,7 +320,6 @@ const quitAddSpot = () => {
     class:active={isRailwayMode}
     on:click={handleChangeModeClick}
     title="Highlight railways">
-    <!-- {#if !isRailwayMapLoading} -->
     <RailroadSvg isLight={isRailwayMode} />
   </button>
 
@@ -351,7 +353,13 @@ const quitAddSpot = () => {
 
   {#if $openedMarkerData}
     <Modal
-      on:close={clearOpenedMarkerData}
+      on:close={() => {
+        clearOpenedMarkerData();
+        if (!$isShowOnMapMode) {
+          selectedUserProfileData.set({});
+          $shouldDisplayShowOnMap && requestSpots($selectedYear);
+        }
+      }}
       withAd
       noLogo
       banner={{
@@ -374,7 +382,7 @@ const quitAddSpot = () => {
       noLogo
       on:close={() => {
         showUserProfile(false);
-        selectedUserProfileData.set({});
+        !$isShowOnMapMode && selectedUserProfileData.set({});
       }}>
       <Profile {onAddSpotBtnClick} {showUserProfile} />
     </Modal>
@@ -388,6 +396,7 @@ const quitAddSpot = () => {
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
 }
+
 .button {
   &-main_screen {
     background: var(--color-light);
@@ -403,6 +412,7 @@ const quitAddSpot = () => {
     min-width: 114px;
     height: 40px;
     padding: 0 36px;
+
     user-select: none;
 
     &::before {
@@ -501,18 +511,15 @@ const quitAddSpot = () => {
 
   &-switch_mode {
     display: flex;
-    align-items: center;
-    justify-content: center;
     position: absolute;
     bottom: 18px;
     left: 70px;
+    align-items: center;
+    justify-content: center;
 
     &.active {
       background-color: var(--color-accent);
     }
-    // &.is-loading {
-    //   pointer-events: none;
-    // }
   }
 
   &-burger {
@@ -521,6 +528,7 @@ const quitAddSpot = () => {
     background-position: 50% 50%;
     background-size: 18px 13px;
   }
+
   &-clear_search {
     margin-left: 5px;
     padding: 8px;
@@ -540,6 +548,7 @@ const quitAddSpot = () => {
   color: var(--color-light);
   font-size: 14px;
   line-height: 17px;
+
   > span {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -552,13 +561,15 @@ const quitAddSpot = () => {
     &-open_calendar {
       max-width: 130px;
       overflow: hidden;
-      white-space: nowrap;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
+
     &-clear_search {
       padding: 4px;
     }
   }
+
   .selected-artist {
     width: 156px;
   }
