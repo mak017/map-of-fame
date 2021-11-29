@@ -262,7 +262,9 @@ const quitAddSpot = () => {
       <button
         class="button button-square button-lighthouse"
         class:active={isLighthouse}
-        disabled={+$selectedYear !== getCurrentYear()}
+        disabled={isSearch ||
+          $isShowOnMapMode ||
+          +$selectedYear !== getCurrentYear()}
         on:click={onLighthouseClick}
         transition:fade>
         <svg
@@ -305,6 +307,8 @@ const quitAddSpot = () => {
             on:click|stopPropagation={() => {
               requestSpots($selectedYear);
               selectedUserProfileData.set({});
+              selectedArtist.set("");
+              selectedCrew.set("");
               isShowOnMapMode.set(false);
               permalink.update({ clearParams: "all" });
             }}>

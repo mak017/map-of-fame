@@ -57,11 +57,9 @@ const validateForm = () => {
 };
 
 const handleArtistClick = (artist, crew) => {
-  // isInProgress = true;
   saveCurrentSearch(artist, crew);
   requestSearchSpots({ artist, crew }).then((response) => {
     const { success, result, error } = response;
-    // isInProgress = false;
     if (success && result) {
       selectedArtist.set(artist);
       selectedCrew.set(crew);
@@ -198,10 +196,9 @@ const fetchArtistsCrews = async () => {
 form {
   display: grid;
   grid-column-gap: 24px;
-  grid-template-columns:
-    minmax(100px, 336px)
-    minmax(100px, 336px)
-    140px;
+  grid-template-columns: minmax(100px, 336px)
+  minmax(100px, 336px)
+  140px;
   max-width: 860px;
 }
 
@@ -233,13 +230,13 @@ button {
   background: 0;
   cursor: pointer;
 
-  + button {
+  +button {
     margin-left: 12px;
   }
 }
 
 .list {
-  .pair-wrapper + .pair-wrapper {
+  .pair-wrapper +.pair-wrapper {
     margin-top: 20px;
   }
 
@@ -341,4 +338,5 @@ button {
     }
   }
 }
+
 </style>

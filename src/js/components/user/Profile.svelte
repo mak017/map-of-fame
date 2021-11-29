@@ -10,6 +10,8 @@ import {
   userData,
   markersStore,
   openedMarkerData,
+  selectedArtist,
+  selectedCrew,
   selectedUserProfileData,
   selectedYear,
   shouldDisplayShowOnMap,
@@ -182,6 +184,9 @@ const handleShowOnMapClick = () => {
   markersStore.set({ spots: spotsList, years: yearsToApply });
   isShowOnMapMode.set(true);
   selectedYear.set(`${currentYear}`);
+  selectedArtist.set("");
+  selectedCrew.set("");
+  permalink.update({ clearParams: ["artist", "crew"] });
   showUserProfile(false);
 };
 </script>
@@ -401,7 +406,8 @@ const handleShowOnMapClick = () => {
   }
 }
 
-.edit, .delete {
+.edit,
+.delete {
   width: 54px;
   height: 54px;
   margin: 12px;
@@ -448,5 +454,4 @@ const handleShowOnMapClick = () => {
     right: 0;
   }
 }
-
 </style>

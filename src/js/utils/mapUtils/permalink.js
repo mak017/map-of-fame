@@ -1,6 +1,7 @@
 import {
   markerIdFromUrl,
   markersStore,
+  openedMarkerData,
   selectedArtist,
   selectedCrew,
   selectedYear,
@@ -18,6 +19,7 @@ let settingsObj = {};
 let yearFromStore = null;
 let selectedArtistValue = null;
 let selectedCrewValue = null;
+let markerId = null;
 
 markersStore.subscribe((values) => {
   arrMarkers = values;
@@ -39,6 +41,10 @@ selectedCrew.subscribe((value) => {
   selectedCrewValue = value;
 });
 
+openedMarkerData.subscribe((value) => {
+  markerId = value?.id;
+});
+
 const update = ({ mapContainer, params, clearParams }) => {
   if (!shouldUpdate) {
     // do not update the URL when the view was changed in the 'popstate' handler (browser history navigation)
@@ -56,7 +62,7 @@ const update = ({ mapContainer, params, clearParams }) => {
   if (params || selectedArtistValue || selectedCrewValue) {
     const artist = params ? params.artist : selectedArtistValue;
     const crew = params ? params.crew : selectedCrewValue;
-    const marker = params?.marker;
+    const marker = params?.marker || markerId;
     paramsToSet = "";
     if (artist) {
       paramsToSet = paramsToSet.concat(`&artist=${artist}`);
@@ -66,7 +72,10 @@ const update = ({ mapContainer, params, clearParams }) => {
     }
     if (marker) {
       const paramsStr = prevParams || paramsToSet;
-      paramsToSet = paramsStr.concat(`&marker=${marker}`);
+      const markerQuery = `&marker=${marker}`;
+      paramsToSet = !paramsStr.includes(`&marker=${marker}`)
+        ? paramsStr.concat(markerQuery)
+        : paramsStr;
     }
     prevParams = paramsToSet;
   }

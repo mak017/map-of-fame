@@ -5,10 +5,13 @@ import Popup from "../Popup.svelte";
 import ShareMarker from "./ShareMarker.svelte";
 import {
   isShowOnMapMode,
+  selectedArtist,
+  selectedCrew,
   selectedUserProfileData,
   selectedYear,
   shouldDisplayShowOnMap,
 } from "../../store";
+import { permalink } from "../../utils/mapUtils/permalink";
 
 export let data;
 export let showUserProfile;
@@ -46,6 +49,9 @@ const handleShowOnMapClick = () => {
     }
   `;
   selectedYear.set(`${year}`);
+  selectedArtist.set("");
+  selectedCrew.set("");
+  permalink.update({ clearParams: ["artist", "crew"] });
   clearOpenedMarkerData();
 };
 
@@ -207,7 +213,7 @@ const getArtistsString = () => {
 .img {
   margin-bottom: 24px;
 
-  > img {
+  >img {
     margin: auto;
   }
 }
@@ -244,12 +250,11 @@ const getArtistsString = () => {
   display: flex;
   justify-content: flex-end;
 
-  div + div {
+  div +div {
     margin-left: 12px;
   }
 
-  button,
-  a {
+  button, a {
     display: block;
     width: 40px;
     height: 40px;
@@ -332,4 +337,5 @@ const getArtistsString = () => {
     margin-bottom: 40px;
   }
 }
+
 </style>
