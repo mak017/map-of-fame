@@ -174,6 +174,10 @@ const getCustomUrl = (coords, zoom, year, params) => {
   const search = getSearchUrlFromParams(coords, zoom, year, params);
   return `${origin}${pathname}${search}`;
 };
+const getInviteUrl = (code) => {
+  const { origin } = window.location;
+  return `${origin}?inviteCode=${code}`;
+};
 const setup = (map) => {
   shouldUpdate = true;
 
@@ -202,5 +206,6 @@ export const permalink = {
   update,
   set,
   getCustomUrl,
+  getInviteUrl,
   getDataFromParams,
 };

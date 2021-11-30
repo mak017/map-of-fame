@@ -12,6 +12,7 @@ export let editSpot = false;
 export let addSpot = false;
 export let link = false;
 export let search = false;
+export let invite = false;
 export let extraMargin = false;
 
 const dispatch = createEventDispatcher();
@@ -29,6 +30,7 @@ const keyDown = (event) => dispatch("keyDown", event);
   class:add-spot={addSpot}
   class:link
   class:search
+  class:invite
   class:extra-margin={extraMargin}>
   {#if label}<span>{label}</span>{/if}
   <input
@@ -174,6 +176,13 @@ label:not(.with-label) {
 
 .extra-margin {
   margin-bottom: 26px;
+}
+
+.invite {
+  input {
+    padding-right: 146px;
+    line-height: 26px;
+  }
 }
 
 @media (max-width: 767px) {

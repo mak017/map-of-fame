@@ -2,6 +2,8 @@
 import { onDestroy, onMount } from "svelte";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
+import Invites from "./Invites.svelte";
+import { getInvites } from "./../../api/auth.js";
 import Spinner from "./../elements/Spinner.svelte";
 import CustomSelect from "../elements/CustomSelect.svelte";
 import {
@@ -43,16 +45,19 @@ let currentYear;
 let currentSpot;
 let showEditModal = false;
 let showDeletePopup = false;
+let showInvitesPopup = false;
 let offset = 0;
 let yearsToApply = [];
 let spotsList = [];
 let newBatch = [];
+let invites = [];
 let isLoading = false;
 let isShowSpinner = false;
 const token = loadFromLocalStorage("token") || null;
 
 const toggleEditModal = (toggle) => (showEditModal = toggle);
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
+const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 
 const unsubscribeUserData = userData.subscribe((value) => (user = value));
 
@@ -88,6 +93,14 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
 onMount(() => {
   fetchSpots({});
   shouldDisplayShowOnMap.set(false);
+  if (isCurrentUser) {
+    getInvites(token).then((response) => {
+      const { success, result } = response;
+      if (success && result) {
+        invites = result;
+      }
+    });
+  }
 });
 
 onDestroy(() => {
@@ -196,6 +209,14 @@ const handleShowOnMapClick = () => {
     {#if username}
       <div class="username">{username}</div>
     {/if}
+    {#if invites.length}
+      <div class="invites">
+        You have
+        <button type="button" on:click={() => toggleInvitesPopup(true)}
+          >Invite</button>
+        for your friends 🖖
+      </div>
+    {/if}
     {#if isCurrentUser}
       <button type="button" class="logout" on:click={handleLogout}
         >Logout</button>
@@ -278,6 +299,14 @@ const handleShowOnMapClick = () => {
   </Popup>
 {/if}
 
+{#if showInvitesPopup}
+  <Popup
+    title={`Invites ${invites.length}/5 👽`}
+    on:close={() => toggleInvitesPopup(false)}>
+    <Invites close={() => toggleInvitesPopup(false)} {invites} />
+  </Popup>
+{/if}
+
 <style lang="scss">
 .container {
   display: flex;
@@ -301,6 +330,22 @@ const handleShowOnMapClick = () => {
   font-weight: 900;
   line-height: 1.22;
   text-transform: uppercase;
+}
+
+.invites {
+  color: var(--color-dark);
+  font-size: 14px;
+  line-height: 17px;
+  button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-accent);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 22px;
+    cursor: pointer;
+  }
 }
 
 .logout {
@@ -438,6 +483,16 @@ const handleShowOnMapClick = () => {
     position: relative;
     flex-direction: column-reverse;
     margin-bottom: 18px;
+  }
+
+  .invites {
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    width: fit-content;
+    max-width: 71vw;
+    transform: translateX(-50%);
+    text-align: center;
   }
 
   .logout {

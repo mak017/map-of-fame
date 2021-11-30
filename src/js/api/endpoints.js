@@ -21,6 +21,9 @@ export const USER_PASSWORD = () => `${ENDPOINT_ORIGIN}/api/user/password`;
 export const USER_PASSWORD_TOKEN = () =>
   `${ENDPOINT_ORIGIN}/api/user/password/token`;
 
+export const INVITES_GET_FOR_USER = () =>
+  `${ENDPOINT_ORIGIN}/api/invites/getForUser`;
+
 export const USER_SEARCH = (artist, crew) => {
   let url = `${ENDPOINT_ORIGIN}/api/user/search/`;
   if (artist) {

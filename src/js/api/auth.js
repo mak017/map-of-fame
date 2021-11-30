@@ -4,6 +4,7 @@ import {
   USER,
   USER_PASSWORD,
   USER_PASSWORD_TOKEN,
+  INVITES_GET_FOR_USER,
 } from "./endpoints";
 
 export const loginRequest = async (email, password) => {
@@ -92,6 +93,16 @@ export const changePasswordReset = async (resetToken, password) => {
       Authorization: bearer,
     },
     body: data,
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const getInvites = async (token) => {
+  const bearer = `Bearer ${token}`;
+  const response = await fetch(INVITES_GET_FOR_USER(), {
+    method: "GET",
+    headers: { Authorization: bearer },
   });
   const result = await response.json();
   return result;
