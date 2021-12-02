@@ -174,9 +174,9 @@ const getCustomUrl = (coords, zoom, year, params) => {
   const search = getSearchUrlFromParams(coords, zoom, year, params);
   return `${origin}${pathname}${search}`;
 };
-const getInviteUrl = (code) => {
+const getInviteUrl = (code, username) => {
   const { origin } = window.location;
-  return `${origin}?inviteCode=${code}`;
+  return `${origin}?invite_code=${code}&from_user=${username}`;
 };
 const setup = (map) => {
   shouldUpdate = true;

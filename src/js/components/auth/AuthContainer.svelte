@@ -7,8 +7,10 @@ import { isMobile } from "../../utils/commonUtils";
 import ForgotPassword from "./ForgotPassword.svelte";
 
 export let showAuth;
+export let inviteData;
+export let clearInviteData;
 
-let currentModal = AUTH_MODALS.login;
+let currentModal = !inviteData ? AUTH_MODALS.login : AUTH_MODALS.registration;
 let isInitialLoad = true;
 let isMobileWidth = isMobile();
 let forgotPasswordEmailSent = false;
@@ -37,15 +39,24 @@ const setForgotPasswordEmailSent = (bool) => (forgotPasswordEmailSent = bool);
 {/if}
 
 {#if currentModal === AUTH_MODALS.registration}
-  <Modal on:close={() => showAuth(false)} title="Registration" noTransition>
-    <RegistrationForm {changeCurrentModal} {showAuth} />
+  <Modal
+    on:close={() => (showAuth(false), clearInviteData())}
+    title="Registration"
+    noTransition={!inviteData}>
+    <RegistrationForm
+      {changeCurrentModal}
+      {showAuth}
+      {inviteData}
+      {clearInviteData} />
   </Modal>
 {/if}
 
 {#if currentModal === AUTH_MODALS.forgotPassword}
   <Modal
     on:close={() => showAuth(false)}
-    title={forgotPasswordEmailSent && isMobileWidth ? 'Letter was sent to the email' : 'Forgot'}
+    title={forgotPasswordEmailSent && isMobileWidth
+      ? "Letter was sent to the email"
+      : "Forgot"}
     noTransition
     accentTitle={forgotPasswordEmailSent && isMobileWidth}>
     <ForgotPassword

@@ -75,13 +75,26 @@ export const adjustVhProp = () => {
 };
 
 export const getResetPasswordToken = () => {
-  const search = window.location.search;
+  const { search } = window.location;
   if (search) {
     const params = new URLSearchParams(search);
     const token = params.get("reset_password_token");
     const id = params.get("id");
     if (token && id) {
       return { token, id };
+    }
+  }
+  return null;
+};
+
+export const getInviteData = () => {
+  const { search } = window.location;
+  if (search) {
+    const params = new URLSearchParams(search);
+    const code = params.get("invite_code");
+    const from = params.get("from_user");
+    if (code) {
+      return { code, from };
     }
   }
   return null;

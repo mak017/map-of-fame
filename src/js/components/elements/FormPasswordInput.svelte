@@ -4,6 +4,7 @@ import { createEventDispatcher } from "svelte";
 export let value = "";
 export let placeholder = "";
 export let errorText = "";
+export let autocomplete = "current-password";
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
@@ -15,6 +16,7 @@ const keyDown = (event) => dispatch("keyDown", event);
   <input
     type="password"
     {placeholder}
+    {autocomplete}
     bind:value
     on:blur={blur}
     on:input={input}

@@ -38,6 +38,7 @@ import Calendar from "./components/Calendar.svelte";
 import {
   adjustVhProp,
   getCurrentYear,
+  getInviteData,
   getResetPasswordToken,
   loadFromLocalStorage,
   saveToLocalStorage,
@@ -61,6 +62,7 @@ let showUserProfileModal = false;
 let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 let resetPasswordToken = getResetPasswordToken();
+let inviteData = getInviteData();
 let prevMarkersData = {};
 
 let map;
@@ -69,7 +71,6 @@ let settingsValue;
 let markersData = {};
 let isSearch;
 let isLighthouse;
-let year;
 let isInitializedValue;
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
@@ -98,10 +99,6 @@ const unsubscribeIsSearchResults = isSearchResults.subscribe(
 
 const unsubscribeIsLighthouse = isLighthouseActive.subscribe(
   (value) => (isLighthouse = value)
-);
-
-const unsubscribeSelectedYear = selectedYear.subscribe(
-  (value) => (year = value)
 );
 
 const unsubscribeIsInitialized = isInitialized.subscribe(
@@ -148,6 +145,10 @@ if (resetPasswordToken) {
   getSettings().then(() => {
     isLoading.set(false);
   });
+}
+
+if (inviteData) {
+  showAuth(true);
 }
 
 // Init leaflet map
@@ -378,7 +379,10 @@ const quitAddSpot = () => {
   {/if}
 
   {#if showAuthContainer}
-    <AuthContainer {showAuth} />
+    <AuthContainer
+      {showAuth}
+      {inviteData}
+      clearInviteData={() => (inviteData = null)} />
   {/if}
 
   {#if showUserProfileModal}

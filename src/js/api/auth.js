@@ -38,6 +38,7 @@ export const createUserRequest = async ({
   type,
   crew,
   link,
+  invite,
 }) => {
   const data = new URLSearchParams();
   data.append("name", name);
@@ -47,6 +48,9 @@ export const createUserRequest = async ({
   data.append("type", type);
   data.append("crew", crew);
   data.append("link", link);
+  if (invite) {
+    data.append("invite", invite);
+  }
   const response = await fetch(USER(), {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },

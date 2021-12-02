@@ -51,6 +51,7 @@ let yearsToApply = [];
 let spotsList = [];
 let newBatch = [];
 let invites = [];
+let unusedInvitesCount = 0;
 let isLoading = false;
 let isShowSpinner = false;
 const token = loadFromLocalStorage("token") || null;
@@ -98,6 +99,11 @@ onMount(() => {
       const { success, result } = response;
       if (success && result) {
         invites = result;
+        unusedInvitesCount = invites.reduce(
+          (accumulator, invite) =>
+            !invite.invitedUserId ? accumulator + 1 : accumulator,
+          0
+        );
       }
     });
   }
@@ -301,9 +307,9 @@ const handleShowOnMapClick = () => {
 
 {#if showInvitesPopup}
   <Popup
-    title={`Invites ${invites.length}/5 👽`}
+    title={`Invites ${unusedInvitesCount}/5 👽`}
     on:close={() => toggleInvitesPopup(false)}>
-    <Invites close={() => toggleInvitesPopup(false)} {invites} />
+    <Invites close={() => toggleInvitesPopup(false)} {invites} {username} />
   </Popup>
 {/if}
 
@@ -336,6 +342,7 @@ const handleShowOnMapClick = () => {
   color: var(--color-dark);
   font-size: 14px;
   line-height: 17px;
+
   button {
     padding: 0;
     border: 0;
@@ -451,8 +458,7 @@ const handleShowOnMapClick = () => {
   }
 }
 
-.edit,
-.delete {
+.edit, .delete {
   width: 54px;
   height: 54px;
   margin: 12px;
@@ -509,4 +515,5 @@ const handleShowOnMapClick = () => {
     right: 0;
   }
 }
+
 </style>

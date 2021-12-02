@@ -1,10 +1,10 @@
 <script>
 import { onDestroy, onMount } from "svelte";
+import { fade } from "svelte/transition";
 import { getAllCountries } from "./../../api/geo.js";
 import AutoComplete from "./../elements/AutoComplete.svelte";
 import { createUserRequest } from "./../../api/auth.js";
 import {
-  isValidHttpUrl,
   saveToLocalStorage,
   validateEmail,
   validatePassword,
@@ -16,12 +16,13 @@ import FormEmailInput from "../elements/FormEmailInput.svelte";
 import FormPasswordInput from "../elements/FormPasswordInput.svelte";
 import FormRadioButton from "../elements/FormRadioButton.svelte";
 import FormTextInput from "../elements/FormTextInput.svelte";
-import { fade } from "svelte/transition";
 import { countriesList, isLoggedIn, userData } from "../../store.js";
 import { transformCountries } from "../../utils/transformers.js";
 
 export let showAuth;
 export let changeCurrentModal;
+export let inviteData;
+export let clearInviteData;
 
 let step = 1;
 let selectedType = USER_TYPES.artist;
@@ -84,10 +85,8 @@ const validate = () => {
       } else errors.password = "";
     }
   } else {
-    // const isValidLink = portfolioLink ? isValidHttpUrl(portfolioLink) : true;
     errors.name = !username ? ERROR_MESSAGES.usernameEmpty : "";
     errors.country = !country ? ERROR_MESSAGES.countryCityEmpty : "";
-    // errors.link = !isValidLink ? ERROR_MESSAGES.linkInvalid : "";
   }
 };
 
@@ -109,6 +108,7 @@ const handleSubmit = () => {
         type: selectedType.toLowerCase(),
         crew,
         link: portfolioLink,
+        invite: inviteData.code,
       })
         .then((response) => {
           const { success, result, errors: error } = response;
@@ -117,6 +117,7 @@ const handleSubmit = () => {
             userData.set(result);
             isLoggedIn.set(true);
             saveToLocalStorage("token", result.token);
+            clearInviteData();
             showAuth(false);
           } else {
             if (error?.email) {
@@ -125,6 +126,9 @@ const handleSubmit = () => {
             }
             if (Array.isArray(error)) {
               errors.link = error[0];
+            }
+            if (error?.message) {
+              errors.link = error.message;
             }
           }
         })
@@ -153,10 +157,16 @@ const handleBackClick = () => {
 </script>
 
 <form on:submit|preventDefault={handleSubmit} novalidate transition:fade>
+  {#if inviteData?.from}
+    <div class="invite-from">
+      По воле юзера {inviteData.from} <br />
+      ты получил доступ в святую святых, аминь друг мой, да прибудет с тобой силы.
+    </div>
+  {/if}
   {#if step === 2}
     <ButtonModalBack on:click={handleBackClick} withTransition />
   {/if}
-  {#if step === 1}
+  {#if step === 1 && !inviteData}
     <div class="switcher" in:fade|local>
       <FormRadioButton
         id={`user-type-switcher-${USER_TYPES.artist.toLowerCase()}`}
@@ -182,6 +192,7 @@ const handleBackClick = () => {
         on:input={() => handleInputChange("email")} />
       <FormPasswordInput
         placeholder="Password"
+        autocomplete="new-password"
         bind:value={password}
         errorText={errors.password}
         on:input={() => handleInputChange("password")} />
@@ -235,6 +246,14 @@ form {
   width: 100%;
   max-width: 530px;
   margin-bottom: auto;
+}
+.invite-from {
+  margin-bottom: 36px;
+  color: var(--color-dark);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 22px;
+  text-align: center;
 }
 .switcher {
   display: flex;
