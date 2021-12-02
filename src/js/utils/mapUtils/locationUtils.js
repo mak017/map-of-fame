@@ -3,6 +3,7 @@ import { getCurrentYear, isEmpty } from "../commonUtils";
 import { permalink } from "./permalink";
 import {
   isInitialized,
+  isLighthouseActive,
   isSearchResults,
   isShowOnMapMode,
   mapBounds,
@@ -11,7 +12,7 @@ import {
   selectedCrew,
   selectedYear,
 } from "../../store";
-import { performSearch, requestSpots } from "../../init";
+import { performSearch, requestRecentSpots, requestSpots } from "../../init";
 import { getSpotById } from "../../api/spot";
 import { setMarkerData } from "./markersUtils";
 
@@ -21,6 +22,7 @@ let crewFromStore;
 let markerId;
 let isSearch;
 let isShowOnMapModeValue;
+let isLighthouseMode;
 
 selectedYear.subscribe((value) => {
   yearFromStore = value;
@@ -44,6 +46,10 @@ isSearchResults.subscribe((value) => {
 
 isShowOnMapMode.subscribe((value) => {
   isShowOnMapModeValue = value;
+});
+
+isLighthouseActive.subscribe((value) => {
+  isLighthouseMode = value;
 });
 
 const getLocationByIp = () =>
@@ -84,6 +90,11 @@ const getBounds = (map) => {
 export const handleMapViewChange = (map) => {
   const bounds = getBounds(map);
   mapBounds.set(bounds);
+
+  if (isLighthouseMode) {
+    requestRecentSpots();
+    return;
+  }
 
   if (!isSearch && !isShowOnMapModeValue) {
     requestSpots(yearFromStore);

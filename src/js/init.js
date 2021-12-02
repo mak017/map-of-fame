@@ -1,7 +1,7 @@
 import { verifyAuthRequest } from "./api/auth";
 import { requestSearchSpots } from "./api/search";
 import { getSettingsRequest } from "./api/settings";
-import { getSpots } from "./api/spot";
+import { getRecentSpots, getSpots } from "./api/spot";
 import { EMPTY_YEAR_STRING } from "./constants";
 import {
   isInitialized,
@@ -91,3 +91,13 @@ export const performSearch = ({ artist, crew, year, geoRect, isInitial }) => {
     }
   });
 };
+
+export const requestRecentSpots = () =>
+  getRecentSpots(7, bounds).then((response) => {
+    const { success, result } = response;
+    if (success && result) {
+      isSearchResults.set(false);
+      isLighthouseActive.set(true);
+      markersStore.set(result);
+    }
+  });

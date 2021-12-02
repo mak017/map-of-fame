@@ -3,11 +3,15 @@ import { onDestroy } from "svelte";
 import { fade } from "svelte/transition";
 import L from "leaflet";
 import CloseCrossSvg from "./components/elements/icons/CloseCrossSvg.svelte";
-import { getLastSpots, placeMarkers } from "./utils/mapUtils/markersUtils.js";
-// import SpinnerSvg from "./components/elements/SpinnerSvg.svelte";
+import { placeMarkers } from "./utils/mapUtils/markersUtils.js";
 import { changePasswordCheckToken } from "./api/auth.js";
 import RailroadSvg from "./components/elements/icons/RailroadSvg.svelte";
-import { getSettings, initApp, requestSpots } from "./init.js";
+import {
+  getSettings,
+  initApp,
+  requestRecentSpots,
+  requestSpots,
+} from "./init.js";
 import SearchForm from "./components/SearchForm.svelte";
 import {
   handleMapViewChange,
@@ -51,7 +55,6 @@ import ResetPassword from "./components/auth/ResetPassword.svelte";
 import Profile from "./components/user/Profile.svelte";
 import { newMarkerIcon } from "./utils/mapUtils/icons";
 import Loader from "./components/elements/Loader.svelte";
-import { getSpots } from "./api/spot.js";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let showCalendarModal = false;
@@ -211,27 +214,11 @@ const onAddSpotBtnClick = () => {
   toggleAddSpotMode(true);
 };
 
-// TODO: Fix lighthouse functionality
 const onLighthouseClick = () => {
   if (!isLighthouse) {
-    prevMarkersData = { ...markersData };
-    if (!isSearch) {
-      const filteredSpots = getLastSpots(markersData);
-      markersStore.set(filteredSpots);
-      isLighthouseActive.set(true);
-    } else {
-      getSpots(getCurrentYear()).then((response) => {
-        const { success, result } = response;
-        if (success && result) {
-          isSearchResults.set(false);
-          isLighthouseActive.set(true);
-          const filteredSpots = getLastSpots(result);
-          markersStore.set(filteredSpots);
-        }
-      });
-    }
+    requestRecentSpots();
   } else {
-    markersStore.set(prevMarkersData);
+    requestSpots($selectedYear);
     isLighthouseActive.set(false);
   }
 };

@@ -1,5 +1,8 @@
 import { ENDPOINT_ORIGIN } from "../constants";
 
+const getGeoRect = (geoRect) =>
+  `&geoRect[0][lat]=${geoRect[0].lat}&geoRect[0][lng]=${geoRect[0].lng}&geoRect[1][lat]=${geoRect[1].lat}&geoRect[1][lng]=${geoRect[1].lng}`;
+
 export const LOGIN = () => `${ENDPOINT_ORIGIN}/api/login`;
 
 export const VERIFY = () => `${ENDPOINT_ORIGIN}/api/verify`;
@@ -61,7 +64,10 @@ export const SETTINGS = () => `${ENDPOINT_ORIGIN}/api/settings`;
 export const SPOT = () => `${ENDPOINT_ORIGIN}/api/spot`;
 
 export const SPOT_YEAR = (year, geoRect) =>
-  `${ENDPOINT_ORIGIN}/api/spot?year=${year}&geoRect[0][lat]=${geoRect[0].lat}&geoRect[0][lng]=${geoRect[0].lng}&geoRect[1][lat]=${geoRect[1].lat}&geoRect[1][lng]=${geoRect[1].lng}`;
+  `${ENDPOINT_ORIGIN}/api/spot?year=${year}${getGeoRect(geoRect)}`;
+
+export const SPOT_LIMIT_DAYS = (limitDays, geoRect) =>
+  `${ENDPOINT_ORIGIN}/api/spot?limitDays=${limitDays}${getGeoRect(geoRect)}`;
 
 export const SPOT_ID = (id) => `${ENDPOINT_ORIGIN}/api/spot/${id}`;
 

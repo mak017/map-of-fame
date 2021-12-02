@@ -3,6 +3,7 @@ import {
   SPOT,
   SPOT_ID,
   SPOT_ID_FEEDBACK,
+  SPOT_LIMIT_DAYS,
   SPOT_YEAR,
   USER_CATEGORY,
   USER_ID_SPOTS,
@@ -10,6 +11,14 @@ import {
 
 export const getSpots = async (year, geoRect) => {
   const response = await fetch(SPOT_YEAR(year, geoRect), { method: "GET" });
+  const result = await response.json();
+  return result;
+};
+
+export const getRecentSpots = async (limitDays, geoRect) => {
+  const response = await fetch(SPOT_LIMIT_DAYS(limitDays, geoRect), {
+    method: "GET",
+  });
   const result = await response.json();
   return result;
 };
