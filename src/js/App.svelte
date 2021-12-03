@@ -246,13 +246,11 @@ const quitAddSpot = () => {
         on:click={() => showCalendar(true)}
         transition:fade>{$selectedYear}</button>
     {/if}
-    {#if !isAddSpotMode}
+    {#if !isAddSpotMode && !isSearch && !$isShowOnMapMode}
       <button
         class="button button-square button-lighthouse"
         class:active={isLighthouse}
-        disabled={isSearch ||
-          $isShowOnMapMode ||
-          +$selectedYear !== getCurrentYear()}
+        disabled={+$selectedYear !== getCurrentYear()}
         on:click={onLighthouseClick}
         transition:fade>
         <svg

@@ -218,17 +218,21 @@ const handleShowOnMapClick = () => {
     {#if invites.length}
       <div class="invites">
         You have
-        <button type="button" on:click={() => toggleInvitesPopup(true)}
-          >Invite</button>
+        <button
+          type="button"
+          class="button"
+          on:click={() => toggleInvitesPopup(true)}>Invite</button>
         for your friends 🖖
       </div>
     {/if}
     {#if isCurrentUser}
-      <button type="button" class="logout" on:click={handleLogout}
+      <button type="button" class="button logout" on:click={handleLogout}
         >Logout</button>
     {:else if !isLoading && currentYear !== ALL_YEARS_STRING}
-      <button type="button" class="show-on-map" on:click={handleShowOnMapClick}
-        >Show on map</button>
+      <button
+        type="button"
+        class="button show-on-map"
+        on:click={handleShowOnMapClick}>Show on map</button>
     {/if}
   </div>
   {#if !!spotsList.length || isShowSpinner}
@@ -255,11 +259,11 @@ const handleShowOnMapClick = () => {
                 <div class="overlay">
                   <button
                     type="button"
-                    class="edit"
+                    class="button edit"
                     on:click={() => handleEdit(spot)} />
                   <button
                     type="button"
-                    class="delete"
+                    class="button delete"
                     on:click={() => handleDelete(spot)} />
                 </div>
               {/if}
@@ -280,9 +284,13 @@ const handleShowOnMapClick = () => {
     </div>
   {:else if !isShowSpinner}
     <div class="empty-state">
-      <img src="../../../images/empty.gif" alt="Empty" />
-      <p>Spot not</p>
-      <ButtonPrimary text="Add spot" type="button" on:click={handleAddSpot} />
+      <img src="../../../images/empty.jpg" alt="Empty" />
+      <p>
+        <button
+          type="button"
+          class="button empty-button"
+          on:click={handleAddSpot}>Make your mark</button> on society, not in society
+      </p>
     </div>
   {/if}
 </div>
@@ -344,20 +352,16 @@ const handleShowOnMapClick = () => {
   line-height: 17px;
 
   button {
-    padding: 0;
-    border: 0;
     background: none;
     color: var(--color-accent);
     font-size: 18px;
     font-weight: 600;
     line-height: 22px;
-    cursor: pointer;
   }
 }
 
 .logout {
   transition: opacity 0.3s;
-  border: 0;
   opacity: 0.4;
   background: none;
   color: var(--color-accent);
@@ -365,7 +369,6 @@ const handleShowOnMapClick = () => {
   font-weight: 900;
   line-height: 1.22;
   text-transform: uppercase;
-  cursor: pointer;
 
   &:hover {
     opacity: 1;
@@ -373,14 +376,11 @@ const handleShowOnMapClick = () => {
 }
 
 .show-on-map {
-  padding: 0;
-  border: 0;
   background: none;
   color: var(--color-accent);
   font-size: 18px;
   font-weight: 600;
   line-height: 22px;
-  cursor: pointer;
 }
 
 .empty-state {
@@ -388,7 +388,9 @@ const handleShowOnMapClick = () => {
   text-align: center;
 
   img {
-    width: 195px;
+    width: 100%;
+    max-width: 394px;
+    margin: auto;
   }
 
   p {
@@ -398,6 +400,16 @@ const handleShowOnMapClick = () => {
     font-weight: 900;
     line-height: 1.22;
     text-transform: uppercase;
+  }
+
+  .empty-button {
+    background: none;
+    color: var(--color-accent);
+    text-transform: inherit;
+
+    &:hover {
+      opacity: 0.7;
+    }
   }
 }
 
@@ -458,16 +470,14 @@ const handleShowOnMapClick = () => {
   }
 }
 
-.edit, .delete {
+.edit,
+.delete {
   width: 54px;
   height: 54px;
   margin: 12px;
-  border: 0;
-  border-radius: 2px;
   background-color: var(--color-accent);
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  cursor: pointer;
 }
 
 .edit {
@@ -515,5 +525,4 @@ const handleShowOnMapClick = () => {
     right: 0;
   }
 }
-
 </style>

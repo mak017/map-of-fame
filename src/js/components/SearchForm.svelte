@@ -1,6 +1,7 @@
 <script>
 import { selectedYear } from "./../store.js";
 import {
+  isMobile,
   loadFromLocalStorage,
   saveToLocalStorage,
 } from "./../utils/commonUtils.js";
@@ -8,7 +9,7 @@ import {
   requestSearchArtistsCrews,
   requestSearchSpots,
 } from "./../api/search.js";
-import { ERROR_MESSAGES } from "../constants";
+import { EMPTY_YEAR_STRING, ERROR_MESSAGES } from "../constants";
 import { permalink } from "../utils/mapUtils/permalink";
 import {
   isLighthouseActive,
@@ -25,6 +26,8 @@ import ListViewSvg from "./elements/icons/ListViewSvg.svelte";
 
 export let showSearch;
 
+const searchHistoryLimit = isMobile() ? 5 : 10;
+
 let artist = "";
 let crew = "";
 let artistError = "";
@@ -34,7 +37,8 @@ let fetchedList = [];
 let isFetched = false;
 // let isInProgress = false;
 let currentView = "list";
-let previousSearches = loadFromLocalStorage("prevSearchResults") || [];
+let savedPreviousSearches = loadFromLocalStorage("prevSearchResults") || [];
+let previousSearches = savedPreviousSearches.slice(0, searchHistoryLimit);
 
 $: isSubmitDisabled = !!artistError || !!crewError;
 
@@ -44,7 +48,7 @@ const saveCurrentSearch = (artist, crew) => {
       (result) => result.artist === artist && result.crew === crew
     )
   ) {
-    const updatedSearches = [...previousSearches, { artist, crew }];
+    const updatedSearches = [{ artist, crew }, ...previousSearches];
     saveToLocalStorage("prevSearchResults", updatedSearches);
   }
 };
@@ -59,7 +63,7 @@ const validateForm = () => {
 const handleArtistClick = (artist, crew) => {
   saveCurrentSearch(artist, crew);
   requestSearchSpots({ artist, crew }).then((response) => {
-    const { success, result, error } = response;
+    const { success, result } = response;
     if (success && result) {
       selectedArtist.set(artist);
       selectedCrew.set(crew);
@@ -67,7 +71,7 @@ const handleArtistClick = (artist, crew) => {
       isSearchResults.set(true);
       isLighthouseActive.set(false);
       if (result?.spots?.length) {
-        selectedYear.set(`${result.spots[0].year}`);
+        selectedYear.set(`${result.spots[0].year ?? EMPTY_YEAR_STRING}`);
       }
       permalink.update({ params: { artist, crew } });
       showSearch(false);
@@ -196,9 +200,10 @@ const fetchArtistsCrews = async () => {
 form {
   display: grid;
   grid-column-gap: 24px;
-  grid-template-columns: minmax(100px, 336px)
-  minmax(100px, 336px)
-  140px;
+  grid-template-columns:
+    minmax(100px, 336px)
+    minmax(100px, 336px)
+    140px;
   max-width: 860px;
 }
 
@@ -230,13 +235,13 @@ button {
   background: 0;
   cursor: pointer;
 
-  +button {
+  + button {
     margin-left: 12px;
   }
 }
 
 .list {
-  .pair-wrapper +.pair-wrapper {
+  .pair-wrapper + .pair-wrapper {
     margin-top: 20px;
   }
 
@@ -338,5 +343,4 @@ button {
     }
   }
 }
-
 </style>

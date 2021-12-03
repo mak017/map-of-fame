@@ -26,7 +26,7 @@ const token = loadFromLocalStorage("token") || null;
 const unsubscribeMarkersStore = markersStore.subscribe(
   (value) =>
     (searchYearsValue = value.years?.map((year) =>
-      year !== null ? year : EMPTY_YEAR_STRING
+      year !== null ? `${year}` : EMPTY_YEAR_STRING
     ))
 );
 
@@ -86,7 +86,7 @@ const handleClick = (year) => {
         class="year"
         class:active={`${date}` === $selectedYear}
         class:disabled={+date > getCurrentYear() ||
-          (searchYearsValue?.length && !searchYearsValue?.includes(+date))}
+          (searchYearsValue?.length && !searchYearsValue?.includes(date))}
         >{date}</a>
     </li>
   {/each}
