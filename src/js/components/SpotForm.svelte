@@ -1,5 +1,4 @@
 <script>
-import { onDestroy } from "svelte";
 import watermark from "watermarkjs";
 import { reduceFileSize } from "./../utils/imageUtils.js";
 import FormTelInput from "./elements/FormTelInput.svelte";
@@ -51,6 +50,8 @@ export let editSpotData = {};
 
 const isEditSpot = !!editSpotData.img;
 
+const isArtist = () => $userData.type === USER_TYPES.artist.toLowerCase();
+
 let year = editSpotData.year ? `${editSpotData.year}` : "";
 let prevYearValue = "";
 let selectedStatus = editSpotData.spotStatus || STATUSES.live;
@@ -64,11 +65,6 @@ let sprayPaintUsed;
 let link = editSpotData.link || "";
 let isSubmitDisabled = false;
 let isInProgress = false;
-let userTypeValue;
-let userName;
-let settingsValue;
-let sprayFirms;
-let categoriesList;
 let errors = {
   year: "",
   imageFile: "",
@@ -84,31 +80,14 @@ const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
 let artistCrewPairs =
   editArtistCrewPairs?.length > 0
     ? editArtistCrewPairs
-    : [{ artist: "", crew: "" }];
+    : [
+        {
+          artist: isArtist() ? $userData.name ?? "" : "",
+          crew: isArtist() ? $userData.crew ?? "" : "",
+        },
+      ];
 const currentYear = getCurrentYear();
 const token = loadFromLocalStorage("token") || null;
-
-const unsubscribeUserData = userData.subscribe((value) => {
-  userTypeValue = value.type;
-  userName = value.name;
-});
-
-const unsubscribeSettings = settings.subscribe(
-  (value) => (settingsValue = value)
-);
-
-const unsubscribeFirms = firms.subscribe((value) => (sprayFirms = value));
-
-const unsubscribeCategories = userCategories.subscribe(
-  (value) => (categoriesList = value)
-);
-
-onDestroy(() => {
-  unsubscribeUserData();
-  unsubscribeSettings();
-  unsubscribeFirms();
-  unsubscribeCategories();
-});
 
 const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
 
@@ -121,9 +100,9 @@ const getInitialCategory = (categories) =>
     : categories[0];
 
 const hasCategories = () =>
-  Array.isArray(categoriesList) && categoriesList.length;
+  Array.isArray($userCategories) && $userCategories.length;
 
-const hasSprays = () => Array.isArray(sprayFirms) && sprayFirms.length;
+const hasSprays = () => Array.isArray($firms) && $firms.length;
 
 if (!hasCategories()) {
   getUserCategories(token).then((response) => {
@@ -136,14 +115,10 @@ if (!hasCategories()) {
     }
   });
 } else {
-  selectedCategory = getInitialCategory(categoriesList);
+  selectedCategory = getInitialCategory($userCategories);
 }
 
-if (
-  !isEditSpot &&
-  userTypeValue === USER_TYPES.artist.toLowerCase() &&
-  !hasSprays()
-) {
+if (!isEditSpot && isArtist() && !hasSprays()) {
   getFirmsRequest(token).then((response) => {
     const { success, result } = response;
     if (success && result) {
@@ -162,7 +137,7 @@ const onChangeImage = () => {
       image.src = e.target.result;
       image.onload = function () {
         watermark([file])
-          .blob((img) => addWatermark(img, userName))
+          .blob((img) => addWatermark(img, $userData.name))
           .then((blob) => {
             imageBlob = new File([blob], "image.jpg");
             if (imageBlob.size > MAX_IMAGE_FILE_SIZE) {
@@ -194,8 +169,8 @@ const onChangeImage = () => {
 const validateYearInput = () => {
   if (!year) {
     errors.year = "";
-  } else if (!validateYear(year, settingsValue.yearStart)) {
-    errors.year = ERROR_MESSAGES.yearNotInRange(settingsValue.yearStart);
+  } else if (!validateYear(year, $settings.yearStart)) {
+    errors.year = ERROR_MESSAGES.yearNotInRange($settings.yearStart);
   } else {
     errors.year = "";
   }
@@ -207,7 +182,7 @@ const validateImage = () => {
 };
 
 const validateFirm = () => {
-  if (userTypeValue === USER_TYPES.artist.toLowerCase() && !isEditSpot) {
+  if (isArtist() && !isEditSpot) {
     errors.sprayPaintUsed = !sprayPaintUsed ? ERROR_MESSAGES.sprayEmpty : "";
   }
 };
@@ -394,7 +369,7 @@ const handleAddMoreClick = () => {
   <FormTelInput
     placeholder="Year"
     bind:value={year}
-    hint={`${settingsValue.yearStart} - ${currentYear}`}
+    hint={`${$settings.yearStart} - ${currentYear}`}
     on:input={handleYearChange}
     errorText={errors.year}
     wideOnMobile
@@ -446,8 +421,8 @@ const handleAddMoreClick = () => {
       addSpot={!isEditSpot} />
   </div>
   <div class="category">
-    {#if categoriesList.length > 0}
-      {#each categoriesList as category}
+    {#if $userCategories.length > 0}
+      {#each $userCategories as category}
         <FormRadioButton
           id={category.id}
           bind:group={selectedCategory}
@@ -459,10 +434,10 @@ const handleAddMoreClick = () => {
       <Spinner height={30} margin="5px 0 5.5px" />
     {/if}
   </div>
-  {#if userTypeValue === USER_TYPES.artist.toLowerCase() && !isEditSpot}
+  {#if isArtist() && !isEditSpot}
     <div class="spray" class:with-error={errors.sprayPaintUsed}>
       <CustomSelect
-        items={sprayFirms}
+        items={$firms}
         bind:selectedValue={sprayPaintUsed}
         on:select={handleSpraySelect}
         placeholder="Spray Paint Used"
