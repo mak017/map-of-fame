@@ -66,7 +66,6 @@ let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 let resetPasswordToken = getResetPasswordToken();
 let inviteData = getInviteData();
-let prevMarkersData = {};
 
 let map;
 let newMarker;

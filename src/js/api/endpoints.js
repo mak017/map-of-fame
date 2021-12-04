@@ -63,8 +63,13 @@ export const SETTINGS = () => `${ENDPOINT_ORIGIN}/api/settings`;
 
 export const SPOT = () => `${ENDPOINT_ORIGIN}/api/spot`;
 
-export const SPOT_YEAR = (year, geoRect) =>
-  `${ENDPOINT_ORIGIN}/api/spot?year=${year}${getGeoRect(geoRect)}`;
+export const SPOT_YEAR = (year, geoRect, categories) => {
+  let url = `${ENDPOINT_ORIGIN}/api/spot?year=${year}${getGeoRect(geoRect)}`;
+  if (categories) {
+    url = url.concat(`&category[]=${categories.join(",")}`);
+  }
+  return url;
+};
 
 export const SPOT_LIMIT_DAYS = (limitDays, geoRect) =>
   `${ENDPOINT_ORIGIN}/api/spot?limitDays=${limitDays}${getGeoRect(geoRect)}`;

@@ -58,15 +58,19 @@ export const initApp = () => {
 };
 
 export const requestSpots = (year) => {
+  const isRailwayMode = loadFromLocalStorage("railwayMode");
   let yearForRequest = year;
-  // isLoading.set(true);
-  if (year === EMPTY_YEAR_STRING) {
-    yearForRequest = "";
-  }
+  let categories = null;
   if (!bounds.length) {
     return null;
   }
-  return getSpots(yearForRequest, bounds).then((response) => {
+  if (year === EMPTY_YEAR_STRING) {
+    yearForRequest = "";
+  }
+  if (!isRailwayMode) {
+    categories = [1, 3, 4, 5, 6];
+  }
+  return getSpots(yearForRequest, bounds, categories).then((response) => {
     const { success, result } = response;
     if (success && result) {
       isSearchResults.set(false);
