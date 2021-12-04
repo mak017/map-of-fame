@@ -1,5 +1,5 @@
 <script>
-import { onDestroy, onMount } from "svelte";
+import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import { getAllCountries } from "./../../api/geo.js";
 import AutoComplete from "./../elements/AutoComplete.svelte";
@@ -35,19 +35,12 @@ let portfolioLink = "";
 let errors = { email: "", password: "", name: "", country: "", link: "" };
 let isSubmitDisabled = false;
 let isInProgress = false;
-let countries = [];
-
-const unsubscribeCountriesList = countriesList.subscribe(
-  (value) => (countries = value)
-);
 
 onMount(() => {
-  if (!countries || countries.length === 0) {
+  if (!$countriesList || $countriesList.length === 0) {
     getCountries();
   }
 });
-
-onDestroy(() => unsubscribeCountriesList());
 
 $: isSubmitDisabled =
   isInProgress ||
@@ -210,7 +203,7 @@ const handleBackClick = () => {
       {/if}
       <AutoComplete
         bind:selectedValue={country}
-        items={countries}
+        items={$countriesList}
         optionIdentifier={"name"}
         {getOptionLabel}
         placeholder="Country"

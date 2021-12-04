@@ -1,5 +1,4 @@
 <script>
-import { onDestroy } from "svelte";
 import { requestSearchSpots } from "./../api/search.js";
 import { markersStore, selectedUserProfileData } from "./../store.js";
 import {
@@ -20,19 +19,10 @@ export let yearEnd;
 export let additionalYears;
 export let isSearch;
 
-let searchYearsValue = [];
-const token = loadFromLocalStorage("token") || null;
-
-const unsubscribeMarkersStore = markersStore.subscribe(
-  (value) =>
-    (searchYearsValue = value.years?.map((year) =>
-      year !== null ? `${year}` : EMPTY_YEAR_STRING
-    ))
+let searchYears = $markersStore.years?.map((year) =>
+  year !== null ? `${year}` : EMPTY_YEAR_STRING
 );
-
-onDestroy(() => {
-  unsubscribeMarkersStore();
-});
+const token = loadFromLocalStorage("token") || null;
 
 const datesFilter = getDatesFilter(yearStart, yearEnd, additionalYears);
 
@@ -86,8 +76,7 @@ const handleClick = (year) => {
         class="year"
         class:active={`${date}` === $selectedYear}
         class:disabled={+date > getCurrentYear() ||
-          (searchYearsValue?.length && !searchYearsValue?.includes(date))}
-        >{date}</a>
+          (searchYears?.length && !searchYears?.includes(date))}>{date}</a>
     </li>
   {/each}
 </ol>

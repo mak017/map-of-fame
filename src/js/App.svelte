@@ -69,11 +69,6 @@ let inviteData = getInviteData();
 
 let map;
 let newMarker;
-let settingsValue;
-let markersData = {};
-let isSearch;
-let isLighthouse;
-let isInitializedValue;
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
@@ -86,26 +81,6 @@ const clearOpenedMarkerData = () => {
   openedMarkerData.set(null);
   permalink.update({ clearParams: ["marker"] });
 };
-
-const unsubscribeSettings = settings.subscribe(
-  (value) => (settingsValue = value)
-);
-
-const unsubscribeMarkers = markersStore.subscribe(
-  (value) => (markersData = value)
-);
-
-const unsubscribeIsSearchResults = isSearchResults.subscribe(
-  (value) => (isSearch = value)
-);
-
-const unsubscribeIsLighthouse = isLighthouseActive.subscribe(
-  (value) => (isLighthouse = value)
-);
-
-const unsubscribeIsInitialized = isInitialized.subscribe(
-  (value) => (isInitializedValue = value)
-);
 
 document.getElementById("initial-loader").remove();
 
@@ -122,8 +97,8 @@ adjustVhProp();
 
 initApp();
 
-$: if (markersData) {
-  placeMarkers(map, markersData, isSearch || $isShowOnMapMode);
+$: if ($markersStore) {
+  placeMarkers(map, $markersStore, $isSearchResults || $isShowOnMapMode);
 }
 
 if (resetPasswordToken) {
@@ -165,10 +140,7 @@ const initMap = (container) => {
 
   setLocation(map);
 
-  map.on(
-    "zoomend dragend",
-    () => isInitializedValue && handleMapViewChange(map)
-  );
+  map.on("zoomend dragend", () => $isInitialized && handleMapViewChange(map));
 
   return {
     destroy: () => {
@@ -214,7 +186,7 @@ const onAddSpotBtnClick = () => {
 };
 
 const onLighthouseClick = () => {
-  if (!isLighthouse) {
+  if (!$isLighthouseActive) {
     requestRecentSpots();
   } else {
     requestSpots($selectedYear);
@@ -245,10 +217,10 @@ const quitAddSpot = () => {
         on:click={() => showCalendar(true)}
         transition:fade>{$selectedYear}</button>
     {/if}
-    {#if !isAddSpotMode && !isSearch && !$isShowOnMapMode}
+    {#if !isAddSpotMode && !$isSearchResults && !$isShowOnMapMode}
       <button
         class="button button-square button-lighthouse"
-        class:active={isLighthouse}
+        class:active={$isLighthouseActive}
         disabled={+$selectedYear !== getCurrentYear()}
         on:click={onLighthouseClick}
         transition:fade>
@@ -267,7 +239,7 @@ const quitAddSpot = () => {
 
   <div class="main-top_right_wrapper">
     {#if !isAddSpotMode}
-      {#if !(isSearch && ($selectedArtist || $selectedCrew)) && !$selectedUserProfileData.name}
+      {#if !($isSearchResults && ($selectedArtist || $selectedCrew)) && !$selectedUserProfileData.name}
         <button
           class="button button-main_screen button-square button-open_search"
           on:click={() => showSearch(true)}
@@ -326,17 +298,17 @@ const quitAddSpot = () => {
       <Calendar
         {selectedYear}
         {showCalendar}
-        {isSearch}
-        yearStart={settingsValue.yearStart}
-        yearEnd={settingsValue.yearEnd}
-        additionalYears={settingsValue.additionalYears &&
-          JSON.parse(settingsValue.additionalYears)} />
+        isSearch={$isSearchResults}
+        yearStart={$settings.yearStart}
+        yearEnd={$settings.yearEnd}
+        additionalYears={$settings.additionalYears &&
+          JSON.parse($settings.additionalYears)} />
     </Modal>
   {/if}
 
   {#if showSearchModal}
     <Modal on:close={() => showSearch(false)} title="Search" withAd alwaysOnTop>
-      <SearchForm {showSearch} yearStart={settingsValue.yearStart} />
+      <SearchForm {showSearch} />
     </Modal>
   {/if}
 

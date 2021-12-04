@@ -40,7 +40,6 @@ import { permalink } from "../../utils/mapUtils/permalink";
 export let onAddSpotBtnClick;
 export let showUserProfile;
 
-let user;
 let currentYear;
 let currentSpot;
 let showEditModal = false;
@@ -60,14 +59,12 @@ const toggleEditModal = (toggle) => (showEditModal = toggle);
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 
-const unsubscribeUserData = userData.subscribe((value) => (user = value));
-
-const username = $selectedUserProfileData.name ?? user.name;
+const username = $selectedUserProfileData.name ?? $userData.name;
 const isCurrentUser =
-  !$selectedUserProfileData.id || $selectedUserProfileData.id === user.id;
+  !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
 
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
-  const userId = $selectedUserProfileData.id || user.id;
+  const userId = $selectedUserProfileData.id || $userData.id;
   isLoading = isNewFetch;
   isShowSpinner = true;
   getUserSpots(token, userId, { year, offset }).then((response) => {
@@ -107,10 +104,6 @@ onMount(() => {
       }
     });
   }
-});
-
-onDestroy(() => {
-  unsubscribeUserData();
 });
 
 $: spotsList = [...spotsList, ...newBatch];

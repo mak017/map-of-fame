@@ -1,9 +1,7 @@
 <script>
-import { onDestroy } from "svelte";
 import { feedbackOnSpot } from "../../api/spot";
 import { ERROR_MESSAGES } from "../../constants";
 import { userData } from "../../store";
-import { loadFromLocalStorage } from "../../utils/commonUtils";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormTextArea from "../elements/FormTextArea.svelte";
 import FormTextInput from "../elements/FormTextInput.svelte";
@@ -15,13 +13,7 @@ let cause = "";
 let description = "";
 let errors = { cause: "", description: "" };
 let isSubmitDisabled = false;
-let userId;
-
-const unsubscribeUserData = userData.subscribe((value) => (userId = value.id));
-
-onDestroy(() => {
-  unsubscribeUserData();
-});
+let userId = $userData.id;
 
 $: isSubmitDisabled = !!errors.cause || !!errors.description;
 
