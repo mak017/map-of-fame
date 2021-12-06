@@ -1,5 +1,4 @@
 <script>
-import { onDestroy } from "svelte";
 import { fade } from "svelte/transition";
 import L from "leaflet";
 import CloseCrossSvg from "./components/elements/icons/CloseCrossSvg.svelte";
@@ -84,15 +83,6 @@ const clearOpenedMarkerData = () => {
 
 document.getElementById("initial-loader").remove();
 
-onDestroy(() => {
-  unsubscribeSettings();
-  unsubscribeMarkers();
-  unsubscribeIsSearchResults();
-  unsubscribeIsLighthouse();
-  unsubscribeSelectedYear();
-  unsubscribeIsInitialized();
-});
-
 adjustVhProp();
 
 initApp();
@@ -159,6 +149,7 @@ const handleChangeModeClick = () => {
     isRailwayMode = false;
   }
   saveToLocalStorage("railwayMode", isRailwayMode);
+  !$isLighthouseActive ? requestSpots($selectedYear) : requestRecentSpots();
 };
 
 const onNewMarkerMoveEnd = () => {

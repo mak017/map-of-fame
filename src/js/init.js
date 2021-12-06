@@ -96,8 +96,13 @@ export const performSearch = ({ artist, crew, year, geoRect, isInitial }) => {
   });
 };
 
-export const requestRecentSpots = () =>
-  getRecentSpots(7, bounds).then((response) => {
+export const requestRecentSpots = () => {
+  const isRailwayMode = loadFromLocalStorage("railwayMode");
+  let categories = null;
+  if (!isRailwayMode) {
+    categories = [1, 3, 4, 5, 6];
+  }
+  getRecentSpots(7, bounds, categories).then((response) => {
     const { success, result } = response;
     if (success && result) {
       isSearchResults.set(false);
@@ -105,3 +110,4 @@ export const requestRecentSpots = () =>
       markersStore.set(result);
     }
   });
+};

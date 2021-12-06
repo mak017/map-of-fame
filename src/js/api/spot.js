@@ -17,10 +17,13 @@ export const getSpots = async (year, geoRect, categories) => {
   return result;
 };
 
-export const getRecentSpots = async (limitDays, geoRect) => {
-  const response = await fetch(SPOT_LIMIT_DAYS(limitDays, geoRect), {
-    method: "GET",
-  });
+export const getRecentSpots = async (limitDays, geoRect, categories) => {
+  const response = await fetch(
+    SPOT_LIMIT_DAYS(limitDays, geoRect, categories),
+    {
+      method: "GET",
+    }
+  );
   const result = await response.json();
   return result;
 };

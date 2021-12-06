@@ -3,6 +3,12 @@ import { ENDPOINT_ORIGIN } from "../constants";
 const getGeoRect = (geoRect) =>
   `&geoRect[0][lat]=${geoRect[0].lat}&geoRect[0][lng]=${geoRect[0].lng}&geoRect[1][lat]=${geoRect[1].lat}&geoRect[1][lng]=${geoRect[1].lng}`;
 
+const getCategories = (categories) =>
+  categories.reduce(
+    (acc, category, index) => acc.concat(`&category[${index}]=${category}`),
+    ""
+  );
+
 export const LOGIN = () => `${ENDPOINT_ORIGIN}/api/login`;
 
 export const VERIFY = () => `${ENDPOINT_ORIGIN}/api/verify`;
@@ -66,13 +72,20 @@ export const SPOT = () => `${ENDPOINT_ORIGIN}/api/spot`;
 export const SPOT_YEAR = (year, geoRect, categories) => {
   let url = `${ENDPOINT_ORIGIN}/api/spot?year=${year}${getGeoRect(geoRect)}`;
   if (categories) {
-    url = url.concat(`&category[]=${categories.join(",")}`);
+    url = url.concat(getCategories(categories));
   }
   return url;
 };
 
-export const SPOT_LIMIT_DAYS = (limitDays, geoRect) =>
-  `${ENDPOINT_ORIGIN}/api/spot?limitDays=${limitDays}${getGeoRect(geoRect)}`;
+export const SPOT_LIMIT_DAYS = (limitDays, geoRect, categories) => {
+  let url = `${ENDPOINT_ORIGIN}/api/spot?limitDays=${limitDays}${getGeoRect(
+    geoRect
+  )}`;
+  if (categories) {
+    url = url.concat(getCategories(categories));
+  }
+  return url;
+};
 
 export const SPOT_ID = (id) => `${ENDPOINT_ORIGIN}/api/spot/${id}`;
 
