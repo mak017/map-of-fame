@@ -34,6 +34,7 @@ export const AUTH_MODALS = {
   login: "login",
   registration: "registration",
   forgotPassword: "forgotPassword",
+  preRegistration: "preRegistration",
 };
 
 export const ERROR_MESSAGES = {
@@ -56,4 +57,5 @@ export const ERROR_MESSAGES = {
     `The ${field} must be at least ${min} characters`,
   artistEmpty: "The artist field is required when crew is not present",
   crewEmpty: "The crew field is required when artist is not present",
+  contactEmpty: "Please provide your contact information",
 };

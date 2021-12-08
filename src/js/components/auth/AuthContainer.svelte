@@ -5,6 +5,7 @@ import LoginForm from "./LoginForm.svelte";
 import RegistrationForm from "./RegistrationForm.svelte";
 import { isMobile } from "../../utils/commonUtils";
 import ForgotPassword from "./ForgotPassword.svelte";
+import PreRegistration from "./PreRegistration.svelte";
 
 export let showAuth;
 export let inviteData;
@@ -14,6 +15,7 @@ let currentModal = !inviteData ? AUTH_MODALS.login : AUTH_MODALS.registration;
 let isInitialLoad = true;
 let isMobileWidth = isMobile();
 let forgotPasswordEmailSent = false;
+let isPreRegistrationSuccess = false;
 
 const changeCurrentModal = (modal) => {
   currentModal = modal;
@@ -25,6 +27,8 @@ const handleResize = () => {
 };
 
 const setForgotPasswordEmailSent = (bool) => (forgotPasswordEmailSent = bool);
+
+const setIsPreRegistrationSuccess = () => (isPreRegistrationSuccess = true);
 </script>
 
 <svelte:window on:resize={handleResize} />
@@ -64,5 +68,16 @@ const setForgotPasswordEmailSent = (bool) => (forgotPasswordEmailSent = bool);
       {setForgotPasswordEmailSent}
       {forgotPasswordEmailSent}
       {isMobileWidth} />
+  </Modal>
+{/if}
+
+{#if currentModal === AUTH_MODALS.preRegistration}
+  <Modal
+    on:close={() => showAuth(false)}
+    title={!isPreRegistrationSuccess && "Pre 👀 Registration"}
+    noTransition>
+    <PreRegistration
+      {setIsPreRegistrationSuccess}
+      close={() => showAuth(false)} />
   </Modal>
 {/if}

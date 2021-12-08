@@ -100,7 +100,7 @@ const handleInputChange = (input) => {
     <span>Don't have an account?</span>
     <button
       type="button"
-      on:click={() => changeCurrentModal(AUTH_MODALS.registration)}
+      on:click={() => changeCurrentModal(AUTH_MODALS.preRegistration)}
       >Sign up</button>
   </div>
 </form>

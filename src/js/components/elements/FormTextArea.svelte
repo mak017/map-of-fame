@@ -7,6 +7,7 @@ export let height = 84;
 export let errorText = "";
 export let isResizable = false;
 export let addSpot = false;
+export let isFloatingLabel = true;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
@@ -20,7 +21,11 @@ if (
 }
 </script>
 
-<div class="container" class:error={!!errorText} class:add-spot={addSpot}>
+<div
+  class="container"
+  class:error={!!errorText}
+  class:add-spot={addSpot}
+  class:no-floating-label={!isFloatingLabel}>
   <textarea
     {placeholder}
     bind:value
@@ -28,7 +33,7 @@ if (
     on:blur={blur}
     on:input={input}
     class:resizable={isResizable} />
-  {#if placeholder}
+  {#if placeholder && isFloatingLabel}
     <div class="floating-label">{placeholder}</div>
   {/if}
   {#if errorText}
@@ -99,6 +104,12 @@ textarea {
 }
 .resizable {
   resize: both;
+}
+
+.no-floating-label {
+  textarea::placeholder {
+    opacity: 1;
+  }
 }
 
 @media (orientation: landscape) and (max-height: 960px) {

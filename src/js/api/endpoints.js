@@ -47,6 +47,10 @@ export const USER_SEARCH = (artist, crew) => {
 
 export const USER_CATEGORY = () => `${ENDPOINT_ORIGIN}/api/usercategory`;
 
+export const PRE_REG_EMAIL = () => `${ENDPOINT_ORIGIN}/api/prereg/email`;
+
+export const PRE_REG_CONTACT = () => `${ENDPOINT_ORIGIN}/api/prereg/contact`;
+
 export const FIRM = () => `${ENDPOINT_ORIGIN}/api/firm`;
 
 export const FIRM_ID = (id) => `${ENDPOINT_ORIGIN}/api/firm/${id}`;

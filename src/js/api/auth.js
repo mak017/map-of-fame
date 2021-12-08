@@ -5,6 +5,8 @@ import {
   USER_PASSWORD,
   USER_PASSWORD_TOKEN,
   INVITES_GET_FOR_USER,
+  PRE_REG_EMAIL,
+  PRE_REG_CONTACT,
 } from "./endpoints";
 
 export const loginRequest = async (email, password) => {
@@ -107,6 +109,30 @@ export const getInvites = async (token) => {
   const response = await fetch(INVITES_GET_FOR_USER(), {
     method: "GET",
     headers: { Authorization: bearer },
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const preRegEmail = async (email) => {
+  const data = new URLSearchParams();
+  data.append("email", email);
+  const response = await fetch(PRE_REG_EMAIL(), {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: data,
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const preRegContact = async (contact) => {
+  const data = new URLSearchParams();
+  data.append("contact", contact);
+  const response = await fetch(PRE_REG_CONTACT(), {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: data,
   });
   const result = await response.json();
   return result;

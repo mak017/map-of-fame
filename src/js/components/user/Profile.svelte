@@ -151,6 +151,10 @@ const onLoadMore = () => {
 };
 
 const onSubmitChanges = () => {
+  if (currentYear === ALL_YEARS_STRING) {
+    fetchSpots({ isNewFetch: true });
+    return;
+  }
   fetchSpots({ year: `${currentYear}`, isNewFetch: true });
 };
 
