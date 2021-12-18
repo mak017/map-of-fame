@@ -355,6 +355,7 @@ const quitAddSpot = () => {
 .button {
   &-main_screen {
     background: var(--color-light);
+    color: var(--color-dark);
   }
 
   &-square {
