@@ -67,6 +67,7 @@ h2 {
   }
   .add-spot {
     width: 100%;
+    padding-bottom: 0;
   }
   .close-mob {
     display: block;
@@ -79,6 +80,9 @@ h2 {
     border: 0;
     background: none;
     cursor: pointer;
+  }
+  .form-wrapper {
+    padding-bottom: 16px;
   }
 }
 

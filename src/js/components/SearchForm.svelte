@@ -165,9 +165,11 @@ const fetchArtistsCrews = async () => {
         </div>
       {:else}
         <div class="empty">
-          <img
-            src="../../images/nothing-found.jpg"
-            alt="Artist/Crew Not Found" />
+          <div class="img-wrapper">
+            <img
+              src="../../images/nothing-found.jpg"
+              alt="Artist/Crew Not Found" />
+          </div>
           <div class="text1">Artist/Crew Not Found</div>
           <div class="text2">{currentSearchFor}</div>
         </div>
@@ -256,7 +258,7 @@ button {
   display: grid;
   grid-auto-rows: 160px;
   grid-gap: 4vmin;
-  grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
   justify-content: space-between;
   width: 100%;
 
@@ -296,6 +298,21 @@ button {
   align-items: center;
   justify-content: center;
   color: var(--color-dark);
+
+  .img-wrapper {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-top: 38.839%;
+
+    > img {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      height: auto;
+      transform: translateX(-50%);
+    }
+  }
 
   .text1 {
     margin: 20px 0;

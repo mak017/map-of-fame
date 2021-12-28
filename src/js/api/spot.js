@@ -127,15 +127,15 @@ export const updateSpot = async (
   const formData = new FormData();
   formData.append("spot_status", spotStatus);
   formData.append("category_id", categoryId);
-  if (year) formData.append("year", year);
+  formData.append("year", year);
   if (img) formData.append("img", img);
-  if (videoLink) formData.append("video_link", videoLink);
-  if (description) formData.append("description", description);
-  if (link) formData.append("link", link);
+  formData.append("video_link", videoLink);
+  formData.append("description", description);
+  formData.append("link", link);
   if (artistsCrews?.length) {
     artistsCrews.forEach((item, index) => {
       const { artist, crew } = item;
-      if (artist || crew) {
+      if (artist || crew || (artistsCrews.length === 1 && index === 0)) {
         formData.append(`artist_crew[${index}][artist]`, artist);
         formData.append(`artist_crew[${index}][crew]`, crew);
       }

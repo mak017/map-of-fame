@@ -86,7 +86,7 @@ input {
 .with-label {
   padding-top: 0;
 
-  >span {
+  > span {
     font-size: 16px;
     line-height: 1.22;
   }
@@ -104,7 +104,9 @@ input {
 
 label:not(.with-label) {
   input {
-    &:placeholder-shown +.floating-label {
+    padding: 4px 0 8px;
+
+    &:placeholder-shown + .floating-label {
       overflow: hidden;
       background: transparent;
       font-size: 16px;
@@ -113,8 +115,8 @@ label:not(.with-label) {
       cursor: text;
     }
 
-    &:not(:placeholder-shown) +.floating-label {
-      transform: translateY(-13px);
+    &:not(:placeholder-shown) + .floating-label {
+      transform: translateY(-16px);
       background: var(--color-light);
       color: rgba(#393940, 0.6);
       font-size: 13px;
@@ -182,14 +184,25 @@ label:not(.with-label) {
   input {
     line-height: 27px;
   }
+
+  &:not(.with-label) {
+    input {
+      padding: 1px 0 11px;
+    }
+  }
 }
 
 .search {
   margin-bottom: 0;
-
-  input {
-    width: 336px;
-    line-height: 25px;
+  &:not(.with-label) {
+    input {
+      width: 336px;
+      padding: 2px 0 10px;
+      line-height: 25px;
+      &:not(:placeholder-shown) + .floating-label {
+        transform: translateY(-19px);
+      }
+    }
   }
 }
 
@@ -226,9 +239,14 @@ label:not(.with-label) {
   }
 
   .search {
-    input {
-      width: 100%;
-      max-width: 530px;
+    margin-bottom: 20px;
+    &:not(.with-label) {
+      input {
+        width: 100%;
+        max-width: 530px;
+        padding: 6px 0;
+        line-height: 20px;
+      }
     }
   }
 }
@@ -253,7 +271,7 @@ label:not(.with-label) {
     }
 
     &.with-label {
-      >span {
+      > span {
         font-size: 14px;
       }
 
@@ -271,5 +289,4 @@ label:not(.with-label) {
     }
   }
 }
-
 </style>

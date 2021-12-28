@@ -39,7 +39,7 @@ label {
 input {
   width: 530px;
   max-width: 100%;
-  padding: 6px 0;
+  padding: 4px 0 8px;
   border: 0;
   border-bottom: 1px solid var(--color-dark);
   color: var(--color-dark);
@@ -65,7 +65,7 @@ input {
     cursor: text;
   }
   &:not(:placeholder-shown) + .floating-label {
-    transform: translateY(-13px);
+    transform: translateY(-16px);
     background: var(--color-light);
     color: rgba(#393940, 0.6);
     font-size: 13px;

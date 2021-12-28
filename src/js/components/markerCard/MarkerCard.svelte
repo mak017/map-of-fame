@@ -1,4 +1,5 @@
 <script>
+import { EMPTY_YEAR_STRING } from "./../../constants.js";
 import { embedVideoCodeFromBasicUrl } from "../../utils/commonUtils";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import Popup from "../Popup.svelte";
@@ -91,7 +92,7 @@ const getArtistsString = () => {
   </div>
   <div class="img"><img src={img.src} alt={img.title} /></div>
   <div class="bottom">
-    <div class="year">{year ?? ""}</div>
+    <div class="year">{year ?? EMPTY_YEAR_STRING}</div>
     <div class="show-on-map-wrapper">
       {#if $shouldDisplayShowOnMap}
         <button
@@ -213,7 +214,7 @@ const getArtistsString = () => {
 .img {
   margin-bottom: 24px;
 
-  >img {
+  > img {
     margin: auto;
   }
 }
@@ -250,11 +251,12 @@ const getArtistsString = () => {
   display: flex;
   justify-content: flex-end;
 
-  div +div {
+  div + div {
     margin-left: 12px;
   }
 
-  button, a {
+  button,
+  a {
     display: block;
     width: 40px;
     height: 40px;
@@ -337,5 +339,4 @@ const getArtistsString = () => {
     margin-bottom: 40px;
   }
 }
-
 </style>

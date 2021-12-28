@@ -30,7 +30,7 @@ const onButtonClick = (link) => copyToClipboard(link);
         type="button"
         text={!invite.isDisabled ? "Copy" : "Used"}
         className={`wide${invite.isDisabled ? " grey" : ""}`}
-        on:click={() => onButtonClick(invite)} />
+        on:click={() => onButtonClick(invite.link)} />
     </div>
   </div>
 {/each}
