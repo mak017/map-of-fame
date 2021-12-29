@@ -267,13 +267,15 @@ const quitAddSpot = () => {
     {/if}
   </div>
 
-  <button
-    class="button button-main_screen button-square button-switch_mode"
-    class:active={isRailwayMode}
-    on:click={handleChangeModeClick}
-    title="Highlight railways">
-    <RailroadSvg isLight={isRailwayMode} />
-  </button>
+  {#if !$isSearchResults}
+    <button
+      class="button button-main_screen button-square button-switch_mode"
+      class:active={isRailwayMode}
+      on:click={handleChangeModeClick}
+      title="Highlight railways">
+      <RailroadSvg isLight={isRailwayMode} />
+    </button>
+  {/if}
 
   {#if $isLoggedIn}
     <AddSpot
