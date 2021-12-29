@@ -27,6 +27,7 @@ import ListViewSvg from "./elements/icons/ListViewSvg.svelte";
 export let showSearch;
 
 const searchHistoryLimit = isMobile() ? 5 : 10;
+const EMPTY_ARTIST_OR_CREW = "---";
 
 let artist = "";
 let crew = "";
@@ -159,8 +160,8 @@ const fetchArtistsCrews = async () => {
               alt={`${pair.artist ?? ""} ${pair.crew ?? ""}`} />
           {/if}
           <div class="pair">
-            <div class="artist">{pair.artist ?? ""}</div>
-            <div class="crew">{pair.crew ?? ""}</div>
+            <div class="artist">{pair.artist ?? EMPTY_ARTIST_OR_CREW}</div>
+            <div class="crew">{pair.crew ?? EMPTY_ARTIST_OR_CREW}</div>
           </div>
         </div>
       {:else}
@@ -189,8 +190,8 @@ const fetchArtistsCrews = async () => {
           class="pair-wrapper"
           on:click={() => handleArtistClick(pair.artist, pair.crew)}>
           <div class="pair">
-            <div class="artist">{pair.artist ?? ""}</div>
-            <div class="crew">{pair.crew ?? ""}</div>
+            <div class="artist">{pair.artist ?? EMPTY_ARTIST_OR_CREW}</div>
+            <div class="crew">{pair.crew ?? EMPTY_ARTIST_OR_CREW}</div>
           </div>
         </div>
       {/each}
@@ -202,10 +203,7 @@ const fetchArtistsCrews = async () => {
 form {
   display: grid;
   grid-column-gap: 24px;
-  grid-template-columns:
-    minmax(100px, 336px)
-    minmax(100px, 336px)
-    140px;
+  grid-template-columns: minmax(100px, 336px) minmax(100px, 336px) 140px;
   max-width: 860px;
 }
 

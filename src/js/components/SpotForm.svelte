@@ -362,8 +362,10 @@ const handleAddMoreClick = () => {
       </div>
     {/each}
     {#if artistCrewPairs.length < 5}
-      <button type="button" class="btn-add-more" on:click={handleAddMoreClick}
-        >Add more</button>
+      <button
+        type="button"
+        class="button btn-add-more"
+        on:click={handleAddMoreClick}>Add more</button>
     {/if}
   </div>
   <FormTelInput
@@ -495,13 +497,11 @@ form {
   display: inline-flex;
   margin-left: auto;
   padding: 4px 0;
-  border: 0;
   background-color: var(--color-light);
   color: var(--color-accent);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1.22;
-  cursor: pointer;
 }
 
 .status,

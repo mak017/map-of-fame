@@ -208,39 +208,42 @@ const handleShowOnMapClick = () => {
 </script>
 
 <div class="container" style={showEditModal ? "display: none" : ""}>
+  {#if invites.length}
+    <div class="invites">
+      You have
+      <button
+        type="button"
+        class="button"
+        on:click={() => toggleInvitesPopup(true)}>Invite</button>
+      for your friends 🖖
+    </div>
+  {/if}
   <div class="top">
     {#if username}
       <div class="username">{username}</div>
     {/if}
-    {#if invites.length}
-      <div class="invites">
-        You have
-        <button
-          type="button"
-          class="button"
-          on:click={() => toggleInvitesPopup(true)}>Invite</button>
-        for your friends 🖖
-      </div>
-    {/if}
     {#if isCurrentUser}
       <button type="button" class="button logout" on:click={handleLogout}
         >Logout</button>
-    {:else if !isLoading && currentYear !== ALL_YEARS_STRING}
-      <button
-        type="button"
-        class="button show-on-map"
-        on:click={handleShowOnMapClick}>Show on map</button>
     {/if}
   </div>
   {#if !!spotsList.length || isShowSpinner}
     <div class="data">
       {#if !!spotsList.length}
-        <div class="year-select">
-          <CustomSelect
-            items={yearsToApply}
-            selectedValue={{ value: currentYear, label: currentYear }}
-            isYear
-            on:select={handleYearSelect} />
+        <div class="data-top">
+          <div class="year-select">
+            <CustomSelect
+              items={yearsToApply}
+              selectedValue={{ value: currentYear, label: currentYear }}
+              isYear
+              on:select={handleYearSelect} />
+          </div>
+          {#if currentYear !== ALL_YEARS_STRING}
+            <button
+              type="button"
+              class="button show-on-map"
+              on:click={handleShowOnMapClick}>Show on map</button>
+          {/if}
         </div>
       {/if}
       {#if !isLoading}
@@ -332,7 +335,7 @@ const handleShowOnMapClick = () => {
   display: flex;
   align-self: stretch;
   justify-content: space-between;
-  margin-bottom: 36px;
+  margin-bottom: 6px;
 }
 
 .username {
@@ -344,6 +347,7 @@ const handleShowOnMapClick = () => {
 }
 
 .invites {
+  margin-bottom: 26px;
   color: var(--color-dark);
   font-size: 14px;
   line-height: 17px;
@@ -413,12 +417,17 @@ const handleShowOnMapClick = () => {
 .year-select {
   width: 114px;
   height: 40px;
-  margin-bottom: 16px;
 }
 
 .data {
   flex: 1 0 auto;
   width: 100%;
+
+  &-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
 }
 
 .spots {
@@ -514,12 +523,6 @@ const handleShowOnMapClick = () => {
     margin: -30px 0 52px;
     background: url(../../../images/logout.svg) 50% 50%/27px 27px no-repeat;
     font-size: 0;
-  }
-
-  .show-on-map {
-    position: absolute;
-    top: 54px;
-    right: 0;
   }
 }
 </style>

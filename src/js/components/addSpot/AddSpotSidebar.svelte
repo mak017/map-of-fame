@@ -37,21 +37,23 @@ export let marker;
 
 h2 {
   display: flex;
-  align-items: center;
-  justify-content: center;
   position: absolute;
   top: 0;
   right: 100%;
+  align-items: center;
+  justify-content: center;
   width: 208px;
   height: 100px;
   padding: 0 20px;
-  background: #fff;
+  background: var(--color-light);
+  filter: brightness(0.9843);
   color: var(--color-dark);
   font-size: 24px;
   font-weight: 900;
   line-height: 1.22;
   text-transform: uppercase;
 }
+
 .form-wrapper {
   padding: 0 20px;
   overflow-y: auto;
@@ -65,10 +67,12 @@ h2 {
     height: auto;
     margin-bottom: 12px;
   }
+
   .add-spot {
     width: 100%;
     padding-bottom: 0;
   }
+
   .close-mob {
     display: block;
     position: absolute;
@@ -81,6 +85,7 @@ h2 {
     background: none;
     cursor: pointer;
   }
+
   .form-wrapper {
     padding-bottom: 16px;
   }
@@ -91,4 +96,5 @@ h2 {
     padding-top: 16px;
   }
 }
+
 </style>

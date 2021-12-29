@@ -117,7 +117,7 @@ const getArtistsString = () => {
   </div>
   <div class="artist-area">
     <div class="subtitle">Artist</div>
-    <div class="title">{getArtistsString()}</div>
+    <div class="title artist">{getArtistsString()}</div>
   </div>
   {#if description}
     <div class="description">{description}</div>
@@ -202,19 +202,18 @@ const getArtistsString = () => {
 
   .buffed {
     color: var(--color-error);
-
     text-decoration-line: line-through;
   }
 
   .live {
-    color: var(--color-accent);
+    color: var(--color-success);
   }
 }
 
 .img {
   margin-bottom: 24px;
 
-  > img {
+  >img {
     margin: auto;
   }
 }
@@ -251,12 +250,11 @@ const getArtistsString = () => {
   display: flex;
   justify-content: flex-end;
 
-  div + div {
+  div +div {
     margin-left: 12px;
   }
 
-  button,
-  a {
+  button, a {
     display: block;
     width: 40px;
     height: 40px;
@@ -286,13 +284,16 @@ const getArtistsString = () => {
   text-align: center;
 }
 
+.artist {
+  font-size: 18px;
+}
+
 .description {
   margin-bottom: 24px;
   color: var(--color-dark);
   font-size: 18px;
   line-height: 1.22;
   white-space: pre-line;
-
   word-break: break-word;
 }
 
@@ -339,4 +340,5 @@ const getArtistsString = () => {
     margin-bottom: 40px;
   }
 }
+
 </style>
