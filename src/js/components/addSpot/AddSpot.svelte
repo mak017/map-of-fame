@@ -14,14 +14,16 @@ export let onCancel;
   <button
     class="button button-add_spot"
     on:click={onAddSpotBtnClick}
-    transition:fade>Add Spot</button>
+    transition:fade={{ duration: 200 }}>Add Spot</button>
 {:else}
   <div class="main-top_right_wrapper">
     <ButtonPrimary on:click={onCancel} text="Cancel" className="add-spot" />
   </div>
 {/if}
 {#if !isAddSpotSidebarVisible && isAddSpotMode}
-  <div class="drag-to-map" transition:fade>Drag pin to map</div>
+  <div class="drag-to-map" transition:fade={{ duration: 200 }}>
+    Drag pin to map
+  </div>
 {/if}
 {#if isAddSpotSidebarVisible}
   <AddSpotSidebar {onCancel} marker={newMarker} />

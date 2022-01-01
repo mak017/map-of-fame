@@ -64,7 +64,10 @@ const handleInputChange = () => {
 };
 </script>
 
-<form on:submit|preventDefault={handleSubmit} novalidate transition:fade>
+<form
+  on:submit|preventDefault={handleSubmit}
+  novalidate
+  transition:fade={{ duration: 200 }}>
   {#if forgotPasswordEmailSent && !isMobileWidth}
     <p>Letter was sent to the email</p>
   {/if}

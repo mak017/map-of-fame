@@ -96,7 +96,7 @@ const submitContact = () => {
 {/if}
 
 {#if screen === screens.SUCCESS}
-  <div class="success" in:fade={{ delay: 500 }}>
+  <div class="success" in:fade={{ delay: 500, duration: 200 }}>
     <div class="thumb">👍</div>
     <div class="button-wrapper">
       <ButtonPrimary text="Back to map" type="button" on:click={close} />

@@ -105,33 +105,34 @@ const fetchArtistsCrews = async () => {
 };
 </script>
 
-<form on:submit|preventDefault={fetchArtistsCrews}>
-  <div class="input-wrapper">
-    <FormTextInput
-      placeholder="Artist"
-      bind:value={artist}
-      on:input={handleInputChange}
-      errorText={artistError}
-      search={true} />
-  </div>
-  <div class="input-wrapper">
-    <FormTextInput
-      placeholder="Crew"
-      bind:value={crew}
-      on:input={handleInputChange}
-      errorText={crewError}
-      search={true} />
-  </div>
-  <div class="button-wrapper">
-    <ButtonPrimary
-      type="submit"
-      isDisabled={isSubmitDisabled}
-      text="Search"
-      className="wide-on-mobile search" />
-  </div>
-</form>
-{#if isFetched}
-  <div class="content">
+<div class="container">
+  <div class="logo" />
+  <form on:submit|preventDefault={fetchArtistsCrews}>
+    <div class="input-wrapper">
+      <FormTextInput
+        placeholder="Artist"
+        bind:value={artist}
+        on:input={handleInputChange}
+        errorText={artistError}
+        search={true} />
+    </div>
+    <div class="input-wrapper">
+      <FormTextInput
+        placeholder="Crew"
+        bind:value={crew}
+        on:input={handleInputChange}
+        errorText={crewError}
+        search={true} />
+    </div>
+    <div class="button-wrapper">
+      <ButtonPrimary
+        type="submit"
+        isDisabled={isSubmitDisabled}
+        text="Search"
+        className="wide-on-mobile search" />
+    </div>
+  </form>
+  {#if isFetched}
     {#if fetchedList.length}
       <div class="content-caption">
         <div class="result">Result: {fetchedList.length}</div>
@@ -149,74 +150,103 @@ const fetchArtistsCrews = async () => {
         </div>
       </div>
     {/if}
-    <div class="search-result {currentView}">
-      {#each fetchedList as pair}
-        <div
-          class="pair-wrapper"
-          on:click={() => handleArtistClick(pair.artist, pair.crew)}>
-          {#if currentView === "grid"}
-            <img
-              src={pair.image}
-              alt={`${pair.artist ?? ""} ${pair.crew ?? ""}`} />
-          {/if}
-          <div class="pair">
-            <div class="artist">{pair.artist ?? EMPTY_ARTIST_OR_CREW}</div>
-            <div class="crew">{pair.crew ?? EMPTY_ARTIST_OR_CREW}</div>
+    <div class="content">
+      <div class="search-result {currentView}">
+        {#each fetchedList as pair}
+          <div
+            class="pair-wrapper"
+            on:click={() => handleArtistClick(pair.artist, pair.crew)}>
+            {#if currentView === "grid"}
+              <img
+                src={pair.image}
+                alt={`${pair.artist ?? ""} ${pair.crew ?? ""}`} />
+            {/if}
+            <div class="pair">
+              <div class="artist">{pair.artist ?? EMPTY_ARTIST_OR_CREW}</div>
+              <div class="crew">{pair.crew ?? EMPTY_ARTIST_OR_CREW}</div>
+            </div>
           </div>
-        </div>
-      {:else}
-        <div class="empty">
-          <div class="img-wrapper">
-            <img
-              src="../../images/nothing-found.jpg"
-              alt="Artist/Crew Not Found" />
+        {:else}
+          <div class="empty">
+            <div class="img-wrapper">
+              <img
+                src="../../images/nothing-found.jpg"
+                alt="Artist/Crew Not Found" />
+            </div>
+            <div class="text1">Artist/Crew Not Found</div>
+            <div class="text2">{currentSearchFor}</div>
           </div>
-          <div class="text1">Artist/Crew Not Found</div>
-          <div class="text2">{currentSearchFor}</div>
-        </div>
-      {/each}
-    </div>
-  </div>
-{:else}
-  <div class="content">
-    <div class="content-caption">
-      <div class="history-icon">
-        <img src="../../images/history.svg" alt="Search History icon" />
+        {/each}
       </div>
     </div>
-    <div class="previous-searches list">
-      {#each previousSearches as pair}
-        <div
-          class="pair-wrapper"
-          on:click={() => handleArtistClick(pair.artist, pair.crew)}>
-          <div class="pair">
-            <div class="artist">{pair.artist ?? EMPTY_ARTIST_OR_CREW}</div>
-            <div class="crew">{pair.crew ?? EMPTY_ARTIST_OR_CREW}</div>
-          </div>
+  {:else}
+    <div class="content">
+      <div class="content-caption">
+        <div class="history-icon">
+          <img src="../../images/history.svg" alt="Search History icon" />
         </div>
-      {/each}
+      </div>
+      <div class="previous-searches list">
+        {#each previousSearches as pair}
+          <div
+            class="pair-wrapper"
+            on:click={() => handleArtistClick(pair.artist, pair.crew)}>
+            <div class="pair">
+              <div class="artist">{pair.artist ?? EMPTY_ARTIST_OR_CREW}</div>
+              <div class="crew">{pair.crew ?? EMPTY_ARTIST_OR_CREW}</div>
+            </div>
+          </div>
+        {/each}
+      </div>
     </div>
-  </div>
-{/if}
+  {/if}
+</div>
 
 <style lang="scss">
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 100%;
+  max-width: 940px;
+}
+
+.logo {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: max(calc((100vw - 940px) / 2), 32px);
+  z-index: 1;
+  width: 57px;
+  height: 76px;
+  background: var(--color-accent) url(../../images/logo.svg) 50% 50%/43px 56px
+    no-repeat;
+  border-radius: 0 0 2px 2px;
+}
+
 form {
   display: grid;
+  position: sticky;
+  top: -30px;
   grid-column-gap: 24px;
   grid-template-columns: minmax(100px, 336px) minmax(100px, 336px) 140px;
-  max-width: 860px;
+  padding: 15px 0 0 80px;
+  background: var(--color-light);
+}
+
+.content-caption {
+  display: flex;
+  position: sticky;
+  top: 31px;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 24px;
+  padding: 25px 0 0 80px;
+  background: var(--color-light);
 }
 
 .content {
   width: 100%;
-  max-width: 860px;
-  margin-top: 25px;
-
-  &-caption {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 24px;
-  }
 }
 
 .result {
@@ -241,6 +271,8 @@ button {
 }
 
 .list {
+  padding-left: 80px;
+
   .pair-wrapper + .pair-wrapper {
     margin-top: 20px;
   }
@@ -256,7 +288,7 @@ button {
   display: grid;
   grid-auto-rows: 160px;
   grid-gap: 4vmin;
-  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
   justify-content: space-between;
   width: 100%;
 
@@ -288,6 +320,12 @@ button {
   font-size: 24px;
   font-weight: 900;
   line-height: 29px;
+}
+
+.artist,
+.crew {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .empty {
@@ -336,11 +374,16 @@ button {
 }
 
 @media (max-width: 767px) {
+  .logo {
+    display: none;
+  }
   form {
     display: flex;
+    position: static;
     flex-direction: column;
     width: 100%;
     max-width: 530px;
+    padding: 0;
   }
 
   .input-wrapper {
@@ -352,7 +395,13 @@ button {
     margin: 20px 0 0;
   }
 
+  .content-caption {
+    top: 8px;
+    padding-left: 0;
+  }
+
   .list {
+    padding-left: 0;
     .pair {
       grid-template-columns: minmax(100px, 336px) minmax(100px, 336px);
     }

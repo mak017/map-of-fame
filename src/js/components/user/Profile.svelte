@@ -254,7 +254,7 @@ const handleShowOnMapClick = () => {
                 loading="lazy"
                 src={spot.thumbnail}
                 alt={spot.title || `${username}'s art`}
-                in:fade />
+                in:fade={{ duration: 200 }} />
               {#if isCurrentUser}
                 <div class="overlay">
                   <button

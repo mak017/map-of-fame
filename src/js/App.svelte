@@ -43,6 +43,7 @@ import {
   getCurrentYear,
   getInviteData,
   getResetPasswordToken,
+  isMobile,
   loadFromLocalStorage,
   saveToLocalStorage,
 } from "./utils/commonUtils";
@@ -206,7 +207,7 @@ const quitAddSpot = () => {
       <button
         class="button button-main_screen button-open_calendar"
         on:click={() => showCalendar(true)}
-        transition:fade>{$selectedYear}</button>
+        transition:fade={{ duration: 200 }}>{$selectedYear}</button>
     {/if}
     {#if !isAddSpotMode && !$isSearchResults && !$isShowOnMapMode}
       <button
@@ -214,7 +215,7 @@ const quitAddSpot = () => {
         class:active={$isLighthouseActive}
         disabled={+$selectedYear !== getCurrentYear()}
         on:click={onLighthouseClick}
-        transition:fade>
+        transition:fade={{ duration: 200 }}>
         <svg
           width="9"
           height="15"
@@ -234,12 +235,12 @@ const quitAddSpot = () => {
         <button
           class="button button-main_screen button-square button-open_search"
           on:click={() => showSearch(true)}
-          in:fade />
+          in:fade={{ duration: 200 }} />
         {#if $isLoggedIn}
           <button
             class="button button-main_screen button-square button-burger"
             on:click={() => showUserProfile(true)}
-            in:fade />
+            in:fade={{ duration: 200 }} />
         {:else}
           <button
             class="button button-main_screen button-square button-open_login"
@@ -300,7 +301,13 @@ const quitAddSpot = () => {
   {/if}
 
   {#if showSearchModal}
-    <Modal on:close={() => showSearch(false)} title="Search" withAd alwaysOnTop>
+    <Modal
+      on:close={() => showSearch(false)}
+      title="Search"
+      withAd
+      alwaysOnTop
+      noLogo={!isMobile()}
+      stickyHeaderOnMobile>
       <SearchForm {showSearch} />
     </Modal>
   {/if}

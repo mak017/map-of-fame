@@ -1,6 +1,6 @@
 <script>
 import { createEventDispatcher } from "svelte";
-import { fade } from "svelte/transition";
+import { fade, slide } from "svelte/transition";
 import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
 import { isMobile } from "../utils/commonUtils.js";
 
@@ -12,11 +12,14 @@ export let accentTitle = false;
 export let noClose = false;
 export let autoMargin = false;
 export let alwaysOnTop = false;
+export let stickyHeaderOnMobile = false;
 export let banner = {};
 
 const dispatch = createEventDispatcher();
 const close = () => dispatch("close");
 let isMobileWidth = isMobile();
+let modalRef;
+let scrollTop = 0;
 
 const handleKeyDown = (e) => {
   if (e.key === "Escape" && !noClose) {
@@ -38,17 +41,32 @@ const handleResize = () => {
   class:accentTitle
   class:autoMargin
   class:alwaysOnTop
+  class:stickyHeaderOnMobile={stickyHeaderOnMobile && scrollTop > 290}
   role="dialog"
   aria-modal="true"
   transition:fade={{ duration: !noTransition ? 200 : 0 }}
   on:keydown|stopPropagation={handleKeyDown}
+  on:scroll={() => (scrollTop = modalRef.scrollTop)}
+  bind:this={modalRef}
   tabindex="-1">
   {#if !noClose}
     <button class="close" on:click={close}><CloseCrossSvg /></button>
   {/if}
   {#if !noLogo}<span class="logo" />{/if}
   {#if title}
-    <h2 transition:fade>{title}</h2>
+    <h2 transition:fade={{ duration: 200 }}>{title}</h2>
+    {#if stickyHeaderOnMobile && scrollTop > 290}
+      <div
+        class="sticky-header"
+        on:click={() => modalRef.scrollTo({ top: 0, behavior: "smooth" })}
+        transition:slide={{ duration: 200 }}>
+        <div class="back" />
+        {title}
+        {#if !noClose}
+          <button class="close" on:click={close}><CloseCrossSvg /></button>
+        {/if}
+      </div>
+    {/if}
   {/if}
   <slot />
   {#if withAd && banner.url}
@@ -93,7 +111,7 @@ const handleResize = () => {
   height: 34px;
   padding: 0;
   border: 0;
-  background: none;
+  background: inherit;
   cursor: pointer;
 }
 
@@ -146,6 +164,27 @@ h2 {
   }
 }
 
+.sticky-header {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  padding: 26px 10px 10px;
+  background-color: var(--color-light);
+  color: var(--color-accent);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.back {
+  width: 16px;
+  height: 16px;
+  background: url(../../images/back.svg) 50% 50% / contain no-repeat;
+}
+
 @media (max-width: 767px) {
   .modal {
     padding: 50px 12px 100px;
@@ -167,6 +206,12 @@ h2 {
   .autoMargin {
     h2 {
       margin-top: 64px;
+    }
+  }
+  .stickyHeaderOnMobile {
+    .sticky-header {
+      display: flex;
+      align-items: center;
     }
   }
 }

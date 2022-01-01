@@ -15,7 +15,7 @@ const dispatch = createEventDispatcher();
   class={`button${className ? ` ${className}` : ""}`}
   disabled={isDisabled}
   on:click={() => dispatch("click")}
-  in:fade
+  in:fade={{ duration: 200 }}
   data-text={text}>{text}</button>
 
 <style lang="scss">

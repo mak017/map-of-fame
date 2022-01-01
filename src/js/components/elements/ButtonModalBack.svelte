@@ -12,8 +12,8 @@ const dispatch = createEventDispatcher();
   type="button"
   class="back"
   class:edit-spot={editSpot}
-  on:click={() => dispatch('click')}
-  transition:fade|local={{ duration: withTransition ? 400 : 0 }} />
+  on:click={() => dispatch("click")}
+  transition:fade|local={{ duration: withTransition ? 200 : 0 }} />
 
 <style>
 .back {
