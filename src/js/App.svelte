@@ -268,7 +268,7 @@ const quitAddSpot = () => {
     {/if}
   </div>
 
-  {#if !$isSearchResults}
+  {#if !$isSearchResults && !$selectedUserProfileData.name}
     <button
       class="button button-main_screen button-square button-switch_mode"
       class:active={isRailwayMode}
@@ -329,6 +329,7 @@ const quitAddSpot = () => {
       }}>
       <MarkerCard
         data={$openedMarkerData}
+        {map}
         {showUserProfile}
         {clearOpenedMarkerData} />
     </Modal>

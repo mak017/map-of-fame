@@ -84,7 +84,7 @@ const update = ({ mapContainer, params, clearParams }) => {
     prevParams = null;
     paramsToSet = "";
   }
-  if (clearParams && Array.isArray(clearParams)) {
+  if (clearParams && Array.isArray(clearParams) && prevParams) {
     paramsToSet = new URLSearchParams(prevParams.substring(1));
     clearParams.forEach((param) => {
       paramsToSet.delete(param);

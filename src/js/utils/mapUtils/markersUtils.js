@@ -86,7 +86,7 @@ const createClusterMarker = (data, map) => {
     icon: markerClusterIcon(spotcnt),
   });
 
-  marker.addEventListener("click", () => map.setView([lat, lng], 13));
+  marker.addEventListener("click", () => map.setView([lat, lng], 14));
   return marker;
 };
 

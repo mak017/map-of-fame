@@ -1,5 +1,5 @@
 <script>
-import { EMPTY_YEAR_STRING } from "./../../constants.js";
+import { EMPTY_YEAR_STRING, MAX_ZOOM } from "./../../constants.js";
 import { embedVideoCodeFromBasicUrl } from "../../utils/commonUtils";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import Popup from "../Popup.svelte";
@@ -15,14 +15,25 @@ import {
 import { permalink } from "../../utils/mapUtils/permalink";
 
 export let data;
+export let map;
 export let showUserProfile;
 export let clearOpenedMarkerData;
 
 let isShareOpened = false;
 let isComplainOpened = false;
 
-const { artistCrew, status, description, img, video, user, id, link, year } =
-  data;
+const {
+  artistCrew,
+  status,
+  description,
+  img,
+  video,
+  user,
+  id,
+  link,
+  year,
+  coords: { lat, lng },
+} = data;
 
 const EMPTY_ARTIST = "Unknown";
 const videoEmbed = video && embedVideoCodeFromBasicUrl(video);
@@ -53,6 +64,9 @@ const handleShowOnMapClick = () => {
   selectedArtist.set("");
   selectedCrew.set("");
   permalink.update({ clearParams: ["artist", "crew"] });
+  setTimeout(() => {
+    map.setView([lat, lng], MAX_ZOOM);
+  }, 0);
   clearOpenedMarkerData();
 };
 
@@ -213,7 +227,7 @@ const getArtistsString = () => {
 .img {
   margin-bottom: 24px;
 
-  >img {
+  > img {
     margin: auto;
   }
 }
@@ -250,11 +264,12 @@ const getArtistsString = () => {
   display: flex;
   justify-content: flex-end;
 
-  div +div {
+  div + div {
     margin-left: 12px;
   }
 
-  button, a {
+  button,
+  a {
     display: block;
     width: 40px;
     height: 40px;
@@ -340,5 +355,4 @@ const getArtistsString = () => {
     margin-bottom: 40px;
   }
 }
-
 </style>

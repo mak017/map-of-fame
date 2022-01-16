@@ -188,9 +188,14 @@ const onSpotClick = (spot) => {
     year,
     link,
   });
+  shouldDisplayShowOnMap.set(true);
   if (currentYear !== ALL_YEARS_STRING) {
-    shouldDisplayShowOnMap.set(true);
     markersStore.set({ spots: spotsList, years: yearsToApply });
+  } else {
+    markersStore.set({
+      spots: spotsList.filter((spot) => spot.year === year),
+      years: yearsToApply,
+    });
   }
   permalink.update({ params: { marker: id } });
   showUserProfile(false);
@@ -198,6 +203,9 @@ const onSpotClick = (spot) => {
 
 const handleShowOnMapClick = () => {
   markersStore.set({ spots: spotsList, years: yearsToApply });
+  if (!$selectedUserProfileData.id) {
+    selectedUserProfileData.set($userData ?? {});
+  }
   isShowOnMapMode.set(true);
   selectedYear.set(`${currentYear}`);
   selectedArtist.set("");
@@ -509,7 +517,7 @@ const handleShowOnMapClick = () => {
 
   .invites {
     position: absolute;
-    top: -26px;
+    top: 25px;
     left: 50%;
     width: fit-content;
     max-width: 71vw;
