@@ -60,7 +60,7 @@ const handleShowOnMapClick = () => {
       box-shadow: 0 8px 8px var(--color-accent);
     }
   `;
-  selectedYear.set(`${year}`);
+  selectedYear.set(year ? `${year}` : EMPTY_YEAR_STRING);
   selectedArtist.set("");
   selectedCrew.set("");
   permalink.update({ clearParams: ["artist", "crew"] });
@@ -93,7 +93,7 @@ const getArtistsString = () => {
   <div class="top">
     <div class="posted-by">
       <div class="subtitle">Posted by</div>
-      <button type="button" on:click={onUserClick}>
+      <button type="button" class="button" on:click={onUserClick}>
         <div class="title">
           {user?.name || $selectedUserProfileData?.name || ""}
         </div>
@@ -180,6 +180,7 @@ const getArtistsString = () => {
   font-size: 24px;
   font-weight: 900;
   line-height: 1.22;
+  text-align: left;
   text-transform: uppercase;
 
   -webkit-box-orient: vertical;
@@ -189,10 +190,7 @@ const getArtistsString = () => {
 .posted-by {
   button {
     position: relative;
-    padding: 0;
-    border: 0;
     background: none;
-    cursor: pointer;
 
     &::before {
       content: "";
@@ -227,7 +225,7 @@ const getArtistsString = () => {
 .img {
   margin-bottom: 24px;
 
-  > img {
+  >img {
     margin: auto;
   }
 }
@@ -264,12 +262,11 @@ const getArtistsString = () => {
   display: flex;
   justify-content: flex-end;
 
-  div + div {
+  div +div {
     margin-left: 12px;
   }
 
-  button,
-  a {
+  button, a {
     display: block;
     width: 40px;
     height: 40px;
@@ -355,4 +352,5 @@ const getArtistsString = () => {
     margin-bottom: 40px;
   }
 }
+
 </style>

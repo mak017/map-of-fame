@@ -52,7 +52,19 @@ const isEditSpot = !!editSpotData.img;
 
 const isArtist = () => $userData.type === USER_TYPES.artist.toLowerCase();
 
-let year = editSpotData.year ? `${editSpotData.year}` : "";
+const getInitialYear = () => {
+  if (editSpotData.year) {
+    return `${editSpotData.year}`;
+  }
+
+  if (validateYear($selectedYear, $settings.yearStart)) {
+    return $selectedYear;
+  }
+
+  return "";
+};
+
+let year = getInitialYear();
 let prevYearValue = "";
 let selectedStatus = editSpotData.spotStatus || STATUSES.live;
 let imageFile;

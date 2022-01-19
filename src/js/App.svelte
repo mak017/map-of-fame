@@ -260,6 +260,7 @@ const quitAddSpot = () => {
               selectedCrew.set("");
               isShowOnMapMode.set(false);
               permalink.update({ clearParams: "all" });
+              document.getElementById("highlighted").innerHTML = "";
             }}>
             <CloseCrossSvg isLight />
           </button>

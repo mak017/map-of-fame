@@ -207,7 +207,7 @@ const handleShowOnMapClick = () => {
     selectedUserProfileData.set($userData ?? {});
   }
   isShowOnMapMode.set(true);
-  selectedYear.set(`${currentYear}`);
+  selectedYear.set(currentYear ? `${currentYear}` : EMPTY_YEAR_STRING);
   selectedArtist.set("");
   selectedCrew.set("");
   permalink.update({ clearParams: ["artist", "crew"] });

@@ -162,8 +162,12 @@ const fetchArtistsCrews = async () => {
                 alt={`${pair.artist ?? ""} ${pair.crew ?? ""}`} />
             {/if}
             <div class="pair">
-              <div class="artist">{pair.artist ?? EMPTY_ARTIST_OR_CREW}</div>
-              <div class="crew">{pair.crew ?? EMPTY_ARTIST_OR_CREW}</div>
+              <div class="artist">
+                {pair.artist ? pair.artist : EMPTY_ARTIST_OR_CREW}
+              </div>
+              <div class="crew">
+                {pair.crew ? pair.crew : EMPTY_ARTIST_OR_CREW}
+              </div>
             </div>
           </div>
         {:else}
@@ -192,8 +196,12 @@ const fetchArtistsCrews = async () => {
             class="pair-wrapper"
             on:click={() => handleArtistClick(pair.artist, pair.crew)}>
             <div class="pair">
-              <div class="artist">{pair.artist ?? EMPTY_ARTIST_OR_CREW}</div>
-              <div class="crew">{pair.crew ?? EMPTY_ARTIST_OR_CREW}</div>
+              <div class="artist">
+                {pair.artist ? pair.artist : EMPTY_ARTIST_OR_CREW}
+              </div>
+              <div class="crew">
+                {pair.crew ? pair.crew : EMPTY_ARTIST_OR_CREW}
+              </div>
             </div>
           </div>
         {/each}
