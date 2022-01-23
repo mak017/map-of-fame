@@ -1,11 +1,7 @@
 <script>
 import { requestSearchSpots } from "./../api/search.js";
 import { markersStore, selectedUserProfileData } from "./../store.js";
-import {
-  getCurrentYear,
-  isMobile,
-  loadFromLocalStorage,
-} from "../utils/commonUtils.js";
+import { getCurrentYear, isMobile } from "../utils/commonUtils.js";
 import { permalink } from "../utils/mapUtils/permalink.js";
 import { getDatesFilter, getProfileYears } from "../utils/datesUtils.js";
 import { requestSpots } from "../init.js";
@@ -22,7 +18,6 @@ export let isSearch;
 let searchYears = $markersStore.years?.map((year) =>
   year !== null ? `${year}` : EMPTY_YEAR_STRING
 );
-const token = loadFromLocalStorage("token") || null;
 
 const datesFilter = getDatesFilter(yearStart, yearEnd, additionalYears);
 
@@ -32,13 +27,13 @@ const handleClick = (year) => {
   const search = window.location.search;
   const params = new URLSearchParams(search);
   const { artist, crew } = permalink.getDataFromParams(params);
+  const yearForRequest = year !== EMPTY_YEAR_STRING ? `${year}` : "";
 
   selectedYear.set(`${year}`);
   if (!isSearch && !$selectedUserProfileData.id) {
     requestSpots(year);
     permalink.update({ clearParams: "all" });
   } else if (isSearch) {
-    const yearForRequest = year !== EMPTY_YEAR_STRING ? `${year}` : "";
     requestSearchSpots({ year: yearForRequest, artist, crew }).then(
       (response) => {
         const { success, result } = response;
@@ -49,8 +44,8 @@ const handleClick = (year) => {
       }
     );
   } else if ($selectedUserProfileData.id) {
-    getUserSpots(token, $selectedUserProfileData.id, {
-      year,
+    getUserSpots($selectedUserProfileData.id, {
+      year: yearForRequest,
       offset: 0,
       limit: 99999999999999,
     }).then((response) => {
@@ -124,4 +119,5 @@ li {
     columns: 3;
   }
 }
+
 </style>

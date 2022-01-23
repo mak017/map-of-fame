@@ -1,5 +1,5 @@
 <script>
-import { onDestroy, onMount } from "svelte";
+import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
 import Invites from "./Invites.svelte";
@@ -18,17 +18,12 @@ import {
   selectedYear,
   shouldDisplayShowOnMap,
 } from "../../store";
-import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import Modal from "../Modal.svelte";
 import EditSpot from "./EditSpot.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import Popup from "../Popup.svelte";
 import { getProfileYears } from "./../../utils/datesUtils.js";
-import {
-  isEmpty,
-  loadFromLocalStorage,
-  removeFromLocalStorage,
-} from "../../utils/commonUtils";
+import { isEmpty, removeFromLocalStorage } from "../../utils/commonUtils";
 import { getUserSpots } from "../../api/spot";
 import {
   ALL_YEARS_STRING,
@@ -53,7 +48,6 @@ let invites = [];
 let unusedInvitesCount = 0;
 let isLoading = false;
 let isShowSpinner = false;
-const token = loadFromLocalStorage("token") || null;
 
 const toggleEditModal = (toggle) => (showEditModal = toggle);
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
@@ -67,7 +61,7 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
   const userId = $selectedUserProfileData.id || $userData.id;
   isLoading = isNewFetch;
   isShowSpinner = true;
-  getUserSpots(token, userId, { year, offset }).then((response) => {
+  getUserSpots(userId, { year, offset }).then((response) => {
     const { success, result, errors } = response;
     if (success && result) {
       const { spots, years } = result;
@@ -189,29 +183,31 @@ const onSpotClick = (spot) => {
     link,
   });
   shouldDisplayShowOnMap.set(true);
-  if (currentYear !== ALL_YEARS_STRING) {
-    markersStore.set({ spots: spotsList, years: yearsToApply });
-  } else {
-    markersStore.set({
-      spots: spotsList.filter((spot) => spot.year === year),
-      years: yearsToApply,
-    });
-  }
   permalink.update({ params: { marker: id } });
   showUserProfile(false);
 };
 
 const handleShowOnMapClick = () => {
-  markersStore.set({ spots: spotsList, years: yearsToApply });
   if (!$selectedUserProfileData.id) {
     selectedUserProfileData.set($userData ?? {});
   }
-  isShowOnMapMode.set(true);
-  selectedYear.set(currentYear ? `${currentYear}` : EMPTY_YEAR_STRING);
-  selectedArtist.set("");
-  selectedCrew.set("");
-  permalink.update({ clearParams: ["artist", "crew"] });
-  showUserProfile(false);
+  getUserSpots($selectedUserProfileData.id, {
+    year: `${currentYear}`,
+    offset: 0,
+    limit: 99999999999999,
+  }).then((response) => {
+    const { success, result } = response;
+    if (success && result) {
+      const { spots, years } = result;
+      markersStore.set({ spots, years: getProfileYears(years) });
+      isShowOnMapMode.set(true);
+      selectedYear.set(currentYear ? `${currentYear}` : EMPTY_YEAR_STRING);
+      selectedArtist.set("");
+      selectedCrew.set("");
+      permalink.update({ clearParams: ["artist", "crew"] });
+      showUserProfile(false);
+    }
+  });
 };
 </script>
 
@@ -458,7 +454,6 @@ const handleShowOnMapClick = () => {
     width: 100%;
     height: 100%;
     object-fit: cover;
-
     user-select: none;
   }
 
@@ -484,8 +479,7 @@ const handleShowOnMapClick = () => {
   }
 }
 
-.edit,
-.delete {
+.edit, .delete {
   width: 54px;
   height: 54px;
   margin: 12px;
@@ -533,4 +527,5 @@ const handleShowOnMapClick = () => {
     font-size: 0;
   }
 }
+
 </style>

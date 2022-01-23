@@ -6,6 +6,7 @@ import Popup from "../Popup.svelte";
 import ShareMarker from "./ShareMarker.svelte";
 import {
   isShowOnMapMode,
+  markersStore,
   selectedArtist,
   selectedCrew,
   selectedUserProfileData,
@@ -13,6 +14,8 @@ import {
   shouldDisplayShowOnMap,
 } from "../../store";
 import { permalink } from "../../utils/mapUtils/permalink";
+import { getProfileYears } from "../../utils/datesUtils.js";
+import { getUserSpots } from "../../api/spot.js";
 
 export let data;
 export let map;
@@ -51,23 +54,34 @@ const onUserClick = () => {
 };
 
 const handleShowOnMapClick = () => {
-  isShowOnMapMode.set(true);
-  document.getElementById("highlighted").innerHTML = `
-    .marker-id-${id} {
-      min-width: 64px;
-      min-height: 64px;
-      border-color: rgba(101, 13, 151, 0.43);
-      box-shadow: 0 8px 8px var(--color-accent);
+  getUserSpots($selectedUserProfileData.id, {
+    year: year ? `${year}` : "",
+    offset: 0,
+    limit: 99999999999999,
+  }).then((response) => {
+    const { success, result } = response;
+    if (success && result) {
+      const { spots, years } = result;
+      markersStore.set({ spots, years: getProfileYears(years) });
+      isShowOnMapMode.set(true);
+      document.getElementById("highlighted").innerHTML = `
+        .marker-id-${id} {
+          min-width: 64px;
+          min-height: 64px;
+          border-color: rgba(101, 13, 151, 0.43);
+          box-shadow: 0 8px 8px var(--color-accent);
+        }
+      `;
+      selectedYear.set(year ? `${year}` : EMPTY_YEAR_STRING);
+      selectedArtist.set("");
+      selectedCrew.set("");
+      permalink.update({ clearParams: ["artist", "crew"] });
+      setTimeout(() => {
+        map.setView([lat, lng], MAX_ZOOM);
+      }, 0);
+      clearOpenedMarkerData();
     }
-  `;
-  selectedYear.set(year ? `${year}` : EMPTY_YEAR_STRING);
-  selectedArtist.set("");
-  selectedCrew.set("");
-  permalink.update({ clearParams: ["artist", "crew"] });
-  setTimeout(() => {
-    map.setView([lat, lng], MAX_ZOOM);
-  }, 0);
-  clearOpenedMarkerData();
+  });
 };
 
 const getArtistsString = () => {
