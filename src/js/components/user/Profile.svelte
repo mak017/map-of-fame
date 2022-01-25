@@ -23,7 +23,11 @@ import EditSpot from "./EditSpot.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import Popup from "../Popup.svelte";
 import { getProfileYears } from "./../../utils/datesUtils.js";
-import { isEmpty, removeFromLocalStorage } from "../../utils/commonUtils";
+import {
+  isEmpty,
+  loadFromLocalStorage,
+  removeFromLocalStorage,
+} from "../../utils/commonUtils";
 import { getUserSpots } from "../../api/spot";
 import {
   ALL_YEARS_STRING,
@@ -48,6 +52,7 @@ let invites = [];
 let unusedInvitesCount = 0;
 let isLoading = false;
 let isShowSpinner = false;
+const token = loadFromLocalStorage("token") || null;
 
 const toggleEditModal = (toggle) => (showEditModal = toggle);
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
@@ -479,7 +484,8 @@ const handleShowOnMapClick = () => {
   }
 }
 
-.edit, .delete {
+.edit,
+.delete {
   width: 54px;
   height: 54px;
   margin: 12px;
@@ -527,5 +533,4 @@ const handleShowOnMapClick = () => {
     font-size: 0;
   }
 }
-
 </style>
