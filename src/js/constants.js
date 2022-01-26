@@ -16,7 +16,11 @@ export const MAX_IMAGE_FILE_SIZE = 5242880;
 
 export const STATUSES = { live: "Live", buffed: "Buffed", unknown: "Unknown" };
 
-export const USER_TYPES = { artist: "Artist", hunter: "Hunter" };
+export const USER_TYPES = {
+  artist: "Artist",
+  hunter: "Hunter",
+  admin: "Admin",
+};
 
 export const statusesOrdered = [
   STATUSES.live,

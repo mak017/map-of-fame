@@ -239,7 +239,7 @@ const getArtistsString = () => {
 .img {
   margin-bottom: 24px;
 
-  >img {
+  > img {
     margin: auto;
   }
 }
@@ -276,11 +276,12 @@ const getArtistsString = () => {
   display: flex;
   justify-content: flex-end;
 
-  div +div {
+  div + div {
     margin-left: 12px;
   }
 
-  button, a {
+  button,
+  a {
     display: block;
     width: 40px;
     height: 40px;
@@ -312,6 +313,7 @@ const getArtistsString = () => {
 
 .artist {
   font-size: 18px;
+  text-align: center;
 }
 
 .description {
@@ -366,5 +368,4 @@ const getArtistsString = () => {
     margin-bottom: 40px;
   }
 }
-
 </style>

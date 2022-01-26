@@ -51,6 +51,7 @@ export let editSpotData = {};
 const isEditSpot = !!editSpotData.img;
 
 const isArtist = () => $userData.type === USER_TYPES.artist.toLowerCase();
+const isHunter = () => $userData.type === USER_TYPES.hunter.toLowerCase();
 
 const getInitialYear = () => {
   if (editSpotData.year) {
@@ -130,7 +131,7 @@ if (!hasCategories()) {
   selectedCategory = getInitialCategory($userCategories);
 }
 
-if (!isEditSpot && isArtist() && !hasSprays()) {
+if (!isEditSpot && !isHunter() && !hasSprays()) {
   getFirmsRequest(token).then((response) => {
     const { success, result } = response;
     if (success && result) {
@@ -179,9 +180,16 @@ const onChangeImage = () => {
 };
 
 const validateYearInput = () => {
+  const isAllowedAllYears = !isArtist() && !isHunter();
+  let additionalYears = [];
+
+  if (isAllowedAllYears && $settings.additionalYears) {
+    additionalYears = JSON.parse($settings.additionalYears);
+  }
+
   if (!year) {
     errors.year = "";
-  } else if (!validateYear(year, $settings.yearStart)) {
+  } else if (!validateYear(year, $settings.yearStart, additionalYears)) {
     errors.year = ERROR_MESSAGES.yearNotInRange($settings.yearStart);
   } else {
     errors.year = "";
@@ -194,7 +202,7 @@ const validateImage = () => {
 };
 
 const validateFirm = () => {
-  if (isArtist() && !isEditSpot) {
+  if (!isHunter() && !isEditSpot) {
     errors.sprayPaintUsed = !sprayPaintUsed ? ERROR_MESSAGES.sprayEmpty : "";
   }
 };
@@ -448,7 +456,7 @@ const handleAddMoreClick = () => {
       <Spinner height={30} margin="5px 0 5.5px" />
     {/if}
   </div>
-  {#if isArtist() && !isEditSpot}
+  {#if !isHunter() && !isEditSpot}
     <div class="spray" class:with-error={errors.sprayPaintUsed}>
       <CustomSelect
         items={$firms}
