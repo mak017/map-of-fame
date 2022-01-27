@@ -20,6 +20,7 @@ export const USER_TYPES = {
   artist: "Artist",
   hunter: "Hunter",
   admin: "Admin",
+  superUser: "Super User",
 };
 
 export const statusesOrdered = [

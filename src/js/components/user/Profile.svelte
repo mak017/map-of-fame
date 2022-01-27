@@ -324,7 +324,7 @@ const handleShowOnMapClick = () => {
 
 {#if showInvitesPopup}
   <Popup
-    title={`Invites ${unusedInvitesCount}/5 👽`}
+    title={`Invites ${unusedInvitesCount}/${invites.length} 👽`}
     on:close={() => toggleInvitesPopup(false)}>
     <Invites close={() => toggleInvitesPopup(false)} {invites} {username} />
   </Popup>
