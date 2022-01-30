@@ -88,7 +88,7 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
 };
 
 onMount(() => {
-  fetchSpots({});
+  fetchSpots({ isNewFetch: true });
   shouldDisplayShowOnMap.set(false);
   if (isCurrentUser) {
     getInvites(token).then((response) => {
