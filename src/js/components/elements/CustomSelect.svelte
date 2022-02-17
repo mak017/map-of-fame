@@ -56,6 +56,9 @@ const dispatch = createEventDispatcher();
     --padding: 0 16px 0 13px;
     --selectedItemPadding: 0 20px 0 8px;
   }
+  &.add-spot {
+    --listMaxHeight: 190px;
+  }
 }
 
 @media (orientation: landscape) and (max-height: 960px) {

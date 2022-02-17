@@ -1,7 +1,8 @@
 export const transformSettings = (data) => {
   const settingsObject = {};
   data.forEach((setting) => {
-    settingsObject[setting.key] = setting.value;
+    settingsObject[setting.key] =
+      setting.type !== "boolean" ? setting.value : setting.value === "1";
   });
   return settingsObject;
 };

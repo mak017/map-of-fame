@@ -6,7 +6,7 @@ import {
   selectedUserProfileData,
   shouldDisplayShowOnMap,
 } from "../../store";
-import { markersReadyEvent } from "../commonUtils";
+import { isAdditionalCategory, markersReadyEvent } from "../commonUtils";
 import { clusterIcon, markerClusterIcon, markerWithPhoto } from "./icons";
 import { permalink } from "./permalink";
 
@@ -103,6 +103,7 @@ const createMarkers = (map, markersData, isSearch) => {
   const tempMarkersList = [];
   markersData?.spots?.forEach((item) => {
     const marker = createMarker(item);
+    marker.isAdditionalCategory = isAdditionalCategory(item.categoryId);
     markersLayer.addLayer(marker);
     prevMarkers.push(marker);
     tempMarkersList.push(marker);

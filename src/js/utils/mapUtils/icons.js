@@ -16,18 +16,33 @@ export const markerWithPhoto = (src, id) =>
 export const clusterIcon = (cluster) => {
   const markers = cluster.getAllChildMarkers();
   let count = 0;
+  const hasAdditionalCategory =
+    typeof markers[0].isAdditionalCategory === "boolean";
   if (markers[0].count) {
     markers.forEach((m) => {
       count += m.count;
     });
   }
-  if (Number.isNaN(count) || count === 0) {
+  if (hasAdditionalCategory) {
+    markers.forEach((m) => {
+      if (!m.isAdditionalCategory) {
+        count += 1;
+      }
+    });
+  }
+  if (Number.isNaN(count) || (count === 0 && !hasAdditionalCategory)) {
     count = cluster.getChildCount();
   }
+  if (count !== 0) {
+    return L.divIcon({
+      html: count < 1000 ? count : `${Math.floor(count / 1000)}K`,
+      className: "map-marker-cluster",
+      iconSize: [56, 56],
+    });
+  }
   return L.divIcon({
-    html: count < 1000 ? count : `${Math.floor(count / 1000)}K`,
-    className: "map-marker-cluster",
-    iconSize: [56, 56],
+    html: "",
+    iconSize: [0, 0],
   });
 };
 

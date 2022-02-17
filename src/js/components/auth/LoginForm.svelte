@@ -2,7 +2,7 @@
 import { fade } from "svelte/transition";
 import { loginRequest } from "../../api/auth.js";
 import { AUTH_MODALS, ERROR_MESSAGES } from "../../constants.js";
-import { isLoggedIn, userData } from "../../store.js";
+import { isLoggedIn, settings, userData } from "../../store.js";
 import { saveToLocalStorage, validateEmail } from "../../utils/commonUtils.js";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
@@ -103,8 +103,12 @@ const handleInputChange = (input) => {
     <span>Don't have an account?</span>
     <button
       type="button"
-      on:click={() => changeCurrentModal(AUTH_MODALS.preRegistration)}
-      >Sign up</button>
+      on:click={() =>
+        changeCurrentModal(
+          $settings.needInviteToRegister
+            ? AUTH_MODALS.preRegistration
+            : AUTH_MODALS.registration
+        )}>Sign up</button>
   </div>
 </form>
 
