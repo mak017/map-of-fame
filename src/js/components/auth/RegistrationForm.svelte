@@ -101,7 +101,7 @@ const handleSubmit = () => {
         type: selectedType.toLowerCase(),
         crew,
         link: portfolioLink,
-        invite: inviteData.code,
+        invite: inviteData?.code,
       })
         .then((response) => {
           const { success, result, errors: error } = response;
