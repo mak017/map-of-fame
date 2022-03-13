@@ -66,25 +66,27 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
   const userId = $selectedUserProfileData.id || $userData.id;
   isLoading = isNewFetch;
   isShowSpinner = true;
-  getUserSpots(userId, { year, offset }).then((response) => {
-    const { success, result, errors } = response;
-    if (success && result) {
-      const { spots, years } = result;
-      if (isNewFetch) spotsList = [];
-      newBatch = spots ? [...spots] : [];
-      yearsToApply = getProfileYears(years);
-      if (currentYear === undefined || year === undefined) {
-        currentYear = yearsToApply[0];
+  getUserSpots(isCurrentUser ? null : userId, token, { year, offset }).then(
+    (response) => {
+      const { success, result, errors } = response;
+      if (success && result) {
+        const { spots, years } = result;
+        if (isNewFetch) spotsList = [];
+        newBatch = spots ? [...spots] : [];
+        yearsToApply = getProfileYears(years);
+        if (currentYear === undefined || year === undefined) {
+          currentYear = yearsToApply[0];
+        }
       }
-    }
-    if (errors && !isEmpty(errors)) {
-      if (errors.year) {
-        fetchSpots({});
+      if (errors && !isEmpty(errors)) {
+        if (errors.year) {
+          fetchSpots({});
+        }
       }
+      isLoading = false;
+      isShowSpinner = false;
     }
-    isLoading = false;
-    isShowSpinner = false;
-  });
+  );
 };
 
 onMount(() => {
@@ -196,7 +198,7 @@ const handleShowOnMapClick = () => {
   if (!$selectedUserProfileData.id) {
     selectedUserProfileData.set($userData ?? {});
   }
-  getUserSpots($selectedUserProfileData.id, {
+  getUserSpots(isCurrentUser ? null : $selectedUserProfileData.id, token, {
     year: `${currentYear}`,
     offset: 0,
     limit: 99999999999999,

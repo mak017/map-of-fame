@@ -25,6 +25,14 @@ export const USER_ID_SPOTS = (id, limit, offset, year) => {
   return url;
 };
 
+export const USER_SPOTS = (limit, offset, year) => {
+  let url = `${ENDPOINT_ORIGIN}/api/user/spots?limit=${limit}&offset=${offset}`;
+  if (typeof year === "string") {
+    url = url.concat(`&year=${year}`);
+  }
+  return url;
+};
+
 export const USER_PASSWORD = () => `${ENDPOINT_ORIGIN}/api/user/password`;
 
 export const USER_PASSWORD_TOKEN = () =>

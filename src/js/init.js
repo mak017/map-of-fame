@@ -36,19 +36,23 @@ export const getSettings = () =>
   });
 
 export const verifyAuth = (token) =>
-  verifyAuthRequest(token).then((response) => {
-    const { success, result, errors } = response;
-    if (success && result) {
-      userData.set(result);
-      isLoggedIn.set(true);
-      if (result.token) saveToLocalStorage("token", result.token);
-    } else if (
-      Array.isArray(errors) &&
-      errors[0] === "Provided token is expired."
-    ) {
+  verifyAuthRequest(token)
+    .then((response) => {
+      const { success, result, errors } = response;
+      if (success && result) {
+        userData.set(result);
+        isLoggedIn.set(true);
+        if (result.token) saveToLocalStorage("token", result.token);
+      } else if (
+        Array.isArray(errors) &&
+        errors[0] === "Provided token is expired."
+      ) {
+        removeFromLocalStorage("token");
+      }
+    })
+    .catch(() => {
       removeFromLocalStorage("token");
-    }
-  });
+    });
 
 export const initApp = () => {
   const token = loadFromLocalStorage("token") || null;

@@ -1,6 +1,9 @@
 <script>
 import { EMPTY_YEAR_STRING, MAX_ZOOM } from "./../../constants.js";
-import { embedVideoCodeFromBasicUrl } from "../../utils/commonUtils";
+import {
+  embedVideoCodeFromBasicUrl,
+  loadFromLocalStorage,
+} from "../../utils/commonUtils";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import Popup from "../Popup.svelte";
 import ShareMarker from "./ShareMarker.svelte";
@@ -12,6 +15,7 @@ import {
   selectedUserProfileData,
   selectedYear,
   shouldDisplayShowOnMap,
+  userData,
 } from "../../store";
 import { permalink } from "../../utils/mapUtils/permalink";
 import { getProfileYears } from "../../utils/datesUtils.js";
@@ -40,6 +44,9 @@ const {
 
 const EMPTY_ARTIST = "Unknown";
 const videoEmbed = video && embedVideoCodeFromBasicUrl(video);
+const isCurrentUser =
+  !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
+const token = loadFromLocalStorage("token") || null;
 
 const onShareToggle = (toggle) => (isShareOpened = toggle);
 
@@ -54,7 +61,7 @@ const onUserClick = () => {
 };
 
 const handleShowOnMapClick = () => {
-  getUserSpots($selectedUserProfileData.id, {
+  getUserSpots(isCurrentUser ? null : $selectedUserProfileData.id, token, {
     year: year ? `${year}` : "",
     offset: 0,
     limit: 99999999999999,

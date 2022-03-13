@@ -1,7 +1,11 @@
 <script>
 import { requestSearchSpots } from "./../api/search.js";
-import { markersStore, selectedUserProfileData } from "./../store.js";
-import { getCurrentYear, isMobile } from "../utils/commonUtils.js";
+import { markersStore, selectedUserProfileData, userData } from "./../store.js";
+import {
+  getCurrentYear,
+  isMobile,
+  loadFromLocalStorage,
+} from "../utils/commonUtils.js";
 import { permalink } from "../utils/mapUtils/permalink.js";
 import { getDatesFilter, getProfileYears } from "../utils/datesUtils.js";
 import { requestSpots } from "../init.js";
@@ -22,6 +26,11 @@ let searchYears = $markersStore.years?.map((year) =>
 const datesFilter = getDatesFilter(yearStart, yearEnd, additionalYears);
 
 const dates = !isMobile() ? datesFilter : datesFilter.reverse();
+
+const isCurrentUser =
+  !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
+
+const token = loadFromLocalStorage("token") || null;
 
 const handleClick = (year) => {
   const search = window.location.search;
@@ -44,7 +53,7 @@ const handleClick = (year) => {
       }
     );
   } else if ($selectedUserProfileData.id) {
-    getUserSpots($selectedUserProfileData.id, {
+    getUserSpots(isCurrentUser ? null : $selectedUserProfileData.id, token, {
       year: yearForRequest,
       offset: 0,
       limit: 99999999999999,
@@ -119,5 +128,4 @@ li {
     columns: 3;
   }
 }
-
 </style>
