@@ -23,6 +23,8 @@ export const countriesList = writable([]);
 
 export const settings = writable([]);
 
+export const categoriesList = writable([]);
+
 export const firms = writable([]);
 
 export const userCategories = writable([]);

@@ -8,6 +8,7 @@ import RailroadSvg from "./components/elements/icons/RailroadSvg.svelte";
 import {
   getSettings,
   initApp,
+  requestCategories,
   requestRecentSpots,
   requestSpots,
 } from "./init.js";
@@ -110,7 +111,7 @@ if (resetPasswordToken) {
   });
 } else {
   isLoading.set(true);
-  getSettings().then(() => {
+  Promise.all([getSettings(), requestCategories()]).then(() => {
     isLoading.set(false);
   });
 }

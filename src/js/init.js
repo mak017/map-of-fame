@@ -1,9 +1,10 @@
 import { verifyAuthRequest } from "./api/auth";
 import { requestSearchSpots } from "./api/search";
-import { getSettingsRequest } from "./api/settings";
+import { getCategories, getSettingsRequest } from "./api/settings";
 import { getRecentSpots, getSpots } from "./api/spot";
 import { EMPTY_YEAR_STRING } from "./constants";
 import {
+  categoriesList,
   isInitialized,
   isLighthouseActive,
   isLoggedIn,
@@ -34,6 +35,15 @@ export const getSettings = () =>
       settings.set(transformSettings(response.result));
     }
   });
+
+export const requestCategories = () => {
+  getCategories().then((response) => {
+    const { success, result } = response;
+    if (success && result) {
+      categoriesList.set(result);
+    }
+  });
+};
 
 export const verifyAuth = (token) =>
   verifyAuthRequest(token)

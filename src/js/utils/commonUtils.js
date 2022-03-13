@@ -1,4 +1,4 @@
-import { MAIN_CATEGORIES_IDS, MOBILE_BREAKPOINT } from "../constants";
+import { MOBILE_BREAKPOINT } from "../constants";
 
 const regexYoutube =
   /(?:https?:)?(?:\/\/)(?:www\.)?(?:m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([^<.,!():"'\s]+)/;
@@ -112,6 +112,3 @@ export const isEmpty = (value) => {
   }
   return true;
 };
-
-export const isAdditionalCategory = (value) =>
-  !MAIN_CATEGORIES_IDS.includes(value);

@@ -64,5 +64,3 @@ export const ERROR_MESSAGES = {
   crewEmpty: "The crew field is required when artist is not present",
   contactEmpty: "Please provide your contact information",
 };
-
-export const MAIN_CATEGORIES_IDS = [1, 2, 5];

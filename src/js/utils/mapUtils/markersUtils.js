@@ -2,20 +2,26 @@ import L from "leaflet";
 import "leaflet.markercluster";
 import "leaflet.markercluster.placementstrategies";
 import {
+  categoriesList,
   openedMarkerData,
   selectedUserProfileData,
   shouldDisplayShowOnMap,
 } from "../../store";
-import { isAdditionalCategory, markersReadyEvent } from "../commonUtils";
+import { markersReadyEvent } from "../commonUtils";
 import { clusterIcon, markerClusterIcon, markerWithPhoto } from "./icons";
 import { permalink } from "./permalink";
 
 let prevMarkers = [];
 let markersLayer = null;
 let userProfileData;
+let categories = [];
 
 selectedUserProfileData.subscribe((value) => {
   userProfileData = value;
+});
+
+categoriesList.subscribe((value) => {
+  categories = value;
 });
 
 const clearMarkers = (map) => {
@@ -103,7 +109,9 @@ const createMarkers = (map, markersData, isSearch) => {
   const tempMarkersList = [];
   markersData?.spots?.forEach((item) => {
     const marker = createMarker(item);
-    marker.isAdditionalCategory = isAdditionalCategory(item.categoryId);
+    marker.isAdditionalCategory = categories.find(
+      (category) => category.id === item.categoryId
+    )?.isAdditional;
     markersLayer.addLayer(marker);
     prevMarkers.push(marker);
     tempMarkersList.push(marker);
