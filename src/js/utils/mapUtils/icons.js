@@ -16,11 +16,12 @@ export const markerWithPhoto = (src, id) =>
 export const clusterIcon = (cluster) => {
   const markers = cluster.getAllChildMarkers();
   let count = 0;
-  const hasAdditionalCategory =
-    typeof markers[0].isAdditionalCategory === "boolean";
+  const hasAdditionalCategory = markers.some(
+    (marker) => typeof marker.isAdditionalCategory === "boolean"
+  );
   if (markers[0].count) {
     markers.forEach((m) => {
-      count += m.count;
+      count += m.count ?? 0;
     });
   }
   if (hasAdditionalCategory) {
