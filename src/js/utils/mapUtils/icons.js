@@ -26,7 +26,7 @@ export const clusterIcon = (cluster) => {
   }
   if (hasAdditionalCategory) {
     markers.forEach((m) => {
-      if (!m.isAdditionalCategory) {
+      if (!m.isAdditionalCategory && !m.count) {
         count += 1;
       }
     });
