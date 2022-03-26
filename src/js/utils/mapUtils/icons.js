@@ -19,7 +19,8 @@ export const clusterIcon = (cluster) => {
   const hasAdditionalCategory = markers.some(
     (marker) => typeof marker.isAdditionalCategory === "boolean"
   );
-  if (markers[0].count) {
+  const hasCount = markers.some((marker) => typeof marker.count === "number");
+  if (hasCount) {
     markers.forEach((m) => {
       count += m.count ?? 0;
     });

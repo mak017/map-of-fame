@@ -42,17 +42,21 @@ const roundRect = (
 };
 
 export const addWatermark = (img, user) => {
+  // Scaling coefficient that takes into account image width and height, where 938 and 539 are the width and height respectively of mockup img
+  // basePx param is just a representation of sizes according to mockup image
+  const getScaledSize = (basePx) =>
+    (img.width + img.height) / ((938 + 539) / basePx);
+
   const ctx = img.getContext("2d");
   const siteName = "MOFF.ORG";
   const text = `${siteName}    ${user.toUpperCase()}`;
-  // base font size is 18px (52.11 = 938 / 18), where 938 is the width of mockup img
-  const fontSize = img.width / 52.11;
+  const fontSize = getScaledSize(18);
   ctx.font = `900 ${fontSize}px Montserrat`;
   const metrics = ctx.measureText(text);
   const siteNameMetrics = ctx.measureText(siteName);
   const squareMetrics = ctx.measureText("  ");
-  const x = img.width - 13;
-  const y = img.height - 13;
+  const x = img.width - getScaledSize(8);
+  const y = img.height - getScaledSize(8);
 
   ctx.translate(x, y);
   ctx.globalAlpha = 0.7;
