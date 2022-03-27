@@ -48,7 +48,7 @@ export const addWatermark = (img, user) => {
     (img.width + img.height) / ((938 + 539) / basePx);
 
   const ctx = img.getContext("2d");
-  const siteName = "MOFF.ORG";
+  const siteName = window.location.hostname.toUpperCase();
   const text = `${siteName}    ${user.toUpperCase()}`;
   const fontSize = getScaledSize(18);
   ctx.font = `900 ${fontSize}px Montserrat`;
