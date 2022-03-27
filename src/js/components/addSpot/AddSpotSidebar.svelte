@@ -66,6 +66,7 @@ h2 {
     width: 100%;
     height: auto;
     margin-bottom: 12px;
+    background: none;
   }
 
   .add-spot {
@@ -96,5 +97,4 @@ h2 {
     padding-top: 16px;
   }
 }
-
 </style>
