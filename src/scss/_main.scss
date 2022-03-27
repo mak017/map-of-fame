@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   width: 100%;
   min-width: 320px;
 
@@ -18,9 +19,12 @@ body {
 }
 
 input {
+  margin: 0;
   border-radius: 0;
 
-  &[type="text"], &[type="email"], &[type="password"] {
+  &[type="text"],
+  &[type="email"],
+  &[type="password"] {
     appearance: none;
   }
 }
@@ -68,7 +72,8 @@ textarea {
     cursor: pointer !important;
   }
 
-  .indicator +div, .clearSelect +div {
+  .indicator + div,
+  .clearSelect + div {
     left: -1px !important;
     border: 1px solid var(--color-accent);
   }
@@ -100,7 +105,7 @@ textarea {
 }
 
 .year-select {
-  .indicator +div {
+  .indicator + div {
     left: 16px !important;
     min-width: 92px !important;
   }
@@ -113,17 +118,18 @@ textarea {
     border-right: 0 !important;
     border-left: 0 !important;
 
-    >div:not([class]) {
+    > div:not([class]) {
       top: 41px !important;
     }
 
-    .indicator +div, .clearSelect +div {
+    .indicator + div,
+    .clearSelect + div {
       border: 0;
     }
   }
 
   &.is-search {
-    .focused ~.floating-label {
+    .focused ~ .floating-label {
       overflow: hidden;
       transform: translateY(-15px);
       opacity: 0.6;
@@ -159,14 +165,4 @@ textarea {
       background-color: var(--color-accent);
     }
   }
-
-  // &.typed-text:not(.not-empty) {
-  //   .selectContainer:not(.focused) {
-  //     +.floating-label {
-  //       transform: translateY(0);
-  //       opacity: 1;
-  //       font-size: 16px;
-  //     }
-  //   }
-  // }
 }

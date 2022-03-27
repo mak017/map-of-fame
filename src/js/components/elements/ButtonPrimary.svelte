@@ -22,7 +22,6 @@ const dispatch = createEventDispatcher();
 button {
   position: relative;
   flex: 1 0 auto;
-  margin: 0;
   padding: 12px 19px;
   background-color: var(--color-accent);
   color: var(--color-light);
