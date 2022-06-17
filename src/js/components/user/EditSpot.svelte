@@ -9,7 +9,7 @@ export let onSubmit;
 
 <div class="edit-spot">
   <ButtonModalBack on:click={() => toggleEditModal(false)} editSpot />
-  <h2>Edit Spot</h2>
+  <h2>Edit Art</h2>
   <SpotForm {editSpotData} onCancel={() => toggleEditModal(false)} {onSubmit} />
 </div>
 

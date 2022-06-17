@@ -15,28 +15,10 @@ export let className = "";
 .radio {
   display: flex;
   flex: 1 0 0;
-  border: 1px solid var(--color-dark);
-  &:nth-child(3n + 1) {
-    border-right: 0;
-  }
-  &:nth-child(3n) {
-    border-left: 0;
-  }
-  &:first-child {
-    border-top-left-radius: 2px;
-  }
-  &:nth-child(3) {
-    border-top-right-radius: 2px;
-  }
-  &:nth-last-child(3) {
-    border-bottom-left-radius: 2px;
-  }
-  &:nth-child(n + 4) {
-    border-top: 0;
-  }
+  border-right: 1px solid var(--color-dark);
 
   &:last-child {
-    border-bottom-right-radius: 2px;
+    border-right: 0;
   }
   input {
     position: absolute;

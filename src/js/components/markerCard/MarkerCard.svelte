@@ -139,7 +139,7 @@ const getArtistsString = () => {
     <div class="buttons">
       {#if link}
         <div class="link">
-          <a href={link} target="_blank">External link to spot</a>
+          <a href={link} target="_blank">External link to art</a>
         </div>
       {/if}
       <div class="share">

@@ -316,7 +316,7 @@ const handleShowOnMapClick = () => {
 {/if}
 
 {#if showDeletePopup}
-  <Popup title="Delete spot?" on:close={() => toggleDeletePopup(false)}>
+  <Popup title="Delete art?" on:close={() => toggleDeletePopup(false)}>
     <DeleteSpot
       close={() => toggleDeletePopup(false)}
       {currentSpot}

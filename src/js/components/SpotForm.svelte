@@ -486,7 +486,7 @@ const handleAddMoreClick = () => {
   {#if !editSpotData.img}
     <div class="button_wrap">
       <ButtonPrimary
-        text="Post Spot"
+        text="Post Art"
         type="submit"
         isDisabled={isSubmitDisabled}
         className={!isEditSpot ? "addSpot" : ""} />
@@ -528,6 +528,9 @@ form {
 .category {
   display: flex;
   flex-wrap: wrap;
+  border: 0.5pt solid var(--color-dark);
+  border-radius: 2px;
+  overflow: hidden;
 }
 
 .upload-image {

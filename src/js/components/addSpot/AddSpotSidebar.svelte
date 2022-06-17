@@ -11,7 +11,7 @@ export let marker;
 <div
   class="add-spot"
   transition:fly={{ x: !isMobile() ? 364 : window.innerWidth, duration: 300 }}>
-  <h2>Add Spot</h2>
+  <h2>Add Art</h2>
   {#if isMobile()}
     <button class="close-mob" on:click={onCancel}>
       <CloseCrossSvg />

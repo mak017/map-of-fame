@@ -14,7 +14,7 @@ export let onCancel;
   <button
     class="button button-add_spot"
     on:click={onAddSpotBtnClick}
-    transition:fade={{ duration: 200 }}>Add Spot</button>
+    transition:fade={{ duration: 200 }}>Add Art</button>
 {:else}
   <div class="main-top_right_wrapper">
     <ButtonPrimary on:click={onCancel} text="Cancel" className="add-spot" />
