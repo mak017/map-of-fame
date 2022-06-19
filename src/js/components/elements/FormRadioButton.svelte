@@ -15,10 +15,18 @@ export let className = "";
 .radio {
   display: flex;
   flex: 1 0 0;
-  border-right: 1px solid var(--color-dark);
+  border: 1px solid var(--color-dark);
+  border-right: 0;
+
+  &:first-child {
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+  }
 
   &:last-child {
-    border-right: 0;
+    border-right: 1px solid var(--color-dark);
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
   }
   input {
     position: absolute;
