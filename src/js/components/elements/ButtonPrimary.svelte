@@ -25,9 +25,10 @@ button {
   padding: 12px 19px;
   background-color: var(--color-accent);
   color: var(--color-light);
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 900;
   line-height: 22px;
+  text-transform: uppercase;
 
   user-select: none;
 

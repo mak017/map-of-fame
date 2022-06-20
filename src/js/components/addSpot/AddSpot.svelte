@@ -37,9 +37,10 @@ export let onCancel;
   padding: 9px 18px;
   background-color: var(--color-dark);
   color: var(--color-light);
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 900;
   line-height: 1.2222222;
+  text-transform: uppercase;
 }
 
 .drag-to-map {

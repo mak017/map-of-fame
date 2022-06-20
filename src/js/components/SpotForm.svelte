@@ -519,9 +519,10 @@ form {
   padding: 4px 0;
   background-color: var(--color-light);
   color: var(--color-accent);
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 900;
   line-height: 1.22;
+  text-transform: uppercase;
 }
 
 .status,
@@ -645,9 +646,10 @@ form {
   border-radius: 2px;
   background-color: var(--color-light);
   color: var(--color-accent);
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 900;
   line-height: 1.22;
+  text-transform: uppercase;
   cursor: pointer;
 
   &:disabled {

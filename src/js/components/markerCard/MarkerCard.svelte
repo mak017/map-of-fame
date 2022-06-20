@@ -273,9 +273,10 @@ const getArtistsString = () => {
   border: 0;
   background: none;
   color: var(--color-accent);
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 900;
   line-height: 22px;
+  text-transform: uppercase;
   cursor: pointer;
 }
 
