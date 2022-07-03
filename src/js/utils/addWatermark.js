@@ -55,12 +55,13 @@ export const addWatermark = (img, user) => {
   const metrics = ctx.measureText(text);
   const siteNameMetrics = ctx.measureText(siteName);
   const squareMetrics = ctx.measureText("  ");
-  const x = img.width - getScaledSize(8);
-  const y = img.height - getScaledSize(8);
+  const x = img.width / 2 - metrics.width / 2.95;
+  const y = img.height / 2 + fontSize * 5.9;
 
+  ctx.save();
   ctx.translate(x, y);
-  ctx.globalAlpha = 0.7;
-  ctx.rotate((-90 * Math.PI) / 180);
+  ctx.globalAlpha = 0.5;
+  ctx.rotate((-45 * Math.PI) / 180);
   ctx.fillStyle = "#373737";
   roundRect(
     ctx,
@@ -80,6 +81,7 @@ export const addWatermark = (img, user) => {
     squareMetrics.width * 0.8,
     siteNameMetrics.actualBoundingBoxAscent
   );
-  ctx.rotate((90 * Math.PI) / 180);
+  ctx.restore();
+
   return img;
 };
