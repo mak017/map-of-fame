@@ -49,38 +49,40 @@ export const addWatermark = (img, user) => {
 
   const ctx = img.getContext("2d");
   const siteName = window.location.hostname.toUpperCase();
-  const text = `${siteName}    ${user.toUpperCase()}`;
-  const fontSize = getScaledSize(18);
-  ctx.font = `900 ${fontSize}px Montserrat`;
-  const metrics = ctx.measureText(text);
-  const siteNameMetrics = ctx.measureText(siteName);
-  const squareMetrics = ctx.measureText("  ");
-  const x = img.width / 2 - metrics.width / 2.95;
-  const y = img.height / 2 + fontSize * 5.9;
+  ctx.font = `900 ${getScaledSize(30)}px Montserrat`;
+  const metrics1 = ctx.measureText(siteName);
+  ctx.font = `900 ${getScaledSize(18)}px Montserrat`;
+  const metrics2 = ctx.measureText(user);
+  const textHeight =
+    metrics1.fontBoundingBoxAscent + metrics2.fontBoundingBoxAscent;
+  const x = img.width * 0.6;
+  const y = img.height * 0.6;
 
   ctx.save();
   ctx.translate(x, y);
   ctx.globalAlpha = 0.5;
-  ctx.rotate((-45 * Math.PI) / 180);
   ctx.fillStyle = "#373737";
   roundRect(
     ctx,
     0,
-    -metrics.fontBoundingBoxAscent,
-    metrics.actualBoundingBoxRight + metrics.actualBoundingBoxAscent * 0.3,
-    metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxAscent * 0.2,
+    -textHeight - textHeight * 0.4,
+    img.width * 0.6,
+    textHeight + textHeight * 0.8,
     { tr: 2, br: 2 },
     true,
     false
   );
+  ctx.translate(0, -textHeight + textHeight * 0.4);
+  ctx.font = `600 ${getScaledSize(30)}px Montserrat`;
   ctx.fillStyle = "#fff";
-  ctx.fillText(text, 4, 0);
-  ctx.fillRect(
-    siteNameMetrics.actualBoundingBoxRight + squareMetrics.width * 0.9,
-    -siteNameMetrics.actualBoundingBoxAscent,
-    squareMetrics.width * 0.8,
-    siteNameMetrics.actualBoundingBoxAscent
+  ctx.globalAlpha = 1;
+  ctx.fillText(siteName, 4, 0);
+  ctx.font = `400 ${getScaledSize(18)}px Montserrat`;
+  ctx.translate(
+    0,
+    metrics1.fontBoundingBoxAscent + metrics1.fontBoundingBoxAscent * 0.2
   );
+  ctx.fillText(user, 4, 0);
   ctx.restore();
 
   return img;
