@@ -49,40 +49,39 @@ export const addWatermark = (img, user) => {
 
   const ctx = img.getContext("2d");
   const siteName = window.location.hostname.toUpperCase();
+  const username = user.toUpperCase();
   ctx.font = `900 ${getScaledSize(30)}px Montserrat`;
   const metrics1 = ctx.measureText(siteName);
   ctx.font = `900 ${getScaledSize(18)}px Montserrat`;
-  const metrics2 = ctx.measureText(user);
+  const metrics2 = ctx.measureText(username);
   const textHeight =
     metrics1.fontBoundingBoxAscent + metrics2.fontBoundingBoxAscent;
-  const x = img.width * 0.6;
-  const y = img.height * 0.6;
+  const x = img.width - getScaledSize(36);
+  const y = img.height;
 
   ctx.save();
   ctx.translate(x, y);
-  ctx.globalAlpha = 0.5;
-  ctx.fillStyle = "#373737";
+  ctx.rotate((-90 * Math.PI) / 180);
+  ctx.globalAlpha = 0.3;
+  ctx.fillStyle = "#000";
   roundRect(
     ctx,
     0,
     -textHeight - textHeight * 0.4,
-    img.width * 0.6,
-    textHeight + textHeight * 0.8,
+    img.height * 0.37,
+    textHeight + textHeight * 0.4,
     { tr: 2, br: 2 },
     true,
     false
   );
-  ctx.translate(0, -textHeight + textHeight * 0.4);
-  ctx.font = `600 ${getScaledSize(30)}px Montserrat`;
+  ctx.translate(getScaledSize(16), -textHeight + textHeight * 0.2);
+  ctx.font = `900 ${getScaledSize(14)}px Montserrat`;
   ctx.fillStyle = "#fff";
-  ctx.globalAlpha = 1;
+  ctx.globalAlpha = 0.5;
   ctx.fillText(siteName, 4, 0);
-  ctx.font = `400 ${getScaledSize(18)}px Montserrat`;
-  ctx.translate(
-    0,
-    metrics1.fontBoundingBoxAscent + metrics1.fontBoundingBoxAscent * 0.2
-  );
-  ctx.fillText(user, 4, 0);
+  ctx.font = `400 ${getScaledSize(8)}px Montserrat`;
+  ctx.translate(0, metrics1.fontBoundingBoxAscent * 0.5);
+  ctx.fillText(username, 4, 0);
   ctx.restore();
 
   return img;

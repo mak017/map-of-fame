@@ -244,10 +244,22 @@ const getArtistsString = () => {
 }
 
 .img {
+  position: relative;
   margin-bottom: 24px;
 
   > img {
     margin: auto;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
 }
 
