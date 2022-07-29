@@ -149,7 +149,7 @@ const onChangeImage = () => {
       const image = new Image();
       image.src = e.target.result;
       image.onload = function () {
-        watermark([file])
+        watermark([file], { type: "image/jpeg" })
           .blob((img) => addWatermark(img, $userData.name))
           .then((blob) => {
             imageBlob = new File([blob], "image.jpg");
