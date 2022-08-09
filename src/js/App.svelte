@@ -65,6 +65,7 @@ let showResetPasswordModal = false;
 let showUserProfileModal = false;
 let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
+let isAreaSelectionActive = false;
 let resetPasswordToken = getResetPasswordToken();
 let inviteData = getInviteData();
 
@@ -75,6 +76,7 @@ const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
 const showResetPassword = (show) => (showResetPasswordModal = show);
 const showUserProfile = (show) => (showUserProfileModal = show);
+const toggleAreaSelectionMode = (toggle) => (isAreaSelectionActive = toggle);
 const toggleAddSpotMode = (toggle) => (isAddSpotMode = toggle);
 const toggleAddSpotSidebarVisible = (toggle) =>
   (isAddSpotSidebarVisible = toggle);
@@ -279,6 +281,14 @@ const quitAddSpot = () => {
       <RailroadSvg isLight={isRailwayMode} />
     </button>
   {/if}
+
+  <button
+    class="button button-main_screen button-square button-select_area"
+    class:active={isAreaSelectionActive}
+    on:click={toggleAreaSelectionMode}
+    title={isAreaSelectionActive
+      ? "Cancel area selection mode"
+      : "Activate area selection mode"} />
 
   {#if $isLoggedIn}
     <AddSpot
