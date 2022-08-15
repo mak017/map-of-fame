@@ -32,9 +32,10 @@ export let onCancel;
 <style>
 .button-add_spot {
   position: absolute;
-  right: 18px;
   bottom: 18px;
-  padding: 9px 18px;
+  left: 50%;
+  padding: 9px 26px;
+  transform: translateX(-50%);
   background-color: var(--color-dark);
   color: var(--color-light);
   font-size: 14px;
@@ -62,6 +63,12 @@ export let onCancel;
 }
 
 @media (max-width: 767px) {
+  .button-add_spot {
+    right: 72px;
+    left: auto;
+    transform: none;
+  }
+
   .drag-to-map {
     top: 98px;
   }

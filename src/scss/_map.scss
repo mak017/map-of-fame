@@ -23,7 +23,8 @@
 
 .add-mode {
   .map-marker {
-    &-with-photo, &-cluster {
+    &-with-photo,
+    &-cluster {
       opacity: 0.4 !important;
       pointer-events: none;
     }
@@ -33,6 +34,29 @@
 .leaflet-container {
   background: url(images/pattern-sales.png);
   font: inherit;
+
+  .area-select-marker,
+  .area-select-ghost-marker {
+    border-color: var(--color-accent);
+
+    &:hover {
+      background: var(--color-accent);
+      filter: brightness(0.6);
+    }
+  }
+
+  .drawing-area-poligon {
+    fill: var(--color-accent);
+    stroke: var(--color-accent);
+    stroke-width: 4;
+    fill-opacity: 0.18;
+  }
+
+  .leaflet-area-draw-selection-pane {
+    .draw-pane-help {
+      bottom: 120px;
+    }
+  }
 }
 
 .leaflet-touch {
@@ -41,7 +65,7 @@
     margin-left: 18px;
     border: 0;
 
-    >a {
+    > a {
       width: 40px;
       height: 40px;
       border: 0;
@@ -54,14 +78,18 @@
 
     &-in {
       background: var(--color-light) url(images/plus.svg) 50% 50%/18px 18px
-      no-repeat;
+        no-repeat;
     }
 
     &-out {
       background: var(--color-light) url(images/minus.svg) 50% 50%/18px 3.5px
-      no-repeat;
+        no-repeat;
     }
   }
+}
+
+.leaflet-area-selector-control {
+  display: none;
 }
 
 @media (max-width: 767px) {

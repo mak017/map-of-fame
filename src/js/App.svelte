@@ -1,6 +1,8 @@
 <script>
 import { fade } from "svelte/transition";
 import L from "leaflet";
+import "@bopen/leaflet-area-selection/dist/index.css";
+import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 import CloseCrossSvg from "./components/elements/icons/CloseCrossSvg.svelte";
 import { placeMarkers } from "./utils/mapUtils/markersUtils.js";
 import { changePasswordCheckToken } from "./api/auth.js";
@@ -56,6 +58,7 @@ import ResetPassword from "./components/auth/ResetPassword.svelte";
 import Profile from "./components/user/Profile.svelte";
 import { newMarkerIcon } from "./utils/mapUtils/icons";
 import Loader from "./components/elements/Loader.svelte";
+import { MIN_ZOOM } from "./constants";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let showCalendarModal = false;
@@ -71,18 +74,45 @@ let inviteData = getInviteData();
 
 let map;
 let newMarker;
+let currentZoom;
+
+const areaSelection = new DrawAreaSelection({
+  onPolygonReady: (polygon) => {
+    polygon.setStyle({
+      color: "var(--color-accent)",
+      weight: 4,
+      fillOpacity: 0.18,
+    });
+    console.log("polygon", polygon);
+    console.log("polygon.toGeoJSON() :>> ", polygon.toGeoJSON());
+  },
+  position: "bottomright",
+});
+
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
 const showResetPassword = (show) => (showResetPasswordModal = show);
 const showUserProfile = (show) => (showUserProfileModal = show);
-const toggleAreaSelectionMode = (toggle) => (isAreaSelectionActive = toggle);
 const toggleAddSpotMode = (toggle) => (isAddSpotMode = toggle);
 const toggleAddSpotSidebarVisible = (toggle) =>
   (isAddSpotSidebarVisible = toggle);
 const clearOpenedMarkerData = () => {
   openedMarkerData.set(null);
   permalink.update({ clearParams: ["marker"] });
+};
+
+const toggleAreaSelectionMode = (toggle) => {
+  isAreaSelectionActive = toggle;
+
+  if (toggle) {
+    map.setMinZoom(15);
+    areaSelection.activate();
+    return;
+  }
+
+  map.setMinZoom(MIN_ZOOM);
+  areaSelection.deactivate();
 };
 
 document.getElementById("initial-loader").remove();
@@ -135,6 +165,10 @@ const initMap = (container) => {
   setLocation(map);
 
   map.on("zoomend dragend", () => $isInitialized && handleMapViewChange(map));
+
+  map.on("zoomend", () => (currentZoom = map.getZoom()));
+
+  map.addControl(areaSelection);
 
   return {
     destroy: () => {
@@ -212,7 +246,7 @@ const quitAddSpot = () => {
         on:click={() => showCalendar(true)}
         transition:fade={{ duration: 200 }}>{$selectedYear}</button>
     {/if}
-    {#if !isAddSpotMode && !$isSearchResults && !$isShowOnMapMode}
+    {#if !isAddSpotMode && !$isSearchResults && !$isShowOnMapMode && !isAreaSelectionActive}
       <button
         class="button button-square button-lighthouse"
         class:active={$isLighthouseActive}
@@ -233,7 +267,7 @@ const quitAddSpot = () => {
   </div>
 
   <div class="main-top_right_wrapper">
-    {#if !isAddSpotMode}
+    {#if !isAddSpotMode && !isAreaSelectionActive}
       {#if !($isSearchResults && ($selectedArtist || $selectedCrew)) && !$selectedUserProfileData.name}
         <button
           class="button button-main_screen button-square button-open_search"
@@ -250,7 +284,7 @@ const quitAddSpot = () => {
             on:click={() => showAuth(true)} />
         {/if}
       {:else}
-        <div class="selected-artist">
+        <div class="selection selected-artist">
           <span
             >{$selectedArtist || $selectedUserProfileData?.name || ""}
             {$selectedCrew || $selectedUserProfileData?.crew || ""}</span>
@@ -269,6 +303,10 @@ const quitAddSpot = () => {
           </button>
         </div>
       {/if}
+    {:else if isAreaSelectionActive}
+      <div class="selection selected-area-spots">
+        <span>56 Spots Selected</span>
+      </div>
     {/if}
   </div>
 
@@ -277,20 +315,28 @@ const quitAddSpot = () => {
       class="button button-main_screen button-square button-switch_mode"
       class:active={isRailwayMode}
       on:click={handleChangeModeClick}
+      in:fade={{ duration: 200 }}
       title="Highlight railways">
       <RailroadSvg isLight={isRailwayMode} />
     </button>
   {/if}
 
-  <button
-    class="button button-main_screen button-square button-select_area"
-    class:active={isAreaSelectionActive}
-    on:click={toggleAreaSelectionMode}
-    title={isAreaSelectionActive
-      ? "Cancel area selection mode"
-      : "Activate area selection mode"} />
+  {#if isAreaSelectionActive || currentZoom > 14}
+    <button
+      class="button button-main_screen button-square button-select_area"
+      class:active={isAreaSelectionActive}
+      on:click={() => toggleAreaSelectionMode(!isAreaSelectionActive)}
+      transition:fade={{ duration: 200 }}
+      title={isAreaSelectionActive
+        ? "Cancel area selection mode"
+        : "Activate area selection mode"}>
+      {#if isAreaSelectionActive}
+        <CloseCrossSvg isLight />
+      {/if}
+    </button>
+  {/if}
 
-  {#if $isLoggedIn}
+  {#if $isLoggedIn && !isAreaSelectionActive}
     <AddSpot
       {isAddSpotMode}
       {isAddSpotSidebarVisible}
@@ -500,6 +546,21 @@ const quitAddSpot = () => {
     }
   }
 
+  &-select_area {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    background-image: url(../images/area-select.svg);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 18px 26px;
+
+    &.active {
+      background-color: var(--color-accent);
+      background-image: none;
+    }
+  }
+
   &-burger {
     background-image: url(../images/burger.svg);
     background-repeat: no-repeat;
@@ -514,13 +575,10 @@ const quitAddSpot = () => {
   }
 }
 
-.selected-artist {
+.selection {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 186px;
   height: 40px;
-  padding-left: 16px;
   border-radius: 2px;
   background: var(--color-accent);
   color: var(--color-light);
@@ -532,6 +590,28 @@ const quitAddSpot = () => {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+}
+
+.selected-artist {
+  justify-content: space-between;
+  width: 186px;
+  padding-left: 16px;
+
+  > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.selected-area-spots {
+  width: 180px;
+  padding-left: 40px;
+  background-image: url(../images/list.svg);
+  background-repeat: no-repeat;
+  background-position: 14px 50%;
+  background-size: 14px 12px;
+  cursor: pointer;
 }
 
 @media (max-width: 767px) {
