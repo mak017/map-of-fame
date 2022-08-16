@@ -68,6 +68,12 @@ const handleSubmit = () => {
 
 const handleInputChange = (input) => {
   if (isDisabledSubmit || errors.password || errors.email) {
+    if (errors.email) {
+      errors = { email: "", password: "" };
+      isDisabledSubmit = false;
+      return;
+    }
+
     errors[input] = "";
     isDisabledSubmit = !!(errors.password || errors.email);
   }
