@@ -55,7 +55,8 @@ export const addWatermark = (img, user) => {
   ctx.font = `900 ${getScaledSize(18)}px Montserrat`;
   const metrics2 = ctx.measureText(username);
   const textHeight =
-    metrics1.fontBoundingBoxAscent + metrics2.fontBoundingBoxAscent;
+    (metrics1.actualBoundingBoxAscent + metrics2.actualBoundingBoxAscent) *
+    1.35;
   const x = img.width - getScaledSize(36);
   const y = img.height;
 
@@ -80,7 +81,7 @@ export const addWatermark = (img, user) => {
   ctx.globalAlpha = 0.5;
   ctx.fillText(siteName, 4, 0);
   ctx.font = `400 ${getScaledSize(8)}px Montserrat`;
-  ctx.translate(0, metrics1.fontBoundingBoxAscent * 0.5);
+  ctx.translate(0, metrics1.actualBoundingBoxAscent * 0.67);
   ctx.fillText(username, 4, 0);
   ctx.restore();
 
