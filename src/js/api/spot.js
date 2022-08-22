@@ -1,6 +1,7 @@
 import { MAX_SPOTS_PER_PAGE } from "../constants";
 import {
   SPOT,
+  SPOT_FROM_POLY,
   SPOT_ID,
   SPOT_ID_FEEDBACK,
   SPOT_LIMIT_DAYS,
@@ -31,6 +32,12 @@ export const getRecentSpots = async (limitDays, geoRect, categories) => {
 
 export const getSpotById = async (id) => {
   const response = await fetch(SPOT_ID(id), { method: "GET" });
+  const result = await response.json();
+  return result;
+};
+
+export const getSpotsInArea = async (polygon) => {
+  const response = await fetch(SPOT_FROM_POLY(polygon), { method: "GET" });
   const result = await response.json();
   return result;
 };

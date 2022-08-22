@@ -59,6 +59,7 @@ import Profile from "./components/user/Profile.svelte";
 import { newMarkerIcon } from "./utils/mapUtils/icons";
 import Loader from "./components/elements/Loader.svelte";
 import { MIN_ZOOM } from "./constants";
+import { getSpotsInArea } from "./api/spot";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let showCalendarModal = false;
@@ -83,8 +84,9 @@ const areaSelection = new DrawAreaSelection({
       weight: 4,
       fillOpacity: 0.18,
     });
-    console.log("polygon", polygon);
     console.log("polygon.toGeoJSON() :>> ", polygon.toGeoJSON());
+    const { coordinates } = polygon.toGeoJSON().geometry;
+    getSpotsInArea(coordinates[0]);
   },
   position: "bottomright",
 });

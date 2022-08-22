@@ -105,3 +105,13 @@ export const SPOT_ID_FEEDBACK = (id) =>
   `${ENDPOINT_ORIGIN}/api/spot/${id}/feedback`;
 
 export const SPOT_SEARCH = () => `${ENDPOINT_ORIGIN}/api/spot/search`;
+
+export const SPOT_FROM_POLY = (polygon) => {
+  const query = polygon.reduce((acc, coords, index) => {
+    const [lng, lat] = coords;
+    const chunk = `poly[${index}][lat]=${lat}&poly[${index}][lng]=${lng}`;
+    return index === 0 ? chunk : `${acc}&${chunk}`;
+  }, "");
+
+  return `${ENDPOINT_ORIGIN}/api/spot/from-poly?${query}`;
+};
