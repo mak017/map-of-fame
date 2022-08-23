@@ -113,5 +113,5 @@ export const SPOT_FROM_POLY = (polygon) => {
     return index === 0 ? chunk : `${acc}&${chunk}`;
   }, "");
 
-  return `${ENDPOINT_ORIGIN}/api/spot/from-poly?${query}`;
+  return `${ENDPOINT_ORIGIN}/api/spot/fromPoly?${query}`;
 };
