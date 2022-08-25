@@ -3,10 +3,9 @@ import { fade } from "svelte/transition";
 import L from "leaflet";
 import "@bopen/leaflet-area-selection/dist/index.css";
 import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
-import CloseCrossSvg from "./components/elements/icons/CloseCrossSvg.svelte";
+
 import { placeMarkers } from "./utils/mapUtils/markersUtils.js";
 import { changePasswordCheckToken } from "./api/auth.js";
-import RailroadSvg from "./components/elements/icons/RailroadSvg.svelte";
 import {
   getSettings,
   initApp,
@@ -14,12 +13,6 @@ import {
   requestRecentSpots,
   requestSpots,
 } from "./init.js";
-import SearchForm from "./components/SearchForm.svelte";
-import {
-  handleMapViewChange,
-  setLocation,
-} from "./utils/mapUtils/locationUtils.js";
-import Modal from "./components/Modal.svelte";
 import {
   isInitialized,
   isLighthouseActive,
@@ -40,7 +33,10 @@ import {
   openRailwayMap,
   openStreetMapMapnik,
 } from "./utils/mapUtils/tileLayers";
-import Calendar from "./components/Calendar.svelte";
+import {
+  handleMapViewChange,
+  setLocation,
+} from "./utils/mapUtils/locationUtils.js";
 import {
   adjustVhProp,
   getCurrentYear,
@@ -50,16 +46,24 @@ import {
   loadFromLocalStorage,
   saveToLocalStorage,
 } from "./utils/commonUtils";
+import { permalink } from "./utils/mapUtils/permalink";
+import { newMarkerIcon } from "./utils/mapUtils/icons";
+import { getSpotsInArea } from "./api/spot";
+
+import CloseCrossSvg from "./components/elements/icons/CloseCrossSvg.svelte";
+import RailroadSvg from "./components/elements/icons/RailroadSvg.svelte";
+import SearchForm from "./components/SearchForm.svelte";
+import Modal from "./components/Modal.svelte";
+import Calendar from "./components/Calendar.svelte";
 import AddSpot from "./components/addSpot/AddSpot.svelte";
 import MarkerCard from "./components/markerCard/MarkerCard.svelte";
-import { permalink } from "./utils/mapUtils/permalink";
 import AuthContainer from "./components/auth/AuthContainer.svelte";
 import ResetPassword from "./components/auth/ResetPassword.svelte";
 import Profile from "./components/user/Profile.svelte";
-import { newMarkerIcon } from "./utils/mapUtils/icons";
 import Loader from "./components/elements/Loader.svelte";
+import Spinner from "./components/elements/Spinner.svelte";
+
 import { MIN_ZOOM } from "./constants";
-import { getSpotsInArea } from "./api/spot";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let showCalendarModal = false;
@@ -70,8 +74,10 @@ let showUserProfileModal = false;
 let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 let isAreaSelectionActive = false;
+let isSpotsFromAreaLoading = false;
 let resetPasswordToken = getResetPasswordToken();
 let inviteData = getInviteData();
+let areaSpots;
 
 let map;
 let newMarker;
@@ -79,14 +85,18 @@ let currentZoom;
 
 const areaSelection = new DrawAreaSelection({
   onPolygonReady: (polygon) => {
+    isSpotsFromAreaLoading = true;
     polygon.setStyle({
       color: "var(--color-accent)",
       weight: 4,
       fillOpacity: 0.18,
     });
-    console.log("polygon.toGeoJSON() :>> ", polygon.toGeoJSON());
+
     const { coordinates } = polygon.toGeoJSON().geometry;
-    getSpotsInArea(coordinates[0]);
+    getSpotsInArea(coordinates[0]).then(({ result, success }) => {
+      areaSpots = result;
+      isSpotsFromAreaLoading = false;
+    });
   },
   position: "bottomright",
 });
@@ -115,6 +125,7 @@ const toggleAreaSelectionMode = (toggle) => {
 
   map.setMinZoom(MIN_ZOOM);
   areaSelection.deactivate();
+  areaSpots = null;
 };
 
 document.getElementById("initial-loader").remove();
@@ -305,25 +316,32 @@ const quitAddSpot = () => {
           </button>
         </div>
       {/if}
-    {:else if isAreaSelectionActive}
-      <div class="selection selected-area-spots">
-        <span>56 Spots Selected</span>
+    {:else if isAreaSelectionActive && (areaSpots || isSpotsFromAreaLoading)}
+      <div
+        class="selection selected-area-spots"
+        transition:fade={{ duration: 200 }}>
+        {#if isSpotsFromAreaLoading}
+          <Spinner height={20} margin="10px" isWhite />
+        {/if}
+        {#if areaSpots}
+          <span>{areaSpots?.length} Spots Selected</span>
+        {/if}
       </div>
     {/if}
   </div>
 
-  {#if !$isSearchResults && !$selectedUserProfileData.name}
+  {#if !$isSearchResults && !$selectedUserProfileData.name && !isAreaSelectionActive}
     <button
       class="button button-main_screen button-square button-switch_mode"
       class:active={isRailwayMode}
       on:click={handleChangeModeClick}
-      in:fade={{ duration: 200 }}
+      transition:fade={{ duration: 200 }}
       title="Highlight railways">
       <RailroadSvg isLight={isRailwayMode} />
     </button>
   {/if}
 
-  {#if isAreaSelectionActive || currentZoom > 14}
+  {#if !$isSearchResults && !$selectedUserProfileData.name && (isAreaSelectionActive || currentZoom > 14)}
     <button
       class="button button-main_screen button-square button-select_area"
       class:active={isAreaSelectionActive}

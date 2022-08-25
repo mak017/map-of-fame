@@ -1,10 +1,12 @@
 <script>
 export let height = 40;
 export let margin = "10px auto";
+export let isWhite = false;
 </script>
 
 <div
   class="spinner"
+  class:isWhite
   style="width: {height}px; height: {height}px; margin: {margin};">
   <svg class="spinner-icon" viewBox="25 25 50 50">
     <circle
@@ -19,10 +21,14 @@ export let margin = "10px auto";
   </svg>
 </div>
 
-<style>
+<style lang="scss">
 .spinner {
   color: var(--color-accent);
   animation: rotate 0.75s linear infinite;
+
+  &.isWhite {
+    color: var(--color-white);
+  }
 }
 
 .spinner-icon {
