@@ -62,6 +62,7 @@ import ResetPassword from "./components/auth/ResetPassword.svelte";
 import Profile from "./components/user/Profile.svelte";
 import Loader from "./components/elements/Loader.svelte";
 import Spinner from "./components/elements/Spinner.svelte";
+import SelectedSpots from "./components/SelectedSpots.svelte";
 
 import { MIN_ZOOM } from "./constants";
 
@@ -75,6 +76,7 @@ let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 let isAreaSelectionActive = false;
 let isSpotsFromAreaLoading = false;
+let showSpotsFromAreaModal = false;
 let resetPasswordToken = getResetPasswordToken();
 let inviteData = getInviteData();
 let areaSpots;
@@ -106,6 +108,7 @@ const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
 const showResetPassword = (show) => (showResetPasswordModal = show);
 const showUserProfile = (show) => (showUserProfileModal = show);
+const showSpotsFromArea = (show) => (showSpotsFromAreaModal = show);
 const toggleAddSpotMode = (toggle) => (isAddSpotMode = toggle);
 const toggleAddSpotSidebarVisible = (toggle) =>
   (isAddSpotSidebarVisible = toggle);
@@ -124,6 +127,7 @@ const toggleAreaSelectionMode = (toggle) => {
   }
 
   map.setMinZoom(MIN_ZOOM);
+  map.dragging.enable();
   areaSelection.deactivate();
   areaSpots = null;
 };
@@ -319,7 +323,9 @@ const quitAddSpot = () => {
     {:else if isAreaSelectionActive && (areaSpots || isSpotsFromAreaLoading)}
       <div
         class="selection selected-area-spots"
-        transition:fade={{ duration: 200 }}>
+        class:active={!isSpotsFromAreaLoading && areaSpots.length > 0}
+        transition:fade={{ duration: 200 }}
+        on:click={() => showSpotsFromArea(true)}>
         {#if isSpotsFromAreaLoading}
           <Spinner height={20} margin="10px" isWhite />
         {/if}
@@ -428,6 +434,16 @@ const quitAddSpot = () => {
         !$isShowOnMapMode && selectedUserProfileData.set({});
       }}>
       <Profile {onAddSpotBtnClick} {showUserProfile} />
+    </Modal>
+  {/if}
+
+  {#if showSpotsFromAreaModal}
+    <Modal
+      noLogo
+      on:close={() => {
+        showSpotsFromArea(false);
+      }}>
+      <SelectedSpots spotsList={areaSpots} />
     </Modal>
   {/if}
 {/if}
@@ -631,7 +647,12 @@ const quitAddSpot = () => {
   background-repeat: no-repeat;
   background-position: 14px 50%;
   background-size: 14px 12px;
-  cursor: pointer;
+  pointer-events: none;
+
+  &.active {
+    pointer-events: all;
+    cursor: pointer;
+  }
 }
 
 @media (max-width: 767px) {
