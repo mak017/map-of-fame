@@ -34,7 +34,9 @@ export let onCancel;
   position: absolute;
   bottom: 18px;
   left: 50%;
-  padding: 9px 26px;
+  min-width: 122px;
+  min-height: 40px;
+  padding: 11px 26px;
   transform: translateX(-50%);
   background-color: var(--color-dark);
   color: var(--color-light);
@@ -64,7 +66,7 @@ export let onCancel;
 
 @media (max-width: 767px) {
   .button-add_spot {
-    right: 72px;
+    right: 70px;
     left: auto;
     transform: none;
   }

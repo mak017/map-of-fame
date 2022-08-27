@@ -442,6 +442,7 @@ const quitAddSpot = () => {
       noLogo
       on:close={() => {
         showSpotsFromArea(false);
+        toggleAreaSelectionMode(false);
       }}>
       <SelectedSpots spotsList={areaSpots} />
     </Modal>
@@ -589,7 +590,7 @@ const quitAddSpot = () => {
     background-image: url(../images/area-select.svg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
-    background-size: 18px 26px;
+    background-size: 19px 26px;
 
     &.active {
       background-color: var(--color-accent);

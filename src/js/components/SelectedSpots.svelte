@@ -1,25 +1,36 @@
 <script>
-import { InfiniteScroll } from "svelte-infinite-scroll";
 import { fade } from "svelte/transition";
 
-import { ALL_YEARS_STRING } from "../constants";
-
 import CustomSelect from "./elements/CustomSelect.svelte";
+
+import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../constants";
 
 export let spotsList;
 
 let currentYear = ALL_YEARS_STRING;
-let yearsToApply = [];
+let spotsToShow = spotsList;
+let yearsToApply = [
+  ALL_YEARS_STRING,
+  ...new Set(
+    spotsList
+      .map(({ year }) => (year === null ? EMPTY_YEAR_STRING : year))
+      .filter((y) => y)
+      .sort(
+        (a, b) =>
+          (a === EMPTY_YEAR_STRING) - (b === EMPTY_YEAR_STRING) ||
+          -(a > b) ||
+          +(a < b)
+      )
+  ),
+];
 
 const handleYearSelect = (event) => {
   const { value } = event.detail.detail;
-  currentYear = value !== EMPTY_YEAR_STRING ? value : "";
-  offset = 0;
-  // if (currentYear === ALL_YEARS_STRING) {
-  //   fetchSpots({ isNewFetch: true });
-  //   return;
-  // }
-  // fetchSpots({ year: `${currentYear}`, isNewFetch: true });
+  currentYear = value !== EMPTY_YEAR_STRING ? value : null;
+  spotsToShow =
+    currentYear === ALL_YEARS_STRING
+      ? spotsList
+      : spotsList.filter((spot) => spot.year === currentYear);
 };
 
 const onSpotClick = (spot) => {
@@ -73,7 +84,7 @@ const onSpotClick = (spot) => {
       </div>
     </div>
     <div class="spots">
-      {#each spotsList as spot}
+      {#each spotsToShow as spot}
         <div class="spot-card" on:click={() => onSpotClick(spot)}>
           <img
             loading="lazy"
