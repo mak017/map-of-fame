@@ -1,11 +1,15 @@
 <script>
 import { fade } from "svelte/transition";
 
+import { openedMarkerData } from "../store";
+import { permalink } from "../utils/mapUtils/permalink";
+
 import CustomSelect from "./elements/CustomSelect.svelte";
 
 import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../constants";
 
 export let spotsList;
+export let close;
 
 let currentYear = ALL_YEARS_STRING;
 let spotsToShow = spotsList;
@@ -34,38 +38,44 @@ const handleYearSelect = (event) => {
 };
 
 const onSpotClick = (spot) => {
-  // if (isCurrentUser) {
-  //   return;
-  // }
-  // const {
-  //   id,
-  //   artistCrew,
-  //   spotStatus: status,
-  //   description,
-  //   img,
-  //   title,
-  //   videoLink: video,
-  //   publicBanner: { banner, bannerUrl },
-  //   location: { lat, lng },
-  //   year,
-  //   link,
-  // } = spot;
-  // openedMarkerData.set({
-  //   id,
-  //   artistCrew,
-  //   status,
-  //   description,
-  //   img: { src: img, title: title || id },
-  //   video,
-  //   user: $selectedUserProfileData,
-  //   firm: { banner, bannerUrl },
-  //   coords: { lat, lng },
-  //   year,
-  //   link,
-  // });
-  // shouldDisplayShowOnMap.set(true);
-  // permalink.update({ params: { marker: id } });
-  // showUserProfile(false);
+  const {
+    id,
+    artistCrew,
+    spotStatus: status,
+    description,
+    img,
+    title,
+    videoLink: video,
+    publicBanner: { banner, bannerUrl },
+    location: { lat, lng },
+    year,
+    link,
+    user,
+  } = spot;
+  openedMarkerData.set({
+    id,
+    artistCrew: [
+      {
+        artist: { name: "test account" },
+        artistId: 18,
+        crew: { name: "testers" },
+        crewId: 12,
+        id: 220,
+        spotId: 235,
+      },
+    ],
+    status,
+    description,
+    img: { src: img, title: title || id },
+    video,
+    user,
+    firm: { banner, bannerUrl },
+    coords: { lat, lng },
+    year,
+    link,
+  });
+  permalink.update({ params: { marker: id } });
+  close();
 };
 </script>
 

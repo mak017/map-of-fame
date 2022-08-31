@@ -404,6 +404,7 @@ const quitAddSpot = () => {
           selectedUserProfileData.set({});
           $shouldDisplayShowOnMap && requestSpots($selectedYear);
         }
+        isAreaSelectionActive && toggleAreaSelectionMode(false);
       }}
       withAd
       noLogo
@@ -444,7 +445,9 @@ const quitAddSpot = () => {
         showSpotsFromArea(false);
         toggleAreaSelectionMode(false);
       }}>
-      <SelectedSpots spotsList={areaSpots} />
+      <SelectedSpots
+        spotsList={areaSpots}
+        close={() => showSpotsFromArea(false)} />
     </Modal>
   {/if}
 {/if}
