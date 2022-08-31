@@ -9,8 +9,9 @@ import {
 import { permalink } from "../utils/mapUtils/permalink.js";
 import { getDatesFilter, getProfileYears } from "../utils/datesUtils.js";
 import { requestSpots } from "../init.js";
-import { EMPTY_YEAR_STRING } from "../constants.js";
 import { getUserSpots } from "../api/spot.js";
+
+import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../constants.js";
 
 export let selectedYear;
 export let showCalendar;
@@ -25,7 +26,9 @@ let searchYears = $markersStore.years?.map((year) =>
 
 const datesFilter = getDatesFilter(yearStart, yearEnd, additionalYears);
 
-const dates = !isMobile() ? datesFilter : datesFilter.reverse();
+const dates = !isMobile()
+  ? [ALL_YEARS_STRING, ...datesFilter]
+  : [ALL_YEARS_STRING, ...datesFilter.reverse()];
 
 const isCurrentUser =
   !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
@@ -43,15 +46,17 @@ const handleClick = (year) => {
     requestSpots(year);
     permalink.update({ clearParams: "all" });
   } else if (isSearch) {
-    requestSearchSpots({ year: yearForRequest, artist, crew }).then(
-      (response) => {
-        const { success, result } = response;
-        if (success && result) {
-          markersStore.set(result);
-          permalink.update({});
-        }
+    const requestParams = { artist, crew };
+    if (!yearForRequest === ALL_YEARS_STRING) {
+      requestParams.year = yearForRequest;
+    }
+    requestSearchSpots(requestParams).then((response) => {
+      const { success, result } = response;
+      if (success && result) {
+        markersStore.set(result);
+        permalink.update({});
       }
-    );
+    });
   } else if ($selectedUserProfileData.id) {
     getUserSpots(isCurrentUser ? null : $selectedUserProfileData.id, token, {
       year: yearForRequest,
@@ -80,7 +85,10 @@ const handleClick = (year) => {
         class="year"
         class:active={`${date}` === $selectedYear}
         class:disabled={+date > getCurrentYear() ||
-          (searchYears?.length && !searchYears?.includes(date))}>{date}</a>
+          (searchYears?.length &&
+            !searchYears?.includes(date) &&
+            date !== ALL_YEARS_STRING) ||
+          (!searchYears?.length && date === ALL_YEARS_STRING)}>{date}</a>
     </li>
   {/each}
 </ol>
