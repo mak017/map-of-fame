@@ -47,7 +47,7 @@ const handleClick = (year) => {
     permalink.update({ clearParams: "all" });
   } else if (isSearch) {
     const requestParams = { artist, crew };
-    if (!yearForRequest === ALL_YEARS_STRING) {
+    if (yearForRequest !== ALL_YEARS_STRING) {
       requestParams.year = yearForRequest;
     }
     requestSearchSpots(requestParams).then((response) => {

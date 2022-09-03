@@ -25,6 +25,7 @@ export let data;
 export let map;
 export let showUserProfile;
 export let clearOpenedMarkerData;
+export let toggleAreaSelectionMode;
 
 let isShareOpened = false;
 let isComplainOpened = false;
@@ -56,6 +57,7 @@ const onUserClick = () => {
   if (!$selectedUserProfileData.id) {
     selectedUserProfileData.set(user ?? {});
   }
+  toggleAreaSelectionMode(false);
   clearOpenedMarkerData();
   showUserProfile(true);
 };

@@ -54,16 +54,7 @@ const onSpotClick = (spot) => {
   } = spot;
   openedMarkerData.set({
     id,
-    artistCrew: [
-      {
-        artist: { name: "test account" },
-        artistId: 18,
-        crew: { name: "testers" },
-        crewId: 12,
-        id: 220,
-        spotId: 235,
-      },
-    ],
+    artistCrew,
     status,
     description,
     img: { src: img, title: title || id },

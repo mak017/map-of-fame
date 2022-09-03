@@ -64,7 +64,7 @@ import Loader from "./components/elements/Loader.svelte";
 import Spinner from "./components/elements/Spinner.svelte";
 import SelectedSpots from "./components/SelectedSpots.svelte";
 
-import { MIN_ZOOM } from "./constants";
+import { ALL_YEARS_STRING, MIN_ZOOM } from "./constants";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let showCalendarModal = false;
@@ -100,6 +100,7 @@ const areaSelection = new DrawAreaSelection({
       isSpotsFromAreaLoading = false;
     });
   },
+  onPolygonDblClick: () => showSpotsFromArea(true),
   position: "bottomright",
 });
 
@@ -260,8 +261,10 @@ const quitAddSpot = () => {
     {#if !isAddSpotMode || (isAddSpotMode && !isAddSpotSidebarVisible)}
       <button
         class="button button-main_screen button-open_calendar"
+        class:inactive={isAreaSelectionActive}
         on:click={() => showCalendar(true)}
-        transition:fade={{ duration: 200 }}>{$selectedYear}</button>
+        transition:fade={{ duration: 200 }}
+        >{isAreaSelectionActive ? ALL_YEARS_STRING : $selectedYear}</button>
     {/if}
     {#if !isAddSpotMode && !$isSearchResults && !$isShowOnMapMode && !isAreaSelectionActive}
       <button
@@ -416,7 +419,8 @@ const quitAddSpot = () => {
         data={$openedMarkerData}
         {map}
         {showUserProfile}
-        {clearOpenedMarkerData} />
+        {clearOpenedMarkerData}
+        {toggleAreaSelectionMode} />
     </Modal>
   {/if}
 
@@ -497,6 +501,10 @@ const quitAddSpot = () => {
       width: 8px;
       height: 5px;
       background: url(../images//triangle-down.svg);
+    }
+
+    &.inactive {
+      pointer-events: none;
     }
   }
 
