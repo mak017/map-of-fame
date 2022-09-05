@@ -112,6 +112,7 @@ li {
   font-size: 18px;
   line-height: 22px;
   text-decoration: none;
+  text-transform: uppercase;
   white-space: nowrap;
 
   &:hover {

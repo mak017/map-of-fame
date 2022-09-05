@@ -255,7 +255,11 @@ const quitAddSpot = () => {
     <ResetPassword {showResetPassword} {resetPasswordToken} />
   </Modal>
 {:else}
-  <div class="map" class:add-mode={isAddSpotMode} use:initMap />
+  <div
+    class="map"
+    class:add-mode={isAddSpotMode}
+    class:area-selection-mode={isAreaSelectionActive}
+    use:initMap />
 
   <div class="main-top_left_wrapper">
     {#if !isAddSpotMode || (isAddSpotMode && !isAddSpotSidebarVisible)}
@@ -480,7 +484,7 @@ const quitAddSpot = () => {
     min-width: 114px;
     height: 40px;
     padding: 0 36px;
-
+    text-transform: uppercase;
     user-select: none;
 
     &::before {

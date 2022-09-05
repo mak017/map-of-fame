@@ -31,6 +31,16 @@
   }
 }
 
+.area-selection-mode {
+  .map-marker {
+    &-with-photo,
+    &-cluster {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+  }
+}
+
 .leaflet-container {
   background: url(images/pattern-sales.png);
   font: inherit;
