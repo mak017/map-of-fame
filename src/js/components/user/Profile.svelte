@@ -191,7 +191,6 @@ const onSpotClick = (spot) => {
   });
   shouldDisplayShowOnMap.set(true);
   permalink.update({ params: { marker: id } });
-  showUserProfile(false);
 };
 
 const handleShowOnMapClick = () => {

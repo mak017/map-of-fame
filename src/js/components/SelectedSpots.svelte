@@ -9,7 +9,6 @@ import CustomSelect from "./elements/CustomSelect.svelte";
 import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../constants";
 
 export let spotsList;
-export let close;
 
 let currentYear = ALL_YEARS_STRING;
 let spotsToShow = spotsList;
@@ -66,7 +65,6 @@ const onSpotClick = (spot) => {
     link,
   });
   permalink.update({ params: { marker: id } });
-  close();
 };
 </script>
 

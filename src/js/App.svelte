@@ -403,6 +403,28 @@ const quitAddSpot = () => {
     </Modal>
   {/if}
 
+  {#if showUserProfileModal}
+    <Modal
+      noLogo
+      on:close={() => {
+        showUserProfile(false);
+        !$isShowOnMapMode && selectedUserProfileData.set({});
+      }}>
+      <Profile {onAddSpotBtnClick} {showUserProfile} />
+    </Modal>
+  {/if}
+
+  {#if showSpotsFromAreaModal}
+    <Modal
+      noLogo
+      on:close={() => {
+        showSpotsFromArea(false);
+        toggleAreaSelectionMode(false);
+      }}>
+      <SelectedSpots spotsList={areaSpots} />
+    </Modal>
+  {/if}
+
   {#if $openedMarkerData}
     <Modal
       on:close={() => {
@@ -423,6 +445,8 @@ const quitAddSpot = () => {
         data={$openedMarkerData}
         {map}
         {showUserProfile}
+        {showSpotsFromAreaModal}
+        {showSpotsFromArea}
         {clearOpenedMarkerData}
         {toggleAreaSelectionMode} />
     </Modal>
@@ -433,30 +457,6 @@ const quitAddSpot = () => {
       {showAuth}
       {inviteData}
       clearInviteData={() => (inviteData = null)} />
-  {/if}
-
-  {#if showUserProfileModal}
-    <Modal
-      noLogo
-      on:close={() => {
-        showUserProfile(false);
-        !$isShowOnMapMode && selectedUserProfileData.set({});
-      }}>
-      <Profile {onAddSpotBtnClick} {showUserProfile} />
-    </Modal>
-  {/if}
-
-  {#if showSpotsFromAreaModal}
-    <Modal
-      noLogo
-      on:close={() => {
-        showSpotsFromArea(false);
-        toggleAreaSelectionMode(false);
-      }}>
-      <SelectedSpots
-        spotsList={areaSpots}
-        close={() => showSpotsFromArea(false)} />
-    </Modal>
   {/if}
 {/if}
 
