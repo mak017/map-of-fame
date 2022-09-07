@@ -605,7 +605,7 @@ const quitAddSpot = () => {
     background-image: url(../images/area-select.svg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
-    background-size: 19px 26px;
+    background-size: 22px 24px;
 
     &.active {
       background-color: var(--color-accent);
