@@ -25,7 +25,6 @@ export let data;
 export let map;
 export let showUserProfile;
 export let showSpotsFromArea;
-export let showSpotsFromAreaModal;
 export let clearOpenedMarkerData;
 export let toggleAreaSelectionMode;
 
@@ -60,8 +59,8 @@ const onUserClick = () => {
     selectedUserProfileData.set(user ?? {});
     toggleAreaSelectionMode(false);
     showSpotsFromArea(false);
-    showUserProfile(true);
   }
+  showUserProfile(true);
   clearOpenedMarkerData();
 };
 
@@ -91,6 +90,7 @@ const handleShowOnMapClick = () => {
       setTimeout(() => {
         map.setView([lat, lng], MAX_ZOOM);
       }, 0);
+      showUserProfile(false);
       clearOpenedMarkerData();
     }
   });
@@ -116,10 +116,6 @@ const getArtistsString = () => {
 </script>
 
 <div class="card">
-  {#if showSpotsFromAreaModal}
-    <button type="button" class="button back" on:click={clearOpenedMarkerData}
-      >Back</button>
-  {/if}
   <div class="top">
     <div class="posted-by">
       <div class="subtitle">Posted by</div>
@@ -188,28 +184,6 @@ const getArtistsString = () => {
   width: 100%;
   max-width: 938px;
   margin-bottom: 64px;
-}
-
-.back {
-  position: relative;
-  margin: -20px 0 20px;
-  background: none;
-  color: var(--color-accent);
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 22px;
-  text-transform: uppercase;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: 100%;
-    width: 20px;
-    height: 20px;
-    transform: translateY(-50%);
-    background: url(../../../images/back.svg) 50% 50% / auto no-repeat;
-  }
 }
 
 .top {

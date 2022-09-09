@@ -100,7 +100,7 @@ const areaSelection = new DrawAreaSelection({
       isSpotsFromAreaLoading = false;
     });
   },
-  onPolygonDblClick: () => showSpotsFromArea(true),
+  onPolygonDblClick: () => !!areaSpots?.length && showSpotsFromArea(true),
   position: "bottomright",
 });
 
@@ -364,7 +364,7 @@ const quitAddSpot = () => {
         ? "Cancel area selection mode"
         : "Activate area selection mode"}>
       {#if isAreaSelectionActive}
-        <CloseCrossSvg isLight />
+        <CloseCrossSvg />
       {/if}
     </button>
   {/if}
@@ -445,7 +445,6 @@ const quitAddSpot = () => {
         data={$openedMarkerData}
         {map}
         {showUserProfile}
-        {showSpotsFromAreaModal}
         {showSpotsFromArea}
         {clearOpenedMarkerData}
         {toggleAreaSelectionMode} />
@@ -608,7 +607,6 @@ const quitAddSpot = () => {
     background-size: 22px 24px;
 
     &.active {
-      background-color: var(--color-accent);
       background-image: none;
     }
   }
