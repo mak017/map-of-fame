@@ -124,6 +124,7 @@ const toggleAreaSelectionMode = (toggle) => {
   if (toggle) {
     map.setMinZoom(15);
     areaSelection.activate();
+    shouldDisplayShowOnMap.set(false);
     return;
   }
 
@@ -433,7 +434,6 @@ const quitAddSpot = () => {
           selectedUserProfileData.set({});
           $shouldDisplayShowOnMap && requestSpots($selectedYear);
         }
-        isAreaSelectionActive && toggleAreaSelectionMode(false);
       }}
       withAd
       noLogo
