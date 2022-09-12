@@ -10,7 +10,7 @@ import {
 import { normalizeCoords } from "./locationUtils";
 import { validateYear } from "../datesUtils";
 import { setMarkerData } from "./markersUtils";
-import { EMPTY_YEAR_STRING } from "../../constants";
+import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../../constants";
 
 let shouldUpdate = true;
 let mapInstance = null;
@@ -108,15 +108,16 @@ const getDataFromParams = (params) => {
 const setStateFromUrl = (params) => {
   const { year, artist, crew, marker } = getDataFromParams(params);
   const additionalYears = JSON.parse(settingsObj.additionalYears) ?? [];
-  if (
-    year &&
-    validateYear(year, settingsObj.yearStart, [
-      ...additionalYears,
-      EMPTY_YEAR_STRING,
-    ])
-  ) {
+  const yearsList = [...additionalYears, EMPTY_YEAR_STRING];
+
+  if (year && (artist || crew)) {
+    yearsList.push(ALL_YEARS_STRING);
+  }
+
+  if (year && validateYear(year, settingsObj.yearStart, yearsList)) {
     selectedYear.set(year);
   }
+
   if (artist) selectedArtist.set(artist);
   if (crew) selectedCrew.set(crew);
   if (marker && !Number.isNaN(+marker)) {

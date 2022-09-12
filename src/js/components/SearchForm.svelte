@@ -9,7 +9,7 @@ import {
   requestSearchArtistsCrews,
   requestSearchSpots,
 } from "./../api/search.js";
-import { EMPTY_YEAR_STRING, ERROR_MESSAGES } from "../constants";
+import { ALL_YEARS_STRING, ERROR_MESSAGES } from "../constants";
 import { permalink } from "../utils/mapUtils/permalink";
 import {
   isLighthouseActive,
@@ -72,7 +72,7 @@ const handleArtistClick = (artist, crew) => {
       isSearchResults.set(true);
       isLighthouseActive.set(false);
       if (result?.spots?.length) {
-        selectedYear.set(`${result.spots[0].year ?? EMPTY_YEAR_STRING}`);
+        selectedYear.set(ALL_YEARS_STRING);
       }
       permalink.update({ params: { artist, crew } });
       showSearch(false);

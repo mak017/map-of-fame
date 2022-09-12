@@ -1,4 +1,9 @@
-import { DEFAULT_ZOOM, DEFAULT_VIEW, EMPTY_YEAR_STRING } from "../../constants";
+import {
+  DEFAULT_ZOOM,
+  DEFAULT_VIEW,
+  EMPTY_YEAR_STRING,
+  ALL_YEARS_STRING,
+} from "../../constants";
 import { getCurrentYear, isEmpty } from "../commonUtils";
 import { permalink } from "./permalink";
 import {
@@ -118,12 +123,18 @@ export const setLocation = (map) => {
       const shouldSearch = artistFromStore || crewFromStore;
       mapBounds.set(bounds);
       if (shouldSearch && !markerId) {
-        performSearch({
+        const params = {
           artist: artistFromStore,
           crew: crewFromStore,
-          year: yearFromStore !== EMPTY_YEAR_STRING ? yearFromStore : "",
           isInitial: true,
-        });
+        };
+
+        if (yearFromStore !== ALL_YEARS_STRING) {
+          params.year =
+            yearFromStore !== EMPTY_YEAR_STRING ? yearFromStore : "";
+        }
+
+        performSearch(params);
       } else if (markerId) {
         getSpotById(markerId).then((response) => {
           const { success, result, errors } = response;
