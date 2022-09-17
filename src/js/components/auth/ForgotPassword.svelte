@@ -1,13 +1,11 @@
 <script>
 import { fade } from "svelte/transition";
 import { changePasswordInit } from "../../api/auth";
-import { AUTH_MODALS, ERROR_MESSAGES } from "../../constants";
+import { ERROR_MESSAGES } from "../../constants";
 import { validateEmail } from "../../utils/commonUtils";
-import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
 
-export let changeCurrentModal;
 export let setForgotPasswordEmailSent;
 export let forgotPasswordEmailSent;
 export let isMobileWidth;
@@ -52,10 +50,6 @@ const handleSubmit = () => {
   }
 };
 
-const handleBackClick = () => {
-  changeCurrentModal(AUTH_MODALS.login);
-};
-
 const handleInputChange = () => {
   if (isDisabledSubmit || errorMessage) {
     errorMessage = "";
@@ -71,7 +65,6 @@ const handleInputChange = () => {
   {#if forgotPasswordEmailSent && !isMobileWidth}
     <p>Letter was sent to the email</p>
   {/if}
-  <ButtonModalBack on:click={handleBackClick} />
   <FormEmailInput
     placeholder="Email"
     bind:value={email}

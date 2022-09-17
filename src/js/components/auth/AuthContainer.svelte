@@ -57,14 +57,13 @@ const setIsPreRegistrationSuccess = () => (isPreRegistrationSuccess = true);
 
 {#if currentModal === AUTH_MODALS.forgotPassword}
   <Modal
-    on:close={() => showAuth(false)}
+    on:close={() => changeCurrentModal(AUTH_MODALS.login)}
     title={forgotPasswordEmailSent && isMobileWidth
       ? "Letter was sent to the email"
       : "Forgot"}
     noTransition
     accentTitle={forgotPasswordEmailSent && isMobileWidth}>
     <ForgotPassword
-      {changeCurrentModal}
       {setForgotPasswordEmailSent}
       {forgotPasswordEmailSent}
       {isMobileWidth} />
