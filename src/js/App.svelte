@@ -316,6 +316,8 @@ const quitAddSpot = () => {
           <button
             class="button button-square button-clear_search"
             on:click|stopPropagation={() => {
+              $selectedYear === ALL_YEARS_STRING &&
+                selectedYear.set(getCurrentYear());
               requestSpots($selectedYear);
               selectedUserProfileData.set({});
               selectedArtist.set("");

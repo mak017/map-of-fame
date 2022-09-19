@@ -88,7 +88,7 @@ const handleClick = (year) => {
           (searchYears?.length &&
             !searchYears?.includes(date) &&
             date !== ALL_YEARS_STRING) ||
-          (!searchYears?.length && date === ALL_YEARS_STRING)}>{date}</a>
+          (!isSearch && date === ALL_YEARS_STRING)}>{date}</a>
     </li>
   {/each}
 </ol>
