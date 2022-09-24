@@ -4,7 +4,6 @@ import "leaflet.markercluster.placementstrategies";
 import {
   categoriesList,
   openedMarkerData,
-  selectedUserProfileData,
   shouldDisplayShowOnMap,
 } from "../../store";
 import { markersReadyEvent } from "../commonUtils";
@@ -13,12 +12,7 @@ import { permalink } from "./permalink";
 
 let prevMarkers = [];
 let markersLayer = null;
-let userProfileData;
 let categories = [];
-
-selectedUserProfileData.subscribe((value) => {
-  userProfileData = value;
-});
 
 categoriesList.subscribe((value) => {
   categories = value;
@@ -65,7 +59,7 @@ export const setMarkerData = (data) => {
     link,
   });
   permalink.update({ params: { marker: id } });
-  shouldDisplayShowOnMap.set(!!userProfileData.id);
+  shouldDisplayShowOnMap.set(false);
   document.getElementById("highlighted").innerHTML = "";
 };
 

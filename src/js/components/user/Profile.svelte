@@ -17,6 +17,7 @@ import {
   selectedUserProfileData,
   selectedYear,
   shouldDisplayShowOnMap,
+  isSearchResults,
 } from "../../store";
 import Modal from "../Modal.svelte";
 import EditSpot from "./EditSpot.svelte";
@@ -206,6 +207,7 @@ const handleShowOnMapClick = () => {
     if (success && result) {
       const { spots, years } = result;
       markersStore.set({ spots, years: getProfileYears(years) });
+      isSearchResults.set(false);
       isShowOnMapMode.set(true);
       selectedYear.set(currentYear ? `${currentYear}` : EMPTY_YEAR_STRING);
       selectedArtist.set("");
