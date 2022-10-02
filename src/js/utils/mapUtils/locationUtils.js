@@ -58,7 +58,7 @@ isLighthouseActive.subscribe((value) => {
 });
 
 const getLocationByIp = () =>
-  fetch("https://ipinfo.io/json?token=c97eec3767f442")
+  fetch("https://ipinfo.io/json?token=f7826cd7c9e44b")
     .then((response) => response.json())
     .then((data) => {
       const { loc } = data;
