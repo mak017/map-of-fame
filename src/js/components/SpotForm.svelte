@@ -153,12 +153,13 @@ const onChangeImage = () => {
           .blob((img) => addWatermark(img, $userData.name))
           .then((blob) => {
             imageBlob = new File([blob], "image.jpg");
+            console.debug("imageBlob.size", imageBlob.size >> 10, "KB");
             if (imageBlob.size > MAX_IMAGE_FILE_SIZE) {
               reduceFileSize(
                 imageBlob,
                 MAX_IMAGE_FILE_SIZE,
-                Infinity,
-                Infinity,
+                4200,
+                4200,
                 0.8,
                 (blob) => {
                   imageBlob = new File([blob], "image.jpg");
@@ -170,7 +171,7 @@ const onChangeImage = () => {
       };
     };
 
-    if (file.size < MAX_IMAGE_FILE_SIZE) {
+    if (file.size < MAX_IMAGE_FILE_SIZE * 6) {
       errors.imageFile = "";
       reader.readAsDataURL(file);
     } else {

@@ -118,9 +118,19 @@ export const reduceFileSize = (
       const canvas = imgToCanvasWithOrientation(img, w, h, orientation);
       canvas.toBlob(
         (blob) => {
-          // console.debug(
-          //   "Resized image to " + w + "x" + h + ", " + (blob.size >> 10) + "kB"
-          // );
+          console.debug(
+            "Resized image to " + w + "x" + h + ", " + (blob.size >> 10) + "kB"
+          );
+          if (file.size > acceptFileSize) {
+            reduceFileSize(
+              new File([blob], "image.jpg"),
+              acceptFileSize,
+              Math.round(w * 0.85),
+              Math.round(h * 0.85),
+              quality,
+              callback
+            );
+          }
           callback(blob);
         },
         "image/jpeg",
