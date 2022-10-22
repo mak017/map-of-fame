@@ -183,7 +183,7 @@ const initMap = (container) => {
 
   setLocation(map);
 
-  map.on("zoomend dragend", () => $isInitialized && handleMapViewChange(map));
+  map.on("moveend", () => $isInitialized && handleMapViewChange(map));
 
   map.on("zoomend", () => (currentZoom = map.getZoom()));
 
@@ -682,6 +682,10 @@ const quitAddSpot = () => {
 
     &-clear_search {
       padding: 4px;
+    }
+
+    &-select_area {
+      bottom: 68px;
     }
   }
 

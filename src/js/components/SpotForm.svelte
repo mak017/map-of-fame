@@ -415,7 +415,7 @@ const handleAddMoreClick = () => {
     {:else}
       <label for="upload-image" class="first_upload">
         <span>Add Image</span>
-        <span>Max 5 Mb</span>
+        <span>Max 10 Mb</span>
       </label>
     {/if}
     {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}

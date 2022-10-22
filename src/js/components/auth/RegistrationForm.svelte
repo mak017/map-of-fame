@@ -197,7 +197,9 @@ const handleBackClick = () => {
   {#if step === 2}
     <div in:fade|local={{ duration: 200 }}>
       <FormTextInput
-        placeholder="User Name"
+        placeholder={selectedType === USER_TYPES.artist
+          ? "Artist Name"
+          : "Name"}
         bind:value={username}
         errorText={errors.name}
         on:input={() => handleInputChange("name")} />

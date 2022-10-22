@@ -57,6 +57,7 @@ export const addWatermark = (img, user) => {
   const textHeight =
     (metrics1.actualBoundingBoxAscent + metrics2.actualBoundingBoxAscent) *
     1.35;
+  const textWidth = Math.max(metrics1.width, metrics2.width) * 0.64;
   const x = img.width - getScaledSize(36);
   const y = img.height;
 
@@ -69,7 +70,7 @@ export const addWatermark = (img, user) => {
     ctx,
     0,
     -textHeight - textHeight * 0.4,
-    img.height * 0.37,
+    textWidth,
     textHeight + textHeight * 0.4,
     { tr: 2, br: 2 },
     true,

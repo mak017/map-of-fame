@@ -66,7 +66,7 @@ export let onCancel;
 
 @media (max-width: 767px) {
   .button-add_spot {
-    right: 70px;
+    right: 18px;
     left: auto;
     transform: none;
   }
