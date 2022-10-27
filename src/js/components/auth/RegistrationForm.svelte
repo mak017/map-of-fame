@@ -9,7 +9,12 @@ import {
   validateEmail,
   validatePassword,
 } from "../../utils/commonUtils.js";
-import { AUTH_MODALS, ERROR_MESSAGES, USER_TYPES } from "../../constants";
+import {
+  AUTH_MODALS,
+  ERROR_MESSAGES,
+  USER_SUBTYPES,
+  USER_TYPES,
+} from "../../constants";
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
@@ -28,13 +33,29 @@ let step = 1;
 let selectedType = USER_TYPES.artist;
 let email = "";
 let password = "";
+let subtype;
 let username = "";
 let crew = "";
 let country;
 let portfolioLink = "";
-let errors = { email: "", password: "", name: "", country: "", link: "" };
+
+let errors = {
+  email: "",
+  password: "",
+  subtype: "",
+  name: "",
+  crew: "",
+  country: "",
+  link: "",
+};
+
 let isSubmitDisabled = false;
 let isInProgress = false;
+
+const subtypeList = [
+  { id: USER_SUBTYPES.artist.toLowerCase(), name: USER_SUBTYPES.artist },
+  { id: USER_SUBTYPES.crew.toLowerCase(), name: USER_SUBTYPES.crew },
+];
 
 onMount(() => {
   if (!$countriesList || $countriesList.length === 0) {
@@ -44,8 +65,11 @@ onMount(() => {
 
 $: isSubmitDisabled =
   isInProgress ||
-  (step === 1 && (!!errors.email || !!errors.password)) ||
-  (step === 2 && (!!errors.name || !!errors.country || !!errors.link));
+  (step === 1 && (!!errors.email || !!errors.password || !!errors.subtype)) ||
+  (step === 2 &&
+    (!!errors.name || !!errors.crew || !!errors.country || !!errors.link));
+
+$: console.log("errors", errors);
 
 const getCountries = () => {
   getAllCountries().then((response) => {
@@ -62,23 +86,42 @@ const validate = () => {
   if (step === 1) {
     const isValidEmail = validateEmail(email);
     const isValidPassword = validatePassword(password);
-    if (isValidEmail && isValidPassword) {
+
+    if (
+      isValidEmail &&
+      isValidPassword &&
+      (selectedType === USER_TYPES.hunter ||
+        (selectedType === USER_TYPES.artist && subtype))
+    ) {
       errors.email = "";
       errors.password = "";
+      errors.subtype = "";
     } else {
       if (!isValidEmail) {
         errors.email = !email
           ? ERROR_MESSAGES.emailEmpty
           : ERROR_MESSAGES.emailInvalid;
       } else errors.email = "";
+
       if (!isValidPassword) {
         errors.password = !password
           ? ERROR_MESSAGES.passwordEmpty
           : ERROR_MESSAGES.passwordInvalid;
       } else errors.password = "";
+
+      errors.subtype =
+        selectedType === USER_TYPES.artist && !subtype
+          ? ERROR_MESSAGES.profileSubtypeEmpty
+          : "";
     }
   } else {
-    errors.name = !username ? ERROR_MESSAGES.usernameEmpty : "";
+    console.log("subtype :>> ", subtype);
+    if (subtype?.name !== USER_SUBTYPES.crew) {
+      errors.name = !username ? ERROR_MESSAGES.usernameEmpty : "";
+    } else {
+      errors.crew = !crew ? ERROR_MESSAGES.crewEmpty : "";
+    }
+
     errors.country = !country ? ERROR_MESSAGES.countryCityEmpty : "";
   }
 };
@@ -86,9 +129,17 @@ const validate = () => {
 const handleSubmit = () => {
   validate();
   if (step === 1) {
-    if (!errors.email && !errors.password) {
+    if (!errors.email && !errors.password && !errors.subtype) {
       step = 2;
-      errors = { email: "", password: "", name: "", country: "", link: "" };
+      errors = {
+        email: "",
+        password: "",
+        subtype: "",
+        name: "",
+        crew: "",
+        country: "",
+        link: "",
+      };
     }
   } else {
     if (!errors.name && !errors.country && !errors.link) {
@@ -98,7 +149,10 @@ const handleSubmit = () => {
         password,
         email,
         country: country.name,
-        type: selectedType.toLowerCase(),
+        type:
+          selectedType === USER_TYPES.hunter
+            ? selectedType.toLowerCase()
+            : subtype.id,
         crew,
         link: portfolioLink,
         invite: inviteData?.code,
@@ -137,8 +191,9 @@ const handleSubmit = () => {
 const handleInputChange = (input) => {
   if (
     isSubmitDisabled ||
-    (step === 1 && (errors.email || errors.password)) ||
-    (step === 2 && (errors.name || errors.country || errors.link))
+    (step === 1 && (errors.email || errors.password || errors.subtype)) ||
+    (step === 2 &&
+      (errors.name || errors.crew || errors.country || errors.link))
   ) {
     errors[input] = "";
   }
@@ -192,19 +247,49 @@ const handleBackClick = () => {
         bind:value={password}
         errorText={errors.password}
         on:input={() => handleInputChange("password")} />
+      {#if selectedType === USER_TYPES.artist}
+        <div class="profile_subtype" class:with-error={errors.sprayPaintUsed}>
+          <AutoComplete
+            bind:selectedValue={subtype}
+            items={subtypeList}
+            optionIdentifier={"name"}
+            {getOptionLabel}
+            placeholder="Profile Subtype"
+            errorMessage={errors.subtype}
+            on:select={() => handleInputChange("subtype")} />
+          <!-- <CustomSelect
+        items={$firms}
+        bind:selectedValue={sprayPaintUsed}
+        on:select={handleSpraySelect}
+        placeholder="Spray Paint Used"
+        optionIdentifier="name"
+        addSpot={!isEditSpot}
+        {getOptionLabel}
+        {getSelectionLabel} /> -->
+          {#if errors.sprayPaintUsed}
+            <span class="error">{errors.sprayPaintUsed}</span>
+          {/if}
+        </div>
+      {/if}
     </div>
   {/if}
   {#if step === 2}
     <div in:fade|local={{ duration: 200 }}>
-      <FormTextInput
-        placeholder={selectedType === USER_TYPES.artist
-          ? "Artist Name"
-          : "Name"}
-        bind:value={username}
-        errorText={errors.name}
-        on:input={() => handleInputChange("name")} />
+      {#if subtype?.name !== USER_SUBTYPES.crew}
+        <FormTextInput
+          placeholder={selectedType === USER_TYPES.artist
+            ? "Artist Name"
+            : "Name"}
+          bind:value={username}
+          errorText={errors.name}
+          on:input={() => handleInputChange("name")} />
+      {/if}
       {#if selectedType === USER_TYPES.artist}
-        <FormTextInput placeholder="Crew" bind:value={crew} />
+        <FormTextInput
+          placeholder="Crew"
+          bind:value={crew}
+          errorText={errors.crew}
+          on:input={() => handleInputChange("crew")} />
       {/if}
       <AutoComplete
         bind:selectedValue={country}

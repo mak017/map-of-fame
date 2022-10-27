@@ -23,6 +23,8 @@ export const USER_TYPES = {
   superUser: "Super User",
 };
 
+export const USER_SUBTYPES = { artist: "Artist", crew: "Crew" };
+
 export const statusesOrdered = [
   STATUSES.live,
   STATUSES.buffed,
@@ -47,6 +49,7 @@ export const ERROR_MESSAGES = {
   emailInvalid: "You have entered invalid email",
   passwordEmpty: "Please enter password",
   passwordInvalid: "Password must be between 8 to 20 characters",
+  profileSubtypeEmpty: "Please select profile subtype",
   usernameEmpty: "Please fill in your name",
   countryCityEmpty: "Please specify where you from",
   fileEmpty: "Please upload image",
