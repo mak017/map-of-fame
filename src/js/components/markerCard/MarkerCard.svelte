@@ -1,5 +1,5 @@
 <script>
-import { EMPTY_YEAR_STRING, MAX_ZOOM } from "./../../constants.js";
+import { EMPTY_YEAR_STRING, MAX_ZOOM, USER_TYPES } from "./../../constants.js";
 import {
   embedVideoCodeFromBasicUrl,
   loadFromLocalStorage,
@@ -54,6 +54,11 @@ const onShareToggle = (toggle) => (isShareOpened = toggle);
 
 const onComplainToggle = (toggle) => (isComplainOpened = toggle);
 
+const isOnlyCrew =
+  user?.type === USER_TYPES.crew.toLowerCase() &&
+  artistCrew.length === 1 &&
+  artistCrew[0].crew?.name === user?.crew?.toLowerCase();
+
 const onUserClick = () => {
   if (!$selectedUserProfileData.id) {
     selectedUserProfileData.set(user ?? {});
@@ -103,9 +108,15 @@ const getArtistsString = () => {
   return artistCrew.reduce((accumulator, pair, index) => {
     const { artist, crew } = pair;
     const artistName = artist?.name ?? EMPTY_ARTIST;
-    const currentName = crew?.name
-      ? `${artistName} (${crew.name})`
-      : artistName;
+    let currentName = artistName;
+
+    if (crew?.name) {
+      currentName =
+        crew.name === user?.crew?.toLowerCase()
+          ? crew.name
+          : `${artistName} (${crew.name})`;
+    }
+
     accumulator = accumulator.concat(currentName);
     if (index < artistCrew.length - 1) {
       accumulator = accumulator.concat("; ");
@@ -121,7 +132,7 @@ const getArtistsString = () => {
       <div class="subtitle">Posted by</div>
       <button type="button" class="button" on:click={onUserClick}>
         <div class="title">
-          {user?.name || $selectedUserProfileData?.name || ""}
+          {user?.name || user?.crew || $selectedUserProfileData?.name || ""}
         </div>
       </button>
     </div>
@@ -156,7 +167,7 @@ const getArtistsString = () => {
     </div>
   </div>
   <div class="artist-area">
-    <div class="subtitle">Artist</div>
+    <div class="subtitle">{isOnlyCrew ? "Crew" : "Artist"}</div>
     <div class="title artist">{getArtistsString()}</div>
   </div>
   {#if description}

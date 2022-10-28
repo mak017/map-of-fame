@@ -9,12 +9,7 @@ import {
   validateEmail,
   validatePassword,
 } from "../../utils/commonUtils.js";
-import {
-  AUTH_MODALS,
-  ERROR_MESSAGES,
-  USER_SUBTYPES,
-  USER_TYPES,
-} from "../../constants";
+import { AUTH_MODALS, ERROR_MESSAGES, USER_TYPES } from "../../constants";
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
@@ -53,8 +48,8 @@ let isSubmitDisabled = false;
 let isInProgress = false;
 
 const subtypeList = [
-  { id: USER_SUBTYPES.artist.toLowerCase(), name: USER_SUBTYPES.artist },
-  { id: USER_SUBTYPES.crew.toLowerCase(), name: USER_SUBTYPES.crew },
+  { id: USER_TYPES.artist.toLowerCase(), name: USER_TYPES.artist },
+  { id: USER_TYPES.crew.toLowerCase(), name: USER_TYPES.crew },
 ];
 
 onMount(() => {
@@ -68,8 +63,6 @@ $: isSubmitDisabled =
   (step === 1 && (!!errors.email || !!errors.password || !!errors.subtype)) ||
   (step === 2 &&
     (!!errors.name || !!errors.crew || !!errors.country || !!errors.link));
-
-$: console.log("errors", errors);
 
 const getCountries = () => {
   getAllCountries().then((response) => {
@@ -115,8 +108,7 @@ const validate = () => {
           : "";
     }
   } else {
-    console.log("subtype :>> ", subtype);
-    if (subtype?.name !== USER_SUBTYPES.crew) {
+    if (subtype?.name !== USER_TYPES.crew) {
       errors.name = !username ? ERROR_MESSAGES.usernameEmpty : "";
     } else {
       errors.crew = !crew ? ERROR_MESSAGES.crewEmpty : "";
@@ -257,15 +249,6 @@ const handleBackClick = () => {
             placeholder="Profile Subtype"
             errorMessage={errors.subtype}
             on:select={() => handleInputChange("subtype")} />
-          <!-- <CustomSelect
-        items={$firms}
-        bind:selectedValue={sprayPaintUsed}
-        on:select={handleSpraySelect}
-        placeholder="Spray Paint Used"
-        optionIdentifier="name"
-        addSpot={!isEditSpot}
-        {getOptionLabel}
-        {getSelectionLabel} /> -->
           {#if errors.sprayPaintUsed}
             <span class="error">{errors.sprayPaintUsed}</span>
           {/if}
@@ -275,7 +258,7 @@ const handleBackClick = () => {
   {/if}
   {#if step === 2}
     <div in:fade|local={{ duration: 200 }}>
-      {#if subtype?.name !== USER_SUBTYPES.crew}
+      {#if subtype?.name !== USER_TYPES.crew}
         <FormTextInput
           placeholder={selectedType === USER_TYPES.artist
             ? "Artist Name"

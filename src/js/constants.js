@@ -18,12 +18,11 @@ export const STATUSES = { live: "Live", buffed: "Buffed", unknown: "Unknown" };
 
 export const USER_TYPES = {
   artist: "Artist",
+  crew: "Crew",
   hunter: "Hunter",
   admin: "Admin",
   superUser: "Super User",
 };
-
-export const USER_SUBTYPES = { artist: "Artist", crew: "Crew" };
 
 export const statusesOrdered = [
   STATUSES.live,

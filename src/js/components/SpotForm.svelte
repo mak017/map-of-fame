@@ -51,6 +51,7 @@ export let editSpotData = {};
 const isEditSpot = !!editSpotData.img;
 
 const isArtist = () => $userData.type === USER_TYPES.artist.toLowerCase();
+const isCrew = () => $userData.type === USER_TYPES.crew.toLowerCase();
 const isHunter = () => $userData.type === USER_TYPES.hunter.toLowerCase();
 
 const getInitialYear = () => {
@@ -96,7 +97,7 @@ let artistCrewPairs =
     : [
         {
           artist: isArtist() ? $userData.name ?? "" : "",
-          crew: isArtist() ? $userData.crew ?? "" : "",
+          crew: isArtist() || isCrew() ? $userData.crew ?? "" : "",
         },
       ];
 const currentYear = getCurrentYear();
@@ -150,7 +151,7 @@ const onChangeImage = () => {
       image.src = e.target.result;
       image.onload = function () {
         watermark([file], { type: "image/jpeg" })
-          .blob((img) => addWatermark(img, $userData.name))
+          .blob((img) => addWatermark(img, $userData.name ?? $userData.crew))
           .then((blob) => {
             imageBlob = new File([blob], "image.jpg");
             console.debug("imageBlob.size", imageBlob.size >> 10, "KB");

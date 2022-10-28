@@ -59,7 +59,8 @@ const toggleEditModal = (toggle) => (showEditModal = toggle);
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 
-const username = $selectedUserProfileData.name ?? $userData.name;
+const username =
+  $selectedUserProfileData.name ?? $userData.name ?? $userData.crew;
 const isCurrentUser =
   !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
 
