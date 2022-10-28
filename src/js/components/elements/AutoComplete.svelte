@@ -12,6 +12,7 @@ export let hint = undefined;
 export let loadOptions = undefined;
 export let errorMessage = "";
 export let isSearch = false;
+export let showIndicator = false;
 export let noOptionsMessage = "No options";
 export let externalTypedText = "";
 
@@ -43,12 +44,14 @@ const onType = (label, filterText) => {
     {getOptionLabel}
     {loadOptions}
     {noOptionsMessage}
+    {showIndicator}
     getSelectionLabel={getOptionLabel}
     placeholder=""
     Item={AutoCompleteItem}
     on:select={onSelect}
     itemFilter={onType}
-    hideEmptyState={!!selectedValue} />
+    hideEmptyState={!!selectedValue}
+    indicatorSvg={`<svg width="8" height="5"viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 5L4.37114e-07 -2.22545e-07L8 4.76837e-07L4 5Z" fill="#393940" /></svg>`} />
   {#if placeholder}
     <div class="floating-label">{placeholder}</div>
   {/if}
@@ -94,7 +97,8 @@ const onType = (label, filterText) => {
   pointer-events: none;
 }
 
-.not-empty, .typed-text {
+.not-empty,
+.typed-text {
   .floating-label {
     overflow: hidden;
     transform: translateY(-15px);
@@ -119,5 +123,4 @@ const onType = (label, filterText) => {
   font-size: 13px;
   line-height: 16px;
 }
-
 </style>

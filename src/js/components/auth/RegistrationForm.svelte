@@ -248,10 +248,8 @@ const handleBackClick = () => {
             {getOptionLabel}
             placeholder="Profile Subtype"
             errorMessage={errors.subtype}
+            showIndicator
             on:select={() => handleInputChange("subtype")} />
-          {#if errors.sprayPaintUsed}
-            <span class="error">{errors.sprayPaintUsed}</span>
-          {/if}
         </div>
       {/if}
     </div>

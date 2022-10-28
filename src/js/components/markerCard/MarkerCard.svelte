@@ -112,6 +112,7 @@ const getArtistsString = () => {
 
     if (crew?.name) {
       currentName =
+        user?.type === USER_TYPES.crew.toLowerCase() &&
         crew.name === user?.crew?.toLowerCase()
           ? crew.name
           : `${artistName} (${crew.name})`;
