@@ -54,11 +54,6 @@ const onShareToggle = (toggle) => (isShareOpened = toggle);
 
 const onComplainToggle = (toggle) => (isComplainOpened = toggle);
 
-const isOnlyCrew =
-  user?.type === USER_TYPES.crew.toLowerCase() &&
-  artistCrew.length === 1 &&
-  artistCrew[0].crew?.name === user?.crew?.toLowerCase();
-
 const onUserClick = () => {
   if (!$selectedUserProfileData.id) {
     selectedUserProfileData.set(user ?? {});
@@ -105,18 +100,13 @@ const getArtistsString = () => {
   if (artistCrew.length === 0) {
     return EMPTY_ARTIST;
   }
+
   return artistCrew.reduce((accumulator, pair, index) => {
     const { artist, crew } = pair;
-    const artistName = artist?.name ?? EMPTY_ARTIST;
-    let currentName = artistName;
-
-    if (crew?.name) {
-      currentName =
-        user?.type === USER_TYPES.crew.toLowerCase() &&
-        crew.name === user?.crew?.toLowerCase()
-          ? crew.name
-          : `${artistName} (${crew.name})`;
-    }
+    const currentName =
+      artist?.name && crew?.name
+        ? `${artist.name} (${crew.name})`
+        : artist?.name ?? crew?.name;
 
     accumulator = accumulator.concat(currentName);
     if (index < artistCrew.length - 1) {
@@ -168,7 +158,7 @@ const getArtistsString = () => {
     </div>
   </div>
   <div class="artist-area">
-    <div class="subtitle">{isOnlyCrew ? "Crew" : "Artist"}</div>
+    <div class="subtitle">Artist/Crew</div>
     <div class="title artist">{getArtistsString()}</div>
   </div>
   {#if description}

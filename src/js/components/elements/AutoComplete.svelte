@@ -73,6 +73,7 @@ const onType = (label, filterText) => {
   --borderHoverColor: var(--color-dark);
   --borderRadius: 0;
   --indicatorTop: 6px;
+  --indicatorRight: -10px;
   --inputColor: var(--color-dark);
   --inputFontSize: 16px;
   --inputPadding: 0;
