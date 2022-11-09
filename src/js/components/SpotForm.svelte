@@ -21,6 +21,7 @@ import {
   selectedUserProfileData,
   selectedYear,
   settings,
+  shouldShowAddSpot,
   userCategories,
   userData,
 } from "../store";
@@ -43,7 +44,6 @@ import { requestSpots } from "../init.js";
 import Spinner from "./elements/Spinner.svelte";
 import { requestSearchSpots } from "../api/search.js";
 
-export let onCancel;
 export let onSubmit = undefined;
 export let marker = null;
 export let editSpotData = {};
@@ -496,7 +496,7 @@ const handleAddMoreClick = () => {
     <button
       type="button"
       class="cancel"
-      on:click={onCancel}
+      on:click={() => shouldShowAddSpot.set(false)}
       disabled={isInProgress}>Cancel</button>
   {/if}
 </form>

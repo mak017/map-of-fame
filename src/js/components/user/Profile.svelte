@@ -1,11 +1,11 @@
 <script>
+import { shouldShowAddSpot } from "./../../store.js";
 import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
-import Invites from "./Invites.svelte";
+import { goto } from "@roxi/routify";
+
 import { getInvites } from "./../../api/auth.js";
-import Spinner from "./../elements/Spinner.svelte";
-import CustomSelect from "../elements/CustomSelect.svelte";
 import {
   isLoggedIn,
   isShowOnMapMode,
@@ -19,10 +19,6 @@ import {
   shouldDisplayShowOnMap,
   isSearchResults,
 } from "../../store";
-import Modal from "../Modal.svelte";
-import EditSpot from "./EditSpot.svelte";
-import DeleteSpot from "./DeleteSpot.svelte";
-import Popup from "../Popup.svelte";
 import { getProfileYears } from "./../../utils/datesUtils.js";
 import {
   isEmpty,
@@ -37,8 +33,13 @@ import {
 } from "../../constants";
 import { permalink } from "../../utils/mapUtils/permalink";
 
-export let onAddSpotBtnClick;
-export let showUserProfile;
+import Invites from "./Invites.svelte";
+import Spinner from "./../elements/Spinner.svelte";
+import CustomSelect from "../elements/CustomSelect.svelte";
+import Modal from "../Modal.svelte";
+import EditSpot from "./EditSpot.svelte";
+import DeleteSpot from "./DeleteSpot.svelte";
+import Popup from "../Popup.svelte";
 
 let currentYear;
 let currentSpot;
@@ -115,12 +116,12 @@ const handleLogout = () => {
   removeFromLocalStorage("token");
   isLoggedIn.set(false);
   userData.set({});
-  showUserProfile(false);
+  $goto("/");
 };
 
 const handleAddSpot = () => {
-  onAddSpotBtnClick();
-  showUserProfile(false);
+  shouldShowAddSpot.set(true);
+  $goto("/");
 };
 
 const handleYearSelect = (event) => {
@@ -214,7 +215,7 @@ const handleShowOnMapClick = () => {
       selectedArtist.set("");
       selectedCrew.set("");
       permalink.update({ clearParams: ["artist", "crew"] });
-      showUserProfile(false);
+      $goto("/");
     }
   });
 };

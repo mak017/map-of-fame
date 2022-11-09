@@ -92,7 +92,7 @@ const update = ({ mapContainer, params, clearParams }) => {
     paramsToSet = paramsToSet.toString() ? `&${paramsToSet}` : "";
     prevParams = paramsToSet;
   }
-  const search = `?coords=${latitude},${longitude}&zoom=${zoom}&year=${year}${paramsToSet}`;
+  const search = `/?coords=${latitude},${longitude}&zoom=${zoom}&year=${year}${paramsToSet}`;
   const state = { zoom, center, year, params };
   window.history.pushState(state, "map", search);
 };
