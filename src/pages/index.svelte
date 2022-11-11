@@ -30,6 +30,7 @@ import {
   settings,
   selectedUserProfileData,
   shouldDisplayShowOnMap,
+  userData,
 } from "../js/store.js";
 import {
   openRailwayMap,
@@ -137,10 +138,6 @@ const toggleAreaSelectionMode = (toggle) => {
 const initialLoader = document.getElementById("initial-loader");
 
 if (initialLoader) initialLoader.remove();
-
-adjustVhProp();
-
-initApp();
 
 $: if ($markersStore) {
   placeMarkers(map, $markersStore, $isSearchResults || $isShowOnMapMode);
@@ -305,7 +302,7 @@ const quitAddSpot = () => {
           in:fade={{ duration: 200 }} />
         {#if $isLoggedIn}
           <a
-            href={$url("/@profile")}
+            href={$url(`/@${$userData.username}`)}
             class="button button-main_screen button-square button-burger"
             in:fade={{ duration: 200 }}>Profile</a>
         {:else}

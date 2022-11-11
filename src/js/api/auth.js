@@ -33,6 +33,7 @@ export const verifyAuthRequest = async (token) => {
 };
 
 export const createUserRequest = async ({
+  username,
   name,
   email,
   password,
@@ -43,6 +44,7 @@ export const createUserRequest = async ({
   invite,
 }) => {
   const data = new URLSearchParams();
+  data.append("username", username);
   data.append("name", name);
   data.append("email", email);
   data.append("password", password);

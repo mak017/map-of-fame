@@ -30,6 +30,7 @@ let email = "";
 let password = "";
 let subtype;
 let username = "";
+let name = "";
 let crew = "";
 let country;
 let portfolioLink = "";
@@ -38,6 +39,7 @@ let errors = {
   email: "",
   password: "",
   subtype: "",
+  username: "",
   name: "",
   crew: "",
   country: "",
@@ -109,11 +111,12 @@ const validate = () => {
     }
   } else {
     if (subtype?.name !== USER_TYPES.crew) {
-      errors.name = !username ? ERROR_MESSAGES.usernameEmpty : "";
+      errors.name = !username ? ERROR_MESSAGES.nameEmpty : "";
     } else {
       errors.crew = !crew ? ERROR_MESSAGES.crewEmpty : "";
     }
 
+    errors.username = !username ? ERROR_MESSAGES.usernameEmpty : "";
     errors.country = !country ? ERROR_MESSAGES.countryCityEmpty : "";
   }
 };
@@ -127,6 +130,7 @@ const handleSubmit = () => {
         email: "",
         password: "",
         subtype: "",
+        username: "",
         name: "",
         crew: "",
         country: "",
@@ -134,10 +138,17 @@ const handleSubmit = () => {
       };
     }
   } else {
-    if (!errors.name && !errors.country && !errors.link) {
+    if (
+      !errors.username &&
+      !errors.name &&
+      !errors.crew &&
+      !errors.country &&
+      !errors.link
+    ) {
       isInProgress = true;
       createUserRequest({
-        name: username,
+        name,
+        username,
         password,
         email,
         country: country.name,
@@ -185,7 +196,11 @@ const handleInputChange = (input) => {
     isSubmitDisabled ||
     (step === 1 && (errors.email || errors.password || errors.subtype)) ||
     (step === 2 &&
-      (errors.name || errors.crew || errors.country || errors.link))
+      (errors.username ||
+        errors.name ||
+        errors.crew ||
+        errors.country ||
+        errors.link))
   ) {
     errors[input] = "";
   }
@@ -256,12 +271,17 @@ const handleBackClick = () => {
   {/if}
   {#if step === 2}
     <div in:fade|local={{ duration: 200 }}>
+      <FormTextInput
+        placeholder="Username"
+        bind:value={username}
+        errorText={errors.username}
+        on:input={() => handleInputChange("username")} />
       {#if subtype?.name !== USER_TYPES.crew}
         <FormTextInput
           placeholder={selectedType === USER_TYPES.artist
             ? "Artist Name"
             : "Name"}
-          bind:value={username}
+          bind:value={name}
           errorText={errors.name}
           on:input={() => handleInputChange("name")} />
       {/if}

@@ -3,7 +3,7 @@ import { shouldShowAddSpot } from "./../../store.js";
 import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
-import { goto } from "@roxi/routify";
+import { goto, params } from "@roxi/routify";
 
 import { getInvites } from "./../../api/auth.js";
 import {
@@ -41,6 +41,8 @@ import EditSpot from "./EditSpot.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import Popup from "../Popup.svelte";
 
+console.log("$params :>> ", $params);
+
 let currentYear;
 let currentSpot;
 let showEditModal = false;
@@ -62,11 +64,12 @@ const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 
 const username =
   $selectedUserProfileData.name ?? $userData.name ?? $userData.crew;
-const isCurrentUser =
-  !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
+// const isCurrentUser =
+//   !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
+const isCurrentUser = $userData.username === $params.username.substring(1);
 
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
-  const userId = $selectedUserProfileData.id || $userData.id;
+  const userId = $selectedUserProfileData.username || $userData.username;
   isLoading = isNewFetch;
   isShowSpinner = true;
   getUserSpots(isCurrentUser ? null : userId, token, { year, offset }).then(
@@ -93,6 +96,7 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
 };
 
 onMount(() => {
+  console.log("$isLoggedIn :>> ", $isLoggedIn);
   fetchSpots({ isNewFetch: true });
   shouldDisplayShowOnMap.set(false);
   if (isCurrentUser) {
