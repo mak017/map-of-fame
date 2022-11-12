@@ -8,6 +8,7 @@ import {
   saveToLocalStorage,
   validateEmail,
   validatePassword,
+  validateUsername,
 } from "../../utils/commonUtils.js";
 import { AUTH_MODALS, ERROR_MESSAGES, USER_TYPES } from "../../constants";
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
@@ -110,13 +111,20 @@ const validate = () => {
           : "";
     }
   } else {
+    const isValidUsername = validateUsername(username);
+
+    if (!isValidUsername) {
+      errors.username = !username
+        ? ERROR_MESSAGES.usernameEmpty
+        : ERROR_MESSAGES.usernameInvalid;
+    } else errors.username = "";
+
     if (subtype?.name !== USER_TYPES.crew) {
       errors.name = !username ? ERROR_MESSAGES.nameEmpty : "";
     } else {
       errors.crew = !crew ? ERROR_MESSAGES.crewEmpty : "";
     }
 
-    errors.username = !username ? ERROR_MESSAGES.usernameEmpty : "";
     errors.country = !country ? ERROR_MESSAGES.countryCityEmpty : "";
   }
 };

@@ -62,8 +62,8 @@ const toggleEditModal = (toggle) => (showEditModal = toggle);
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 
-const username =
-  $selectedUserProfileData.name ?? $userData.name ?? $userData.crew;
+const username = $selectedUserProfileData.username ?? $userData.username;
+const name = $selectedUserProfileData.name ?? $userData.name ?? $userData.crew;
 // const isCurrentUser =
 //   !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
 const isCurrentUser = $userData.username === $params.username.substring(1);
@@ -377,6 +377,10 @@ const handleShowOnMapClick = () => {
     font-weight: 900;
     line-height: 22px;
     text-transform: uppercase;
+
+    &:hover {
+      opacity: 0.7;
+    }
   }
 }
 
