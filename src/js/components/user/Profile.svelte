@@ -3,9 +3,10 @@ import { shouldShowAddSpot } from "./../../store.js";
 import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
-import { goto, params } from "@roxi/routify";
+import { goto, params, url } from "@roxi/routify";
 
-import { getInvites } from "./../../api/auth.js";
+import { getInvites, getUserData } from "./../../api/auth.js";
+import { getUserSpots } from "../../api/spot";
 import {
   isLoggedIn,
   isShowOnMapMode,
@@ -25,7 +26,6 @@ import {
   loadFromLocalStorage,
   removeFromLocalStorage,
 } from "../../utils/commonUtils";
-import { getUserSpots } from "../../api/spot";
 import {
   ALL_YEARS_STRING,
   EMPTY_YEAR_STRING,
@@ -40,6 +40,7 @@ import Modal from "../Modal.svelte";
 import EditSpot from "./EditSpot.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import Popup from "../Popup.svelte";
+import ShareSvg from "../elements/icons/ShareSvg.svelte";
 
 console.log("$params :>> ", $params);
 
@@ -62,7 +63,7 @@ const toggleEditModal = (toggle) => (showEditModal = toggle);
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 
-const username = $selectedUserProfileData.username ?? $userData.username;
+const username = $params.username;
 const name = $selectedUserProfileData.name ?? $userData.name ?? $userData.crew;
 // const isCurrentUser =
 //   !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
@@ -97,21 +98,31 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
 
 onMount(() => {
   console.log("$isLoggedIn :>> ", $isLoggedIn);
-  fetchSpots({ isNewFetch: true });
-  shouldDisplayShowOnMap.set(false);
-  if (isCurrentUser) {
-    getInvites(token).then((response) => {
-      const { success, result } = response;
-      if (success && result) {
-        invites = result;
-        unusedInvitesCount = invites.reduce(
-          (accumulator, invite) =>
-            !invite.invitedUserId ? accumulator + 1 : accumulator,
-          0
-        );
+  getUserData(username).then((response) => {
+    const { success, result, errors } = response;
+
+    console.log("success :>> ", success);
+    console.log("result :>> ", result);
+    console.log("errors :>> ", errors);
+
+    if (success) {
+      fetchSpots({ isNewFetch: true });
+      shouldDisplayShowOnMap.set(false);
+      if (isCurrentUser) {
+        getInvites(token).then((response) => {
+          const { success, result } = response;
+          if (success && result) {
+            invites = result;
+            unusedInvitesCount = invites.reduce(
+              (accumulator, invite) =>
+                !invite.invitedUserId ? accumulator + 1 : accumulator,
+              0
+            );
+          }
+        });
       }
-    });
-  }
+    }
+  });
 });
 
 $: spotsList = [...spotsList, ...newBatch];
@@ -237,8 +248,16 @@ const handleShowOnMapClick = () => {
     </div>
   {/if}
   <div class="top">
-    {#if username}
-      <div class="username">{username}</div>
+    {#if name || username}
+      <div class="user">
+        {#if name}
+          <button type="button" class="button name"
+            >{name} <ShareSvg color="dark" /></button>
+        {/if}
+        {#if username}
+          <div class="username">{username}</div>
+        {/if}
+      </div>
     {/if}
     {#if isCurrentUser}
       <button type="button" class="button logout" on:click={handleLogout}
@@ -313,6 +332,10 @@ const handleShowOnMapClick = () => {
   {/if}
 </div>
 
+{#if !isCurrentUser}
+  <a href={$url("../")} class="go-to-map">Go to map</a>
+{/if}
+
 {#if showEditModal}
   <Modal on:close={() => toggleEditModal(false)} noLogo noClose>
     <EditSpot
@@ -351,17 +374,31 @@ const handleShowOnMapClick = () => {
 
 .top {
   display: flex;
+  align-items: baseline;
   align-self: stretch;
   justify-content: space-between;
   margin-bottom: 6px;
 }
 
-.username {
+.user {
   color: var(--color-dark);
-  font-size: 24px;
-  font-weight: 900;
-  line-height: 1.22;
-  text-transform: uppercase;
+
+  .name {
+    margin-bottom: 4px;
+    background: none;
+    color: inherit;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.22;
+    text-transform: uppercase;
+  }
+
+  &name {
+    opacity: 0.4;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
 }
 
 .invites {
@@ -523,6 +560,20 @@ const handleShowOnMapClick = () => {
   position: relative;
 }
 
+.go-to-map {
+  display: block;
+  position: fixed;
+  top: 112px;
+  left: 0;
+  width: 64px;
+  height: 52px;
+  border-radius: 0 50% 50% 0;
+  background: var(--color-accent) url(../../../images/map.svg) 50% 50%/ 30px 26px
+    no-repeat;
+  color: transparent;
+  font-size: 0;
+}
+
 @media (max-width: 767px) {
   .top {
     position: relative;
@@ -546,6 +597,10 @@ const handleShowOnMapClick = () => {
     margin: -30px 0 52px;
     background: url(../../../images/logout.svg) 50% 50%/27px 27px no-repeat;
     font-size: 0;
+  }
+
+  .go-to-map {
+    display: none;
   }
 }
 </style>

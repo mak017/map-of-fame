@@ -7,6 +7,7 @@ import {
   INVITES_GET_FOR_USER,
   PRE_REG_EMAIL,
   PRE_REG_CONTACT,
+  USER_ID,
 } from "./endpoints";
 
 export const loginRequest = async (email, password) => {
@@ -136,6 +137,12 @@ export const preRegContact = async (contact) => {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: data,
   });
+  const result = await response.json();
+  return result;
+};
+
+export const getUserData = async (username) => {
+  const response = await fetch(USER_ID(username), { method: "GET" });
   const result = await response.json();
   return result;
 };

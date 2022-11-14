@@ -1,12 +1,10 @@
 <script>
-import { EMPTY_YEAR_STRING, MAX_ZOOM, USER_TYPES } from "./../../constants.js";
+import { goto } from "@roxi/routify";
+import { EMPTY_YEAR_STRING, MAX_ZOOM } from "./../../constants.js";
 import {
   embedVideoCodeFromBasicUrl,
   loadFromLocalStorage,
 } from "../../utils/commonUtils";
-import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
-import Popup from "../Popup.svelte";
-import ShareMarker from "./ShareMarker.svelte";
 import {
   isShowOnMapMode,
   markersStore,
@@ -20,6 +18,11 @@ import {
 import { permalink } from "../../utils/mapUtils/permalink";
 import { getProfileYears } from "../../utils/datesUtils.js";
 import { getUserSpots } from "../../api/spot.js";
+
+import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
+import Popup from "../Popup.svelte";
+import ShareMarker from "./ShareMarker.svelte";
+import ShareSvg from "../elements/icons/ShareSvg.svelte";
 
 export let data;
 export let map;
@@ -60,8 +63,8 @@ const onUserClick = () => {
     toggleAreaSelectionMode(false);
     showSpotsFromArea(false);
   }
-  showUserProfile(true);
   clearOpenedMarkerData();
+  $goto(`/@${user.username}`);
 };
 
 const handleShowOnMapClick = () => {
@@ -150,7 +153,8 @@ const getArtistsString = () => {
         </div>
       {/if}
       <div class="share">
-        <button type="button" on:click={() => onShareToggle(true)} />
+        <button type="button" on:click={() => onShareToggle(true)}
+          ><ShareSvg /></button>
       </div>
       <div class="complain">
         <button type="button" on:click={() => onComplainToggle(true)} />
@@ -313,7 +317,10 @@ const getArtistsString = () => {
 }
 
 .share button {
-  background: url(../../../images/share.svg) 50% 50% / auto no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
 }
 
 .complain button {
