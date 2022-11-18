@@ -13,7 +13,7 @@ export const selectedCrew = writable("");
 
 export const openedMarkerData = writable(null);
 
-export const markersStore = writable([]);
+export const markersStore = writable({});
 
 export const isSearchResults = writable(false);
 

@@ -64,48 +64,43 @@ const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 
 const username = $params.username;
+const strippedUsername = $params.username.substring(1);
 const name = $selectedUserProfileData.name ?? $userData.name ?? $userData.crew;
-// const isCurrentUser =
-//   !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
-const isCurrentUser = $userData.username === $params.username.substring(1);
+const isCurrentUser = $userData.username === strippedUsername;
 
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
-  const userId = $selectedUserProfileData.username || $userData.username;
   isLoading = isNewFetch;
   isShowSpinner = true;
-  getUserSpots(isCurrentUser ? null : userId, token, { year, offset }).then(
-    (response) => {
-      const { success, result, errors } = response;
-      if (success && result) {
-        const { spots, years } = result;
-        if (isNewFetch) spotsList = [];
-        newBatch = spots ? [...spots] : [];
-        yearsToApply = getProfileYears(years);
-        if (currentYear === undefined || year === undefined) {
-          currentYear = yearsToApply[0];
-        }
+  getUserSpots(strippedUsername, token, {
+    year,
+    offset,
+  }).then((response) => {
+    const { success, result, errors } = response;
+    if (success && result) {
+      const { spots, years } = result;
+      if (isNewFetch) spotsList = [];
+      newBatch = spots ? [...spots] : [];
+      yearsToApply = getProfileYears(years);
+      if (currentYear === undefined || year === undefined) {
+        currentYear = yearsToApply[0];
       }
-      if (errors && !isEmpty(errors)) {
-        if (errors.year) {
-          fetchSpots({});
-        }
-      }
-      isLoading = false;
-      isShowSpinner = false;
     }
-  );
+    if (errors && !isEmpty(errors)) {
+      if (errors.year) {
+        fetchSpots({});
+      }
+    }
+    isLoading = false;
+    isShowSpinner = false;
+  });
 };
 
 onMount(() => {
-  console.log("$isLoggedIn :>> ", $isLoggedIn);
-  getUserData(username).then((response) => {
+  getUserData(strippedUsername).then((response) => {
     const { success, result, errors } = response;
 
-    console.log("success :>> ", success);
-    console.log("result :>> ", result);
-    console.log("errors :>> ", errors);
-
-    if (success) {
+    if (success && result) {
+      selectedUserProfileData.set(result);
       fetchSpots({ isNewFetch: true });
       shouldDisplayShowOnMap.set(false);
       if (isCurrentUser) {
@@ -208,7 +203,7 @@ const onSpotClick = (spot) => {
     link,
   });
   shouldDisplayShowOnMap.set(true);
-  permalink.update({ params: { marker: id } });
+  permalink.update({ params: { marker: id }, isProfile: true });
 };
 
 const handleShowOnMapClick = () => {
@@ -229,14 +224,16 @@ const handleShowOnMapClick = () => {
       selectedYear.set(currentYear ? `${currentYear}` : EMPTY_YEAR_STRING);
       selectedArtist.set("");
       selectedCrew.set("");
-      permalink.update({ clearParams: ["artist", "crew"] });
       $goto("/");
     }
   });
 };
 </script>
 
-<div class="container" style={showEditModal ? "display: none" : ""}>
+<div
+  class="container"
+  class:isCurrentUser
+  style={showEditModal ? "display: none" : ""}>
   {#if invites.length}
     <div class="invites">
       You have
@@ -575,6 +572,10 @@ const handleShowOnMapClick = () => {
 }
 
 @media (max-width: 767px) {
+  .container:not(.isCurrentUser) {
+    margin-top: 48px;
+  }
+
   .top {
     position: relative;
     flex-direction: column-reverse;
@@ -600,7 +601,7 @@ const handleShowOnMapClick = () => {
   }
 
   .go-to-map {
-    display: none;
+    top: 16px;
   }
 }
 </style>

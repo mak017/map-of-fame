@@ -22,6 +22,7 @@ import {
   isLoggedIn,
   isSearchResults,
   isShowOnMapMode,
+  mapBounds,
   markersStore,
   openedMarkerData,
   selectedArtist,
@@ -139,7 +140,7 @@ const initialLoader = document.getElementById("initial-loader");
 
 if (initialLoader) initialLoader.remove();
 
-$: if ($markersStore) {
+$: if (map && $markersStore) {
   placeMarkers(map, $markersStore, $isSearchResults || $isShowOnMapMode);
 }
 
@@ -180,7 +181,16 @@ const initMap = (container) => {
   // Change position of zoom control
   map.zoomControl.setPosition("bottomleft");
 
-  setLocation(map);
+  if ($mapBounds.length > 0) {
+    map.fitBounds($mapBounds);
+    permalink.setup(map);
+
+    if ($markersStore?.spots?.length) {
+      placeMarkers(map, $markersStore, $isSearchResults || $isShowOnMapMode);
+    }
+  } else {
+    setLocation(map);
+  }
 
   map.on("moveend", () => $isInitialized && handleMapViewChange(map));
 

@@ -46,12 +46,23 @@ openedMarkerData.subscribe((value) => {
   markerId = value?.id;
 });
 
-const update = ({ mapContainer, params, clearParams }) => {
+const update = ({ mapContainer, params, clearParams, isProfile }) => {
   if (!shouldUpdate) {
     // do not update the URL when the view was changed in the 'popstate' handler (browser history navigation)
     shouldUpdate = true;
     return;
   }
+
+  if (isProfile && params) {
+    const marker = params?.marker || markerId;
+    const paramsStr = prevParams || "";
+    const markerQuery = `/?marker=${marker}`;
+    const paramsToSet = !paramsStr.includes(`marker=${marker}`)
+      ? paramsStr.concat(markerQuery)
+      : paramsStr;
+    window.history.pushState({ params }, "map", paramsToSet);
+  }
+
   const map = mapContainer || mapInstance;
   const year = yearFromStore;
   let paramsToSet = prevParams || "";
