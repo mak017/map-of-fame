@@ -8,6 +8,7 @@ import CloseCrossSvg from "../elements/icons/CloseCrossSvg.svelte";
 import SpotForm from "../SpotForm.svelte";
 
 export let marker;
+export let onCancel;
 </script>
 
 <div
@@ -20,7 +21,7 @@ export let marker;
     </button>
   {/if}
   <div class="form-wrapper">
-    <SpotForm {marker} />
+    <SpotForm {marker} {onCancel} />
   </div>
 </div>
 

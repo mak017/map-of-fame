@@ -7,14 +7,7 @@ import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 import { url } from "@roxi/routify";
 
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
-import { changePasswordCheckToken } from "../js/api/auth.js";
-import {
-  getSettings,
-  initApp,
-  requestCategories,
-  requestRecentSpots,
-  requestSpots,
-} from "../js/init.js";
+import { requestRecentSpots, requestSpots } from "../js/init.js";
 import {
   isInitialized,
   isLighthouseActive,
@@ -31,6 +24,7 @@ import {
   settings,
   selectedUserProfileData,
   shouldDisplayShowOnMap,
+  shouldShowResetPassword,
   userData,
 } from "../js/store.js";
 import {
@@ -73,7 +67,6 @@ let isRailwayMode = loadFromLocalStorage("railwayMode");
 let showCalendarModal = false;
 let showSearchModal = false;
 let showAuthContainer = false;
-let showResetPasswordModal = false;
 let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
 let isAreaSelectionActive = false;
@@ -109,8 +102,6 @@ const areaSelection = new DrawAreaSelection({
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
-const showResetPassword = (show) => (showResetPasswordModal = show);
-const showUserProfile = (show) => (showUserProfileModal = show);
 const showSpotsFromArea = (show) => (showSpotsFromAreaModal = show);
 const toggleAddSpotMode = (toggle) => (isAddSpotMode = toggle);
 const toggleAddSpotSidebarVisible = (toggle) =>
@@ -136,35 +127,8 @@ const toggleAreaSelectionMode = (toggle) => {
   areaSpots = null;
 };
 
-const initialLoader = document.getElementById("initial-loader");
-
-if (initialLoader) initialLoader.remove();
-
 $: if (map && $markersStore) {
   placeMarkers(map, $markersStore, $isSearchResults || $isShowOnMapMode);
-}
-
-if (resetPasswordToken) {
-  const { token, id } = resetPasswordToken;
-  isLoading.set(true);
-  changePasswordCheckToken(token, id).then((response) => {
-    const { success, result } = response;
-    if (success && result) {
-      getSettings();
-      isLoading.set(false);
-      showResetPassword(true);
-      resetPasswordToken = result;
-    } else {
-      getSettings().then(() => {
-        isLoading.set(false);
-      });
-    }
-  });
-} else {
-  isLoading.set(true);
-  Promise.all([getSettings(), requestCategories()]).then(() => {
-    isLoading.set(false);
-  });
 }
 
 if (inviteData) {
@@ -263,9 +227,9 @@ const quitAddSpot = () => {
 <svelte:window on:resize={adjustVhProp} />
 {#if $isLoading}
   <Loader />
-{:else if showResetPasswordModal}
+{:else if $shouldShowResetPassword}
   <Modal noClose title="Reset Password">
-    <ResetPassword {showResetPassword} {resetPasswordToken} />
+    <ResetPassword {resetPasswordToken} />
   </Modal>
 {:else}
   <div
@@ -446,7 +410,6 @@ const quitAddSpot = () => {
       <MarkerCard
         data={$openedMarkerData}
         {map}
-        {showUserProfile}
         {showSpotsFromArea}
         {clearOpenedMarkerData}
         {toggleAreaSelectionMode} />

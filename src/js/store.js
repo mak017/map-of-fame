@@ -44,3 +44,5 @@ export const shouldDisplayShowOnMap = writable(false);
 export const isShowOnMapMode = writable(false);
 
 export const shouldShowAddSpot = writable(null);
+
+export const shouldShowResetPassword = writable(false);

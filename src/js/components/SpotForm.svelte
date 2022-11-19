@@ -47,6 +47,7 @@ import { requestSearchSpots } from "../api/search.js";
 export let onSubmit = undefined;
 export let marker = null;
 export let editSpotData = {};
+export let onCancel;
 
 const isEditSpot = !!editSpotData.img;
 
@@ -339,7 +340,6 @@ const handleSubmit = () => {
         isInProgress = false;
         if (success && result) {
           onSubmit();
-          onCancel();
         }
       });
     }

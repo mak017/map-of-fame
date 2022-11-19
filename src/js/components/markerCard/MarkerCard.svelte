@@ -26,7 +26,6 @@ import ShareSvg from "../elements/icons/ShareSvg.svelte";
 
 export let data;
 export let map;
-export let showUserProfile;
 export let showSpotsFromArea;
 export let clearOpenedMarkerData;
 export let toggleAreaSelectionMode;
@@ -93,7 +92,6 @@ const handleShowOnMapClick = () => {
       setTimeout(() => {
         map.setView([lat, lng], MAX_ZOOM);
       }, 0);
-      showUserProfile(false);
       clearOpenedMarkerData();
     }
   });
