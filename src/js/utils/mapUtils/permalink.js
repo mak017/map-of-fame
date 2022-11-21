@@ -209,7 +209,7 @@ const setup = (map) => {
   };
   mapInstance = map;
   window.addEventListener("popstate", popStateHandler);
-  update({ mapContainer: mapInstance });
+  // update({ mapContainer: mapInstance });
 };
 
 export const permalink = {

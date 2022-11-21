@@ -1,23 +1,25 @@
 <script>
-import { shouldShowAddSpot } from "./../js/store.js";
 import { fade } from "svelte/transition";
 import L from "leaflet";
 import "@bopen/leaflet-area-selection/dist/index.css";
-import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 import { url } from "@roxi/routify";
 
-import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
 import { requestRecentSpots, requestSpots } from "../js/init.js";
 import {
+  areaSelection,
+  areaSpots,
+  map,
+  isAddSpotMode,
+  shouldShowAddSpot,
+  currentZoom,
+  isSpotsFromAreaLoading,
+  shouldShowSpotsFromArea,
   isInitialized,
   isLighthouseActive,
   isLoading,
   isLoggedIn,
   isSearchResults,
   isShowOnMapMode,
-  mapBounds,
-  markersStore,
-  openedMarkerData,
   selectedArtist,
   selectedCrew,
   selectedYear,
@@ -26,17 +28,10 @@ import {
   shouldDisplayShowOnMap,
   shouldShowResetPassword,
   userData,
+  isAreaSelectionActive,
 } from "../js/store.js";
+import { openRailwayMap } from "../js/utils/mapUtils/tileLayers";
 import {
-  openRailwayMap,
-  openStreetMapMapnik,
-} from "../js/utils/mapUtils/tileLayers";
-import {
-  handleMapViewChange,
-  setLocation,
-} from "../js/utils/mapUtils/locationUtils.js";
-import {
-  adjustVhProp,
   getCurrentYear,
   getInviteData,
   getResetPasswordToken,
@@ -46,7 +41,6 @@ import {
 } from "../js/utils/commonUtils";
 import { permalink } from "../js/utils/mapUtils/permalink";
 import { newMarkerIcon } from "../js/utils/mapUtils/icons";
-import { getSpotsInArea } from "../js/api/spot";
 
 import CloseCrossSvg from "../js/components/elements/icons/CloseCrossSvg.svelte";
 import RailroadSvg from "../js/components/elements/icons/RailroadSvg.svelte";
@@ -54,7 +48,6 @@ import SearchForm from "../js/components/SearchForm.svelte";
 import Modal from "../js/components/Modal.svelte";
 import Calendar from "../js/components/Calendar.svelte";
 import AddSpot from "../js/components/addSpot/AddSpot.svelte";
-import MarkerCard from "../js/components/markerCard/MarkerCard.svelte";
 import AuthContainer from "../js/components/auth/AuthContainer.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
 import Loader from "../js/components/elements/Loader.svelte";
@@ -67,112 +60,49 @@ let isRailwayMode = loadFromLocalStorage("railwayMode");
 let showCalendarModal = false;
 let showSearchModal = false;
 let showAuthContainer = false;
-let isAddSpotMode = false;
 let isAddSpotSidebarVisible = false;
-let isAreaSelectionActive = false;
-let isSpotsFromAreaLoading = false;
-let showSpotsFromAreaModal = false;
 let resetPasswordToken = getResetPasswordToken();
 let inviteData = getInviteData();
-let areaSpots;
 
-let map;
 let newMarker;
-let currentZoom;
 
-const areaSelection = new DrawAreaSelection({
-  onPolygonReady: (polygon) => {
-    isSpotsFromAreaLoading = true;
-    polygon.setStyle({
-      color: "var(--color-accent)",
-      weight: 4,
-      fillOpacity: 0.18,
-    });
-
-    const { coordinates } = polygon.toGeoJSON().geometry;
-    getSpotsInArea(coordinates[0]).then(({ result, success }) => {
-      areaSpots = result;
-      isSpotsFromAreaLoading = false;
-    });
-  },
-  onPolygonDblClick: () => !!areaSpots?.length && showSpotsFromArea(true),
-  position: "bottomright",
-});
+if ($map && $isInitialized) {
+  permalink.setup($map);
+}
 
 const showCalendar = (show) => (showCalendarModal = show);
 const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
-const showSpotsFromArea = (show) => (showSpotsFromAreaModal = show);
-const toggleAddSpotMode = (toggle) => (isAddSpotMode = toggle);
 const toggleAddSpotSidebarVisible = (toggle) =>
   (isAddSpotSidebarVisible = toggle);
-const clearOpenedMarkerData = () => {
-  openedMarkerData.set(null);
-  permalink.update({ clearParams: ["marker"] });
-};
+// const clearOpenedMarkerData = () => {
+//   openedMarkerData.set(null);
+//   permalink.update({ clearParams: ["marker"] });
+// };
 
 const toggleAreaSelectionMode = (toggle) => {
-  isAreaSelectionActive = toggle;
+  isAreaSelectionActive.set(toggle);
 
   if (toggle) {
-    map.setMinZoom(15);
-    areaSelection.activate();
+    $map.setMinZoom(15);
+    $areaSelection.activate();
     shouldDisplayShowOnMap.set(false);
     return;
   }
 
-  map.setMinZoom(MIN_ZOOM);
-  map.dragging.enable();
-  areaSelection.deactivate();
-  areaSpots = null;
+  $map.setMinZoom(MIN_ZOOM);
+  $map.dragging.enable();
+  $areaSelection.deactivate();
+  areaSpots.set(null);
 };
-
-$: if (map && $markersStore) {
-  placeMarkers(map, $markersStore, $isSearchResults || $isShowOnMapMode);
-}
 
 if (inviteData) {
   showAuth(true);
 }
 
-// Init leaflet map
-const initMap = (container) => {
-  const layers = isRailwayMode
-    ? [openStreetMapMapnik, openRailwayMap]
-    : [openStreetMapMapnik];
-  map = L.map(container, { layers });
-
-  // Change position of zoom control
-  map.zoomControl.setPosition("bottomleft");
-
-  if ($mapBounds.length > 0) {
-    map.fitBounds($mapBounds);
-    permalink.setup(map);
-
-    if ($markersStore?.spots?.length) {
-      placeMarkers(map, $markersStore, $isSearchResults || $isShowOnMapMode);
-    }
-  } else {
-    setLocation(map);
-  }
-
-  map.on("moveend", () => $isInitialized && handleMapViewChange(map));
-
-  map.on("zoomend", () => (currentZoom = map.getZoom()));
-
-  map.addControl(areaSelection);
-
-  return {
-    destroy: () => {
-      map.remove();
-      map = null;
-    },
-  };
-};
-
 const handleChangeModeClick = () => {
   if (!isRailwayMode) {
-    map.addLayer(openRailwayMap);
+    $map.addLayer(openRailwayMap);
     isRailwayMode = true;
   } else {
     map.removeLayer(openRailwayMap);
@@ -191,19 +121,19 @@ const onNewMarkerMoveEnd = () => {
 const onNewMarkerCancel = () => {
   quitAddSpot();
   newMarker.removeEventListener("moveend", onNewMarkerMoveEnd);
-  map.removeLayer(newMarker);
+  $map.removeLayer(newMarker);
 };
 
 const showAddSpot = () => {
-  const center = map.getCenter();
+  const center = $map.getCenter();
   newMarker = L.marker(center, {
     draggable: true,
     icon: newMarkerIcon,
     zIndexOffset: 10000,
   });
-  map.addLayer(newMarker);
+  $map.addLayer(newMarker);
   newMarker.addEventListener("moveend", onNewMarkerMoveEnd);
-  toggleAddSpotMode(true);
+  shouldShowAddSpot.set(true);
 };
 
 $: if ($shouldShowAddSpot) showAddSpot();
@@ -219,12 +149,11 @@ const onLighthouseClick = () => {
 };
 
 const quitAddSpot = () => {
-  toggleAddSpotMode(false);
+  shouldShowAddSpot.set(false);
   toggleAddSpotSidebarVisible(false);
 };
 </script>
 
-<svelte:window on:resize={adjustVhProp} />
 {#if $isLoading}
   <Loader />
 {:else if $shouldShowResetPassword}
@@ -232,22 +161,16 @@ const quitAddSpot = () => {
     <ResetPassword {resetPasswordToken} />
   </Modal>
 {:else}
-  <div
-    class="map"
-    class:add-mode={isAddSpotMode}
-    class:area-selection-mode={isAreaSelectionActive}
-    use:initMap />
-
   <div class="main-top_left_wrapper">
-    {#if !isAddSpotMode || (isAddSpotMode && !isAddSpotSidebarVisible)}
+    {#if !$isAddSpotMode || ($isAddSpotMode && !isAddSpotSidebarVisible)}
       <button
         class="button button-main_screen button-open_calendar"
-        class:inactive={isAreaSelectionActive}
+        class:inactive={$isAreaSelectionActive}
         on:click={() => showCalendar(true)}
         transition:fade={{ duration: 200 }}
-        >{isAreaSelectionActive ? ALL_YEARS_STRING : $selectedYear}</button>
+        >{$isAreaSelectionActive ? ALL_YEARS_STRING : $selectedYear}</button>
     {/if}
-    {#if !isAddSpotMode && !$isSearchResults && !$isShowOnMapMode && !isAreaSelectionActive}
+    {#if !$isAddSpotMode && !$isSearchResults && !$isShowOnMapMode && !$isAreaSelectionActive}
       <button
         class="button button-square button-lighthouse"
         class:active={$isLighthouseActive}
@@ -268,7 +191,7 @@ const quitAddSpot = () => {
   </div>
 
   <div class="main-top_right_wrapper">
-    {#if !isAddSpotMode && !isAreaSelectionActive}
+    {#if !$isAddSpotMode && !$isAreaSelectionActive}
       {#if !($isSearchResults && ($selectedArtist || $selectedCrew)) && !$selectedUserProfileData.name}
         <button
           class="button button-main_screen button-square button-open_search"
@@ -306,22 +229,22 @@ const quitAddSpot = () => {
           </button>
         </div>
       {/if}
-    {:else if isAreaSelectionActive && (areaSpots || isSpotsFromAreaLoading)}
+    {:else if $isAreaSelectionActive && ($areaSpots || $isSpotsFromAreaLoading)}
       <div
         class="selection selected-area-spots"
-        class:active={!isSpotsFromAreaLoading && areaSpots.length > 0}
+        class:active={!$isSpotsFromAreaLoading && $areaSpots.length > 0}
         transition:fade={{ duration: 200 }}
-        on:click={() => showSpotsFromArea(true)}>
-        {#if isSpotsFromAreaLoading}
+        on:click={() => shouldShowSpotsFromArea.set(true)}>
+        {#if $isSpotsFromAreaLoading}
           <Spinner height={20} margin="10px" isWhite />
-        {:else if areaSpots}
-          <span>{areaSpots?.length} Spots Selected</span>
+        {:else if $areaSpots}
+          <span>{$areaSpots?.length} Spots Selected</span>
         {/if}
       </div>
     {/if}
   </div>
 
-  {#if !$isSearchResults && !$selectedUserProfileData.name && !isAreaSelectionActive}
+  {#if !$isSearchResults && !$selectedUserProfileData.name && !$isAreaSelectionActive}
     <button
       class="button button-main_screen button-square button-switch_mode"
       class:active={isRailwayMode}
@@ -332,24 +255,24 @@ const quitAddSpot = () => {
     </button>
   {/if}
 
-  {#if !$isSearchResults && !$selectedUserProfileData.name && (isAreaSelectionActive || currentZoom > 14)}
+  {#if !$isSearchResults && !$selectedUserProfileData.name && ($isAreaSelectionActive || $currentZoom > 14)}
     <button
       class="button button-main_screen button-square button-select_area"
-      class:active={isAreaSelectionActive}
-      on:click={() => toggleAreaSelectionMode(!isAreaSelectionActive)}
+      class:active={$isAreaSelectionActive}
+      on:click={() => isAreaSelectionActive.set(!$isAreaSelectionActive)}
       transition:fade={{ duration: 200 }}
-      title={isAreaSelectionActive
+      title={$isAreaSelectionActive
         ? "Cancel area selection mode"
         : "Activate area selection mode"}>
-      {#if isAreaSelectionActive}
+      {#if $isAreaSelectionActive}
         <CloseCrossSvg />
       {/if}
     </button>
   {/if}
 
-  {#if $isLoggedIn && !isAreaSelectionActive}
+  {#if $isLoggedIn && !$isAreaSelectionActive}
     <AddSpot
-      {isAddSpotMode}
+      {$isAddSpotMode}
       {isAddSpotSidebarVisible}
       {showAddSpot}
       {newMarker}
@@ -381,18 +304,18 @@ const quitAddSpot = () => {
     </Modal>
   {/if}
 
-  {#if showSpotsFromAreaModal}
+  {#if $shouldShowSpotsFromArea}
     <Modal
       noLogo
       on:close={() => {
-        showSpotsFromArea(false);
+        shouldShowSpotsFromArea.set(false);
         toggleAreaSelectionMode(false);
       }}>
-      <SelectedSpots spotsList={areaSpots} />
+      <SelectedSpots spotsList={$areaSpots} />
     </Modal>
   {/if}
 
-  {#if $openedMarkerData}
+  <!-- {#if $openedMarkerData}
     <Modal
       on:close={() => {
         clearOpenedMarkerData();
@@ -414,7 +337,7 @@ const quitAddSpot = () => {
         {clearOpenedMarkerData}
         {toggleAreaSelectionMode} />
     </Modal>
-  {/if}
+  {/if} -->
 
   {#if showAuthContainer}
     <AuthContainer
@@ -425,13 +348,6 @@ const quitAddSpot = () => {
 {/if}
 
 <style lang="scss">
-.map {
-  z-index: 0;
-  width: 100%;
-  height: 100vh;
-  height: calc(var(--vh, 1vh) * 100);
-}
-
 .button {
   &-main_screen {
     background: var(--color-light);

@@ -1,9 +1,16 @@
 import { writable } from "svelte/store";
+
 import { getCurrentYear } from "./utils/commonUtils";
+
+import { DEFAULT_ZOOM } from "./constants";
 
 export const isInitialized = writable(false);
 
 export const isLoggedIn = writable(false);
+
+export const map = writable(null);
+
+export const currentZoom = writable(DEFAULT_ZOOM);
 
 export const selectedYear = writable(`${getCurrentYear()}`);
 
@@ -37,12 +44,24 @@ export const isLighthouseActive = writable(false);
 
 export const mapBounds = writable([]);
 
+export const areaSelection = writable(null);
+
+export const areaSpots = writable([]);
+
 export const selectedUserProfileData = writable({});
 
 export const shouldDisplayShowOnMap = writable(false);
 
 export const isShowOnMapMode = writable(false);
 
+export const isAddSpotMode = writable(false);
+
+export const isAreaSelectionActive = writable(false);
+
+export const isSpotsFromAreaLoading = writable(false);
+
 export const shouldShowAddSpot = writable(null);
 
 export const shouldShowResetPassword = writable(false);
+
+export const shouldShowSpotsFromArea = writable(false);
