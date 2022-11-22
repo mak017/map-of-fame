@@ -1,12 +1,11 @@
 <script>
 import { copyToClipboard } from "../../utils/commonUtils";
-
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormTextInput from "../elements/FormTextInput.svelte";
 
 const { href } = window.location;
 
-const onButtonClick = () => copyToClipboard(link);
+const onButtonClick = () => copyToClipboard(href);
 </script>
 
 <div class="input">

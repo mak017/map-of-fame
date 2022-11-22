@@ -8,6 +8,8 @@ export const isInitialized = writable(false);
 
 export const isLoggedIn = writable(false);
 
+export const globalGoto = writable(null);
+
 export const map = writable(null);
 
 export const currentZoom = writable(DEFAULT_ZOOM);

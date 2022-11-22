@@ -26,12 +26,6 @@ import {
   loadFromLocalStorage,
   removeFromLocalStorage,
 } from "../../utils/commonUtils";
-import {
-  ALL_YEARS_STRING,
-  EMPTY_YEAR_STRING,
-  MAX_SPOTS_PER_PAGE,
-} from "../../constants";
-import { permalink } from "../../utils/mapUtils/permalink";
 
 import Invites from "./Invites.svelte";
 import Spinner from "./../elements/Spinner.svelte";
@@ -41,14 +35,20 @@ import EditSpot from "./EditSpot.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import Popup from "../Popup.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
+import ShareProfile from "./ShareProfile.svelte";
 
-console.log("$params :>> ", $params);
+import {
+  ALL_YEARS_STRING,
+  EMPTY_YEAR_STRING,
+  MAX_SPOTS_PER_PAGE,
+} from "../../constants";
 
 let currentYear;
 let currentSpot;
 let showEditModal = false;
 let showDeletePopup = false;
 let showInvitesPopup = false;
+let showSharePopup = false;
 let offset = 0;
 let yearsToApply = [];
 let spotsList = [];
@@ -56,17 +56,21 @@ let newBatch = [];
 let invites = [];
 let unusedInvitesCount = 0;
 let isLoading = false;
-let isShowSpinner = false;
+let isShowSpinner = true;
 const token = loadFromLocalStorage("token") || null;
 
 const toggleEditModal = (toggle) => (showEditModal = toggle);
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
+const toggleSharePopup = (toggle) => (showSharePopup = toggle);
 
 const username = $params.username;
 const strippedUsername = $params.username.substring(1);
 const name = $selectedUserProfileData.name ?? $userData.name ?? $userData.crew;
-const isCurrentUser = $userData.username === strippedUsername;
+
+let isCurrentUser = $userData.username === strippedUsername;
+
+$: isCurrentUser = $userData.username === strippedUsername;
 
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
   isLoading = isNewFetch;
@@ -203,14 +207,17 @@ const onSpotClick = (spot) => {
     link,
   });
   shouldDisplayShowOnMap.set(true);
-  permalink.update({ params: { marker: id }, isProfile: true });
+  $goto("/@:username/spot/:id", {
+    username: $selectedUserProfileData.username,
+    id,
+  });
 };
 
 const handleShowOnMapClick = () => {
   if (!$selectedUserProfileData.id) {
     selectedUserProfileData.set($userData ?? {});
   }
-  getUserSpots(isCurrentUser ? null : $selectedUserProfileData.id, token, {
+  getUserSpots(strippedUsername, token, {
     year: `${currentYear}`,
     offset: 0,
     limit: 99999999999999,
@@ -248,7 +255,10 @@ const handleShowOnMapClick = () => {
     {#if name || username}
       <div class="user">
         {#if name}
-          <button type="button" class="button name"
+          <button
+            type="button"
+            class="button name"
+            on:click={() => toggleSharePopup(true)}
             >{name} <ShareSvg color="dark" /></button>
         {/if}
         {#if username}
@@ -356,6 +366,12 @@ const handleShowOnMapClick = () => {
     title={`Invites ${unusedInvitesCount}/${invites.length} 👽`}
     on:close={() => toggleInvitesPopup(false)}>
     <Invites close={() => toggleInvitesPopup(false)} {invites} {username} />
+  </Popup>
+{/if}
+
+{#if showSharePopup}
+  <Popup on:close={() => toggleSharePopup(false)} title="Share Profile">
+    <ShareProfile />
   </Popup>
 {/if}
 

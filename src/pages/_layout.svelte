@@ -1,5 +1,6 @@
 <script>
 import L from "leaflet";
+import { goto } from "@roxi/routify";
 import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 
 import { loadFromLocalStorage } from "../js/utils/commonUtils.js";
@@ -25,9 +26,12 @@ import {
   areaSpots,
   shouldShowSpotsFromArea,
   areaSelection,
+  globalGoto,
 } from "./../js/store.js";
 import { getSpotsInArea } from "../js/api/spot.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
+
+globalGoto.set($goto);
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 

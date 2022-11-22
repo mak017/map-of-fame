@@ -1,10 +1,10 @@
 <script>
 import { goto } from "@roxi/routify";
 
-import { isShowOnMapMode, selectedUserProfileData } from "./../js/store.js";
+import { isShowOnMapMode, selectedUserProfileData } from "../../js/store.js";
 
-import Modal from "../js/components/Modal.svelte";
-import Profile from "../js/components/user/Profile.svelte";
+import Modal from "../../js/components/Modal.svelte";
+import Profile from "../../js/components/user/Profile.svelte";
 </script>
 
 <Modal

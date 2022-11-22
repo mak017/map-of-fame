@@ -199,7 +199,7 @@ const quitAddSpot = () => {
           in:fade={{ duration: 200 }} />
         {#if $isLoggedIn}
           <a
-            href={$url(`/@${$userData.username}`)}
+            href={$url("/@:username", { username: $userData.username })}
             class="button button-main_screen button-square button-burger"
             in:fade={{ duration: 200 }}>Profile</a>
         {:else}
