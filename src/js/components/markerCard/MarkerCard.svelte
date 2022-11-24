@@ -36,7 +36,6 @@ let isShareOpened = false;
 let isComplainOpened = false;
 
 const getSpotData = async () => {
-  console.log("$openedMarkerData :>> ", $openedMarkerData);
   if ($openedMarkerData) {
     return $openedMarkerData;
   }
@@ -79,6 +78,8 @@ const onShareToggle = (toggle) => (isShareOpened = toggle);
 const onComplainToggle = (toggle) => (isComplainOpened = toggle);
 
 const onUserClick = () => {
+  const { user } = $openedMarkerData;
+
   if (!$selectedUserProfileData.id) {
     selectedUserProfileData.set(user ?? {});
     isAreaSelectionActive.set(false);

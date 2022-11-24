@@ -163,12 +163,12 @@ const quitAddSpot = () => {
 {:else}
   <div class="main-top_left_wrapper">
     {#if !$isAddSpotMode || ($isAddSpotMode && !isAddSpotSidebarVisible)}
-      <button
+      <a
+        href={$url("/calendar")}
         class="button button-main_screen button-open_calendar"
         class:inactive={$isAreaSelectionActive}
-        on:click={() => showCalendar(true)}
         transition:fade={{ duration: 200 }}
-        >{$isAreaSelectionActive ? ALL_YEARS_STRING : $selectedYear}</button>
+        >{$isAreaSelectionActive ? ALL_YEARS_STRING : $selectedYear}</a>
     {/if}
     {#if !$isAddSpotMode && !$isSearchResults && !$isShowOnMapMode && !$isAreaSelectionActive}
       <button
@@ -279,19 +279,6 @@ const quitAddSpot = () => {
       onCancel={onNewMarkerCancel} />
   {/if}
 
-  {#if showCalendarModal}
-    <Modal on:close={() => showCalendar(false)} title="Years" withAd autoMargin>
-      <Calendar
-        {selectedYear}
-        {showCalendar}
-        isSearch={$isSearchResults}
-        yearStart={$settings.yearStart}
-        yearEnd={$settings.yearEnd}
-        additionalYears={$settings.additionalYears &&
-          JSON.parse($settings.additionalYears)} />
-    </Modal>
-  {/if}
-
   {#if showSearchModal}
     <Modal
       on:close={() => showSearch(false)}
@@ -315,30 +302,6 @@ const quitAddSpot = () => {
     </Modal>
   {/if}
 
-  <!-- {#if $openedMarkerData}
-    <Modal
-      on:close={() => {
-        clearOpenedMarkerData();
-        if (!$isShowOnMapMode) {
-          selectedUserProfileData.set({});
-          $shouldDisplayShowOnMap && requestSpots($selectedYear);
-        }
-      }}
-      withAd
-      noLogo
-      banner={{
-        img: $openedMarkerData.firm?.banner,
-        url: $openedMarkerData.firm?.bannerUrl,
-      }}>
-      <MarkerCard
-        data={$openedMarkerData}
-        {map}
-        {showSpotsFromArea}
-        {clearOpenedMarkerData}
-        {toggleAreaSelectionMode} />
-    </Modal>
-  {/if} -->
-
   {#if showAuthContainer}
     <AuthContainer
       {showAuth}
@@ -360,10 +323,13 @@ const quitAddSpot = () => {
   }
 
   &-open_calendar {
+    display: flex;
+    align-items: center;
     position: relative;
     min-width: 114px;
     height: 40px;
     padding: 0 36px;
+    text-decoration: none;
     text-transform: uppercase;
     user-select: none;
 
