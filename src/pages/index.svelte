@@ -23,7 +23,6 @@ import {
   selectedArtist,
   selectedCrew,
   selectedYear,
-  settings,
   selectedUserProfileData,
   shouldDisplayShowOnMap,
   shouldShowResetPassword,
@@ -35,7 +34,6 @@ import {
   getCurrentYear,
   getInviteData,
   getResetPasswordToken,
-  isMobile,
   loadFromLocalStorage,
   saveToLocalStorage,
 } from "../js/utils/commonUtils";
@@ -44,9 +42,7 @@ import { newMarkerIcon } from "../js/utils/mapUtils/icons";
 
 import CloseCrossSvg from "../js/components/elements/icons/CloseCrossSvg.svelte";
 import RailroadSvg from "../js/components/elements/icons/RailroadSvg.svelte";
-import SearchForm from "../js/components/SearchForm.svelte";
 import Modal from "../js/components/Modal.svelte";
-import Calendar from "../js/components/Calendar.svelte";
 import AddSpot from "../js/components/addSpot/AddSpot.svelte";
 import AuthContainer from "../js/components/auth/AuthContainer.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
@@ -57,8 +53,6 @@ import SelectedSpots from "../js/components/SelectedSpots.svelte";
 import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
-let showCalendarModal = false;
-let showSearchModal = false;
 let showAuthContainer = false;
 let isAddSpotSidebarVisible = false;
 let resetPasswordToken = getResetPasswordToken();
@@ -70,15 +64,9 @@ if ($map && $isInitialized) {
   permalink.setup($map);
 }
 
-const showCalendar = (show) => (showCalendarModal = show);
-const showSearch = (show) => (showSearchModal = show);
 const showAuth = (show) => (showAuthContainer = show);
 const toggleAddSpotSidebarVisible = (toggle) =>
   (isAddSpotSidebarVisible = toggle);
-// const clearOpenedMarkerData = () => {
-//   openedMarkerData.set(null);
-//   permalink.update({ clearParams: ["marker"] });
-// };
 
 const toggleAreaSelectionMode = (toggle) => {
   isAreaSelectionActive.set(toggle);
@@ -193,10 +181,10 @@ const quitAddSpot = () => {
   <div class="main-top_right_wrapper">
     {#if !$isAddSpotMode && !$isAreaSelectionActive}
       {#if !($isSearchResults && ($selectedArtist || $selectedCrew)) && !$selectedUserProfileData.name}
-        <button
+        <a
+          href={$url("/search")}
           class="button button-main_screen button-square button-open_search"
-          on:click={() => showSearch(true)}
-          in:fade={{ duration: 200 }} />
+          in:fade={{ duration: 200 }}>Search</a>
         {#if $isLoggedIn}
           <a
             href={$url("/@:username", { username: $userData.username })}
@@ -277,18 +265,6 @@ const quitAddSpot = () => {
       {showAddSpot}
       {newMarker}
       onCancel={onNewMarkerCancel} />
-  {/if}
-
-  {#if showSearchModal}
-    <Modal
-      on:close={() => showSearch(false)}
-      title="Search"
-      withAd
-      alwaysOnTop
-      noLogo={!isMobile()}
-      stickyHeaderOnMobile>
-      <SearchForm {showSearch} />
-    </Modal>
   {/if}
 
   {#if $shouldShowSpotsFromArea}
@@ -422,6 +398,8 @@ const quitAddSpot = () => {
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: 20px 20px;
+    color: transparent;
+    font-size: 0;
   }
 
   &-open_login {

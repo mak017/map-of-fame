@@ -65,7 +65,7 @@ const getSpotData = async () => {
   }
 
   if (errors && !isEmpty(errors)) {
-    $goto("/_fallback");
+    $goto("/404");
   }
 };
 
