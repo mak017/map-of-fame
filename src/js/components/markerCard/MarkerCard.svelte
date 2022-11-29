@@ -30,7 +30,8 @@ import Spinner from "../elements/Spinner.svelte";
 
 import { EMPTY_YEAR_STRING, MAX_ZOOM } from "./../../constants.js";
 
-const { id } = $params;
+const { id, username } = $params;
+const strippedUsername = username.substring(1);
 
 let isShareOpened = false;
 let isComplainOpened = false;
@@ -51,7 +52,14 @@ const getSpotData = async () => {
       videoLink: video,
       publicBanner: { banner, bannerUrl },
       location: { lat, lng },
+      user,
     } = result;
+
+    if (user.username !== strippedUsername) {
+      $goto("/404");
+      throw new Error();
+    }
+
     const data = {
       ...result,
       status,

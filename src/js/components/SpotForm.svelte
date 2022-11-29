@@ -44,7 +44,6 @@ import { requestSpots } from "../init.js";
 import Spinner from "./elements/Spinner.svelte";
 import { requestSearchSpots } from "../api/search.js";
 
-export let onSubmit = undefined;
 export let marker = null;
 export let editSpotData = {};
 export let onCancel;
@@ -339,7 +338,7 @@ const handleSubmit = () => {
         const { success, result } = response;
         isInProgress = false;
         if (success && result) {
-          onSubmit();
+          onCancel();
         }
       });
     }

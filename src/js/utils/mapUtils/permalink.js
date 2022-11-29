@@ -203,8 +203,8 @@ const setup = (map) => {
       return;
     }
     const { center, zoom, year, params } = event.state;
-    if (params) setParamsFromState(year, params);
-    map.setView(center, zoom);
+    if (year && params) setParamsFromState(year, params);
+    if (center && zoom) map.setView(center, zoom);
     shouldUpdate = false;
   };
   mapInstance = map;

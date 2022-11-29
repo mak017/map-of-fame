@@ -1,17 +1,56 @@
 <script>
+import { goto, params } from "@roxi/routify";
+
+import { editSpotData } from "./../../store.js";
+import { getSpotById } from "../../api/spot.js";
+import { isEmpty } from "../../utils/commonUtils.js";
+
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import SpotForm from "../SpotForm.svelte";
+import Spinner from "../elements/Spinner.svelte";
 
-export let editSpotData;
-export let toggleEditModal;
-export let onSubmit;
+const { id, username } = $params;
+const strippedUsername = username.substring(1);
+
+const getSpotData = async () => {
+  if ($editSpotData.id) {
+    return $editSpotData;
+  }
+
+  const { success, result, errors } = await getSpotById(id);
+
+  if (success && result) {
+    const { user } = result;
+
+    if (user.username !== strippedUsername) {
+      $goto("/404");
+      throw new Error();
+    }
+
+    editSpotData.set(result);
+    return result;
+  }
+
+  if (errors && !isEmpty(errors)) {
+    $goto("/404");
+  }
+};
+
+const goBack = () => {
+  editSpotData.set({});
+  window.history.back();
+};
 </script>
 
-<div class="edit-spot">
-  <ButtonModalBack on:click={() => toggleEditModal(false)} editSpot />
-  <h2>Edit Art</h2>
-  <SpotForm {editSpotData} onCancel={() => toggleEditModal(false)} {onSubmit} />
-</div>
+{#await getSpotData()}
+  <Spinner height={40} margin="auto" />
+{:then}
+  <div class="edit-spot">
+    <ButtonModalBack on:click={goBack} editSpot />
+    <h2>Edit Art</h2>
+    <SpotForm editSpotData={$editSpotData} onCancel={goBack} />
+  </div>
+{/await}
 
 <style>
 .edit-spot {

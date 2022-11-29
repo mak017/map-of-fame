@@ -1,5 +1,4 @@
 <script>
-import { shouldShowAddSpot } from "./../../store.js";
 import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
@@ -19,6 +18,8 @@ import {
   selectedYear,
   shouldDisplayShowOnMap,
   isSearchResults,
+  editSpotData,
+  shouldShowAddSpot,
 } from "../../store";
 import { getProfileYears } from "./../../utils/datesUtils.js";
 import {
@@ -55,7 +56,7 @@ let spotsList = [];
 let newBatch = [];
 let invites = [];
 let unusedInvitesCount = 0;
-let isLoading = false;
+let isLoading = true;
 let isShowSpinner = true;
 const token = loadFromLocalStorage("token") || null;
 
@@ -64,12 +65,13 @@ const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 const toggleSharePopup = (toggle) => (showSharePopup = toggle);
 
-const username = $params.username;
-const strippedUsername = $params.username.substring(1);
-const name = $selectedUserProfileData.name ?? $userData.name ?? $userData.crew;
+const { username } = $params;
+const strippedUsername = username.substring(1);
 
+let name = $selectedUserProfileData.name ?? $userData.name ?? $userData.crew;
 let isCurrentUser = $userData.username === strippedUsername;
 
+$: name = $selectedUserProfileData.name ?? $userData.name ?? $userData.crew;
 $: isCurrentUser = $userData.username === strippedUsername;
 
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
@@ -103,8 +105,11 @@ onMount(() => {
   getUserData(strippedUsername).then((response) => {
     const { success, result, errors } = response;
 
+    if (errors) {
+      $goto("/404");
+    }
+
     if (success && result) {
-      selectedUserProfileData.set(result);
       fetchSpots({ isNewFetch: true });
       shouldDisplayShowOnMap.set(false);
       if (isCurrentUser) {
@@ -119,7 +124,10 @@ onMount(() => {
             );
           }
         });
+      } else {
+        selectedUserProfileData.set(result);
       }
+      isLoading = false;
     }
   });
 });
@@ -150,8 +158,9 @@ const handleYearSelect = (event) => {
 };
 
 const handleEdit = (spot) => {
-  currentSpot = spot;
-  toggleEditModal(true);
+  const { id } = spot;
+  editSpotData.set(spot);
+  $goto("/@:username/spot/:id/edit", { username: strippedUsername, id });
 };
 
 const handleDelete = (spot) => {
@@ -252,7 +261,7 @@ const handleShowOnMapClick = () => {
     </div>
   {/if}
   <div class="top">
-    {#if name || username}
+    {#if !isLoading && (name || username)}
       <div class="user">
         {#if name}
           <button
@@ -339,7 +348,7 @@ const handleShowOnMapClick = () => {
   {/if}
 </div>
 
-{#if !isCurrentUser}
+{#if !isLoading && !isCurrentUser}
   <a href={$url("../")} class="go-to-map">Go to map</a>
 {/if}
 

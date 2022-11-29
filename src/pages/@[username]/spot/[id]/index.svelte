@@ -7,11 +7,11 @@ import {
   shouldDisplayShowOnMap,
   selectedYear,
   openedMarkerData,
-} from "./../../../js/store.js";
-import { requestSpots } from "../../../js/init.js";
+} from "../../../../js/store.js";
+import { requestSpots } from "../../../../js/init.js";
 
-import MarkerCard from "./../../../js/components/markerCard/MarkerCard.svelte";
-import Modal from "../../../js/components/Modal.svelte";
+import MarkerCard from "../../../../js/components/markerCard/MarkerCard.svelte";
+import Modal from "../../../../js/components/Modal.svelte";
 </script>
 
 <Modal
