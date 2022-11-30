@@ -1,8 +1,9 @@
 <script>
 import { onMount } from "svelte";
 import { fade } from "svelte/transition";
+import { goto, url } from "@roxi/routify";
+
 import { getAllCountries } from "./../../api/geo.js";
-import AutoComplete from "./../elements/AutoComplete.svelte";
 import { createUserRequest } from "./../../api/auth.js";
 import {
   saveToLocalStorage,
@@ -10,20 +11,20 @@ import {
   validatePassword,
   validateUsername,
 } from "../../utils/commonUtils.js";
-import { AUTH_MODALS, ERROR_MESSAGES, USER_TYPES } from "../../constants";
+import { countriesList, isLoggedIn, userData } from "../../store.js";
+import { transformCountries } from "../../utils/transformers.js";
+
+import AutoComplete from "./../elements/AutoComplete.svelte";
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
 import FormPasswordInput from "../elements/FormPasswordInput.svelte";
 import FormRadioButton from "../elements/FormRadioButton.svelte";
 import FormTextInput from "../elements/FormTextInput.svelte";
-import { countriesList, isLoggedIn, userData } from "../../store.js";
-import { transformCountries } from "../../utils/transformers.js";
 
-export let showAuth;
-export let changeCurrentModal;
+import { ERROR_MESSAGES, USER_TYPES } from "../../constants";
+
 export let inviteData;
-export let clearInviteData;
 
 let step = 1;
 let selectedType = USER_TYPES.artist;
@@ -175,8 +176,7 @@ const handleSubmit = () => {
             userData.set(result);
             isLoggedIn.set(true);
             saveToLocalStorage("token", result.token);
-            clearInviteData();
-            showAuth(false);
+            $goto("/");
           } else {
             if (error?.email) {
               errors.email = error.email;
@@ -325,9 +325,7 @@ const handleBackClick = () => {
   {#if step === 1}
     <div class="switch-to-sign-in" in:fade|local={{ duration: 200 }}>
       <span>Have an account?</span>
-      <button
-        type="button"
-        on:click={() => changeCurrentModal(AUTH_MODALS.login)}>Log in</button>
+      <a href={$url("/login")}>Log in</a>
     </div>
   {/if}
 </form>
@@ -367,7 +365,7 @@ form {
   font-weight: 600;
   line-height: 1.22;
   text-align: center;
-  button {
+  a {
     padding: 0;
     border: 0;
     background: none;
@@ -375,7 +373,12 @@ form {
     font-size: inherit;
     font-weight: inherit;
     line-height: inherit;
+    text-decoration: none;
     cursor: pointer;
+
+    &:hover {
+      opacity: 0.7;
+    }
   }
 }
 </style>

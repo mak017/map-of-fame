@@ -1,15 +1,18 @@
 <script>
 import { fade } from "svelte/transition";
-import FormTextArea from "./../elements/FormTextArea.svelte";
+import { goto } from "@roxi/routify";
+
 import { preRegContact, preRegEmail } from "./../../api/auth.js";
+import { isMobile, validateEmail } from "../../utils/commonUtils.js";
+
+import FormTextArea from "./../elements/FormTextArea.svelte";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "./../elements/FormEmailInput.svelte";
-import { isMobile, validateEmail } from "../../utils/commonUtils.js";
-import { ERROR_MESSAGES } from "../../constants.js";
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 
+import { ERROR_MESSAGES } from "../../constants.js";
+
 export let setIsPreRegistrationSuccess;
-export let close;
 
 const screens = { INITIAL: "INITIAL", ARTIST: "ARTIST", SUCCESS: "SUCCESS" };
 
@@ -99,7 +102,10 @@ const submitContact = () => {
   <div class="success" in:fade={{ delay: 500, duration: 200 }}>
     <div class="thumb">👍</div>
     <div class="button-wrapper">
-      <ButtonPrimary text="Back to map" type="button" on:click={close} />
+      <ButtonPrimary
+        text="Back to map"
+        type="button"
+        on:click={() => $goto("/")} />
     </div>
   </div>
 {/if}

@@ -189,7 +189,7 @@ const getCustomUrl = (coords, zoom, year, params) => {
 };
 const getInviteUrl = (code, username) => {
   const { origin } = window.location;
-  return `${origin}?invite_code=${code}&from_user=${username}`;
+  return `${origin}/registration?invite_code=${code}&from_user=${username}`;
 };
 const setup = (map) => {
   shouldUpdate = true;

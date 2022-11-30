@@ -102,34 +102,35 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
 };
 
 onMount(() => {
-  getUserData(strippedUsername).then((response) => {
-    const { success, result, errors } = response;
+  if (!isCurrentUser) {
+    getUserData(strippedUsername).then((response) => {
+      const { success, result, errors } = response;
 
-    if (errors) {
-      $goto("/404");
-    }
-
-    if (success && result) {
-      fetchSpots({ isNewFetch: true });
-      shouldDisplayShowOnMap.set(false);
-      if (isCurrentUser) {
-        getInvites(token).then((response) => {
-          const { success, result } = response;
-          if (success && result) {
-            invites = result;
-            unusedInvitesCount = invites.reduce(
-              (accumulator, invite) =>
-                !invite.invitedUserId ? accumulator + 1 : accumulator,
-              0
-            );
-          }
-        });
-      } else {
-        selectedUserProfileData.set(result);
+      if (errors) {
+        $goto("/404");
       }
-      isLoading = false;
-    }
-  });
+
+      if (success && result) {
+        fetchSpots({ isNewFetch: true });
+        shouldDisplayShowOnMap.set(false);
+        selectedUserProfileData.set(result);
+        isLoading = false;
+      }
+    });
+  } else {
+    fetchSpots({ isNewFetch: true });
+    getInvites(token).then((response) => {
+      const { success, result } = response;
+      if (success && result) {
+        invites = result;
+        unusedInvitesCount = invites.reduce(
+          (accumulator, invite) =>
+            !invite.invitedUserId ? accumulator + 1 : accumulator,
+          0
+        );
+      }
+    });
+  }
 });
 
 $: spotsList = [...spotsList, ...newBatch];

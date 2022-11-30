@@ -1,7 +1,11 @@
 <script>
 import { goto } from "@roxi/routify";
 
-import { isShowOnMapMode, selectedUserProfileData } from "../../js/store.js";
+import {
+  isInitialized,
+  isShowOnMapMode,
+  selectedUserProfileData,
+} from "../../js/store.js";
 
 import Modal from "../../js/components/Modal.svelte";
 import Profile from "../../js/components/user/Profile.svelte";
@@ -9,6 +13,7 @@ import Profile from "../../js/components/user/Profile.svelte";
 
 <Modal
   noLogo
+  noTransition={!$isInitialized}
   on:close={() => {
     $goto("/");
     !$isShowOnMapMode && selectedUserProfileData.set({});

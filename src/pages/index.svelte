@@ -44,7 +44,6 @@ import CloseCrossSvg from "../js/components/elements/icons/CloseCrossSvg.svelte"
 import RailroadSvg from "../js/components/elements/icons/RailroadSvg.svelte";
 import Modal from "../js/components/Modal.svelte";
 import AddSpot from "../js/components/addSpot/AddSpot.svelte";
-import AuthContainer from "../js/components/auth/AuthContainer.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
 import Loader from "../js/components/elements/Loader.svelte";
 import Spinner from "../js/components/elements/Spinner.svelte";
@@ -191,9 +190,10 @@ const quitAddSpot = () => {
             class="button button-main_screen button-square button-burger"
             in:fade={{ duration: 200 }}>Profile</a>
         {:else}
-          <button
+          <a
+            href={$url("/login")}
             class="button button-main_screen button-square button-open_login"
-            on:click={() => showAuth(true)} />
+            >Login</a>
         {/if}
       {:else}
         <div class="selection selected-artist">
@@ -276,13 +276,6 @@ const quitAddSpot = () => {
       }}>
       <SelectedSpots spotsList={$areaSpots} />
     </Modal>
-  {/if}
-
-  {#if showAuthContainer}
-    <AuthContainer
-      {showAuth}
-      {inviteData}
-      clearInviteData={() => (inviteData = null)} />
   {/if}
 {/if}
 
@@ -407,6 +400,8 @@ const quitAddSpot = () => {
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: 9px 17px;
+    color: transparent;
+    font-size: 0;
   }
 
   &-switch_mode {

@@ -36,13 +36,6 @@ export const ALL_YEARS_STRING = "All";
 
 export const ENDPOINT_ORIGIN = process.env.SVELTE_APP_API_ENTRYPOINT;
 
-export const AUTH_MODALS = {
-  login: "login",
-  registration: "registration",
-  forgotPassword: "forgotPassword",
-  preRegistration: "preRegistration",
-};
-
 export const ERROR_MESSAGES = {
   emailEmpty: "Please enter your email",
   emailInvalid: "You have entered invalid email",
