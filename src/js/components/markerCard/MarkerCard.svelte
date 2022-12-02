@@ -10,7 +10,6 @@ import {
   openedMarkerData,
   map,
   isAreaSelectionActive,
-  shouldShowSpotsFromArea,
   isShowOnMapMode,
   markersStore,
   selectedArtist,
@@ -91,7 +90,6 @@ const onUserClick = () => {
   if (!$selectedUserProfileData.id) {
     selectedUserProfileData.set(user ?? {});
     isAreaSelectionActive.set(false);
-    shouldShowSpotsFromArea.set(false);
   }
   openedMarkerData.set(null);
   $goto("/@:username", { username: user.username });

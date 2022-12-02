@@ -24,7 +24,6 @@ import {
   currentZoom,
   isSpotsFromAreaLoading,
   areaSpots,
-  shouldShowSpotsFromArea,
   areaSelection,
   globalGoto,
 } from "./../js/store.js";
@@ -48,11 +47,10 @@ areaSelection.set(
       const { coordinates } = polygon.toGeoJSON().geometry;
       getSpotsInArea(coordinates[0]).then(({ result }) => {
         areaSpots.set(result);
-        isSpotsFromAreaLoading = false;
+        isSpotsFromAreaLoading.set(false);
       });
     },
-    onPolygonDblClick: () =>
-      !!$areaSpots?.length && shouldShowSpotsFromArea.set(true),
+    onPolygonDblClick: () => !!$areaSpots?.length && $goto("/selected-spots"),
     position: "bottomright",
   })
 );

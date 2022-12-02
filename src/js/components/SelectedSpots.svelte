@@ -1,21 +1,23 @@
 <script>
 import { fade } from "svelte/transition";
+import { goto } from "@roxi/routify";
 
-import { openedMarkerData } from "../store";
-import { permalink } from "../utils/mapUtils/permalink";
+import { areaSpots, openedMarkerData } from "./../store.js";
 
 import CustomSelect from "./elements/CustomSelect.svelte";
 
 import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../constants";
 
-export let spotsList;
+if (!$areaSpots.length) {
+  $goto("/");
+}
 
 let currentYear = ALL_YEARS_STRING;
-let spotsToShow = spotsList;
+let spotsToShow = $areaSpots;
 let yearsToApply = [
   ALL_YEARS_STRING,
   ...new Set(
-    spotsList
+    $areaSpots
       .map(({ year }) => (year === null ? EMPTY_YEAR_STRING : year))
       .filter((y) => y)
       .sort(
@@ -32,8 +34,8 @@ const handleYearSelect = (event) => {
   currentYear = value !== EMPTY_YEAR_STRING ? value : null;
   spotsToShow =
     currentYear === ALL_YEARS_STRING
-      ? spotsList
-      : spotsList.filter((spot) => spot.year === currentYear);
+      ? $areaSpots
+      : $areaSpots.filter((spot) => spot.year === currentYear);
 };
 
 const onSpotClick = (spot) => {
@@ -64,7 +66,11 @@ const onSpotClick = (spot) => {
     year,
     link,
   });
-  permalink.update({ params: { marker: id } });
+
+  $goto("/@:username/spot/:id", {
+    username: user.username,
+    id,
+  });
 };
 </script>
 

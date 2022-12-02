@@ -36,4 +36,3 @@ export const isAreaSelectionActive = writable(false);
 export const isSpotsFromAreaLoading = writable(false);
 export const shouldShowAddSpot = writable(null);
 export const shouldShowResetPassword = writable(false);
-export const shouldShowSpotsFromArea = writable(false);

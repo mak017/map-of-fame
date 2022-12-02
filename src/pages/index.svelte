@@ -2,7 +2,7 @@
 import { fade } from "svelte/transition";
 import L from "leaflet";
 import "@bopen/leaflet-area-selection/dist/index.css";
-import { url } from "@roxi/routify";
+import { goto, url } from "@roxi/routify";
 
 import { requestRecentSpots, requestSpots } from "../js/init.js";
 import {
@@ -13,7 +13,6 @@ import {
   shouldShowAddSpot,
   currentZoom,
   isSpotsFromAreaLoading,
-  shouldShowSpotsFromArea,
   isInitialized,
   isLighthouseActive,
   isLoading,
@@ -47,8 +46,6 @@ import AddSpot from "../js/components/addSpot/AddSpot.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
 import Loader from "../js/components/elements/Loader.svelte";
 import Spinner from "../js/components/elements/Spinner.svelte";
-import SelectedSpots from "../js/components/SelectedSpots.svelte";
-
 import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
@@ -73,6 +70,7 @@ const toggleAreaSelectionMode = (toggle) => {
   if (toggle) {
     $map.setMinZoom(15);
     $areaSelection.activate();
+    $goto("/");
     shouldDisplayShowOnMap.set(false);
     return;
   }
@@ -218,17 +216,17 @@ const quitAddSpot = () => {
         </div>
       {/if}
     {:else if $isAreaSelectionActive && ($areaSpots || $isSpotsFromAreaLoading)}
-      <div
+      <a
+        href={$url("/selected-spots")}
         class="selection selected-area-spots"
         class:active={!$isSpotsFromAreaLoading && $areaSpots.length > 0}
-        transition:fade={{ duration: 200 }}
-        on:click={() => shouldShowSpotsFromArea.set(true)}>
+        transition:fade={{ duration: 200 }}>
         {#if $isSpotsFromAreaLoading}
           <Spinner height={20} margin="10px" isWhite />
         {:else if $areaSpots}
           <span>{$areaSpots?.length} Spots Selected</span>
         {/if}
-      </div>
+      </a>
     {/if}
   </div>
 
@@ -247,7 +245,7 @@ const quitAddSpot = () => {
     <button
       class="button button-main_screen button-square button-select_area"
       class:active={$isAreaSelectionActive}
-      on:click={() => isAreaSelectionActive.set(!$isAreaSelectionActive)}
+      on:click={() => toggleAreaSelectionMode(!$isAreaSelectionActive)}
       transition:fade={{ duration: 200 }}
       title={$isAreaSelectionActive
         ? "Cancel area selection mode"
@@ -265,17 +263,6 @@ const quitAddSpot = () => {
       {showAddSpot}
       {newMarker}
       onCancel={onNewMarkerCancel} />
-  {/if}
-
-  {#if $shouldShowSpotsFromArea}
-    <Modal
-      noLogo
-      on:close={() => {
-        shouldShowSpotsFromArea.set(false);
-        toggleAreaSelectionMode(false);
-      }}>
-      <SelectedSpots spotsList={$areaSpots} />
-    </Modal>
   {/if}
 {/if}
 
@@ -483,6 +470,7 @@ const quitAddSpot = () => {
   background-repeat: no-repeat;
   background-position: 14px 50%;
   background-size: 14px 12px;
+  text-decoration: none;
   pointer-events: none;
 
   &.active {

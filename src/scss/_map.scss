@@ -65,6 +65,7 @@
   .leaflet-area-draw-selection-pane {
     .draw-pane-help {
       bottom: 120px;
+      user-select: none;
     }
   }
 }
