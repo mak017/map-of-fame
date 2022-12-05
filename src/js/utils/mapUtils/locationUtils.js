@@ -1,10 +1,4 @@
-import {
-  DEFAULT_ZOOM,
-  DEFAULT_VIEW,
-  EMPTY_YEAR_STRING,
-  ALL_YEARS_STRING,
-} from "../../constants";
-import { getCurrentYear, isEmpty } from "../commonUtils";
+import { getCurrentYear } from "../commonUtils";
 import { permalink } from "./permalink";
 import {
   isInitialized,
@@ -12,19 +6,22 @@ import {
   isSearchResults,
   isShowOnMapMode,
   mapBounds,
-  markerIdFromUrl,
   selectedArtist,
   selectedCrew,
   selectedYear,
 } from "../../store";
 import { performSearch, requestRecentSpots, requestSpots } from "../../init";
-import { getSpotById } from "../../api/spot";
-import { setMarkerData } from "./markersUtils";
+
+import {
+  DEFAULT_ZOOM,
+  DEFAULT_VIEW,
+  EMPTY_YEAR_STRING,
+  ALL_YEARS_STRING,
+} from "../../constants";
 
 let yearFromStore;
 let artistFromStore;
 let crewFromStore;
-let markerId;
 let isSearch;
 let isShowOnMapModeValue;
 let isLighthouseMode;
@@ -39,10 +36,6 @@ selectedArtist.subscribe((value) => {
 
 selectedCrew.subscribe((value) => {
   crewFromStore = value;
-});
-
-markerIdFromUrl.subscribe((value) => {
-  markerId = value;
 });
 
 isSearchResults.subscribe((value) => {
@@ -122,7 +115,7 @@ export const setLocation = (map) => {
       const bounds = getBounds(map);
       const shouldSearch = artistFromStore || crewFromStore;
       mapBounds.set(bounds);
-      if (shouldSearch && !markerId) {
+      if (shouldSearch) {
         const params = {
           artist: artistFromStore,
           crew: crewFromStore,
@@ -135,28 +128,6 @@ export const setLocation = (map) => {
         }
 
         performSearch(params);
-      } else if (markerId) {
-        getSpotById(markerId).then((response) => {
-          const { success, result, errors } = response;
-          markerIdFromUrl.set(null);
-          isInitialized.set(true);
-          if (success && result) {
-            setMarkerData(result);
-          }
-          if (errors && !isEmpty(errors)) {
-            permalink.update({ clearParams: "all" });
-          }
-          if (!shouldSearch) {
-            requestSpots(yearFromStore);
-          } else {
-            performSearch({
-              artist: artistFromStore,
-              crew: crewFromStore,
-              year: yearFromStore !== EMPTY_YEAR_STRING ? yearFromStore : "",
-              isInitial: true,
-            });
-          }
-        });
       } else {
         isInitialized.set(true);
         requestSpots(yearFromStore || getCurrentYear());

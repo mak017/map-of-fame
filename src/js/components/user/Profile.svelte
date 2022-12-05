@@ -102,7 +102,7 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
 };
 
 onMount(() => {
-  if (!isCurrentUser) {
+  if (!isCurrentUser && !$selectedUserProfileData.id) {
     getUserData(strippedUsername).then((response) => {
       const { success, result, errors } = response;
 
@@ -119,17 +119,19 @@ onMount(() => {
     });
   } else {
     fetchSpots({ isNewFetch: true });
-    getInvites(token).then((response) => {
-      const { success, result } = response;
-      if (success && result) {
-        invites = result;
-        unusedInvitesCount = invites.reduce(
-          (accumulator, invite) =>
-            !invite.invitedUserId ? accumulator + 1 : accumulator,
-          0
-        );
-      }
-    });
+    if (isCurrentUser) {
+      getInvites(token).then((response) => {
+        const { success, result } = response;
+        if (success && result) {
+          invites = result;
+          unusedInvitesCount = invites.reduce(
+            (accumulator, invite) =>
+              !invite.invitedUserId ? accumulator + 1 : accumulator,
+            0
+          );
+        }
+      });
+    }
   }
 });
 
@@ -350,7 +352,10 @@ const handleShowOnMapClick = () => {
 </div>
 
 {#if !isLoading && !isCurrentUser}
-  <a href={$url("../")} class="go-to-map">Go to map</a>
+  <a
+    href={$url("../")}
+    class="go-to-map"
+    on:click={() => selectedUserProfileData.set({})}>Go to map</a>
 {/if}
 
 {#if showEditModal}

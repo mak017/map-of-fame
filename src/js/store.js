@@ -23,7 +23,6 @@ export const categoriesList = writable([]);
 export const firms = writable([]);
 export const userCategories = writable([]);
 export const isLoading = writable(false);
-export const markerIdFromUrl = writable(null);
 export const isLighthouseActive = writable(false);
 export const mapBounds = writable([]);
 export const areaSelection = writable(null);
