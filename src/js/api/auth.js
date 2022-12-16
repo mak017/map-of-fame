@@ -9,6 +9,7 @@ import {
   PRE_REG_CONTACT,
   USER_ID,
 } from "./endpoints";
+import { USER_TYPES } from "../constants";
 
 export const loginRequest = async (email, password) => {
   const data = new URLSearchParams();
@@ -46,12 +47,16 @@ export const createUserRequest = async ({
 }) => {
   const data = new URLSearchParams();
   data.append("username", username);
-  data.append("name", name);
+  if (type !== USER_TYPES.crew.toLowerCase()) {
+    data.append("name", name);
+  }
   data.append("email", email);
   data.append("password", password);
   data.append("country", country);
   data.append("type", type);
-  data.append("crew", crew);
+  if (type !== USER_TYPES.hunter.toLowerCase()) {
+    data.append("crew", crew);
+  }
   data.append("link", link);
   if (invite) {
     data.append("invite", invite);

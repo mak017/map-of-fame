@@ -19,7 +19,6 @@ import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
 import FormPasswordInput from "../elements/FormPasswordInput.svelte";
-import FormRadioButton from "../elements/FormRadioButton.svelte";
 import FormTextInput from "../elements/FormTextInput.svelte";
 
 import { ERROR_MESSAGES, USER_TYPES } from "../../constants";
@@ -27,11 +26,10 @@ import { ERROR_MESSAGES, USER_TYPES } from "../../constants";
 export let inviteData;
 
 let step = 1;
-let selectedType = USER_TYPES.artist;
 let email = "";
 let password = "";
-let subtype;
-let username = "";
+let userType;
+let username = "@";
 let name = "";
 let crew = "";
 let country;
@@ -40,7 +38,7 @@ let portfolioLink = "";
 let errors = {
   email: "",
   password: "",
-  subtype: "",
+  userType: "",
   username: "",
   name: "",
   crew: "",
@@ -51,9 +49,10 @@ let errors = {
 let isSubmitDisabled = false;
 let isInProgress = false;
 
-const subtypeList = [
+const userTypeList = [
   { id: USER_TYPES.artist.toLowerCase(), name: USER_TYPES.artist },
   { id: USER_TYPES.crew.toLowerCase(), name: USER_TYPES.crew },
+  { id: USER_TYPES.hunter.toLowerCase(), name: USER_TYPES.hunter },
 ];
 
 onMount(() => {
@@ -64,7 +63,7 @@ onMount(() => {
 
 $: isSubmitDisabled =
   isInProgress ||
-  (step === 1 && (!!errors.email || !!errors.password || !!errors.subtype)) ||
+  (step === 1 && (!!errors.email || !!errors.password || !!errors.userType)) ||
   (step === 2 &&
     (!!errors.name || !!errors.crew || !!errors.country || !!errors.link));
 
@@ -79,20 +78,18 @@ const getCountries = () => {
 
 const getOptionLabel = (option) => option.name;
 
+const stripUsername = (username) =>
+  username.startsWith("@") ? username.substring(1) : username;
+
 const validate = () => {
   if (step === 1) {
     const isValidEmail = validateEmail(email);
     const isValidPassword = validatePassword(password);
 
-    if (
-      isValidEmail &&
-      isValidPassword &&
-      (selectedType === USER_TYPES.hunter ||
-        (selectedType === USER_TYPES.artist && subtype))
-    ) {
+    if (isValidEmail && isValidPassword && userType) {
       errors.email = "";
       errors.password = "";
-      errors.subtype = "";
+      errors.userType = "";
     } else {
       if (!isValidEmail) {
         errors.email = !email
@@ -106,22 +103,20 @@ const validate = () => {
           : ERROR_MESSAGES.passwordInvalid;
       } else errors.password = "";
 
-      errors.subtype =
-        selectedType === USER_TYPES.artist && !subtype
-          ? ERROR_MESSAGES.profileSubtypeEmpty
-          : "";
+      errors.userType = !userType ? ERROR_MESSAGES.profileSubtypeEmpty : "";
     }
   } else {
-    const isValidUsername = validateUsername(username);
+    const strippedUsername = stripUsername(username);
+    const isValidUsername = validateUsername(strippedUsername);
 
     if (!isValidUsername) {
-      errors.username = !username
+      errors.username = !strippedUsername
         ? ERROR_MESSAGES.usernameEmpty
         : ERROR_MESSAGES.usernameInvalid;
     } else errors.username = "";
 
-    if (subtype?.name !== USER_TYPES.crew) {
-      errors.name = !username ? ERROR_MESSAGES.nameEmpty : "";
+    if (userType?.name !== USER_TYPES.crew) {
+      errors.name = !strippedUsername ? ERROR_MESSAGES.nameEmpty : "";
     } else {
       errors.crew = !crew ? ERROR_MESSAGES.crewEmpty : "";
     }
@@ -133,12 +128,12 @@ const validate = () => {
 const handleSubmit = () => {
   validate();
   if (step === 1) {
-    if (!errors.email && !errors.password && !errors.subtype) {
+    if (!errors.email && !errors.password && !errors.userType) {
       step = 2;
       errors = {
         email: "",
         password: "",
-        subtype: "",
+        userType: "",
         username: "",
         name: "",
         crew: "",
@@ -146,63 +141,61 @@ const handleSubmit = () => {
         link: "",
       };
     }
-  } else {
-    if (
-      !errors.username &&
-      !errors.name &&
-      !errors.crew &&
-      !errors.country &&
-      !errors.link
-    ) {
-      isInProgress = true;
-      createUserRequest({
-        name,
-        username,
-        password,
-        email,
-        country: country.name,
-        type:
-          selectedType === USER_TYPES.hunter
-            ? selectedType.toLowerCase()
-            : subtype.id,
-        crew,
-        link: portfolioLink,
-        invite: inviteData?.code,
-      })
-        .then((response) => {
-          const { success, result, errors: error } = response;
-          isInProgress = false;
-          if (success && result) {
-            userData.set(result);
-            isLoggedIn.set(true);
-            saveToLocalStorage("token", result.token);
-            $goto("/");
-          } else {
-            if (error?.email) {
-              errors.email = error.email;
-              step = 1;
-            }
-            if (Array.isArray(error)) {
-              errors.link = error[0];
-            }
-            if (error?.message) {
-              errors.link = error.message;
-            }
+  } else if (
+    !errors.username &&
+    !errors.name &&
+    !errors.crew &&
+    !errors.country &&
+    !errors.link
+  ) {
+    isInProgress = true;
+    createUserRequest({
+      name,
+      username: stripUsername(username),
+      password,
+      email,
+      country: country.name,
+      type: userType.id,
+      crew,
+      link: portfolioLink,
+      invite: inviteData?.code,
+    })
+      .then((response) => {
+        const { success, result, errors: error } = response;
+        isInProgress = false;
+        if (success && result) {
+          userData.set(result);
+          isLoggedIn.set(true);
+          saveToLocalStorage("token", result.token);
+          $goto("/");
+        } else {
+          if (error?.email) {
+            errors.email = error.email;
+            step = 1;
           }
-        })
-        .catch((e) => {
-          console.error(e);
-          isInProgress = false;
-          errors.password = "Something went wrong";
-        });
-    }
+          if (Array.isArray(error)) {
+            errors.link = error[0];
+          }
+          if (error?.message) {
+            errors.link = error.message;
+          }
+          if (error?.username && Array.isArray(error.username)) {
+            errors.username = error.username[0];
+          }
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        isInProgress = false;
+        errors.password = "Something went wrong";
+      });
   }
 };
 
 const handleInputChange = (input) => {
   if (
     isSubmitDisabled ||
-    (step === 1 && (errors.email || errors.password || errors.subtype)) ||
+    (step === 1 && (errors.email || errors.password || errors.userType)) ||
     (step === 2 &&
       (errors.username ||
         errors.name ||
@@ -232,22 +225,6 @@ const handleBackClick = () => {
   {#if step === 2}
     <ButtonModalBack on:click={handleBackClick} withTransition />
   {/if}
-  {#if step === 1 && !inviteData}
-    <div class="switcher" in:fade|local={{ duration: 200 }}>
-      <FormRadioButton
-        id={`user-type-switcher-${USER_TYPES.artist.toLowerCase()}`}
-        bind:group={selectedType}
-        value={USER_TYPES.artist}
-        label={USER_TYPES.artist}
-        className="accent" />
-      <FormRadioButton
-        id={`user-type-switcher-${USER_TYPES.hunter.toLowerCase()}`}
-        bind:group={selectedType}
-        value={USER_TYPES.hunter}
-        label={USER_TYPES.hunter}
-        className="accent" />
-    </div>
-  {/if}
   <div class="step">step {step} of 2</div>
   {#if step === 1}
     <div in:fade|local={{ duration: 200 }}>
@@ -262,19 +239,17 @@ const handleBackClick = () => {
         bind:value={password}
         errorText={errors.password}
         on:input={() => handleInputChange("password")} />
-      {#if selectedType === USER_TYPES.artist}
-        <div class="profile_subtype" class:with-error={errors.sprayPaintUsed}>
-          <AutoComplete
-            bind:selectedValue={subtype}
-            items={subtypeList}
-            optionIdentifier={"name"}
-            {getOptionLabel}
-            placeholder="Profile Subtype"
-            errorMessage={errors.subtype}
-            showIndicator
-            on:select={() => handleInputChange("subtype")} />
-        </div>
-      {/if}
+      <div class="profile_subtype" class:with-error={errors.sprayPaintUsed}>
+        <AutoComplete
+          bind:selectedValue={userType}
+          items={userTypeList}
+          optionIdentifier={"name"}
+          {getOptionLabel}
+          placeholder="Profile Subtype"
+          errorMessage={errors.userType}
+          showIndicator
+          on:select={() => handleInputChange("userType")} />
+      </div>
     </div>
   {/if}
   {#if step === 2}
@@ -284,16 +259,16 @@ const handleBackClick = () => {
         bind:value={username}
         errorText={errors.username}
         on:input={() => handleInputChange("username")} />
-      {#if subtype?.name !== USER_TYPES.crew}
+      {#if userType.name !== USER_TYPES.crew}
         <FormTextInput
-          placeholder={selectedType === USER_TYPES.artist
+          placeholder={userType.name === USER_TYPES.artist
             ? "Artist Name"
             : "Name"}
           bind:value={name}
           errorText={errors.name}
           on:input={() => handleInputChange("name")} />
       {/if}
-      {#if selectedType === USER_TYPES.artist}
+      {#if userType.name !== USER_TYPES.hunter}
         <FormTextInput
           placeholder="Crew"
           bind:value={crew}
@@ -344,10 +319,6 @@ form {
   font-weight: 600;
   line-height: 22px;
   text-align: center;
-}
-.switcher {
-  display: flex;
-  margin-bottom: 24px;
 }
 .step {
   margin-bottom: 24px;
