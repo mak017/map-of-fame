@@ -68,10 +68,18 @@ const toggleSharePopup = (toggle) => (showSharePopup = toggle);
 const { username } = $params;
 const strippedUsername = username.substring(1);
 
-let name = $selectedUserProfileData.name ?? $userData.name ?? $userData.crew;
+let name =
+  $selectedUserProfileData.name ??
+  $selectedUserProfileData.crew ??
+  $userData.name ??
+  $userData.crew;
 let isCurrentUser = $userData.username === strippedUsername;
 
-$: name = $selectedUserProfileData.name ?? $userData.name ?? $userData.crew;
+$: name =
+  $selectedUserProfileData.name ??
+  $selectedUserProfileData.crew ??
+  $userData.name ??
+  $userData.crew;
 $: isCurrentUser = $userData.username === strippedUsername;
 
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
@@ -342,10 +350,14 @@ const handleShowOnMapClick = () => {
     <div class="empty-state">
       <img src="../../../images/empty.jpg" alt="Empty" />
       <p>
-        <button
-          type="button"
-          class="button empty-button"
-          on:click={handleAddSpot}>Make your mark</button> on society, not in society
+        {#if isCurrentUser}
+          <button
+            type="button"
+            class="button empty-button"
+            on:click={handleAddSpot}>Make your mark</button> on society, not in society
+        {:else}
+          Make your mark on society, not in society
+        {/if}
       </p>
     </div>
   {/if}
