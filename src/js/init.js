@@ -5,6 +5,7 @@ import { getRecentSpots, getSpots } from "./api/spot";
 import { EMPTY_YEAR_STRING } from "./constants";
 import {
   categoriesList,
+  isFirstTimeVisit,
   isInitialized,
   isLighthouseActive,
   isLoggedIn,
@@ -66,8 +67,15 @@ export const verifyAuth = (token) =>
 
 export const initApp = () => {
   const token = loadFromLocalStorage("token") || null;
+  const isKnownUser = loadFromLocalStorage("isKnownUser") || null;
+
   if (token) {
     verifyAuth(token);
+  }
+
+  if (!isKnownUser) {
+    isFirstTimeVisit.set(true);
+    saveToLocalStorage("isKnownUser", "true");
   }
 };
 

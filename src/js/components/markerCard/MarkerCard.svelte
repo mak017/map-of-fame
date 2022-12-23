@@ -36,7 +36,7 @@ let isShareOpened = false;
 let isComplainOpened = false;
 
 const getSpotData = async () => {
-  if ($openedMarkerData) {
+  if ($openedMarkerData?.id === id) {
     return $openedMarkerData;
   }
 

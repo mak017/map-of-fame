@@ -2,7 +2,7 @@
 import { fade } from "svelte/transition";
 import L from "leaflet";
 import "@bopen/leaflet-area-selection/dist/index.css";
-import { goto, url } from "@roxi/routify";
+import { goto, prefetch, url } from "@roxi/routify";
 
 import { requestRecentSpots, requestSpots } from "../js/init.js";
 import {
@@ -97,15 +97,15 @@ const handleChangeModeClick = () => {
   !$isLighthouseActive ? requestSpots($selectedYear) : requestRecentSpots();
 };
 
-const onNewMarkerMoveEnd = () => {
+const handleNewMarkerMoveEnd = () => {
   if (!isAddSpotSidebarVisible) {
     toggleAddSpotSidebarVisible(true);
   }
 };
 
-const onNewMarkerCancel = () => {
+const handleNewMarkerCancel = () => {
   quitAddSpot();
-  newMarker.removeEventListener("moveend", onNewMarkerMoveEnd);
+  newMarker.removeEventListener("moveend", handleNewMarkerMoveEnd);
   $map.removeLayer(newMarker);
 };
 
@@ -117,14 +117,14 @@ const showAddSpot = () => {
     zIndexOffset: 10000,
   });
   $map.addLayer(newMarker);
-  newMarker.addEventListener("moveend", onNewMarkerMoveEnd);
+  newMarker.addEventListener("moveend", handleNewMarkerMoveEnd);
   shouldShowAddSpot.set(true);
 };
 
 $: if ($shouldShowAddSpot) showAddSpot();
-$: if ($shouldShowAddSpot === false) onNewMarkerCancel();
+$: if ($shouldShowAddSpot === false) handleNewMarkerCancel();
 
-const onLighthouseClick = () => {
+const handleLighthouseClick = () => {
   if (!$isLighthouseActive) {
     requestRecentSpots();
   } else {
@@ -160,7 +160,7 @@ const quitAddSpot = () => {
         class="button button-square button-lighthouse"
         class:active={$isLighthouseActive}
         disabled={+$selectedYear !== getCurrentYear()}
-        on:click={onLighthouseClick}
+        on:click={handleLighthouseClick}
         transition:fade={{ duration: 200 }}>
         <svg
           width="9"
@@ -262,7 +262,7 @@ const quitAddSpot = () => {
       {isAddSpotSidebarVisible}
       {showAddSpot}
       {newMarker}
-      onCancel={onNewMarkerCancel} />
+      onCancel={handleNewMarkerCancel} />
   {/if}
 {/if}
 

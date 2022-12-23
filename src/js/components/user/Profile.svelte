@@ -20,6 +20,7 @@ import {
   isSearchResults,
   editSpotData,
   shouldShowAddSpot,
+  isFirstTimeVisit,
 } from "../../store";
 import { getProfileYears } from "./../../utils/datesUtils.js";
 import {
@@ -275,11 +276,12 @@ const handleShowOnMapClick = () => {
     {#if !isLoading && (name || username)}
       <div class="user">
         {#if name}
+          <span class="name">{name}</span>
           <button
             type="button"
             class="button name"
             on:click={() => toggleSharePopup(true)}
-            >{name} <ShareSvg color="dark" /></button>
+            ><ShareSvg color="dark" /></button>
         {/if}
         {#if username}
           <div class="username">{username}</div>
@@ -363,7 +365,7 @@ const handleShowOnMapClick = () => {
   {/if}
 </div>
 
-{#if !isLoading && !isCurrentUser}
+{#if $isFirstTimeVisit && !isLoading && !isCurrentUser}
   <a
     href={$url("../")}
     class="go-to-map"

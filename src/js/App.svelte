@@ -1,5 +1,5 @@
 <script>
-import { Router } from "@roxi/routify";
+import { prefetch, Router } from "@roxi/routify";
 import { routes } from "../../.routify/routes";
 
 import { changePasswordCheckToken } from "./api/auth";
@@ -10,6 +10,8 @@ import { adjustVhProp, getResetPasswordToken } from "./utils/commonUtils";
 adjustVhProp();
 
 initApp();
+
+// routes.map((route) => route.api).forEach((node) => prefetch(node.path));
 
 let resetPasswordToken = getResetPasswordToken();
 const initialLoader = document.getElementById("initial-loader");

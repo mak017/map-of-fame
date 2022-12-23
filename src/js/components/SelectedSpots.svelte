@@ -1,14 +1,21 @@
 <script>
+import { onDestroy } from "svelte";
 import { fade } from "svelte/transition";
 import { goto } from "@roxi/routify";
 
-import { areaSpots, openedMarkerData } from "./../store.js";
+import {
+  areaSelection,
+  areaSpots,
+  isAreaSelectionActive,
+  map,
+  openedMarkerData,
+} from "./../store.js";
 
 import CustomSelect from "./elements/CustomSelect.svelte";
 
-import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../constants";
+import { ALL_YEARS_STRING, EMPTY_YEAR_STRING, MIN_ZOOM } from "../constants";
 
-if (!$areaSpots.length) {
+if (!$areaSpots || !$areaSpots.length) {
   $goto("/");
 }
 
@@ -28,6 +35,14 @@ let yearsToApply = [
       )
   ),
 ];
+
+onDestroy(() => {
+  isAreaSelectionActive.set(false);
+  $map.setMinZoom(MIN_ZOOM);
+  $map.dragging.enable();
+  $areaSelection.deactivate();
+  areaSpots.set(null);
+});
 
 const handleYearSelect = (event) => {
   const { value } = event.detail.detail;
