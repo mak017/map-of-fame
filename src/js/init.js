@@ -10,6 +10,7 @@ import {
   isLighthouseActive,
   isLoggedIn,
   isSearchResults,
+  isUserVerifyProgress,
   mapBounds,
   markersStore,
   settings,
@@ -60,9 +61,11 @@ export const verifyAuth = (token) =>
       ) {
         removeFromLocalStorage("token");
       }
+      isUserVerifyProgress.set(false);
     })
     .catch(() => {
       removeFromLocalStorage("token");
+      isUserVerifyProgress.set(false);
     });
 
 export const initApp = () => {
@@ -70,6 +73,7 @@ export const initApp = () => {
   const isKnownUser = loadFromLocalStorage("isKnownUser") || null;
 
   if (token) {
+    isUserVerifyProgress.set(true);
     verifyAuth(token);
   }
 

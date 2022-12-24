@@ -186,7 +186,8 @@ const getArtistsString = (artistCrew) => {
       <div class="buttons">
         {#if data.link}
           <div class="link">
-            <a href={data.link} target="_blank">External link to art</a>
+            <a href={data.link} target="_blank" rel="noreferrer"
+              >External link to art</a>
           </div>
         {/if}
         <div class="share">

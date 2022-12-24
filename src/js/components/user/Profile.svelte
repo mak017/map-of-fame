@@ -1,5 +1,5 @@
 <script>
-import { onMount } from "svelte";
+import { isUserVerifyProgress } from "./../../store.js";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
 import { goto, params, url } from "@roxi/routify";
@@ -69,48 +69,19 @@ const toggleSharePopup = (toggle) => (showSharePopup = toggle);
 const { username } = $params;
 const strippedUsername = username.substring(1);
 
-let name =
-  $selectedUserProfileData.name ??
-  $selectedUserProfileData.crew ??
-  $userData.name ??
-  $userData.crew;
+let isInitialized = false;
 let isCurrentUser = $userData.username === strippedUsername;
+let name = isCurrentUser
+  ? $userData.name ?? $userData.crew
+  : $selectedUserProfileData.name ?? $selectedUserProfileData.crew;
 
-$: name =
-  $selectedUserProfileData.name ??
-  $selectedUserProfileData.crew ??
-  $userData.name ??
-  $userData.crew;
 $: isCurrentUser = $userData.username === strippedUsername;
+$: name = isCurrentUser
+  ? $userData.name ?? $userData.crew
+  : $selectedUserProfileData.name ?? $selectedUserProfileData.crew;
 
-const fetchSpots = ({ year, offset, isNewFetch = false }) => {
-  isLoading = isNewFetch;
-  isShowSpinner = true;
-  getUserSpots(strippedUsername, token, {
-    year,
-    offset,
-  }).then((response) => {
-    const { success, result, errors } = response;
-    if (success && result) {
-      const { spots, years } = result;
-      if (isNewFetch) spotsList = [];
-      newBatch = spots ? [...spots] : [];
-      yearsToApply = getProfileYears(years);
-      if (currentYear === undefined || year === undefined) {
-        currentYear = yearsToApply[0];
-      }
-    }
-    if (errors && !isEmpty(errors)) {
-      if (errors.year) {
-        fetchSpots({});
-      }
-    }
-    isLoading = false;
-    isShowSpinner = false;
-  });
-};
-
-onMount(() => {
+$: if (!isInitialized && !$isUserVerifyProgress) {
+  isInitialized = true;
   if (!isCurrentUser && !$selectedUserProfileData.id) {
     getUserData(strippedUsername).then((response) => {
       const { success, result, errors } = response;
@@ -142,7 +113,34 @@ onMount(() => {
       });
     }
   }
-});
+}
+
+const fetchSpots = ({ year, offset, isNewFetch = false }) => {
+  isLoading = isNewFetch;
+  isShowSpinner = true;
+  getUserSpots(strippedUsername, token, {
+    year,
+    offset,
+  }).then((response) => {
+    const { success, result, errors } = response;
+    if (success && result) {
+      const { spots, years } = result;
+      if (isNewFetch) spotsList = [];
+      newBatch = spots ? [...spots] : [];
+      yearsToApply = getProfileYears(years);
+      if (currentYear === undefined || year === undefined) {
+        currentYear = yearsToApply[0];
+      }
+    }
+    if (errors && !isEmpty(errors)) {
+      if (errors.year) {
+        fetchSpots({});
+      }
+    }
+    isLoading = false;
+    isShowSpinner = false;
+  });
+};
 
 $: spotsList = [...spotsList, ...newBatch];
 
@@ -315,7 +313,11 @@ const handleShowOnMapClick = () => {
       {#if !isLoading}
         <div class="spots">
           {#each spotsList as spot}
-            <div class="spot-card" on:click={() => onSpotClick(spot)}>
+            <div
+              class="spot-card"
+              role="button"
+              on:click={() => onSpotClick(spot)}
+              on:keydown={(e) => e.key === "Enter" && onSpotClick(spot)}>
               <img
                 loading="lazy"
                 src={spot.thumbnail}

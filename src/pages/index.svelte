@@ -186,6 +186,7 @@ const quitAddSpot = () => {
           <a
             href={$url("/@:username", { username: $userData.username })}
             class="button button-main_screen button-square button-burger"
+            on:click={isShowOnMapMode.set(false)}
             in:fade={{ duration: 200 }}>Profile</a>
         {:else}
           <a

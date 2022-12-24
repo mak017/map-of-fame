@@ -5,6 +5,7 @@ import { getCurrentYear } from "./utils/commonUtils";
 import { DEFAULT_ZOOM } from "./constants";
 
 export const isInitialized = writable(false);
+export const isUserVerifyProgress = writable(false);
 export const isLoggedIn = writable(false);
 export const globalGoto = writable(null);
 export const map = writable(null);

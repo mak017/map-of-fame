@@ -25,7 +25,7 @@ let yearsToApply = [
   ALL_YEARS_STRING,
   ...new Set(
     $areaSpots
-      .map(({ year }) => (year === null ? EMPTY_YEAR_STRING : year))
+      ?.map(({ year }) => (year === null ? EMPTY_YEAR_STRING : year))
       .filter((y) => y)
       .sort(
         (a, b) =>
@@ -104,15 +104,17 @@ const onSpotClick = (spot) => {
       </div>
     </div>
     <div class="spots">
-      {#each spotsToShow as spot}
-        <div class="spot-card" on:click={() => onSpotClick(spot)}>
-          <img
-            loading="lazy"
-            src={spot.thumbnail}
-            alt={spot.title ?? `Spot ${spot.id} from area`}
-            in:fade={{ duration: 200 }} />
-        </div>
-      {/each}
+      {#if spotsToShow}
+        {#each spotsToShow as spot}
+          <div class="spot-card" on:click={() => onSpotClick(spot)}>
+            <img
+              loading="lazy"
+              src={spot.thumbnail}
+              alt={spot.title ?? `Spot ${spot.id} from area`}
+              in:fade={{ duration: 200 }} />
+          </div>
+        {/each}
+      {/if}
     </div>
   </div>
 </div>
