@@ -2,7 +2,7 @@
 import { isUserVerifyProgress } from "./../../store.js";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
-import { goto, params, url } from "@roxi/routify";
+import { goto, params, prefetch, url } from "@roxi/routify";
 
 import { getInvites, getUserData } from "./../../api/auth.js";
 import { getUserSpots } from "../../api/spot";
@@ -32,8 +32,6 @@ import {
 import Invites from "./Invites.svelte";
 import Spinner from "./../elements/Spinner.svelte";
 import CustomSelect from "../elements/CustomSelect.svelte";
-import Modal from "../Modal.svelte";
-import EditSpot from "./EditSpot.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import Popup from "../Popup.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
@@ -47,7 +45,6 @@ import {
 
 let currentYear;
 let currentSpot;
-let showEditModal = false;
 let showDeletePopup = false;
 let showInvitesPopup = false;
 let showSharePopup = false;
@@ -59,10 +56,10 @@ let invites = [];
 let unusedInvitesCount = 0;
 let isLoading = true;
 let isShowSpinner = true;
+let shouldPrefetch = true;
 let user = {};
 const token = loadFromLocalStorage("token") || null;
 
-const toggleEditModal = (toggle) => (showEditModal = toggle);
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 const toggleSharePopup = (toggle) => (showSharePopup = toggle);
@@ -126,7 +123,16 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
     const { success, result, errors } = response;
     if (success && result) {
       const { spots, years } = result;
-      if (isNewFetch) spotsList = [];
+      if (isNewFetch) {
+        spotsList = [];
+        if (shouldPrefetch && spots.length) {
+          const firstSpotId = spots[0].id;
+          isCurrentUser
+            ? prefetch(`/${username}/spot/${firstSpotId}/edit`)
+            : prefetch(`/${username}/spot/${firstSpotId}`);
+          shouldPrefetch = false;
+        }
+      }
       newBatch = spots ? [...spots] : [];
       yearsToApply = getProfileYears(years);
       if (currentYear === undefined || year === undefined) {
@@ -260,10 +266,7 @@ const handleShowOnMapClick = () => {
 };
 </script>
 
-<div
-  class="container"
-  class:isCurrentUser
-  style={showEditModal ? "display: none" : ""}>
+<div class="container" class:isCurrentUser>
   {#if invites.length}
     <div class="invites">
       You have
@@ -317,11 +320,16 @@ const handleShowOnMapClick = () => {
       {#if !isLoading}
         <div class="spots">
           {#each spotsList as spot}
-            <div
+            <a
+              href={!isCurrentUser
+                ? $url("/@:username/spot/:id", {
+                    username: user.username,
+                    id: spot.id,
+                  })
+                : undefined}
               class="spot-card"
               role="button"
-              on:click={() => onSpotClick(spot)}
-              on:keydown={(e) => e.key === "Enter" && onSpotClick(spot)}>
+              on:click|preventDefault={() => onSpotClick(spot)}>
               <img
                 loading="lazy"
                 src={spot.thumbnail}
@@ -339,7 +347,7 @@ const handleShowOnMapClick = () => {
                     on:click={() => handleDelete(spot)} />
                 </div>
               {/if}
-            </div>
+            </a>
           {/each}
           <InfiniteScroll
             hasMore={newBatch.length === MAX_SPOTS_PER_PAGE}
@@ -376,15 +384,6 @@ const handleShowOnMapClick = () => {
     href={$url("../")}
     class="go-to-map"
     on:click={() => selectedUserProfileData.set({})}>Go to map</a>
-{/if}
-
-{#if showEditModal}
-  <Modal on:close={() => toggleEditModal(false)} noLogo noClose>
-    <EditSpot
-      editSpotData={currentSpot}
-      {toggleEditModal}
-      onSubmit={onSubmitChanges} />
-  </Modal>
 {/if}
 
 {#if showDeletePopup}

@@ -3,7 +3,11 @@ import L from "leaflet";
 import { goto } from "@roxi/routify";
 import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 
-import { loadFromLocalStorage } from "../js/utils/commonUtils.js";
+import {
+  adjustVhProp,
+  getResetPasswordToken,
+  loadFromLocalStorage,
+} from "../js/utils/commonUtils.js";
 import {
   handleMapViewChange,
   setLocation,
@@ -26,9 +30,58 @@ import {
   areaSpots,
   areaSelection,
   globalGoto,
+  isLoading,
+  shouldShowResetPassword,
 } from "./../js/store.js";
 import { getSpotsInArea } from "../js/api/spot.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
+import { getSettings, initApp, requestCategories } from "../js/init.js";
+import { changePasswordCheckToken } from "../js/api/auth.js";
+import { onMount } from "svelte";
+
+onMount(() => {
+  console.log("$isLoading :>> ", $isLoading);
+  console.log("$isInitialized :>> ", $isInitialized);
+  console.log("$map :>> ", $map);
+  if (!$isInitialized) {
+    adjustVhProp();
+
+    initApp();
+
+    let resetPasswordToken = getResetPasswordToken();
+    const initialLoader = document.getElementById("initial-loader");
+
+    if (initialLoader) initialLoader.remove();
+
+    if (resetPasswordToken) {
+      const { token, id } = resetPasswordToken;
+      isLoading.set(true);
+      changePasswordCheckToken(token, id).then((response) => {
+        const { success, result } = response;
+        if (success && result) {
+          getSettings().then(() => {
+            isInitialized.set(true);
+          });
+          isLoading.set(false);
+          shouldShowResetPassword.set(true);
+          resetPasswordToken = result;
+        } else {
+          getSettings().then(() => {
+            isLoading.set(false);
+            isInitialized.set(true);
+          });
+        }
+      });
+    } else {
+      isLoading.set(true);
+      Promise.all([getSettings(), requestCategories()]).then(() => {
+        isLoading.set(false);
+        isInitialized.set(true);
+        console.log(">>> init", $isInitialized);
+      });
+    }
+  }
+});
 
 globalGoto.set($goto);
 
