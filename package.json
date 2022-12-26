@@ -8,7 +8,9 @@
     "dev:gulp": "gulp",
     "dev:webpack": "webpack-dev-server",
     "dev:routify": "routify",
-    "build": "routify -b && cross-env NODE_ENV=production webpack"
+    "build": "run-s build:*",
+    "build:routify": "routify -b",
+    "build:webpack": "cross-env NODE_ENV=production webpack"
   },
   "author": "",
   "license": "ISC",

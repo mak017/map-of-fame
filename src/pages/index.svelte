@@ -104,9 +104,11 @@ const handleNewMarkerMoveEnd = () => {
 };
 
 const handleNewMarkerCancel = () => {
-  quitAddSpot();
-  newMarker.removeEventListener("moveend", handleNewMarkerMoveEnd);
-  $map.removeLayer(newMarker);
+  if (newMarker) {
+    quitAddSpot();
+    newMarker.removeEventListener("moveend", handleNewMarkerMoveEnd);
+    $map.removeLayer(newMarker);
+  }
 };
 
 const showAddSpot = () => {
@@ -150,6 +152,7 @@ const quitAddSpot = () => {
     {#if !$isAddSpotMode || ($isAddSpotMode && !isAddSpotSidebarVisible)}
       <a
         href={$url("/calendar")}
+        use:prefetch
         class="button button-main_screen button-open_calendar"
         class:inactive={$isAreaSelectionActive}
         transition:fade={{ duration: 200 }}
