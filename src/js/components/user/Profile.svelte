@@ -59,6 +59,7 @@ let invites = [];
 let unusedInvitesCount = 0;
 let isLoading = true;
 let isShowSpinner = true;
+let user = {};
 const token = loadFromLocalStorage("token") || null;
 
 const toggleEditModal = (toggle) => (showEditModal = toggle);
@@ -73,16 +74,16 @@ let isInitialized = false;
 let isCurrentUser = $userData.username === strippedUsername;
 let name = isCurrentUser
   ? $userData.name ?? $userData.crew
-  : $selectedUserProfileData.name ?? $selectedUserProfileData.crew;
+  : user.name ?? user.crew;
 
 $: isCurrentUser = $userData.username === strippedUsername;
 $: name = isCurrentUser
   ? $userData.name ?? $userData.crew
-  : $selectedUserProfileData.name ?? $selectedUserProfileData.crew;
+  : user.name ?? user.crew;
 
 $: if (!isInitialized && !$isUserVerifyProgress) {
   isInitialized = true;
-  if (!isCurrentUser && !$selectedUserProfileData.id) {
+  if (!isCurrentUser && !user.id) {
     getUserData(strippedUsername).then((response) => {
       const { success, result, errors } = response;
 
@@ -93,7 +94,7 @@ $: if (!isInitialized && !$isUserVerifyProgress) {
       if (success && result) {
         fetchSpots({ isNewFetch: true });
         shouldDisplayShowOnMap.set(false);
-        selectedUserProfileData.set(result);
+        user = result;
         isLoading = false;
       }
     });
@@ -199,6 +200,7 @@ const onSpotClick = (spot) => {
   if (isCurrentUser) {
     return;
   }
+  selectedUserProfileData.set(user);
   const {
     id,
     artistCrew,
@@ -219,7 +221,7 @@ const onSpotClick = (spot) => {
     description,
     img: { src: img, title: title || id },
     video,
-    user: $selectedUserProfileData,
+    user,
     firm: { banner, bannerUrl },
     coords: { lat, lng },
     year,
@@ -227,7 +229,7 @@ const onSpotClick = (spot) => {
   });
   shouldDisplayShowOnMap.set(true);
   $goto("/@:username/spot/:id", {
-    username: $selectedUserProfileData.username,
+    username: user.username,
     id,
   });
 };
@@ -235,6 +237,8 @@ const onSpotClick = (spot) => {
 const handleShowOnMapClick = () => {
   if (!$selectedUserProfileData.id) {
     selectedUserProfileData.set($userData ?? {});
+  } else {
+    selectedUserProfileData.set(user);
   }
   getUserSpots(strippedUsername, token, {
     year: `${currentYear}`,

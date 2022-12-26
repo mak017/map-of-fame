@@ -14,6 +14,7 @@ import {
   currentZoom,
   isSpotsFromAreaLoading,
   isInitialized,
+  isFirstTimeVisit,
   isLighthouseActive,
   isLoading,
   isLoggedIn,
@@ -46,6 +47,7 @@ import AddSpot from "../js/components/addSpot/AddSpot.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
 import Loader from "../js/components/elements/Loader.svelte";
 import Spinner from "../js/components/elements/Spinner.svelte";
+
 import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
@@ -56,8 +58,14 @@ let inviteData = getInviteData();
 
 let newMarker;
 
+if ($isFirstTimeVisit) {
+  saveToLocalStorage("isKnownUser", true);
+  isFirstTimeVisit.set(false);
+}
+
 if ($map && $isInitialized) {
   permalink.setup($map);
+  permalink.update($map);
 }
 
 const showAuth = (show) => (showAuthContainer = show);
@@ -180,7 +188,7 @@ const quitAddSpot = () => {
 
   <div class="main-top_right_wrapper">
     {#if !$isAddSpotMode && !$isAreaSelectionActive}
-      {#if !($isSearchResults && ($selectedArtist || $selectedCrew)) && !$selectedUserProfileData.name}
+      {#if !($isSearchResults && ($selectedArtist || $selectedCrew)) && !$isShowOnMapMode}
         <a
           href={$url("/search")}
           class="button button-main_screen button-square button-open_search"

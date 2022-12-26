@@ -79,7 +79,6 @@ export const initApp = () => {
 
   if (!isKnownUser) {
     isFirstTimeVisit.set(true);
-    saveToLocalStorage("isKnownUser", "true");
   }
 };
 
