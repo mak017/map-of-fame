@@ -98,7 +98,7 @@ const handleChangeModeClick = () => {
     $map.addLayer(openRailwayMap);
     isRailwayMode = true;
   } else {
-    map.removeLayer(openRailwayMap);
+    $map.removeLayer(openRailwayMap);
     isRailwayMode = false;
   }
   saveToLocalStorage("railwayMode", isRailwayMode);
@@ -162,7 +162,6 @@ const quitAddSpot = () => {
         href={$url("/calendar")}
         class="button button-main_screen button-open_calendar"
         class:inactive={$isAreaSelectionActive}
-        use:prefetch={{ validFor: 60 * 24 }}
         transition:fade={{ duration: 200 }}
         >{$isAreaSelectionActive ? ALL_YEARS_STRING : $selectedYear}</a>
     {/if}
@@ -192,19 +191,16 @@ const quitAddSpot = () => {
         <a
           href={$url("/search")}
           class="button button-main_screen button-square button-open_search"
-          use:prefetch={{ validFor: 60 * 24 }}
           in:fade={{ duration: 200 }}>Search</a>
         {#if $isLoggedIn}
           <a
             href={$url("/@:username", { username: $userData.username })}
             class="button button-main_screen button-square button-burger"
-            use:prefetch={{ validFor: 60 * 24 }}
             on:click={isShowOnMapMode.set(false)}
             in:fade={{ duration: 200 }}>Profile</a>
         {:else}
           <a
             href={$url("/login")}
-            use:prefetch={{ validFor: 60 * 24 }}
             class="button button-main_screen button-square button-open_login"
             >Login</a>
         {/if}
@@ -235,7 +231,6 @@ const quitAddSpot = () => {
         href={$url("/selected-spots")}
         class="selection selected-area-spots"
         class:active={!$isSpotsFromAreaLoading && $areaSpots.length > 0}
-        use:prefetch={{ validFor: 60 * 24 }}
         transition:fade={{ duration: 200 }}>
         {#if $isSpotsFromAreaLoading}
           <Spinner height={20} margin="10px" isWhite />
