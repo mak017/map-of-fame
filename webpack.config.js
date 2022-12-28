@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const autoPreprocess = require("svelte-preprocess");
 const path = require("path");
@@ -72,6 +73,9 @@ module.exports = {
       filename: "[name].css",
     }),
     new Dotenv(),
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1,
+    }),
   ],
   devtool: prod ? false : "source-map",
   devServer: {

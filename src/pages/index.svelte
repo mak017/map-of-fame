@@ -2,7 +2,7 @@
 import { fade } from "svelte/transition";
 import L from "leaflet";
 import "@bopen/leaflet-area-selection/dist/index.css";
-import { goto, prefetch, url } from "@roxi/routify";
+import { goto, url } from "@roxi/routify";
 
 import { requestRecentSpots, requestSpots } from "../js/init.js";
 import {
@@ -16,7 +16,6 @@ import {
   isInitialized,
   isFirstTimeVisit,
   isLighthouseActive,
-  isLoading,
   isLoggedIn,
   isSearchResults,
   isShowOnMapMode,
@@ -28,6 +27,7 @@ import {
   shouldShowResetPassword,
   userData,
   isAreaSelectionActive,
+  isPermalinkReady,
 } from "../js/store.js";
 import { openRailwayMap } from "../js/utils/mapUtils/tileLayers";
 import {
@@ -45,7 +45,6 @@ import RailroadSvg from "../js/components/elements/icons/RailroadSvg.svelte";
 import Modal from "../js/components/Modal.svelte";
 import AddSpot from "../js/components/addSpot/AddSpot.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
-import Loader from "../js/components/elements/Loader.svelte";
 import Spinner from "../js/components/elements/Spinner.svelte";
 
 import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
@@ -62,10 +61,13 @@ if ($isFirstTimeVisit) {
   saveToLocalStorage("isKnownUser", true);
   isFirstTimeVisit.set(false);
 }
+if ($map && $isPermalinkReady) {
+  permalink.update({ mapInstance: $map });
+}
 
-if ($map && $isInitialized) {
+if ($map && $isInitialized && !$isPermalinkReady) {
   permalink.setup($map);
-  permalink.update($map);
+  isPermalinkReady.set(true);
 }
 
 const showAuth = (show) => (showAuthContainer = show);
@@ -149,9 +151,7 @@ const quitAddSpot = () => {
 };
 </script>
 
-{#if $isLoading}
-  <Loader />
-{:else if $shouldShowResetPassword}
+{#if $shouldShowResetPassword}
   <Modal noClose title="Reset Password">
     <ResetPassword {resetPasswordToken} />
   </Modal>

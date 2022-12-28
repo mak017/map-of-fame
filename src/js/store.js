@@ -5,6 +5,7 @@ import { getCurrentYear } from "./utils/commonUtils";
 import { DEFAULT_ZOOM } from "./constants";
 
 export const isInitialized = writable(false);
+export const isPermalinkReady = writable(false);
 export const isUserVerifyProgress = writable(false);
 export const isLoggedIn = writable(false);
 export const globalGoto = writable(null);
@@ -19,7 +20,7 @@ export const markersStore = writable({});
 export const isSearchResults = writable(false);
 export const userData = writable({});
 export const countriesList = writable([]);
-export const settings = writable([]);
+export const settings = writable({});
 export const categoriesList = writable([]);
 export const firms = writable([]);
 export const userCategories = writable([]);

@@ -1,19 +1,10 @@
 <script>
 import L from "leaflet";
-import {
-  afterPageLoad,
-  beforeUrlChange,
-  goto,
-  isChangingPage,
-} from "@roxi/routify";
+import { goto } from "@roxi/routify";
 import { TabsTransition } from "@roxi/routify/decorators";
 import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 
-import {
-  adjustVhProp,
-  getResetPasswordToken,
-  loadFromLocalStorage,
-} from "../js/utils/commonUtils.js";
+import { loadFromLocalStorage } from "../js/utils/commonUtils.js";
 import {
   handleMapViewChange,
   setLocation,
@@ -37,71 +28,14 @@ import {
   areaSelection,
   globalGoto,
   isLoading,
-  shouldShowResetPassword,
   settings,
 } from "./../js/store.js";
 import { getSpotsInArea } from "../js/api/spot.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
-import { getSettings, initApp, requestCategories } from "../js/init.js";
-import { changePasswordCheckToken } from "../js/api/auth.js";
-import { onMount } from "svelte";
+
 import Loader from "../js/components/elements/Loader.svelte";
 
-// $: {
-//   console.log("$isInitialized :>> ", $isInitialized);
-//   console.log("$settings :>> ", $settings);
-//   if (!$isInitialized) {
-//     adjustVhProp();
-
-//     initApp();
-
-//     let resetPasswordToken = getResetPasswordToken();
-//     const initialLoader = document.getElementById("initial-loader");
-
-//     if (initialLoader) initialLoader.remove();
-
-//     if (resetPasswordToken) {
-//       const { token, id } = resetPasswordToken;
-//       isLoading.set(true);
-//       changePasswordCheckToken(token, id).then((response) => {
-//         const { success, result } = response;
-//         if (success && result) {
-//           getSettings().then(() => {
-//             isInitialized.set(true);
-//           });
-//           isLoading.set(false);
-//           shouldShowResetPassword.set(true);
-//           resetPasswordToken = result;
-//         } else {
-//           getSettings().then(() => {
-//             isLoading.set(false);
-//             isInitialized.set(true);
-//           });
-//         }
-//       });
-//     } else {
-//       isLoading.set(true);
-//       Promise.all([getSettings(), requestCategories()]).then(() => {
-//         isLoading.set(false);
-//         isInitialized.set(true);
-//         console.log(">>> init", $isInitialized);
-//       });
-//     }
-//   }
-// }
-
 globalGoto.set($goto);
-
-// $beforeUrlChange((event) => {
-//   console.log("event", event);
-//   isLoading.set(true);
-//   return true;
-// });
-
-// $afterPageLoad((page) => {
-//   console.log("loaded " + page.title);
-//   isLoading.set(false);
-// });
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 
@@ -136,6 +70,7 @@ const initMap = (container) => {
   // Change position of zoom control
   $map.zoomControl.setPosition("bottomleft");
 
+  console.log("$mapBounds", $mapBounds);
   if ($mapBounds.length > 0) {
     $map.fitBounds($mapBounds);
 
@@ -165,12 +100,16 @@ $: if ($map && $markersStore) {
 }
 </script>
 
-<div
-  class="map"
-  class:add-mode={$isAddSpotMode}
-  class:area-selection-mode={$isAreaSelectionActive}
-  use:initMap />
-<slot decorator={TabsTransition} />
+{#if $isLoading}
+  <Loader />
+{:else}
+  <div
+    class="map"
+    class:add-mode={$isAddSpotMode}
+    class:area-selection-mode={$isAreaSelectionActive}
+    use:initMap />
+  <slot decorator={TabsTransition} />
+{/if}
 
 <style>
 .map {

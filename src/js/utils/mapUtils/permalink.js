@@ -74,7 +74,7 @@ const update = ({ mapContainer, params, clearParams }) => {
   }
   const search = `/?coords=${latitude},${longitude}&zoom=${zoom}&year=${year}${paramsToSet}`;
   const state = { zoom, center, year, params };
-  window.history.pushState(state, "map", search);
+  window.history.replaceState(state, "map", search);
 };
 
 const getDataFromParams = (params) => {
@@ -86,7 +86,9 @@ const getDataFromParams = (params) => {
 
 const setStateFromUrl = (params) => {
   const { year, artist, crew } = getDataFromParams(params);
-  const additionalYears = JSON.parse(settingsObj.additionalYears) ?? [];
+  const additionalYears = settingsObj.additionalYears
+    ? JSON.parse(settingsObj.additionalYears)
+    : [];
   const yearsList = [...additionalYears, EMPTY_YEAR_STRING];
 
   if (year && (artist || crew)) {
@@ -108,9 +110,9 @@ const setParamsFromState = (year, params) => {
   if (crew) selectedCrew.set(crew);
 };
 
-const getMapLocation = (zoom, center) => {
-  let newZoom = zoom;
-  let newCenter = center;
+const getMapLocation = () => {
+  let newZoom;
+  let newCenter;
   const search = window.location.search;
   if (search) {
     const params = new URLSearchParams(search);
