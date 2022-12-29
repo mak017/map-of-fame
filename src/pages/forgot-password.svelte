@@ -18,6 +18,7 @@ const handleResize = () => {
 
 <svelte:window on:resize={handleResize} />
 <Modal
+  id="forgot-password-modal"
   on:close={() => $goto("/")}
   title={forgotPasswordEmailSent && isMobileWidth
     ? "Letter was sent to the email"

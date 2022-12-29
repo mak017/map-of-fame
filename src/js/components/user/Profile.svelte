@@ -2,7 +2,7 @@
 import { isUserVerifyProgress } from "./../../store.js";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
-import { goto, params, prefetch, url } from "@roxi/routify";
+import { goto, params, url } from "@roxi/routify";
 
 import { getInvites, getUserData } from "./../../api/auth.js";
 import { getUserSpots } from "../../api/spot";
@@ -56,7 +56,6 @@ let invites = [];
 let unusedInvitesCount = 0;
 let isLoading = true;
 let isShowSpinner = true;
-let shouldPrefetch = true;
 let user = {};
 const token = loadFromLocalStorage("token") || null;
 
@@ -125,13 +124,6 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
       const { spots, years } = result;
       if (isNewFetch) {
         spotsList = [];
-        if (shouldPrefetch && spots.length) {
-          const firstSpotId = spots[0].id;
-          isCurrentUser
-            ? prefetch(`/${username}/spot/${firstSpotId}/edit`)
-            : prefetch(`/${username}/spot/${firstSpotId}`);
-          shouldPrefetch = false;
-        }
       }
       newBatch = spots ? [...spots] : [];
       yearsToApply = getProfileYears(years);
@@ -353,7 +345,7 @@ const handleShowOnMapClick = () => {
             hasMore={newBatch.length === MAX_SPOTS_PER_PAGE}
             threshold={100}
             on:loadMore={onLoadMore}
-            elementScroll={document.querySelector(".modal")} />
+            elementScroll={document.getElementById("profile-modal")} />
         </div>
       {/if}
       {#if isShowSpinner}

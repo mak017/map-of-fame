@@ -1,5 +1,5 @@
 <script>
-import { goto, prefetch } from "@roxi/routify";
+import { goto } from "@roxi/routify";
 
 import {
   isInitialized,
@@ -9,11 +9,10 @@ import {
 
 import Modal from "../../js/components/Modal.svelte";
 import Profile from "../../js/components/user/Profile.svelte";
-
-prefetch("/");
 </script>
 
 <Modal
+  id="profile-modal"
   noLogo
   noTransition={!$isInitialized}
   on:close={() => {

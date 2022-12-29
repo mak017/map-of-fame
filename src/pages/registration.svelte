@@ -9,6 +9,10 @@ import RegistrationForm from "../js/components/auth/RegistrationForm.svelte";
 let inviteData = getInviteData();
 </script>
 
-<Modal on:close={() => $goto("/")} title="Registration" noTransition>
+<Modal
+  id="registration-modal"
+  on:close={() => $goto("/")}
+  title="Registration"
+  noTransition>
   <RegistrationForm {inviteData} />
 </Modal>

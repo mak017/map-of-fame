@@ -152,7 +152,7 @@ const quitAddSpot = () => {
 </script>
 
 {#if $shouldShowResetPassword}
-  <Modal noClose title="Reset Password">
+  <Modal id="reset-password-modal" noClose title="Reset Password">
     <ResetPassword {resetPasswordToken} />
   </Modal>
 {:else}

@@ -1,5 +1,5 @@
 <script>
-import { goto, params, prefetch } from "@roxi/routify";
+import { goto } from "@roxi/routify";
 
 import {
   isShowOnMapMode,
@@ -12,14 +12,10 @@ import { requestSpots } from "../../../../js/init.js";
 
 import MarkerCard from "../../../../js/components/markerCard/MarkerCard.svelte";
 import Modal from "../../../../js/components/Modal.svelte";
-
-const { username } = $params;
-
-prefetch("/");
-prefetch(`/${username}`);
 </script>
 
 <Modal
+  id="marker-card-modal"
   on:close={() => {
     openedMarkerData.set(null);
     if (!$isShowOnMapMode) {

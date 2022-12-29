@@ -4,6 +4,7 @@ import { fade, slide } from "svelte/transition";
 import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
 import { isMobile } from "../utils/commonUtils.js";
 
+export let id;
 export let title = "";
 export let withAd = false;
 export let noLogo = false;
@@ -42,6 +43,7 @@ const handleResize = () => {
   class:autoMargin
   class:alwaysOnTop
   class:stickyHeaderOnMobile={stickyHeaderOnMobile && scrollTop > 290}
+  {id}
   role="dialog"
   aria-modal="true"
   transition:fade={{ duration: !noTransition ? 200 : 0 }}

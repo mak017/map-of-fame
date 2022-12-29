@@ -70,7 +70,6 @@ const initMap = (container) => {
   // Change position of zoom control
   $map.zoomControl.setPosition("bottomleft");
 
-  console.log("$mapBounds", $mapBounds);
   if ($mapBounds.length > 0) {
     $map.fitBounds($mapBounds);
 
@@ -108,7 +107,7 @@ $: if ($map && $markersStore) {
     class:add-mode={$isAddSpotMode}
     class:area-selection-mode={$isAreaSelectionActive}
     use:initMap />
-  <slot decorator={TabsTransition} />
+  <slot />
 {/if}
 
 <style>

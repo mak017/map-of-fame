@@ -8,6 +8,7 @@ import SearchForm from "../js/components/SearchForm.svelte";
 </script>
 
 <Modal
+  id="search-modal"
   on:close={() => $goto("/")}
   title="Search"
   withAd
