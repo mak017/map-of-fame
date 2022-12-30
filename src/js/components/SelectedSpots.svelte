@@ -41,7 +41,6 @@ onDestroy(() => {
   $map.setMinZoom(MIN_ZOOM);
   $map.dragging.enable();
   $areaSelection.deactivate();
-  areaSpots.set(null);
 });
 
 const handleYearSelect = (event) => {

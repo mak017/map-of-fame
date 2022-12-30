@@ -76,6 +76,7 @@ const toggleAddSpotSidebarVisible = (toggle) =>
 
 const toggleAreaSelectionMode = (toggle) => {
   isAreaSelectionActive.set(toggle);
+  areaSpots.set(null);
 
   if (toggle) {
     $map.setMinZoom(15);
@@ -88,7 +89,6 @@ const toggleAreaSelectionMode = (toggle) => {
   $map.setMinZoom(MIN_ZOOM);
   $map.dragging.enable();
   $areaSelection.deactivate();
-  areaSpots.set(null);
 };
 
 if (inviteData) {
