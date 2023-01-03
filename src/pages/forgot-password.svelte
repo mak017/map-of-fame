@@ -23,7 +23,6 @@ const handleResize = () => {
   title={forgotPasswordEmailSent && isMobileWidth
     ? "Letter was sent to the email"
     : "Forgot"}
-  noTransition
   accentTitle={forgotPasswordEmailSent && isMobileWidth}>
   <ForgotPassword
     {setForgotPasswordEmailSent}

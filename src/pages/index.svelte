@@ -61,6 +61,7 @@ if ($isFirstTimeVisit) {
   saveToLocalStorage("isKnownUser", true);
   isFirstTimeVisit.set(false);
 }
+
 if ($map && $isPermalinkReady) {
   permalink.update({ mapInstance: $map });
 }

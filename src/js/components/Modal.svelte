@@ -8,7 +8,6 @@ export let id;
 export let title = "";
 export let withAd = false;
 export let noLogo = false;
-export let noTransition = false;
 export let accentTitle = false;
 export let noClose = false;
 export let autoMargin = false;
@@ -46,7 +45,6 @@ const handleResize = () => {
   {id}
   role="dialog"
   aria-modal="true"
-  transition:fade={{ duration: !noTransition ? 200 : 0 }}
   on:keydown|stopPropagation={handleKeyDown}
   on:scroll={() => (scrollTop = modalRef.scrollTop)}
   bind:this={modalRef}

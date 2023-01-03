@@ -14,7 +14,6 @@ import Profile from "../../js/components/user/Profile.svelte";
 <Modal
   id="profile-modal"
   noLogo
-  noTransition={!$isInitialized}
   on:close={() => {
     $goto("/");
     !$isShowOnMapMode && selectedUserProfileData.set({});

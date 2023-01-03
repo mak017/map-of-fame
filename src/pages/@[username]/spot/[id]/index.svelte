@@ -26,7 +26,6 @@ import Modal from "../../../../js/components/Modal.svelte";
   }}
   withAd
   noLogo
-  noTransition={!$openedMarkerData}
   banner={{
     img: $openedMarkerData?.firm?.banner,
     url: $openedMarkerData?.firm?.bannerUrl,

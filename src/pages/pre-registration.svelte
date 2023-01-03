@@ -12,7 +12,6 @@ const setIsPreRegistrationSuccess = () => (isPreRegistrationSuccess = true);
 <Modal
   id="pre-registration-modal"
   on:close={() => $goto("/")}
-  title={!isPreRegistrationSuccess && "Pre 👀 Registration"}
-  noTransition>
+  title={!isPreRegistrationSuccess && "Pre 👀 Registration"}>
   <PreRegistration {setIsPreRegistrationSuccess} />
 </Modal>

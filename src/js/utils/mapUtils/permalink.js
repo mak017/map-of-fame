@@ -9,7 +9,6 @@ import { validateYear } from "../datesUtils";
 
 import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../../constants";
 
-let shouldUpdate = true;
 let mapInstance = null;
 let prevParams = null;
 let settingsObj = {};
@@ -34,12 +33,6 @@ selectedCrew.subscribe((value) => {
 });
 
 const update = ({ mapContainer, params, clearParams }) => {
-  if (!shouldUpdate) {
-    // do not update the URL when the view was changed in the 'popstate' handler (browser history navigation)
-    shouldUpdate = true;
-    return;
-  }
-
   const map = mapContainer || mapInstance;
   const year = yearFromStore;
   let paramsToSet = prevParams || "";
@@ -153,8 +146,6 @@ const getInviteUrl = (code, username) => {
   return `${origin}/registration?invite_code=${code}&from_user=${username}`;
 };
 const setup = (map) => {
-  shouldUpdate = true;
-
   map.on("moveend", () => update({ mapContainer: map }));
 
   // restore the view state when navigating through the history, see
@@ -166,11 +157,9 @@ const setup = (map) => {
     const { center, zoom, year, params } = event.state;
     if (year && params) setParamsFromState(year, params);
     if (center && zoom) map.setView(center, zoom);
-    shouldUpdate = false;
   };
   mapInstance = map;
   window.addEventListener("popstate", popStateHandler);
-  // update({ mapContainer: mapInstance });
 };
 
 export const permalink = {

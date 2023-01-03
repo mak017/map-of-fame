@@ -1,8 +1,6 @@
 <script>
 import { goto } from "@roxi/routify";
 
-import { isInitialized } from "./../js/store.js";
-
 import Calendar from "./../js/components/Calendar.svelte";
 import Modal from "../js/components/Modal.svelte";
 </script>
@@ -12,7 +10,6 @@ import Modal from "../js/components/Modal.svelte";
   on:close={() => $goto("/")}
   title="Years"
   withAd
-  autoMargin
-  noTransition={!$isInitialized}>
+  autoMargin>
   <Calendar />
 </Modal>

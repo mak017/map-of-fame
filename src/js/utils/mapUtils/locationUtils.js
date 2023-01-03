@@ -3,6 +3,7 @@ import { permalink } from "./permalink";
 import {
   isInitialized,
   isLighthouseActive,
+  isPermalinkReady,
   isSearchResults,
   isShowOnMapMode,
   mapBounds,
@@ -112,6 +113,7 @@ export const setLocation = (map) => {
     })
     .finally(() => {
       permalink.setup(map);
+      isPermalinkReady.set(true);
       const bounds = getBounds(map);
       const shouldSearch = artistFromStore || crewFromStore;
       mapBounds.set(bounds);
