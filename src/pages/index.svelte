@@ -82,7 +82,6 @@ const toggleAreaSelectionMode = (toggle) => {
   if (toggle) {
     $map.setMinZoom(15);
     $areaSelection.activate();
-    $goto("/");
     shouldDisplayShowOnMap.set(false);
     return;
   }

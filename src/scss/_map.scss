@@ -104,6 +104,10 @@
   display: none;
 }
 
+.leaflet-control-attribution {
+  user-select: none;
+}
+
 @media (max-width: 767px) {
   .leaflet-container .leaflet-control-attribution {
     font-size: 5px;

@@ -37,7 +37,10 @@ let yearsToApply = [
 ];
 
 onDestroy(() => {
-  isAreaSelectionActive.set(false);
+  // Hack to fix a bug with displayed area selection after go back
+  setTimeout(() => {
+    isAreaSelectionActive.set(false);
+  }, 0);
   $map.setMinZoom(MIN_ZOOM);
   $map.dragging.enable();
   $areaSelection.deactivate();
