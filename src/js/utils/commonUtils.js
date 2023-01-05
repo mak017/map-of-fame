@@ -1,11 +1,13 @@
 import { MOBILE_BREAKPOINT } from "../constants";
 
 const regexYoutube =
-  /(?:https?:)?(?:\/\/)(?:www\.)?(?:m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([^<.,!():"'\s]+)/;
+  /(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([^<.,!():"'\s]+)/;
 const regexVimeo =
-  /(?:http:|https:)?(?:\/\/)(?:www\.)?(?:vimeo\.com)\/([^<.,!():"'\s]+)/;
+  /(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com)\/([^<.,!():"'\s]+)/;
 const regexDailymotion =
-  /(?:http:|https:)?(?:\/\/)(?:www\.)?(?:dailymotion\.com|dai\.ly)(?:\/video)?\/([^<.,!():"'\s]+)/;
+  /(?:https?:\/\/)?(?:www\.)?(?:dailymotion\.com|dai\.ly)(?:\/video)?\/([^<.,!():"'\s]+)/;
+const regexInstagram =
+  /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/(?:p|reel)?\/([^/?#&]+)/;
 
 export const isMobile = () => window.innerWidth < MOBILE_BREAKPOINT;
 
@@ -21,7 +23,8 @@ export const validatePassword = (password) => /^(?=.*).{8,20}$/.test(password);
 export const validateVideoLink = (link) =>
   regexYoutube.test(link) ||
   regexVimeo.test(link) ||
-  regexDailymotion.test(link);
+  regexDailymotion.test(link) ||
+  regexInstagram.test(link);
 
 export const isValidHttpUrl = (string) => {
   let url;
@@ -58,6 +61,10 @@ export const embedVideoCodeFromBasicUrl = (url) =>
     .replace(
       new RegExp(regexDailymotion, "g"),
       '<iframe frameborder="0" type="text/html" src="https://www.dailymotion.com/embed/video/$1?logo=0&foreground=ffffff&highlight=1bb4c6&background=000000" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
+    )
+    .replace(
+      new RegExp(regexInstagram, "g"),
+      '<iframe frameborder="0" type="text/html" src="//instagram.com/p/$1/embed" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
     );
 
 export const markersReadyEvent = new Event("markersReady");

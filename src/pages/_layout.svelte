@@ -1,10 +1,9 @@
 <script>
 import L from "leaflet";
 import { goto } from "@roxi/routify";
-import { TabsTransition } from "@roxi/routify/decorators";
 import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 
-import { loadFromLocalStorage } from "../js/utils/commonUtils.js";
+import { adjustVhProp, loadFromLocalStorage } from "../js/utils/commonUtils.js";
 import {
   handleMapViewChange,
   setLocation,
@@ -28,7 +27,6 @@ import {
   areaSelection,
   globalGoto,
   isLoading,
-  settings,
 } from "./../js/store.js";
 import { getSpotsInArea } from "../js/api/spot.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
@@ -99,6 +97,7 @@ $: if ($map && $markersStore) {
 }
 </script>
 
+<svelte:window on:resize={adjustVhProp} />
 {#if $isLoading}
   <Loader />
 {:else}

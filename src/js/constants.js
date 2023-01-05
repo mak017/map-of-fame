@@ -52,7 +52,7 @@ export const ERROR_MESSAGES = {
     `Year is not in range of ${yearStart} - ${getCurrentYear()}`,
   sprayEmpty: "Please select spray paint used",
   genericEmpty: "This is required field",
-  videoLinkInvalid: "Youtube, Vimeo or Dailymotion links only",
+  videoLinkInvalid: "Youtube/Vimeo/Dailymotion/Instagram links only",
   categoryEmpty: "Please select at least 1 category",
   linkInvalid: "Link must start with http or https",
   fieldMinLength: (field, min) =>

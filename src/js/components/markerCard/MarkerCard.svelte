@@ -207,7 +207,7 @@ const getArtistsString = (artistCrew) => {
       <div class="description">{data.description}</div>
     {/if}
     {#if data.video}
-      <div class="video">
+      <div class="video" class:instagram={data.video.includes("instagr")}>
         {@html getVideoEmbed(data.video)}
       </div>
     {/if}
@@ -391,6 +391,10 @@ const getArtistsString = (artistCrew) => {
   margin-bottom: 24px;
   padding: 30px 0 56.25%;
   overflow: hidden;
+
+  &.instagram {
+    padding-bottom: 131%;
+  }
 }
 
 @media (max-width: 767px) {
