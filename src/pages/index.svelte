@@ -1,8 +1,9 @@
 <script>
+import { onDestroy, onMount } from "svelte";
 import { fade } from "svelte/transition";
 import L from "leaflet";
 import "@bopen/leaflet-area-selection/dist/index.css";
-import { goto, url } from "@roxi/routify";
+import { url } from "@roxi/routify";
 
 import { requestRecentSpots, requestSpots } from "../js/init.js";
 import {
@@ -50,12 +51,13 @@ import Spinner from "../js/components/elements/Spinner.svelte";
 import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
-let showAuthContainer = false;
 let isAddSpotSidebarVisible = false;
 let resetPasswordToken = getResetPasswordToken();
 let inviteData = getInviteData();
 
 let newMarker;
+
+const updatePermalink = () => permalink.update({ mapContainer: $map });
 
 if ($isFirstTimeVisit) {
   saveToLocalStorage("isKnownUser", true);
@@ -63,13 +65,21 @@ if ($isFirstTimeVisit) {
 }
 
 if ($map && $isPermalinkReady) {
-  permalink.update({ mapInstance: $map });
+  updatePermalink();
 }
 
 if ($map && $isInitialized && !$isPermalinkReady) {
   permalink.setup($map);
   isPermalinkReady.set(true);
 }
+
+onMount(() => {
+  $map.on("moveend", updatePermalink);
+});
+
+onDestroy(() => {
+  $map.off("moveend", updatePermalink);
+});
 
 const showAuth = (show) => (showAuthContainer = show);
 const toggleAddSpotSidebarVisible = (toggle) =>

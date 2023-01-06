@@ -146,8 +146,6 @@ const getInviteUrl = (code, username) => {
   return `${origin}/registration?invite_code=${code}&from_user=${username}`;
 };
 const setup = (map) => {
-  map.on("moveend", () => update({ mapContainer: map }));
-
   // restore the view state when navigating through the history, see
   // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
   const popStateHandler = (event) => {
