@@ -48,8 +48,17 @@ export const removeFromLocalStorage = (key) => localStorage.removeItem(key);
 
 export const isYearLike = (year) => /^\d{0,4}$/.test(year);
 
-export const embedVideoCodeFromBasicUrl = (url) =>
-  url
+export const embedVideoCodeFromBasicUrl = (url) => {
+  if (url.includes("instagr")) {
+    const [urlWithoutQuery] = url.split("?");
+
+    return urlWithoutQuery.replace(
+      new RegExp(regexInstagram, "g"),
+      '<iframe frameborder="0" type="text/html" src="//instagram.com/p/$1/embed" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
+    );
+  }
+
+  return url
     .replace(
       new RegExp(regexYoutube, "g"),
       '<iframe src="https://www.youtube.com/embed/$1?modestbranding=1&rel=0&wmode=transparent&theme=light&color=white" width="100%" height="100%" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
@@ -61,11 +70,8 @@ export const embedVideoCodeFromBasicUrl = (url) =>
     .replace(
       new RegExp(regexDailymotion, "g"),
       '<iframe frameborder="0" type="text/html" src="https://www.dailymotion.com/embed/video/$1?logo=0&foreground=ffffff&highlight=1bb4c6&background=000000" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
-    )
-    .replace(
-      new RegExp(regexInstagram, "g"),
-      '<iframe frameborder="0" type="text/html" src="//instagram.com/p/$1/embed" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
     );
+};
 
 export const markersReadyEvent = new Event("markersReady");
 
