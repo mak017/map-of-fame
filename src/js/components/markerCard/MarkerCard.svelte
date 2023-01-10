@@ -393,7 +393,9 @@ const getArtistsString = (artistCrew) => {
   overflow: hidden;
 
   &.instagram {
-    padding-bottom: 131%;
+    max-width: 370px;
+    margin: 0 auto 24px;
+    padding-bottom: min(182%, 670px);
   }
 }
 

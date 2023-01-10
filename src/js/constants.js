@@ -36,6 +36,10 @@ export const ALL_YEARS_STRING = "All";
 
 export const ENDPOINT_ORIGIN = process.env.SVELTE_APP_API_ENTRYPOINT;
 
+export const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
+
+export const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
+
 export const ERROR_MESSAGES = {
   emailEmpty: "Please enter your email",
   emailInvalid: "You have entered invalid email",
