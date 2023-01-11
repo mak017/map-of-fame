@@ -29,6 +29,24 @@ import Spinner from "../elements/Spinner.svelte";
 
 import { EMPTY_YEAR_STRING, MAX_ZOOM } from "./../../constants.js";
 
+const emojiList = [
+  "👽",
+  "🧛",
+  "🤖",
+  "👻",
+  "👾",
+  "👨‍🚀",
+  "🎅",
+  "🎃",
+  "💀",
+  "🤠",
+  "🦐",
+  "⛄",
+  "🧟‍️",
+  "👨‍🎨",
+  "🤖",
+];
+
 const { id, username } = $params;
 const strippedUsername = username.substring(1);
 
@@ -130,17 +148,39 @@ const handleShowOnMapClick = () => {
   });
 };
 
+const getRandomEmojis = (count = 1) => {
+  let resultString = "";
+  for (let index = 0; index < count; index++) {
+    const emoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+    resultString = resultString + "&#8239;" + emoji;
+  }
+
+  return resultString;
+};
+
+const resolveArtistCrew = (pair) => {
+  const { artist, crew } = pair;
+
+  if (artist?.name && crew?.name) {
+    return `${getRandomEmojis()}&nbsp;${artist.name} <span>[${
+      crew.name
+    }]</span>`;
+  }
+
+  if (artist?.name) {
+    return `${getRandomEmojis()}&nbsp;${artist.name}`;
+  }
+
+  return `${getRandomEmojis(3)}&nbsp;<span>[${crew?.name}]</span>`;
+};
+
 const getArtistsString = (artistCrew) => {
   if (!artistCrew || artistCrew.length === 0) {
     return EMPTY_ARTIST;
   }
 
   return artistCrew.reduce((accumulator, pair, index) => {
-    const { artist, crew } = pair;
-    const currentName =
-      artist?.name && crew?.name
-        ? `${artist.name} (${crew.name})`
-        : artist?.name ?? crew?.name;
+    const currentName = resolveArtistCrew(pair);
 
     accumulator = accumulator.concat(currentName);
     if (index < artistCrew.length - 1) {
@@ -201,7 +241,7 @@ const getArtistsString = (artistCrew) => {
     </div>
     <div class="artist-area">
       <div class="subtitle">Artist/Crew</div>
-      <div class="title artist">{getArtistsString(data.artistCrew)}</div>
+      <div class="title artist">{@html getArtistsString(data.artistCrew)}</div>
     </div>
     {#if data.description}
       <div class="description">{data.description}</div>
@@ -245,16 +285,12 @@ const getArtistsString = (artistCrew) => {
 }
 
 .title {
-  display: -webkit-box;
-  overflow: hidden;
   color: var(--color-dark);
   font-size: 24px;
   font-weight: 900;
   line-height: 1.22;
   text-align: left;
   text-transform: uppercase;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
 }
 
 .posted-by {
