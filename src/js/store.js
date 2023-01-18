@@ -32,7 +32,6 @@ export const areaSpots = writable(null);
 export const selectedUserProfileData = writable({});
 export const shouldDisplayShowOnMap = writable(false);
 export const isShowOnMapMode = writable(false);
-export const isAddSpotMode = writable(false);
 export const isAreaSelectionActive = writable(false);
 export const isSpotsFromAreaLoading = writable(false);
 export const isFirstTimeVisit = writable(false);

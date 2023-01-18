@@ -6,13 +6,12 @@ import { shouldShowAddSpot } from "../../store";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import AddSpotSidebar from "./AddSpotSidebar.svelte";
 
-export let isAddSpotMode;
 export let isAddSpotSidebarVisible;
 export let newMarker;
 export let onCancel;
 </script>
 
-{#if !isAddSpotMode}
+{#if !$shouldShowAddSpot}
   <button
     class="button button-add_spot"
     on:click={() => shouldShowAddSpot.set(true)}
@@ -25,7 +24,7 @@ export let onCancel;
       className="add-spot" />
   </div>
 {/if}
-{#if !isAddSpotSidebarVisible && isAddSpotMode}
+{#if !isAddSpotSidebarVisible && $shouldShowAddSpot}
   <div class="drag-to-map" transition:fade={{ duration: 200 }}>
     Drag pin to map
   </div>

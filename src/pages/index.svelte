@@ -10,7 +10,6 @@ import {
   areaSelection,
   areaSpots,
   map,
-  isAddSpotMode,
   shouldShowAddSpot,
   currentZoom,
   isSpotsFromAreaLoading,
@@ -167,7 +166,7 @@ const quitAddSpot = () => {
   </Modal>
 {:else}
   <div class="main-top_left_wrapper">
-    {#if !$isAddSpotMode || ($isAddSpotMode && !isAddSpotSidebarVisible)}
+    {#if !$shouldShowAddSpot || ($shouldShowAddSpot && !isAddSpotSidebarVisible)}
       <a
         href={$url("/calendar")}
         class="button button-main_screen button-open_calendar"
@@ -175,7 +174,7 @@ const quitAddSpot = () => {
         transition:fade={{ duration: 200 }}
         >{$isAreaSelectionActive ? ALL_YEARS_STRING : $selectedYear}</a>
     {/if}
-    {#if !$isAddSpotMode && !$isSearchResults && !$isShowOnMapMode && !$isAreaSelectionActive}
+    {#if !$shouldShowAddSpot && !$isSearchResults && !$isShowOnMapMode && !$isAreaSelectionActive}
       <button
         class="button button-square button-lighthouse"
         class:active={$isLighthouseActive}
@@ -196,7 +195,7 @@ const quitAddSpot = () => {
   </div>
 
   <div class="main-top_right_wrapper">
-    {#if !$isAddSpotMode && !$isAreaSelectionActive}
+    {#if !$shouldShowAddSpot && !$isAreaSelectionActive}
       {#if !($isSearchResults && ($selectedArtist || $selectedCrew)) && !$isShowOnMapMode}
         <a
           href={$url("/search")}
@@ -262,7 +261,7 @@ const quitAddSpot = () => {
     </button>
   {/if}
 
-  {#if !$isSearchResults && !$selectedUserProfileData.name && ($isAreaSelectionActive || $currentZoom > 14)}
+  {#if !$isSearchResults && !$isShowOnMapMode && !$shouldShowAddSpot && !$selectedUserProfileData.name && ($isAreaSelectionActive || $currentZoom > 14)}
     <button
       class="button button-main_screen button-square button-select_area"
       class:active={$isAreaSelectionActive}
@@ -279,7 +278,6 @@ const quitAddSpot = () => {
 
   {#if $isLoggedIn && !$isAreaSelectionActive}
     <AddSpot
-      {$isAddSpotMode}
       {isAddSpotSidebarVisible}
       {showAddSpot}
       {newMarker}

@@ -1,4 +1,5 @@
 <script>
+import { onDestroy } from "svelte";
 import { goto, params } from "@roxi/routify";
 
 import {
@@ -52,6 +53,10 @@ const strippedUsername = username.substring(1);
 
 let isShareOpened = false;
 let isComplainOpened = false;
+
+onDestroy(() => {
+  !$isShowOnMapMode && selectedUserProfileData.set({});
+});
 
 const getSpotData = async () => {
   if ($openedMarkerData?.id === id) {
@@ -142,6 +147,7 @@ const handleShowOnMapClick = () => {
       selectedCrew.set("");
       setTimeout(() => {
         $map.setView([lat, lng], MAX_ZOOM);
+        $goto("/");
       }, 0);
       openedMarkerData.set(null);
     }
@@ -231,11 +237,16 @@ const getArtistsString = (artistCrew) => {
           </div>
         {/if}
         <div class="share">
-          <button type="button" on:click={() => onShareToggle(true)}
-            ><ShareSvg /></button>
+          <button
+            type="button"
+            class="button"
+            on:click={() => onShareToggle(true)}><ShareSvg /></button>
         </div>
         <div class="complain">
-          <button type="button" on:click={() => onComplainToggle(true)} />
+          <button
+            type="button"
+            class="button"
+            on:click={() => onComplainToggle(true)} />
         </div>
       </div>
     </div>

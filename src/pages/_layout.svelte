@@ -13,7 +13,7 @@ import {
   openStreetMapMapnik,
 } from "../js/utils/mapUtils/tileLayers.js";
 import {
-  isAddSpotMode,
+  shouldShowAddSpot,
   isAreaSelectionActive,
   mapBounds,
   markersStore,
@@ -103,7 +103,7 @@ $: if ($map && $markersStore) {
 {:else}
   <div
     class="map"
-    class:add-mode={$isAddSpotMode}
+    class:add-mode={$shouldShowAddSpot}
     class:area-selection-mode={$isAreaSelectionActive}
     use:initMap />
   <slot />
