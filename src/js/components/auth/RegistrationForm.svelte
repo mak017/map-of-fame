@@ -207,6 +207,16 @@ const handleInputChange = (input) => {
   }
 };
 
+const handleUsernameChange = (event) => {
+  handleInputChange("username");
+  if (!event?.detail?.target?.value?.startsWith("@")) {
+    event.detail.target.value = username;
+    return;
+  }
+
+  username = event?.detail?.target?.value;
+};
+
 const handleBackClick = () => {
   step = 1;
 };
@@ -256,9 +266,9 @@ const handleBackClick = () => {
     <div in:fade|local={{ duration: 200 }}>
       <FormTextInput
         placeholder="Username"
-        bind:value={username}
         errorText={errors.username}
-        on:input={() => handleInputChange("username")} />
+        value={username}
+        on:input={handleUsernameChange} />
       {#if userType.name !== USER_TYPES.crew}
         <FormTextInput
           placeholder={userType.name === USER_TYPES.artist

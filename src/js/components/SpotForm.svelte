@@ -1,8 +1,6 @@
 <script>
-import watermark from "watermarkjs";
 import { reduceFileSize } from "./../utils/imageUtils.js";
 import FormTelInput from "./elements/FormTelInput.svelte";
-import { addWatermark } from "./../utils/addWatermark.js";
 import { createSpot, getUserCategories, updateSpot } from "./../api/spot";
 import {
   EMPTY_YEAR_STRING,
@@ -150,25 +148,12 @@ const onChangeImage = () => {
       const image = new Image();
       image.src = e.target.result;
       image.onload = function () {
-        watermark([file], { type: "image/jpeg" })
-          .blob((img) => addWatermark(img, $userData.name ?? $userData.crew))
-          .then((blob) => {
+        if (file.size > MAX_IMAGE_FILE_SIZE) {
+          reduceFileSize(file, MAX_IMAGE_FILE_SIZE, 4200, 4200, 0.8, (blob) => {
             imageBlob = new File([blob], "image.jpg");
-            console.debug("imageBlob.size", imageBlob.size >> 10, "KB");
-            if (imageBlob.size > MAX_IMAGE_FILE_SIZE) {
-              reduceFileSize(
-                imageBlob,
-                MAX_IMAGE_FILE_SIZE,
-                4200,
-                4200,
-                0.8,
-                (blob) => {
-                  imageBlob = new File([blob], "image.jpg");
-                }
-              );
-            }
             imageFilePreview = URL.createObjectURL(imageBlob);
           });
+        }
       };
     };
 
