@@ -222,7 +222,7 @@ const quitAddSpot = () => {
             class="button button-square button-clear_search"
             on:click|stopPropagation={() => {
               $selectedYear === ALL_YEARS_STRING &&
-                selectedYear.set(getCurrentYear());
+                selectedYear.set(`${getCurrentYear()}`);
               requestSpots($selectedYear);
               selectedUserProfileData.set({});
               selectedArtist.set("");
@@ -276,7 +276,7 @@ const quitAddSpot = () => {
     </button>
   {/if}
 
-  {#if $isLoggedIn && !$isAreaSelectionActive}
+  {#if $isLoggedIn && !$isAreaSelectionActive && !$isSearchResults}
     <AddSpot
       {isAddSpotSidebarVisible}
       {showAddSpot}
