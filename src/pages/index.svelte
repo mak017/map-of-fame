@@ -250,7 +250,7 @@ const quitAddSpot = () => {
     {/if}
   </div>
 
-  {#if !$isSearchResults && !$selectedUserProfileData.name && !$isAreaSelectionActive}
+  {#if !$isSearchResults && !$selectedUserProfileData.name && !$isAreaSelectionActive && !$isShowOnMapMode}
     <button
       class="button button-main_screen button-square button-switch_mode"
       class:active={isRailwayMode}
@@ -276,7 +276,7 @@ const quitAddSpot = () => {
     </button>
   {/if}
 
-  {#if $isLoggedIn && !$isAreaSelectionActive && !$isSearchResults}
+  {#if $isLoggedIn && !$isAreaSelectionActive && !$isSearchResults && !$isShowOnMapMode}
     <AddSpot
       {isAddSpotSidebarVisible}
       {showAddSpot}

@@ -233,7 +233,7 @@ const onSpotClick = (spot) => {
 };
 
 const handleShowOnMapClick = () => {
-  if (!$selectedUserProfileData.id) {
+  if (!$selectedUserProfileData.id && isCurrentUser) {
     selectedUserProfileData.set($userData ?? {});
   } else {
     selectedUserProfileData.set(user);
