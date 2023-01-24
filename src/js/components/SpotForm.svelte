@@ -153,6 +153,9 @@ const onChangeImage = () => {
             imageBlob = new File([blob], "image.jpg");
             imageFilePreview = URL.createObjectURL(imageBlob);
           });
+        } else {
+          imageBlob = file;
+          imageFilePreview = e.target.result;
         }
       };
     };
