@@ -43,6 +43,7 @@ function getExifOrientation(file, callback) {
 
 // Derived from https://stackoverflow.com/a/40867559, cc by-sa
 function imgToCanvasWithOrientation(img, rawWidth, rawHeight, orientation) {
+  let isRotated = false;
   const canvas = document.createElement("canvas");
   if (orientation > 4) {
     canvas.width = rawHeight;
@@ -52,9 +53,10 @@ function imgToCanvasWithOrientation(img, rawWidth, rawHeight, orientation) {
     canvas.height = rawHeight;
   }
 
-  // if (orientation > 1) {
-  //   console.log("EXIF orientation = " + orientation + ", rotating picture");
-  // }
+  if (orientation > 1) {
+    isRotated = true;
+    console.debug(`EXIF orientation = ${orientation}, rotating picture`);
+  }
 
   const ctx = canvas.getContext("2d");
   switch (orientation) {
@@ -83,15 +85,16 @@ function imgToCanvasWithOrientation(img, rawWidth, rawHeight, orientation) {
     // intentionally left empty
   }
   ctx.drawImage(img, 0, 0, rawWidth, rawHeight);
-  return canvas;
+  return { canvas, isRotated };
 }
 
-export const reduceFileSize = (
+export const processImage = (
   file,
   acceptFileSize,
   maxWidth,
   maxHeight,
   quality,
+  isRecursive,
   callback
 ) => {
   if (file.size <= acceptFileSize) {
@@ -115,23 +118,30 @@ export const reduceFileSize = (
       h = Math.round(h * scale);
       w = Math.round(w * scale);
 
-      const canvas = imgToCanvasWithOrientation(img, w, h, orientation);
+      const { canvas, isRotated } = imgToCanvasWithOrientation(
+        img,
+        w,
+        h,
+        orientation
+      );
+
       canvas.toBlob(
         (blob) => {
-          console.debug(
-            "Resized image to " + w + "x" + h + ", " + (blob.size >> 10) + "kB"
-          );
-          if (file.size > acceptFileSize) {
-            reduceFileSize(
+          console.debug(`Resized image to ${w}x${h}, ${blob.size >> 10}kB`);
+
+          if (isRecursive && file.size > acceptFileSize) {
+            processImage(
               new File([blob], "image.jpg"),
               acceptFileSize,
               Math.round(w * 0.85),
               Math.round(h * 0.85),
               quality,
+              isRecursive,
               callback
             );
           }
-          callback(blob);
+
+          callback(blob, isRotated);
         },
         "image/jpeg",
         quality

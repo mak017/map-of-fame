@@ -1,15 +1,18 @@
 <script>
-import { reduceFileSize } from "./../utils/imageUtils.js";
-import FormTelInput from "./elements/FormTelInput.svelte";
+import { requestSearchSpots } from "../api/search.js";
+import { getFirmsRequest } from "../api/settings";
 import { createSpot, getUserCategories, updateSpot } from "./../api/spot";
 import {
-  EMPTY_YEAR_STRING,
-  ERROR_MESSAGES,
-  MAX_IMAGE_FILE_SIZE,
-  STATUSES,
-  statusesOrdered,
-  USER_TYPES,
-} from "../constants";
+  getCurrentYear,
+  isEmpty,
+  isValidHttpUrl,
+  isYearLike,
+  loadFromLocalStorage,
+  validateVideoLink,
+} from "../utils/commonUtils";
+import { validateYear } from "../utils/datesUtils";
+import { processImage } from "./../utils/imageUtils.js";
+import { requestSpots } from "../init.js";
 import {
   firms,
   isSearchResults,
@@ -23,24 +26,23 @@ import {
   userCategories,
   userData,
 } from "../store";
-import {
-  getCurrentYear,
-  isEmpty,
-  isValidHttpUrl,
-  isYearLike,
-  loadFromLocalStorage,
-  validateVideoLink,
-} from "../utils/commonUtils";
+
+import FormTelInput from "./elements/FormTelInput.svelte";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormRadioButton from "./elements/FormRadioButton.svelte";
 import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
-import { validateYear } from "../utils/datesUtils";
-import { getFirmsRequest } from "../api/settings";
-import { requestSpots } from "../init.js";
 import Spinner from "./elements/Spinner.svelte";
-import { requestSearchSpots } from "../api/search.js";
+
+import {
+  EMPTY_YEAR_STRING,
+  ERROR_MESSAGES,
+  MAX_IMAGE_FILE_SIZE,
+  STATUSES,
+  statusesOrdered,
+  USER_TYPES,
+} from "../constants";
 
 export let marker = null;
 export let editSpotData = {};
@@ -149,13 +151,36 @@ const onChangeImage = () => {
       image.src = e.target.result;
       image.onload = function () {
         if (file.size > MAX_IMAGE_FILE_SIZE) {
-          reduceFileSize(file, MAX_IMAGE_FILE_SIZE, 4200, 4200, 0.8, (blob) => {
-            imageBlob = new File([blob], "image.jpg");
-            imageFilePreview = URL.createObjectURL(imageBlob);
-          });
+          processImage(
+            file,
+            MAX_IMAGE_FILE_SIZE,
+            4200,
+            4200,
+            0.8,
+            true,
+            (blob) => {
+              imageBlob = new File([blob], "image.jpg");
+              imageFilePreview = URL.createObjectURL(imageBlob);
+            }
+          );
         } else {
-          imageBlob = file;
-          imageFilePreview = e.target.result;
+          processImage(
+            file,
+            0,
+            Infinity,
+            Infinity,
+            0.85,
+            false,
+            (blob, isRotated) => {
+              if (isRotated) {
+                imageBlob = new File([blob], "image.jpg");
+                imageFilePreview = URL.createObjectURL(imageBlob);
+              } else {
+                imageBlob = file;
+                imageFilePreview = e.target.result;
+              }
+            }
+          );
         }
       };
     };
