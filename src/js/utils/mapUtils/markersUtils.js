@@ -1,14 +1,16 @@
 import L from "leaflet";
 import "leaflet.markercluster";
 import "leaflet.markercluster.placementstrategies";
+import { get } from "svelte/store";
+
 import {
   categoriesList,
+  globalGoto,
   openedMarkerData,
   shouldDisplayShowOnMap,
 } from "../../store";
 import { markersReadyEvent } from "../commonUtils";
 import { clusterIcon, markerClusterIcon, markerWithPhoto } from "./icons";
-import { permalink } from "./permalink";
 
 let prevMarkers = [];
 let markersLayer = null;
@@ -31,34 +33,26 @@ const clearMarkers = (map) => {
 };
 
 export const setMarkerData = (data) => {
+  const $goto = get(globalGoto);
   const {
     id,
-    artistCrew,
     spotStatus: status,
-    description,
     img,
     title,
     videoLink: video,
     user,
     publicBanner: { banner, bannerUrl },
     location: { lat, lng },
-    year,
-    link,
   } = data;
   openedMarkerData.set({
-    id,
-    artistCrew,
+    ...data,
     status,
-    description,
     img: { src: img, title: title || id },
     video,
-    user,
     firm: { banner, bannerUrl },
     coords: { lat, lng },
-    year,
-    link,
   });
-  permalink.update({ params: { marker: id } });
+  $goto("/@:username/spot/:id", { username: user.username, id });
   shouldDisplayShowOnMap.set(false);
   document.getElementById("highlighted").innerHTML = "";
 };

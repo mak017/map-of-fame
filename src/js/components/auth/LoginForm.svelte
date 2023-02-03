@@ -1,15 +1,16 @@
 <script>
 import { fade } from "svelte/transition";
+import { goto, url } from "@roxi/routify";
+
 import { loginRequest } from "../../api/auth.js";
-import { AUTH_MODALS, ERROR_MESSAGES } from "../../constants.js";
 import { isLoggedIn, settings, userData } from "../../store.js";
 import { saveToLocalStorage, validateEmail } from "../../utils/commonUtils.js";
+
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
 import FormPasswordInput from "../elements/FormPasswordInput.svelte";
 
-export let showAuth;
-export let changeCurrentModal;
+import { ERROR_MESSAGES } from "../../constants.js";
 
 let email = "";
 let password = "";
@@ -43,7 +44,7 @@ const handleSubmit = () => {
           userData.set(result);
           isLoggedIn.set(true);
           saveToLocalStorage("token", result.token);
-          showAuth(false);
+          $goto("/");
         } else {
           isInProgress = false;
           if (response.errors?.email) {
@@ -95,10 +96,7 @@ const handleInputChange = (input) => {
     errorText={errors.password}
     on:input={() => handleInputChange("password")} />
   <div class="forgot-password">
-    <button
-      type="button"
-      on:click={() => changeCurrentModal(AUTH_MODALS.forgotPassword)}
-      >Forgot password</button>
+    <a href={$url("/forgot-password")}>Forgot password</a>
   </div>
   <ButtonPrimary
     text="Login"
@@ -107,14 +105,10 @@ const handleInputChange = (input) => {
     isDisabled={isDisabledSubmit} />
   <div class="switch-to-sign-up">
     <span>Don't have an account?</span>
-    <button
-      type="button"
-      on:click={() =>
-        changeCurrentModal(
-          $settings.needInviteToRegister
-            ? AUTH_MODALS.preRegistration
-            : AUTH_MODALS.registration
-        )}>Sign up</button>
+    <a
+      href={$url(
+        $settings.needInviteToRegister ? "/pre-registration" : "registration"
+      )}>Sign up</a>
   </div>
 </form>
 
@@ -127,7 +121,7 @@ form {
 .forgot-password {
   margin-bottom: 36px;
   text-align: right;
-  button {
+  a {
     padding: 0;
     border: 0;
     background: none;
@@ -135,8 +129,13 @@ form {
     font-size: 14px;
     font-weight: 900;
     line-height: 1.22;
+    text-decoration: none;
     text-transform: uppercase;
     cursor: pointer;
+
+    &:hover {
+      opacity: 0.7;
+    }
   }
 }
 .switch-to-sign-up {
@@ -145,7 +144,7 @@ form {
   font-weight: 600;
   line-height: 1.22;
   text-align: center;
-  button {
+  a {
     padding: 0;
     border: 0;
     background: none;
@@ -153,7 +152,12 @@ form {
     font-size: inherit;
     font-weight: inherit;
     line-height: inherit;
+    text-decoration: none;
     cursor: pointer;
+
+    &:hover {
+      opacity: 0.7;
+    }
   }
 }
 </style>

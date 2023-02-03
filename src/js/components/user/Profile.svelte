@@ -1,11 +1,11 @@
 <script>
-import { onMount } from "svelte";
+import { isUserVerifyProgress } from "./../../store.js";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
-import Invites from "./Invites.svelte";
-import { getInvites } from "./../../api/auth.js";
-import Spinner from "./../elements/Spinner.svelte";
-import CustomSelect from "../elements/CustomSelect.svelte";
+import { goto, params, url } from "@roxi/routify";
+
+import { getInvites, getUserData } from "./../../api/auth.js";
+import { getUserSpots } from "../../api/spot";
 import {
   isLoggedIn,
   isShowOnMapMode,
@@ -18,95 +18,128 @@ import {
   selectedYear,
   shouldDisplayShowOnMap,
   isSearchResults,
+  editSpotData,
+  shouldShowAddSpot,
+  isFirstTimeVisit,
 } from "../../store";
-import Modal from "../Modal.svelte";
-import EditSpot from "./EditSpot.svelte";
-import DeleteSpot from "./DeleteSpot.svelte";
-import Popup from "../Popup.svelte";
 import { getProfileYears } from "./../../utils/datesUtils.js";
 import {
   isEmpty,
   loadFromLocalStorage,
   removeFromLocalStorage,
 } from "../../utils/commonUtils";
-import { getUserSpots } from "../../api/spot";
+
+import Invites from "./Invites.svelte";
+import Spinner from "./../elements/Spinner.svelte";
+import CustomSelect from "../elements/CustomSelect.svelte";
+import DeleteSpot from "./DeleteSpot.svelte";
+import Popup from "../Popup.svelte";
+import ShareSvg from "../elements/icons/ShareSvg.svelte";
+import ShareProfile from "./ShareProfile.svelte";
+
 import {
   ALL_YEARS_STRING,
   EMPTY_YEAR_STRING,
   MAX_SPOTS_PER_PAGE,
 } from "../../constants";
-import { permalink } from "../../utils/mapUtils/permalink";
-
-export let onAddSpotBtnClick;
-export let showUserProfile;
 
 let currentYear;
 let currentSpot;
-let showEditModal = false;
 let showDeletePopup = false;
 let showInvitesPopup = false;
+let showSharePopup = false;
 let offset = 0;
 let yearsToApply = [];
 let spotsList = [];
 let newBatch = [];
 let invites = [];
 let unusedInvitesCount = 0;
-let isLoading = false;
-let isShowSpinner = false;
+let isLoading = true;
+let isShowSpinner = true;
+let user = {};
 const token = loadFromLocalStorage("token") || null;
 
-const toggleEditModal = (toggle) => (showEditModal = toggle);
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
+const toggleSharePopup = (toggle) => (showSharePopup = toggle);
 
-const username = $selectedUserProfileData.name ?? $userData.name;
-const isCurrentUser =
-  !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
+const { username } = $params;
+const strippedUsername = username.substring(1);
 
-const fetchSpots = ({ year, offset, isNewFetch = false }) => {
-  const userId = $selectedUserProfileData.id || $userData.id;
-  isLoading = isNewFetch;
-  isShowSpinner = true;
-  getUserSpots(isCurrentUser ? null : userId, token, { year, offset }).then(
-    (response) => {
+let isInitialized = false;
+let isCurrentUser = $userData.username === strippedUsername;
+let name = isCurrentUser
+  ? $userData.name ?? $userData.crew
+  : user.name ?? user.crew;
+
+$: isCurrentUser = $userData.username === strippedUsername;
+$: name = isCurrentUser
+  ? $userData.name ?? $userData.crew
+  : user.name ?? user.crew;
+
+$: if (!isInitialized && !$isUserVerifyProgress) {
+  isInitialized = true;
+  if (!isCurrentUser && !user.id) {
+    getUserData(strippedUsername).then((response) => {
       const { success, result, errors } = response;
-      if (success && result) {
-        const { spots, years } = result;
-        if (isNewFetch) spotsList = [];
-        newBatch = spots ? [...spots] : [];
-        yearsToApply = getProfileYears(years);
-        if (currentYear === undefined || year === undefined) {
-          currentYear = yearsToApply[0];
-        }
-      }
-      if (errors && !isEmpty(errors)) {
-        if (errors.year) {
-          fetchSpots({});
-        }
-      }
-      isLoading = false;
-      isShowSpinner = false;
-    }
-  );
-};
 
-onMount(() => {
-  fetchSpots({ isNewFetch: true });
-  shouldDisplayShowOnMap.set(false);
-  if (isCurrentUser) {
-    getInvites(token).then((response) => {
-      const { success, result } = response;
+      if (errors) {
+        $goto("/404");
+      }
+
       if (success && result) {
-        invites = result;
-        unusedInvitesCount = invites.reduce(
-          (accumulator, invite) =>
-            !invite.invitedUserId ? accumulator + 1 : accumulator,
-          0
-        );
+        fetchSpots({ isNewFetch: true });
+        shouldDisplayShowOnMap.set(false);
+        user = result;
+        isLoading = false;
       }
     });
+  } else {
+    fetchSpots({ isNewFetch: true });
+    if (isCurrentUser) {
+      getInvites(token).then((response) => {
+        const { success, result } = response;
+        if (success && result) {
+          invites = result;
+          unusedInvitesCount = invites.reduce(
+            (accumulator, invite) =>
+              !invite.invitedUserId ? accumulator + 1 : accumulator,
+            0
+          );
+        }
+      });
+    }
   }
-});
+}
+
+const fetchSpots = ({ year, offset, isNewFetch = false }) => {
+  isLoading = isNewFetch;
+  isShowSpinner = true;
+  getUserSpots(strippedUsername, token, {
+    year,
+    offset,
+  }).then((response) => {
+    const { success, result, errors } = response;
+    if (success && result) {
+      const { spots, years } = result;
+      if (isNewFetch) {
+        spotsList = [];
+      }
+      newBatch = spots ? [...spots] : [];
+      yearsToApply = getProfileYears(years);
+      if (currentYear === undefined || year === undefined) {
+        currentYear = yearsToApply[0];
+      }
+    }
+    if (errors && !isEmpty(errors)) {
+      if (errors.year) {
+        fetchSpots({});
+      }
+    }
+    isLoading = false;
+    isShowSpinner = false;
+  });
+};
 
 $: spotsList = [...spotsList, ...newBatch];
 
@@ -114,12 +147,12 @@ const handleLogout = () => {
   removeFromLocalStorage("token");
   isLoggedIn.set(false);
   userData.set({});
-  showUserProfile(false);
+  $goto("/");
 };
 
 const handleAddSpot = () => {
-  onAddSpotBtnClick();
-  showUserProfile(false);
+  shouldShowAddSpot.set(true);
+  $goto("/");
 };
 
 const handleYearSelect = (event) => {
@@ -134,8 +167,9 @@ const handleYearSelect = (event) => {
 };
 
 const handleEdit = (spot) => {
-  currentSpot = spot;
-  toggleEditModal(true);
+  const { id } = spot;
+  editSpotData.set(spot);
+  $goto("/@:username/spot/:id/edit", { username: strippedUsername, id });
 };
 
 const handleDelete = (spot) => {
@@ -164,6 +198,7 @@ const onSpotClick = (spot) => {
   if (isCurrentUser) {
     return;
   }
+  selectedUserProfileData.set(user);
   const {
     id,
     artistCrew,
@@ -184,21 +219,26 @@ const onSpotClick = (spot) => {
     description,
     img: { src: img, title: title || id },
     video,
-    user: $selectedUserProfileData,
+    user,
     firm: { banner, bannerUrl },
     coords: { lat, lng },
     year,
     link,
   });
   shouldDisplayShowOnMap.set(true);
-  permalink.update({ params: { marker: id } });
+  $goto("/@:username/spot/:id", {
+    username: user.username,
+    id,
+  });
 };
 
 const handleShowOnMapClick = () => {
-  if (!$selectedUserProfileData.id) {
+  if (!$selectedUserProfileData.id && isCurrentUser) {
     selectedUserProfileData.set($userData ?? {});
+  } else {
+    selectedUserProfileData.set(user);
   }
-  getUserSpots(isCurrentUser ? null : $selectedUserProfileData.id, token, {
+  getUserSpots(strippedUsername, token, {
     year: `${currentYear}`,
     offset: 0,
     limit: 99999999999999,
@@ -212,14 +252,13 @@ const handleShowOnMapClick = () => {
       selectedYear.set(currentYear ? `${currentYear}` : EMPTY_YEAR_STRING);
       selectedArtist.set("");
       selectedCrew.set("");
-      permalink.update({ clearParams: ["artist", "crew"] });
-      showUserProfile(false);
+      $goto("/");
     }
   });
 };
 </script>
 
-<div class="container" style={showEditModal ? "display: none" : ""}>
+<div class="container" class:isCurrentUser>
   {#if invites.length}
     <div class="invites">
       You have
@@ -231,8 +270,20 @@ const handleShowOnMapClick = () => {
     </div>
   {/if}
   <div class="top">
-    {#if username}
-      <div class="username">{username}</div>
+    {#if !isLoading && (name || username)}
+      <div class="user">
+        {#if name}
+          <span class="name">{name}</span>
+          <button
+            type="button"
+            class="button name"
+            on:click={() => toggleSharePopup(true)}
+            ><ShareSvg color="dark" /></button>
+        {/if}
+        {#if username}
+          <div class="username">{username}</div>
+        {/if}
+      </div>
     {/if}
     {#if isCurrentUser}
       <button type="button" class="button logout" on:click={handleLogout}
@@ -261,7 +312,16 @@ const handleShowOnMapClick = () => {
       {#if !isLoading}
         <div class="spots">
           {#each spotsList as spot}
-            <div class="spot-card" on:click={() => onSpotClick(spot)}>
+            <a
+              href={!isCurrentUser
+                ? $url("/@:username/spot/:id", {
+                    username: user.username,
+                    id: spot.id,
+                  })
+                : undefined}
+              class="spot-card"
+              role="button"
+              on:click|preventDefault={() => onSpotClick(spot)}>
               <img
                 loading="lazy"
                 src={spot.thumbnail}
@@ -279,13 +339,13 @@ const handleShowOnMapClick = () => {
                     on:click={() => handleDelete(spot)} />
                 </div>
               {/if}
-            </div>
+            </a>
           {/each}
           <InfiniteScroll
             hasMore={newBatch.length === MAX_SPOTS_PER_PAGE}
             threshold={100}
             on:loadMore={onLoadMore}
-            elementScroll={document.querySelector(".modal")} />
+            elementScroll={document.getElementById("profile-modal")} />
         </div>
       {/if}
       {#if isShowSpinner}
@@ -298,22 +358,24 @@ const handleShowOnMapClick = () => {
     <div class="empty-state">
       <img src="../../../images/empty.jpg" alt="Empty" />
       <p>
-        <button
-          type="button"
-          class="button empty-button"
-          on:click={handleAddSpot}>Make your mark</button> on society, not in society
+        {#if isCurrentUser}
+          <button
+            type="button"
+            class="button empty-button"
+            on:click={handleAddSpot}>Make your mark</button> on society, not in society
+        {:else}
+          Make your mark on society, not in society
+        {/if}
       </p>
     </div>
   {/if}
 </div>
 
-{#if showEditModal}
-  <Modal on:close={() => toggleEditModal(false)} noLogo noClose>
-    <EditSpot
-      editSpotData={currentSpot}
-      {toggleEditModal}
-      onSubmit={onSubmitChanges} />
-  </Modal>
+{#if $isFirstTimeVisit && !isLoading && !isCurrentUser}
+  <a
+    href={$url("../")}
+    class="go-to-map"
+    on:click={() => selectedUserProfileData.set({})}>Go to map</a>
 {/if}
 
 {#if showDeletePopup}
@@ -333,6 +395,12 @@ const handleShowOnMapClick = () => {
   </Popup>
 {/if}
 
+{#if showSharePopup}
+  <Popup on:close={() => toggleSharePopup(false)} title="Share Profile">
+    <ShareProfile />
+  </Popup>
+{/if}
+
 <style lang="scss">
 .container {
   display: flex;
@@ -345,17 +413,31 @@ const handleShowOnMapClick = () => {
 
 .top {
   display: flex;
+  align-items: baseline;
   align-self: stretch;
   justify-content: space-between;
   margin-bottom: 6px;
 }
 
-.username {
+.user {
   color: var(--color-dark);
-  font-size: 24px;
-  font-weight: 900;
-  line-height: 1.22;
-  text-transform: uppercase;
+
+  .name {
+    margin-bottom: 4px;
+    background: none;
+    color: inherit;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.22;
+    text-transform: uppercase;
+  }
+
+  &name {
+    opacity: 0.4;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
 }
 
 .invites {
@@ -371,6 +453,10 @@ const handleShowOnMapClick = () => {
     font-weight: 900;
     line-height: 22px;
     text-transform: uppercase;
+
+    &:hover {
+      opacity: 0.7;
+    }
   }
 }
 
@@ -513,7 +599,25 @@ const handleShowOnMapClick = () => {
   position: relative;
 }
 
+.go-to-map {
+  display: block;
+  position: fixed;
+  top: 112px;
+  left: 0;
+  width: 64px;
+  height: 52px;
+  border-radius: 0 50% 50% 0;
+  background: var(--color-accent) url(../../../images/map.svg) 50% 50%/ 30px 26px
+    no-repeat;
+  color: transparent;
+  font-size: 0;
+}
+
 @media (max-width: 767px) {
+  .container:not(.isCurrentUser) {
+    margin-top: 48px;
+  }
+
   .top {
     position: relative;
     flex-direction: column-reverse;
@@ -536,6 +640,10 @@ const handleShowOnMapClick = () => {
     margin: -30px 0 52px;
     background: url(../../../images/logout.svg) 50% 50%/27px 27px no-repeat;
     font-size: 0;
+  }
+
+  .go-to-map {
+    top: 16px;
   }
 }
 </style>

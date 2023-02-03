@@ -1,22 +1,31 @@
 <script>
+import { onDestroy } from "svelte";
 import { fade } from "svelte/transition";
+import { goto } from "@roxi/routify";
 
-import { openedMarkerData } from "../store";
-import { permalink } from "../utils/mapUtils/permalink";
+import {
+  areaSelection,
+  areaSpots,
+  isAreaSelectionActive,
+  map,
+  openedMarkerData,
+} from "./../store.js";
 
 import CustomSelect from "./elements/CustomSelect.svelte";
 
-import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../constants";
+import { ALL_YEARS_STRING, EMPTY_YEAR_STRING, MIN_ZOOM } from "../constants";
 
-export let spotsList;
+if (!$areaSpots || !$areaSpots.length) {
+  $goto("/");
+}
 
 let currentYear = ALL_YEARS_STRING;
-let spotsToShow = spotsList;
+let spotsToShow = $areaSpots;
 let yearsToApply = [
   ALL_YEARS_STRING,
   ...new Set(
-    spotsList
-      .map(({ year }) => (year === null ? EMPTY_YEAR_STRING : year))
+    $areaSpots
+      ?.map(({ year }) => (year === null ? EMPTY_YEAR_STRING : year))
       .filter((y) => y)
       .sort(
         (a, b) =>
@@ -27,13 +36,23 @@ let yearsToApply = [
   ),
 ];
 
+onDestroy(() => {
+  // Hack to fix a bug with displayed area selection after go back
+  setTimeout(() => {
+    isAreaSelectionActive.set(false);
+  }, 0);
+  $map.setMinZoom(MIN_ZOOM);
+  $map.dragging.enable();
+  $areaSelection.deactivate();
+});
+
 const handleYearSelect = (event) => {
   const { value } = event.detail.detail;
   currentYear = value !== EMPTY_YEAR_STRING ? value : null;
   spotsToShow =
     currentYear === ALL_YEARS_STRING
-      ? spotsList
-      : spotsList.filter((spot) => spot.year === currentYear);
+      ? $areaSpots
+      : $areaSpots.filter((spot) => spot.year === currentYear);
 };
 
 const onSpotClick = (spot) => {
@@ -64,7 +83,11 @@ const onSpotClick = (spot) => {
     year,
     link,
   });
-  permalink.update({ params: { marker: id } });
+
+  $goto("/@:username/spot/:id", {
+    username: user.username,
+    id,
+  });
 };
 </script>
 
@@ -83,15 +106,17 @@ const onSpotClick = (spot) => {
       </div>
     </div>
     <div class="spots">
-      {#each spotsToShow as spot}
-        <div class="spot-card" on:click={() => onSpotClick(spot)}>
-          <img
-            loading="lazy"
-            src={spot.thumbnail}
-            alt={spot.title ?? `Spot ${spot.id} from area`}
-            in:fade={{ duration: 200 }} />
-        </div>
-      {/each}
+      {#if spotsToShow}
+        {#each spotsToShow as spot}
+          <div class="spot-card" on:click={() => onSpotClick(spot)}>
+            <img
+              loading="lazy"
+              src={spot.thumbnail}
+              alt={spot.title ?? `Spot ${spot.id} from area`}
+              in:fade={{ duration: 200 }} />
+          </div>
+        {/each}
+      {/if}
     </div>
   </div>
 </div>

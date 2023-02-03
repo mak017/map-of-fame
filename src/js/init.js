@@ -5,10 +5,12 @@ import { getRecentSpots, getSpots } from "./api/spot";
 import { EMPTY_YEAR_STRING } from "./constants";
 import {
   categoriesList,
+  isFirstTimeVisit,
   isInitialized,
   isLighthouseActive,
   isLoggedIn,
   isSearchResults,
+  isUserVerifyProgress,
   mapBounds,
   markersStore,
   settings,
@@ -59,15 +61,24 @@ export const verifyAuth = (token) =>
       ) {
         removeFromLocalStorage("token");
       }
+      isUserVerifyProgress.set(false);
     })
     .catch(() => {
       removeFromLocalStorage("token");
+      isUserVerifyProgress.set(false);
     });
 
 export const initApp = () => {
   const token = loadFromLocalStorage("token") || null;
+  const isKnownUser = loadFromLocalStorage("isKnownUser") || null;
+
   if (token) {
+    isUserVerifyProgress.set(true);
     verifyAuth(token);
+  }
+
+  if (!isKnownUser) {
+    isFirstTimeVisit.set(true);
   }
 };
 

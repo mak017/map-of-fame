@@ -1,13 +1,16 @@
 <script>
-import { EMPTY_YEAR_STRING, MAX_ZOOM } from "./../../constants.js";
+import { onDestroy } from "svelte";
+import { goto, params } from "@roxi/routify";
+
 import {
   embedVideoCodeFromBasicUrl,
+  isEmpty,
   loadFromLocalStorage,
 } from "../../utils/commonUtils";
-import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
-import Popup from "../Popup.svelte";
-import ShareMarker from "./ShareMarker.svelte";
 import {
+  openedMarkerData,
+  map,
+  isAreaSelectionActive,
   isShowOnMapMode,
   markersStore,
   selectedArtist,
@@ -15,39 +18,89 @@ import {
   selectedUserProfileData,
   selectedYear,
   shouldDisplayShowOnMap,
-  userData,
 } from "../../store";
-import { permalink } from "../../utils/mapUtils/permalink";
 import { getProfileYears } from "../../utils/datesUtils.js";
-import { getUserSpots } from "../../api/spot.js";
+import { getSpotById, getUserSpots } from "../../api/spot.js";
 
-export let data;
-export let map;
-export let showUserProfile;
-export let showSpotsFromArea;
-export let clearOpenedMarkerData;
-export let toggleAreaSelectionMode;
+import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
+import Popup from "../Popup.svelte";
+import ShareMarker from "./ShareMarker.svelte";
+import ShareSvg from "../elements/icons/ShareSvg.svelte";
+import Spinner from "../elements/Spinner.svelte";
+
+import { EMPTY_YEAR_STRING, MAX_ZOOM } from "./../../constants.js";
+
+const emojiList = [
+  "👽",
+  "🧛",
+  "🤖",
+  "👻",
+  "👾",
+  "👨‍🚀",
+  "🎅",
+  "🎃",
+  "💀",
+  "🤠",
+  "🦐",
+  "⛄",
+  "🧟‍️",
+  "👨‍🎨",
+  "🤖",
+];
+
+const { id, username } = $params;
+const strippedUsername = username.substring(1);
 
 let isShareOpened = false;
 let isComplainOpened = false;
 
-const {
-  artistCrew,
-  status,
-  description,
-  img,
-  video,
-  user,
-  id,
-  link,
-  year,
-  coords: { lat, lng },
-} = data;
+onDestroy(() => {
+  !$isShowOnMapMode && selectedUserProfileData.set({});
+});
+
+const getSpotData = async () => {
+  if ($openedMarkerData?.id === id) {
+    return $openedMarkerData;
+  }
+
+  const { success, result, errors } = await getSpotById(id);
+
+  if (success && result) {
+    const {
+      id,
+      spotStatus: status,
+      img,
+      title,
+      videoLink: video,
+      publicBanner: { banner, bannerUrl },
+      location: { lat, lng },
+      user,
+    } = result;
+
+    if (user.username !== strippedUsername) {
+      $goto("/404");
+      throw new Error();
+    }
+
+    const data = {
+      ...result,
+      status,
+      img: { src: img, title: title || id },
+      video,
+      firm: { banner, bannerUrl },
+      coords: { lat, lng },
+    };
+    openedMarkerData.set(data);
+    return data;
+  }
+
+  if (errors && !isEmpty(errors)) {
+    $goto("/404");
+  }
+};
 
 const EMPTY_ARTIST = "Unknown";
-const videoEmbed = video && embedVideoCodeFromBasicUrl(video);
-const isCurrentUser =
-  !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
+const getVideoEmbed = (video) => video && embedVideoCodeFromBasicUrl(video);
 const token = loadFromLocalStorage("token") || null;
 
 const onShareToggle = (toggle) => (isShareOpened = toggle);
@@ -55,17 +108,23 @@ const onShareToggle = (toggle) => (isShareOpened = toggle);
 const onComplainToggle = (toggle) => (isComplainOpened = toggle);
 
 const onUserClick = () => {
+  const { user } = $openedMarkerData;
+
   if (!$selectedUserProfileData.id) {
     selectedUserProfileData.set(user ?? {});
-    toggleAreaSelectionMode(false);
-    showSpotsFromArea(false);
+    isAreaSelectionActive.set(false);
   }
-  showUserProfile(true);
-  clearOpenedMarkerData();
+  openedMarkerData.set(null);
+  $goto("/@:username", { username: user.username });
 };
 
 const handleShowOnMapClick = () => {
-  getUserSpots(isCurrentUser ? null : $selectedUserProfileData.id, token, {
+  const {
+    year,
+    coords: { lat, lng },
+  } = $openedMarkerData;
+
+  getUserSpots($selectedUserProfileData.id, token, {
     year: year ? `${year}` : "",
     offset: 0,
     limit: 99999999999999,
@@ -86,26 +145,49 @@ const handleShowOnMapClick = () => {
       selectedYear.set(year ? `${year}` : EMPTY_YEAR_STRING);
       selectedArtist.set("");
       selectedCrew.set("");
-      permalink.update({ clearParams: ["artist", "crew"] });
       setTimeout(() => {
-        map.setView([lat, lng], MAX_ZOOM);
+        $map.setView([lat, lng], MAX_ZOOM);
+        $goto("/");
       }, 0);
-      showUserProfile(false);
-      clearOpenedMarkerData();
+      openedMarkerData.set(null);
     }
   });
 };
 
-const getArtistsString = () => {
-  if (artistCrew.length === 0) {
+const getRandomEmojis = (count = 1) => {
+  let resultString = "";
+  for (let index = 0; index < count; index++) {
+    const emoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+    resultString = resultString + "&#8239;" + emoji;
+  }
+
+  return resultString;
+};
+
+const resolveArtistCrew = (pair) => {
+  const { artist, crew } = pair;
+
+  if (artist?.name && crew?.name) {
+    return `${getRandomEmojis()}&nbsp;${artist.name} <span>[${
+      crew.name
+    }]</span>`;
+  }
+
+  if (artist?.name) {
+    return `${getRandomEmojis()}&nbsp;${artist.name}`;
+  }
+
+  return `${getRandomEmojis(3)}&nbsp;<span>[${crew?.name}]</span>`;
+};
+
+const getArtistsString = (artistCrew) => {
+  if (!artistCrew || artistCrew.length === 0) {
     return EMPTY_ARTIST;
   }
+
   return artistCrew.reduce((accumulator, pair, index) => {
-    const { artist, crew } = pair;
-    const artistName = artist?.name ?? EMPTY_ARTIST;
-    const currentName = crew?.name
-      ? `${artistName} (${crew.name})`
-      : artistName;
+    const currentName = resolveArtistCrew(pair);
+
     accumulator = accumulator.concat(currentName);
     if (index < artistCrew.length - 1) {
       accumulator = accumulator.concat("; ");
@@ -115,69 +197,83 @@ const getArtistsString = () => {
 };
 </script>
 
-<div class="card">
-  <div class="top">
-    <div class="posted-by">
-      <div class="subtitle">Posted by</div>
-      <button type="button" class="button" on:click={onUserClick}>
-        <div class="title">
-          {user?.name || $selectedUserProfileData?.name || ""}
-        </div>
-      </button>
-    </div>
-    <div class="status">
-      <div class="subtitle">Status</div>
-      <div class={`title ${status.toLowerCase()}`}>{status}</div>
-    </div>
-  </div>
-  <div class="img"><img src={img.src} alt={img.title} /></div>
-  <div class="bottom">
-    <div class="year">{year ?? EMPTY_YEAR_STRING}</div>
-    <div class="show-on-map-wrapper">
-      {#if $shouldDisplayShowOnMap}
-        <button
-          type="button"
-          class="show-on-map"
-          on:click={handleShowOnMapClick}>Show on map</button>
-      {/if}
-    </div>
-    <div class="buttons">
-      {#if link}
-        <div class="link">
-          <a href={link} target="_blank">External link to art</a>
-        </div>
-      {/if}
-      <div class="share">
-        <button type="button" on:click={() => onShareToggle(true)} />
+{#await getSpotData()}
+  <Spinner height={40} margin="auto" />
+{:then data}
+  <div class="card">
+    <div class="top">
+      <div class="posted-by">
+        <div class="subtitle">Posted by</div>
+        <button type="button" class="button" on:click={onUserClick}>
+          <div class="title">
+            {data.user?.name ||
+              data.user?.crew ||
+              $selectedUserProfileData?.name ||
+              ""}
+          </div>
+        </button>
       </div>
-      <div class="complain">
-        <button type="button" on:click={() => onComplainToggle(true)} />
+      <div class="status">
+        <div class="subtitle">Status</div>
+        <div class={`title ${data.status.toLowerCase()}`}>{data.status}</div>
       </div>
     </div>
-  </div>
-  <div class="artist-area">
-    <div class="subtitle">Artist</div>
-    <div class="title artist">{getArtistsString()}</div>
-  </div>
-  {#if description}
-    <div class="description">{description}</div>
-  {/if}
-  {#if video}
-    <div class="video">
-      {@html videoEmbed}
+    <div class="img"><img src={data.img.src} alt={data.img.title} /></div>
+    <div class="bottom">
+      <div class="year">{data.year ?? EMPTY_YEAR_STRING}</div>
+      <div class="show-on-map-wrapper">
+        {#if $shouldDisplayShowOnMap}
+          <button
+            type="button"
+            class="show-on-map"
+            on:click={handleShowOnMapClick}>Show on map</button>
+        {/if}
+      </div>
+      <div class="buttons">
+        {#if data.link}
+          <div class="link">
+            <a href={data.link} target="_blank" rel="noreferrer"
+              >External link to art</a>
+          </div>
+        {/if}
+        <div class="share">
+          <button
+            type="button"
+            class="button"
+            on:click={() => onShareToggle(true)}><ShareSvg /></button>
+        </div>
+        <div class="complain">
+          <button
+            type="button"
+            class="button"
+            on:click={() => onComplainToggle(true)} />
+        </div>
+      </div>
     </div>
+    <div class="artist-area">
+      <div class="subtitle">Artist/Crew</div>
+      <div class="title artist">{@html getArtistsString(data.artistCrew)}</div>
+    </div>
+    {#if data.description}
+      <div class="description">{data.description}</div>
+    {/if}
+    {#if data.video}
+      <div class="video" class:instagram={data.video.includes("instagr")}>
+        {@html getVideoEmbed(data.video)}
+      </div>
+    {/if}
+  </div>
+  {#if isShareOpened}
+    <Popup on:close={() => onShareToggle(false)} title="Share Link">
+      <ShareMarker />
+    </Popup>
   {/if}
-</div>
-{#if isShareOpened}
-  <Popup on:close={() => onShareToggle(false)} title="Share Link">
-    <ShareMarker {data} />
-  </Popup>
-{/if}
-{#if isComplainOpened}
-  <Popup on:close={() => onComplainToggle(false)} title="Complaint!">
-    <MarkerCardComplaint {onComplainToggle} spotId={id} />
-  </Popup>
-{/if}
+  {#if isComplainOpened}
+    <Popup on:close={() => onComplainToggle(false)} title="Complaint!">
+      <MarkerCardComplaint {onComplainToggle} spotId={id} />
+    </Popup>
+  {/if}
+{/await}
 
 <style lang="scss">
 .card {
@@ -200,16 +296,12 @@ const getArtistsString = () => {
 }
 
 .title {
-  display: -webkit-box;
-  overflow: hidden;
   color: var(--color-dark);
   font-size: 24px;
   font-weight: 900;
   line-height: 1.22;
   text-align: left;
   text-transform: uppercase;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
 }
 
 .posted-by {
@@ -311,7 +403,10 @@ const getArtistsString = () => {
 }
 
 .share button {
-  background: url(../../../images/share.svg) 50% 50% / auto no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
 }
 
 .complain button {
@@ -343,6 +438,12 @@ const getArtistsString = () => {
   margin-bottom: 24px;
   padding: 30px 0 56.25%;
   overflow: hidden;
+
+  &.instagram {
+    max-width: 370px;
+    margin: 0 auto 24px;
+    padding-bottom: min(182%, 670px);
+  }
 }
 
 @media (max-width: 767px) {

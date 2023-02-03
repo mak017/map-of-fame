@@ -7,7 +7,9 @@ import {
   INVITES_GET_FOR_USER,
   PRE_REG_EMAIL,
   PRE_REG_CONTACT,
+  USER_ID,
 } from "./endpoints";
+import { USER_TYPES } from "../constants";
 
 export const loginRequest = async (email, password) => {
   const data = new URLSearchParams();
@@ -33,6 +35,7 @@ export const verifyAuthRequest = async (token) => {
 };
 
 export const createUserRequest = async ({
+  username,
   name,
   email,
   password,
@@ -43,12 +46,17 @@ export const createUserRequest = async ({
   invite,
 }) => {
   const data = new URLSearchParams();
-  data.append("name", name);
+  data.append("username", username);
+  if (type !== USER_TYPES.crew.toLowerCase()) {
+    data.append("name", name);
+  }
   data.append("email", email);
   data.append("password", password);
   data.append("country", country);
   data.append("type", type);
-  data.append("crew", crew);
+  if (type !== USER_TYPES.hunter.toLowerCase()) {
+    data.append("crew", crew);
+  }
   data.append("link", link);
   if (invite) {
     data.append("invite", invite);
@@ -134,6 +142,12 @@ export const preRegContact = async (contact) => {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: data,
   });
+  const result = await response.json();
+  return result;
+};
+
+export const getUserData = async (username) => {
+  const response = await fetch(USER_ID(username), { method: "GET" });
   const result = await response.json();
   return result;
 };

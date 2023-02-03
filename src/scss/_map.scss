@@ -65,6 +65,7 @@
   .leaflet-area-draw-selection-pane {
     .draw-pane-help {
       bottom: 120px;
+      user-select: none;
     }
   }
 }
@@ -101,6 +102,10 @@
 .leaflet-area-selector-control,
 .leaflet-control-attribution svg {
   display: none;
+}
+
+.leaflet-control-attribution {
+  user-select: none;
 }
 
 @media (max-width: 767px) {

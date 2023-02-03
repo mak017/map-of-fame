@@ -9,7 +9,6 @@ import {
   requestSearchArtistsCrews,
   requestSearchSpots,
 } from "./../api/search.js";
-import { ALL_YEARS_STRING, ERROR_MESSAGES } from "../constants";
 import { permalink } from "../utils/mapUtils/permalink";
 import {
   isLighthouseActive,
@@ -18,13 +17,13 @@ import {
   selectedArtist,
   selectedCrew,
 } from "../store";
+
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
-// import Spinner from "./elements/Spinner.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import GridViewSvg from "./elements/icons/GridViewSvg.svelte";
 import ListViewSvg from "./elements/icons/ListViewSvg.svelte";
 
-export let showSearch;
+import { ALL_YEARS_STRING, ERROR_MESSAGES } from "../constants";
 
 const searchHistoryLimit = isMobile() ? 5 : 10;
 const EMPTY_ARTIST_OR_CREW = "---";
@@ -36,7 +35,6 @@ let crewError = "";
 let currentSearchFor = "";
 let fetchedList = [];
 let isFetched = false;
-// let isInProgress = false;
 let currentView = "list";
 let savedPreviousSearches = loadFromLocalStorage("prevSearchResults") || [];
 let previousSearches = savedPreviousSearches.slice(0, searchHistoryLimit);
@@ -75,7 +73,6 @@ const handleArtistClick = (artist, crew) => {
         selectedYear.set(ALL_YEARS_STRING);
       }
       permalink.update({ params: { artist, crew } });
-      showSearch(false);
     }
   });
 };

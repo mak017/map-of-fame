@@ -1,52 +1,59 @@
 <script>
+import { goto } from "@roxi/routify";
+
 import { requestSearchSpots } from "./../api/search.js";
-import { markersStore, selectedUserProfileData, userData } from "./../store.js";
+import {
+  isSearchResults,
+  markersStore,
+  selectedArtist,
+  selectedCrew,
+  selectedUserProfileData,
+  selectedYear,
+  settings,
+} from "./../store.js";
 import {
   getCurrentYear,
   isMobile,
   loadFromLocalStorage,
 } from "../utils/commonUtils.js";
-import { permalink } from "../utils/mapUtils/permalink.js";
 import { getDatesFilter, getProfileYears } from "../utils/datesUtils.js";
 import { requestSpots } from "../init.js";
 import { getUserSpots } from "../api/spot.js";
 
 import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../constants.js";
 
-export let selectedYear;
-export let showCalendar;
-export let yearStart;
-export let yearEnd;
-export let additionalYears;
-export let isSearch;
+let { yearStart, yearEnd, additionalYears } = $settings || {};
+
+$: if ($settings) {
+  yearStart = $settings.yearStart;
+  yearEnd = $settings.yearEnd;
+  additionalYears = $settings.additionalYears;
+}
 
 let searchYears = $markersStore.years?.map((year) =>
   year !== null ? `${year}` : EMPTY_YEAR_STRING
 );
 
-const datesFilter = getDatesFilter(yearStart, yearEnd, additionalYears);
+const datesFilter = getDatesFilter(
+  yearStart,
+  yearEnd,
+  additionalYears && JSON.parse(additionalYears)
+);
 
 const dates = !isMobile()
   ? [ALL_YEARS_STRING, ...datesFilter]
   : [ALL_YEARS_STRING, ...datesFilter.reverse()];
 
-const isCurrentUser =
-  !$selectedUserProfileData.id || $selectedUserProfileData.id === $userData.id;
-
 const token = loadFromLocalStorage("token") || null;
 
 const handleClick = (year) => {
-  const search = window.location.search;
-  const params = new URLSearchParams(search);
-  const { artist, crew } = permalink.getDataFromParams(params);
   const yearForRequest = year !== EMPTY_YEAR_STRING ? `${year}` : "";
 
   selectedYear.set(`${year}`);
-  if (!isSearch && !$selectedUserProfileData.id) {
+  if (!$isSearchResults && !$selectedUserProfileData.id) {
     requestSpots(year);
-    permalink.update({ clearParams: "all" });
-  } else if (isSearch) {
-    const requestParams = { artist, crew };
+  } else if ($isSearchResults) {
+    const requestParams = { artist: $selectedArtist, crew: $selectedCrew };
     if (yearForRequest !== ALL_YEARS_STRING) {
       requestParams.year = yearForRequest;
     }
@@ -54,11 +61,10 @@ const handleClick = (year) => {
       const { success, result } = response;
       if (success && result) {
         markersStore.set(result);
-        permalink.update({});
       }
     });
   } else if ($selectedUserProfileData.id) {
-    getUserSpots(isCurrentUser ? null : $selectedUserProfileData.id, token, {
+    getUserSpots($selectedUserProfileData.id, token, {
       year: yearForRequest,
       offset: 0,
       limit: 99999999999999,
@@ -68,11 +74,10 @@ const handleClick = (year) => {
         const { spots, years } = result;
         markersStore.set({ spots, years: getProfileYears(years) });
         document.getElementById("highlighted").innerHTML = "";
-        permalink.update({});
       }
     });
   }
-  showCalendar(false);
+  $goto("/");
 };
 </script>
 
@@ -88,7 +93,7 @@ const handleClick = (year) => {
           (searchYears?.length &&
             !searchYears?.includes(date) &&
             date !== ALL_YEARS_STRING) ||
-          (!isSearch && date === ALL_YEARS_STRING)}>{date}</a>
+          (!$isSearchResults && date === ALL_YEARS_STRING)}>{date}</a>
     </li>
   {/each}
 </ol>

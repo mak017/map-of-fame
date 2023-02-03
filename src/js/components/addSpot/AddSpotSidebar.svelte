@@ -1,11 +1,14 @@
 <script>
 import { fly } from "svelte/transition";
+
+import { shouldShowAddSpot } from "../../store";
 import { isMobile } from "../../utils/commonUtils";
+
 import CloseCrossSvg from "../elements/icons/CloseCrossSvg.svelte";
 import SpotForm from "../SpotForm.svelte";
 
-export let onCancel;
 export let marker;
+export let onCancel;
 </script>
 
 <div
@@ -13,12 +16,12 @@ export let marker;
   transition:fly={{ x: !isMobile() ? 364 : window.innerWidth, duration: 300 }}>
   <h2>Add Art</h2>
   {#if isMobile()}
-    <button class="close-mob" on:click={onCancel}>
+    <button class="close-mob" on:click={() => shouldShowAddSpot.set(false)}>
       <CloseCrossSvg />
     </button>
   {/if}
   <div class="form-wrapper">
-    <SpotForm {onCancel} {marker} />
+    <SpotForm {marker} {onCancel} />
   </div>
 </div>
 

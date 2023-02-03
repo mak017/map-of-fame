@@ -1,17 +1,18 @@
 <script>
-import watermark from "watermarkjs";
-import { reduceFileSize } from "./../utils/imageUtils.js";
-import FormTelInput from "./elements/FormTelInput.svelte";
-import { addWatermark } from "./../utils/addWatermark.js";
+import { requestSearchSpots } from "../api/search.js";
+import { getFirmsRequest } from "../api/settings";
 import { createSpot, getUserCategories, updateSpot } from "./../api/spot";
 import {
-  EMPTY_YEAR_STRING,
-  ERROR_MESSAGES,
-  MAX_IMAGE_FILE_SIZE,
-  STATUSES,
-  statusesOrdered,
-  USER_TYPES,
-} from "../constants";
+  getCurrentYear,
+  isEmpty,
+  isValidHttpUrl,
+  isYearLike,
+  loadFromLocalStorage,
+  validateVideoLink,
+} from "../utils/commonUtils";
+import { validateYear } from "../utils/datesUtils";
+import { processImage } from "./../utils/imageUtils.js";
+import { requestSpots } from "../init.js";
 import {
   firms,
   isSearchResults,
@@ -21,36 +22,36 @@ import {
   selectedUserProfileData,
   selectedYear,
   settings,
+  shouldShowAddSpot,
   userCategories,
   userData,
 } from "../store";
-import {
-  getCurrentYear,
-  isEmpty,
-  isValidHttpUrl,
-  isYearLike,
-  loadFromLocalStorage,
-  validateVideoLink,
-} from "../utils/commonUtils";
+
+import FormTelInput from "./elements/FormTelInput.svelte";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormRadioButton from "./elements/FormRadioButton.svelte";
 import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
-import { validateYear } from "../utils/datesUtils";
-import { getFirmsRequest } from "../api/settings";
-import { requestSpots } from "../init.js";
 import Spinner from "./elements/Spinner.svelte";
-import { requestSearchSpots } from "../api/search.js";
 
-export let onCancel;
-export let onSubmit = undefined;
+import {
+  EMPTY_YEAR_STRING,
+  ERROR_MESSAGES,
+  MAX_IMAGE_FILE_SIZE,
+  STATUSES,
+  statusesOrdered,
+  USER_TYPES,
+} from "../constants";
+
 export let marker = null;
 export let editSpotData = {};
+export let onCancel;
 
 const isEditSpot = !!editSpotData.img;
 
 const isArtist = () => $userData.type === USER_TYPES.artist.toLowerCase();
+const isCrew = () => $userData.type === USER_TYPES.crew.toLowerCase();
 const isHunter = () => $userData.type === USER_TYPES.hunter.toLowerCase();
 
 const getInitialYear = () => {
@@ -96,7 +97,7 @@ let artistCrewPairs =
     : [
         {
           artist: isArtist() ? $userData.name ?? "" : "",
-          crew: isArtist() ? $userData.crew ?? "" : "",
+          crew: isArtist() || isCrew() ? $userData.crew ?? "" : "",
         },
       ];
 const currentYear = getCurrentYear();
@@ -149,25 +150,38 @@ const onChangeImage = () => {
       const image = new Image();
       image.src = e.target.result;
       image.onload = function () {
-        watermark([file], { type: "image/jpeg" })
-          .blob((img) => addWatermark(img, $userData.name))
-          .then((blob) => {
-            imageBlob = new File([blob], "image.jpg");
-            console.debug("imageBlob.size", imageBlob.size >> 10, "KB");
-            if (imageBlob.size > MAX_IMAGE_FILE_SIZE) {
-              reduceFileSize(
-                imageBlob,
-                MAX_IMAGE_FILE_SIZE,
-                4200,
-                4200,
-                0.8,
-                (blob) => {
-                  imageBlob = new File([blob], "image.jpg");
-                }
-              );
+        if (file.size > MAX_IMAGE_FILE_SIZE) {
+          processImage(
+            file,
+            MAX_IMAGE_FILE_SIZE,
+            4200,
+            4200,
+            0.8,
+            true,
+            (blob) => {
+              imageBlob = new File([blob], "image.jpg");
+              imageFilePreview = URL.createObjectURL(imageBlob);
             }
-            imageFilePreview = URL.createObjectURL(imageBlob);
-          });
+          );
+        } else {
+          processImage(
+            file,
+            0,
+            Infinity,
+            Infinity,
+            0.85,
+            false,
+            (blob, isRotated) => {
+              if (isRotated) {
+                imageBlob = new File([blob], "image.jpg");
+                imageFilePreview = URL.createObjectURL(imageBlob);
+              } else {
+                imageBlob = file;
+                imageFilePreview = e.target.result;
+              }
+            }
+          );
+        }
       };
     };
 
@@ -337,7 +351,6 @@ const handleSubmit = () => {
         const { success, result } = response;
         isInProgress = false;
         if (success && result) {
-          onSubmit();
           onCancel();
         }
       });
@@ -495,7 +508,7 @@ const handleAddMoreClick = () => {
     <button
       type="button"
       class="cancel"
-      on:click={onCancel}
+      on:click={() => shouldShowAddSpot.set(false)}
       disabled={isInProgress}>Cancel</button>
   {/if}
 </form>

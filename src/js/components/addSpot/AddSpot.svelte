@@ -1,26 +1,30 @@
 <script>
 import { fade } from "svelte/transition";
+
+import { shouldShowAddSpot } from "../../store";
+
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import AddSpotSidebar from "./AddSpotSidebar.svelte";
 
-export let isAddSpotMode;
 export let isAddSpotSidebarVisible;
-export let onAddSpotBtnClick;
 export let newMarker;
 export let onCancel;
 </script>
 
-{#if !isAddSpotMode}
+{#if !$shouldShowAddSpot}
   <button
     class="button button-add_spot"
-    on:click={onAddSpotBtnClick}
+    on:click={() => shouldShowAddSpot.set(true)}
     transition:fade={{ duration: 200 }}>Add Art</button>
 {:else}
   <div class="main-top_right_wrapper">
-    <ButtonPrimary on:click={onCancel} text="Cancel" className="add-spot" />
+    <ButtonPrimary
+      on:click={() => shouldShowAddSpot.set(false)}
+      text="Cancel"
+      className="add-spot" />
   </div>
 {/if}
-{#if !isAddSpotSidebarVisible && isAddSpotMode}
+{#if !isAddSpotSidebarVisible && $shouldShowAddSpot}
   <div class="drag-to-map" transition:fade={{ duration: 200 }}>
     Drag pin to map
   </div>

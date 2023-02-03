@@ -18,7 +18,7 @@ export let isDisabled = false;
 
 const dispatch = createEventDispatcher();
 const blur = () => dispatch("blur");
-const input = () => dispatch("input");
+const input = (event) => dispatch("input", event);
 const keyDown = (event) => dispatch("keyDown", event);
 </script>
 

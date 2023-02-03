@@ -18,6 +18,7 @@ export const STATUSES = { live: "Live", buffed: "Buffed", unknown: "Unknown" };
 
 export const USER_TYPES = {
   artist: "Artist",
+  crew: "Crew",
   hunter: "Hunter",
   admin: "Admin",
   superUser: "Super User",
@@ -35,19 +36,19 @@ export const ALL_YEARS_STRING = "All";
 
 export const ENDPOINT_ORIGIN = process.env.SVELTE_APP_API_ENTRYPOINT;
 
-export const AUTH_MODALS = {
-  login: "login",
-  registration: "registration",
-  forgotPassword: "forgotPassword",
-  preRegistration: "preRegistration",
-};
+export const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
+
+export const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
 
 export const ERROR_MESSAGES = {
   emailEmpty: "Please enter your email",
   emailInvalid: "You have entered invalid email",
   passwordEmpty: "Please enter password",
   passwordInvalid: "Password must be between 8 to 20 characters",
-  usernameEmpty: "Please fill in your name",
+  profileSubtypeEmpty: "Please select profile subtype",
+  usernameEmpty: "Please fill in your username",
+  usernameInvalid: "Username can only contain latin letters and numbers",
+  nameEmpty: "Please fill in your name",
   countryCityEmpty: "Please specify where you from",
   fileEmpty: "Please upload image",
   fileTooLarge: "File size must be less than 5 MB",
@@ -55,7 +56,7 @@ export const ERROR_MESSAGES = {
     `Year is not in range of ${yearStart} - ${getCurrentYear()}`,
   sprayEmpty: "Please select spray paint used",
   genericEmpty: "This is required field",
-  videoLinkInvalid: "Youtube, Vimeo or Dailymotion links only",
+  videoLinkInvalid: "Youtube/Vimeo/Dailymotion/Instagram links only",
   categoryEmpty: "Please select at least 1 category",
   linkInvalid: "Link must start with http or https",
   fieldMinLength: (field, min) =>
