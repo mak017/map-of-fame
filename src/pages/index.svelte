@@ -33,7 +33,6 @@ import { openRailwayMap } from "../js/utils/mapUtils/tileLayers";
 import {
   getCurrentYear,
   getInviteData,
-  getResetPasswordToken,
   loadFromLocalStorage,
   saveToLocalStorage,
 } from "../js/utils/commonUtils";
@@ -51,7 +50,6 @@ import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
 
 let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isAddSpotSidebarVisible = false;
-let resetPasswordToken = getResetPasswordToken();
 let inviteData = getInviteData();
 
 let newMarker;
@@ -165,7 +163,7 @@ const quitAddSpot = () => {
     id="reset-password-modal"
     title="Reset Password"
     on:close={() => shouldShowResetPassword.set(false)}>
-    <ResetPassword {resetPasswordToken} />
+    <ResetPassword />
   </Modal>
 {:else}
   <div class="main-top_left_wrapper">

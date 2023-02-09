@@ -1,13 +1,19 @@
 <script>
 import { fade } from "svelte/transition";
+
 import { changePasswordReset } from "../../api/auth";
-import { ERROR_MESSAGES } from "../../constants";
-import { isLoggedIn, shouldShowResetPassword, userData } from "../../store";
+import {
+  isLoggedIn,
+  shouldShowResetPassword,
+  resetPasswordToken,
+  userData,
+} from "../../store";
 import { saveToLocalStorage, validatePassword } from "../../utils/commonUtils";
+
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormPasswordInput from "./../elements/FormPasswordInput.svelte";
 
-export let resetPasswordToken;
+import { ERROR_MESSAGES } from "../../constants";
 
 let password = "";
 let errorMessage = "";
@@ -30,18 +36,20 @@ const handleSubmit = () => {
   validate();
   if (!errorMessage) {
     isInProgress = true;
-    changePasswordReset(resetPasswordToken.token, password).then((response) => {
-      const { success, result } = response;
-      isInProgress = false;
-      if (success && result) {
-        userData.set(resetPasswordToken);
-        isLoggedIn.set(true);
-        saveToLocalStorage("token", resetPasswordToken.token);
-        shouldShowResetPassword.set(false);
-      } else {
-        errorMessage = "Something went wrong";
+    changePasswordReset($resetPasswordToken.token, password).then(
+      (response) => {
+        const { success, result } = response;
+        isInProgress = false;
+        if (success && result) {
+          userData.set($resetPasswordToken);
+          isLoggedIn.set(true);
+          saveToLocalStorage("token", $resetPasswordToken.token);
+          shouldShowResetPassword.set(false);
+        } else {
+          errorMessage = "Something went wrong";
+        }
       }
-    });
+    );
   }
 };
 

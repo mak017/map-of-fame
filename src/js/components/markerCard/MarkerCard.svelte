@@ -446,12 +446,14 @@ const getArtistsString = (artistCrew) => {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1039px) {
   .card {
     margin-bottom: 0;
     padding-top: 38px;
   }
+}
 
+@media (max-width: 767px) {
   .posted-by {
     button {
       &::before {
