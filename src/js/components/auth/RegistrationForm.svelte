@@ -173,6 +173,10 @@ const handleSubmit = () => {
             errors.email = error.email;
             step = 1;
           }
+          if (error?.password) {
+            errors.password = error.password[0];
+            step = 1;
+          }
           if (Array.isArray(error)) {
             errors.link = error[0];
           }

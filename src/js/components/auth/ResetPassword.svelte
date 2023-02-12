@@ -38,7 +38,7 @@ const handleSubmit = () => {
     isInProgress = true;
     changePasswordReset($resetPasswordToken.token, password).then(
       (response) => {
-        const { success, result } = response;
+        const { success, result, errors } = response;
         isInProgress = false;
         if (success && result) {
           userData.set($resetPasswordToken);
@@ -46,7 +46,7 @@ const handleSubmit = () => {
           saveToLocalStorage("token", $resetPasswordToken.token);
           shouldShowResetPassword.set(false);
         } else {
-          errorMessage = "Something went wrong";
+          errorMessage = errors?.password?.[0] ?? "Something went wrong";
         }
       }
     );
