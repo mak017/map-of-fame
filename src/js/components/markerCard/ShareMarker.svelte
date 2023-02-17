@@ -6,7 +6,7 @@ import FormTextInput from "../elements/FormTextInput.svelte";
 
 const { href } = window.location;
 
-const onButtonClick = () => copyToClipboard(link);
+const onButtonClick = () => copyToClipboard(href);
 </script>
 
 <div class="input">
