@@ -16,7 +16,7 @@ export const validateEmail = (email) =>
     email
   );
 
-export const validateUsername = (username) => /^[a-z0-9]+$/i.test(username);
+export const validateUsername = (username) => /^[a-z0-9_]+$/i.test(username);
 
 export const validatePassword = (password) => /^(?=.*).{8,20}$/.test(password);
 

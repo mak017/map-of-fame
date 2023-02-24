@@ -16,10 +16,10 @@ import { requestSpots } from "../init.js";
 import {
   firms,
   isSearchResults,
+  map,
   markersStore,
   selectedArtist,
   selectedCrew,
-  selectedUserProfileData,
   selectedYear,
   settings,
   shouldShowAddSpot,
@@ -43,6 +43,7 @@ import {
   statusesOrdered,
   USER_TYPES,
 } from "../constants";
+import { permalink } from "../utils/mapUtils/permalink.js";
 
 export let marker = null;
 export let editSpotData = {};
@@ -307,25 +308,23 @@ const handleSubmit = () => {
         const { success, result, errors: error } = response;
         isInProgress = false;
         if (success && result) {
-          if (
-            ($selectedYear === year ||
-              (!year && $selectedYear === EMPTY_YEAR_STRING)) &&
-            !$selectedUserProfileData.id
-          ) {
-            if (!$isSearchResults) {
-              requestSpots($selectedYear);
-            } else if (isSelectedArtistCrew()) {
-              requestSearchSpots({
-                artist: $selectedArtist,
-                crew: $selectedCrew,
-                year: $selectedYear,
-              }).then((response) => {
-                const { success, result } = response;
-                if (success && result) {
-                  markersStore.set(result);
-                }
-              });
-            }
+          const yearForRequest = year || EMPTY_YEAR_STRING;
+
+          selectedYear.set(yearForRequest);
+          if (!$isSearchResults) {
+            requestSpots($selectedYear);
+            permalink.update({ mapContainer: $map });
+          } else if (isSelectedArtistCrew()) {
+            requestSearchSpots({
+              artist: $selectedArtist,
+              crew: $selectedCrew,
+              year: $selectedYear,
+            }).then((response) => {
+              const { success, result } = response;
+              if (success && result) {
+                markersStore.set(result);
+              }
+            });
           }
           onCancel();
         }
