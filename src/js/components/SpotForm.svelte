@@ -67,9 +67,12 @@ const getInitialYear = () => {
   return "";
 };
 
+const currentYear = getCurrentYear();
 let year = getInitialYear();
 let prevYearValue = "";
-let selectedStatus = editSpotData.spotStatus || STATUSES.live;
+let selectedStatus =
+  editSpotData.spotStatus ??
+  (currentYear - +year > 10 ? STATUSES.buffed : STATUSES.live);
 let imageFile;
 let imageFilePreview = editSpotData.img || "";
 let imageBlob;
@@ -101,7 +104,7 @@ let artistCrewPairs =
           crew: isArtist() || isCrew() ? $userData.crew ?? "" : "",
         },
       ];
-const currentYear = getCurrentYear();
+
 const token = loadFromLocalStorage("token") || null;
 
 const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
