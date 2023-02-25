@@ -438,15 +438,6 @@ const handleAddMoreClick = () => {
       id="upload-image"
       type="file" />
   </div>
-  <FormTextInput
-    label="Link To Video"
-    bind:value={linkToVideo}
-    errorText={errors.linkToVideo}
-    on:input={handleVideoLinkChange}
-    wideOnMobile
-    editSpot={isEditSpot}
-    addSpot={!isEditSpot}
-    link />
   <div class="description">
     <FormTextArea
       placeholder="Description"
@@ -485,6 +476,15 @@ const handleAddMoreClick = () => {
       {/if}
     </div>
   {/if}
+  <FormTextInput
+    label="Link To Video"
+    bind:value={linkToVideo}
+    errorText={errors.linkToVideo}
+    on:input={handleVideoLinkChange}
+    wideOnMobile
+    editSpot={isEditSpot}
+    addSpot={!isEditSpot}
+    link />
   <div class="link-to-work">
     <FormTextInput
       label="Link To Work"

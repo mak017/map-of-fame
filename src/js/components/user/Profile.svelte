@@ -232,14 +232,17 @@ const onSpotClick = (spot) => {
   });
 };
 
-const handleShowOnMapClick = () => {
+const handleShowOnMapClick = (showAll) => {
   if (!$selectedUserProfileData.id && isCurrentUser) {
     selectedUserProfileData.set($userData ?? {});
   } else {
     selectedUserProfileData.set(user);
   }
   getUserSpots(strippedUsername, token, {
-    year: `${currentYear}`,
+    year:
+      showAll || currentYear === ALL_YEARS_STRING
+        ? undefined
+        : `${currentYear}`,
     offset: 0,
     limit: 99999999999999,
   }).then((response) => {
@@ -301,12 +304,10 @@ const handleShowOnMapClick = () => {
               isYear
               on:select={handleYearSelect} />
           </div>
-          {#if currentYear !== ALL_YEARS_STRING}
-            <button
-              type="button"
-              class="button show-on-map"
-              on:click={handleShowOnMapClick}>Show on map</button>
-          {/if}
+          <button
+            type="button"
+            class="button show-on-map"
+            on:click={handleShowOnMapClick}>Show on map</button>
         </div>
       {/if}
       {#if !isLoading}
@@ -372,10 +373,10 @@ const handleShowOnMapClick = () => {
 </div>
 
 {#if $isFirstTimeVisit && !isLoading && !isCurrentUser}
-  <a
-    href={$url("../")}
-    class="go-to-map"
-    on:click={() => selectedUserProfileData.set({})}>Go to map</a>
+  <button
+    type="button"
+    class="button go-to-map"
+    on:click={() => handleShowOnMapClick(true)}>Go to map</button>
 {/if}
 
 {#if showDeletePopup}
