@@ -78,7 +78,7 @@ let imageFilePreview = editSpotData.img || "";
 let imageBlob;
 let linkToVideo = editSpotData.videoLink || "";
 let description = editSpotData.description || "";
-let selectedCategory = null;
+let selectedCategory;
 let sprayPaintUsed;
 let link = editSpotData.link || "";
 let isSubmitDisabled = false;
@@ -87,6 +87,7 @@ let errors = {
   year: "",
   imageFile: "",
   linkToVideo: "",
+  selectedCategory: "",
   sprayPaintUsed: "",
   link: "",
   artistCrewPairs: "",
@@ -115,7 +116,7 @@ $: isSubmitDisabled =
 const getInitialCategory = (categories) =>
   isEditSpot
     ? categories.find((cat) => cat.id === editSpotData.categoryId)
-    : categories[0];
+    : undefined;
 
 const hasCategories = () =>
   Array.isArray($userCategories) && $userCategories.length;
@@ -220,6 +221,12 @@ const validateImage = () => {
     errors.imageFile || !imageFilePreview ? ERROR_MESSAGES.fileEmpty : "";
 };
 
+const validateCategory = () => {
+  errors.selectedCategory = !selectedCategory
+    ? ERROR_MESSAGES.categoryEmpty
+    : "";
+};
+
 const validateFirm = () => {
   if (!isHunter() && !isEditSpot) {
     errors.sprayPaintUsed = !sprayPaintUsed ? ERROR_MESSAGES.sprayEmpty : "";
@@ -240,6 +247,7 @@ const validateLink = () => {
 const validate = () => {
   validateYearInput();
   validateImage();
+  validateCategory();
   validateFirm();
   validateVideoLinkInput();
   validateLink();
@@ -268,6 +276,12 @@ const handleSpraySelect = () => {
   }
 };
 
+const handleCategorySelect = () => {
+  if (isSubmitDisabled || isFormHasErrors()) {
+    errors.selectedCategory = "";
+  }
+};
+
 const handleLinkChange = () => {
   if (isSubmitDisabled || isFormHasErrors()) {
     errors.link = "";
@@ -284,6 +298,7 @@ const handleSubmit = () => {
   if (
     !errors.year &&
     !errors.imageFile &&
+    !errors.selectedCategory &&
     !errors.sprayPaintUsed &&
     !errors.linkToVideo &&
     !errors.link
@@ -451,14 +466,15 @@ const handleAddMoreClick = () => {
   </div>
   <div class="category">
     {#if $userCategories.length > 0}
-      {#each $userCategories as category}
-        <FormRadioButton
-          id={category.id}
-          bind:group={selectedCategory}
-          value={category}
-          label={category.name}
-          className={!isEditSpot ? "addSpot" : ""} />
-      {/each}
+      <CustomSelect
+        items={$userCategories}
+        bind:selectedValue={selectedCategory}
+        on:select={handleCategorySelect}
+        placeholder="Art Category"
+        optionIdentifier="name"
+        addSpot={!isEditSpot}
+        {getOptionLabel}
+        {getSelectionLabel} />
     {:else}
       <Spinner height={30} margin="5px 0 5.5px" />
     {/if}
@@ -541,8 +557,7 @@ form {
   text-transform: uppercase;
 }
 
-.status,
-.category {
+.status {
   display: flex;
 }
 

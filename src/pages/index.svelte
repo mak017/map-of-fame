@@ -45,6 +45,7 @@ import Modal from "../js/components/Modal.svelte";
 import AddSpot from "../js/components/addSpot/AddSpot.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
 import Spinner from "../js/components/elements/Spinner.svelte";
+import CategoryFilter from "../js/components/CategoryFilter.svelte";
 
 import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
 
@@ -194,6 +195,8 @@ const quitAddSpot = () => {
       </button>
     {/if}
   </div>
+
+  <CategoryFilter />
 
   <div class="main-top_right_wrapper">
     {#if !$shouldShowAddSpot && !$isAreaSelectionActive}
