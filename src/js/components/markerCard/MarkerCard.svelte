@@ -28,7 +28,7 @@ import ShareMarker from "./ShareMarker.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
 import Spinner from "../elements/Spinner.svelte";
 
-import { EMPTY_YEAR_STRING, MAX_ZOOM } from "./../../constants.js";
+import { EMPTY_YEAR_STRING, MAX_ZOOM } from "../../constants.js";
 
 const emojiList = [
   "👽",

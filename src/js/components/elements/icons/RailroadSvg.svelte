@@ -1,5 +1,6 @@
 <script>
 export let isLight = false;
+export let isActive = false;
 </script>
 
 <svg
@@ -7,7 +8,8 @@ export let isLight = false;
   height="22"
   viewBox="0 0 20 22"
   xmlns="http://www.w3.org/2000/svg"
-  class:isLight>
+  class:isLight
+  class:isActive>
   <path
     d="M5.52323 0H4.05078C3.69487 0 3.40625 0.288578 3.40625 0.644531V21.3555C3.40625 21.7114 3.69487 22 4.05078 22H5.52323C5.87923 22 6.16777 21.7114 6.16777 21.3555V0.644531C6.16777 0.288578 5.87923 0 5.52323 0Z" />
   <path
@@ -41,6 +43,11 @@ path {
 .isLight {
   path {
     fill: var(--color-light);
+  }
+}
+.isActive {
+  path {
+    fill: var(--color-accent);
   }
 }
 </style>
