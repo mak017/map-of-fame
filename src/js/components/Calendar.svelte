@@ -42,7 +42,7 @@ const datesFilter = getDatesFilter(
 
 const dates = !isMobile()
   ? [ALL_YEARS_STRING, ...datesFilter]
-  : [ALL_YEARS_STRING, ...datesFilter.reverse()];
+  : [...datesFilter.reverse(), ALL_YEARS_STRING];
 
 const token = loadFromLocalStorage("token") || null;
 
@@ -141,7 +141,9 @@ li {
 
 @media (max-width: 767px) {
   .years-list {
-    columns: 3;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-column-gap: 16px;
   }
 }
 </style>
