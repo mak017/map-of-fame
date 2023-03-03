@@ -195,9 +195,6 @@ const onSubmitChanges = () => {
 };
 
 const onSpotClick = (spot) => {
-  if (isCurrentUser) {
-    return;
-  }
   selectedUserProfileData.set(user);
   const {
     id,
@@ -227,7 +224,7 @@ const onSpotClick = (spot) => {
   });
   shouldDisplayShowOnMap.set(true);
   $goto("/@:username/spot/:id", {
-    username: user.username,
+    username: isCurrentUser ? strippedUsername : user.username,
     id,
   });
 };
@@ -330,6 +327,13 @@ const handleShowOnMapClick = (showAll) => {
                 in:fade={{ duration: 200 }} />
               {#if isCurrentUser}
                 <div class="overlay">
+                  <a
+                    href={$url("/:username/spot/:id", {
+                      username,
+                      id: spot.id,
+                    })}
+                    class="button view"
+                    on:click|preventDefault={() => onSpotClick(spot)}>👁</a>
                   <button
                     type="button"
                     class="button edit"
@@ -576,6 +580,7 @@ const handleShowOnMapClick = (showAll) => {
   }
 }
 
+.view,
 .edit,
 .delete {
   width: 54px;
@@ -584,6 +589,15 @@ const handleShowOnMapClick = (showAll) => {
   background-color: var(--color-accent);
   background-repeat: no-repeat;
   background-position: 50% 50%;
+}
+
+.view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-light);
+  text-decoration: none;
+  font-size: 32px;
 }
 
 .edit {
