@@ -40,14 +40,10 @@ export let isActive = false;
 path {
   fill: var(--color-dark);
 }
-.isLight {
-  path {
-    fill: var(--color-light);
-  }
-}
+.isLight,
 .isActive {
   path {
-    fill: var(--color-accent);
+    fill: var(--color-light);
   }
 }
 </style>

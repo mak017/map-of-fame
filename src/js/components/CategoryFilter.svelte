@@ -1,24 +1,42 @@
 <script>
-import { categoriesList } from "../store";
+import { fade } from "svelte/transition";
+
+import { requestRecentSpots, requestSpots } from "../init";
+import {
+  categoriesList,
+  isLighthouseActive,
+  map,
+  selectedYear,
+} from "../store";
 import { loadFromLocalStorage, saveToLocalStorage } from "../utils/commonUtils";
+import { openRailwayMap } from "../utils/mapUtils/tileLayers";
+
 import CategoryIcon from "./elements/CategoryIcon.svelte";
 import ArrowLeftSvg from "./elements/icons/ArrowLeftSvg.svelte";
 
 let isOpened = false;
-let categories = $categoriesList.filter((category) => !category.isAdditional);
+let categories;
+let selectedCategories = loadFromLocalStorage("categories") || [1];
 $: categories = $categoriesList.filter((category) => !category.isAdditional);
-console.log("categories :>> ", categories);
-const selectedCategories = loadFromLocalStorage("categories") || [1];
 
 const handleCategoryClick = (id) => {
   const isSelected = selectedCategories.includes(id);
-  const updatedCategories = isSelected
+  selectedCategories = isSelected
     ? selectedCategories.filter((categoryId) => categoryId !== id)
     : [...selectedCategories, id];
-  saveToLocalStorage("categories", updatedCategories);
-};
+  saveToLocalStorage("categories", selectedCategories);
+  !$isLighthouseActive ? requestSpots($selectedYear) : requestRecentSpots();
 
-const isCategoryActive = (id) => selectedCategories.includes(id);
+  const isTrainsSelected = selectedCategories.includes(2);
+  const hasRailwayLayer = $map.hasLayer(openRailwayMap);
+  if (isTrainsSelected && !hasRailwayLayer) {
+    $map.addLayer(openRailwayMap);
+  }
+
+  if (!isTrainsSelected && hasRailwayLayer) {
+    $map.removeLayer(openRailwayMap);
+  }
+};
 </script>
 
 <div class="wrapper">
@@ -26,7 +44,8 @@ const isCategoryActive = (id) => selectedCategories.includes(id);
     type="button"
     class="button button-filter"
     class:isOpened
-    on:click={() => (isOpened = !isOpened)}>
+    on:click={() => (isOpened = !isOpened)}
+    transition:fade={{ duration: 200 }}>
     {#if isOpened}
       <span>
         <ArrowLeftSvg isDarkColor isArrowUp />
@@ -38,13 +57,13 @@ const isCategoryActive = (id) => selectedCategories.includes(id);
       {#each categories as category}
         <li>
           <button
-            type="button button-category"
-            class={`button category-${category.id}`}
-            class:isActive={isCategoryActive(category.id)}
+            type="button"
+            class={`button button-category category-${category.id}`}
+            class:isActive={selectedCategories.includes(category.id)}
             on:click={() => handleCategoryClick(category.id)}>
             <CategoryIcon
               categoryId={category.id}
-              isActive={isCategoryActive()} />
+              isActive={selectedCategories.includes(category.id)} />
             <span>{category.name}</span></button>
         </li>
       {/each}
@@ -57,6 +76,27 @@ const isCategoryActive = (id) => selectedCategories.includes(id);
   position: absolute;
   top: 68px;
   left: 18px;
+}
+
+li {
+  &:nth-child(odd) {
+    .button-category.isActive {
+      background-color: var(--color-accent);
+    }
+  }
+
+  &:nth-child(even) {
+    .button-category.isActive {
+      background-color: rgba(#650d97, 0.9);
+    }
+  }
+
+  &:last-child {
+    .button-category {
+      border-bottom-right-radius: 2px;
+      border-bottom-left-radius: 2px;
+    }
+  }
 }
 
 .button {
@@ -80,12 +120,25 @@ const isCategoryActive = (id) => selectedCategories.includes(id);
     }
 
     &.isOpened {
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
       background-color: var(--color-lotion);
       background-image: none;
     }
   }
 
   &-category {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 5px 5px 0;
+    border-radius: 0;
+    font-size: 11px;
+
+    &.isActive {
+      color: var(--color-light);
+    }
   }
 }
 </style>

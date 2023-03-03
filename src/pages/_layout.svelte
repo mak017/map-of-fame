@@ -35,7 +35,7 @@ import Loader from "../js/components/elements/Loader.svelte";
 
 globalGoto.set($goto);
 
-let isRailwayMode = loadFromLocalStorage("railwayMode");
+let selectedCategories = loadFromLocalStorage("categories") || [1];
 
 areaSelection.set(
   new DrawAreaSelection({
@@ -60,7 +60,7 @@ areaSelection.set(
 
 // Init leaflet map
 const initMap = (container) => {
-  const layers = isRailwayMode
+  const layers = selectedCategories.includes(2)
     ? [openStreetMapMapnik, openRailwayMap]
     : [openStreetMapMapnik];
   map.set(L.map(container, { layers }));

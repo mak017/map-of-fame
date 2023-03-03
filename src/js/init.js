@@ -126,11 +126,13 @@ export const performSearch = ({ artist, crew, year, geoRect, isInitial }) => {
 };
 
 export const requestRecentSpots = () => {
-  const isRailwayMode = loadFromLocalStorage("railwayMode");
-  let categories = null;
-  if (!isRailwayMode) {
-    categories = [1, 3, 4, 5, 6];
+  let categories = loadFromLocalStorage("categories");
+
+  if (!categories) {
+    categories = [1];
+    saveToLocalStorage("categories", categories);
   }
+
   getRecentSpots(7, bounds, categories).then((response) => {
     const { success, result } = response;
     if (success && result) {

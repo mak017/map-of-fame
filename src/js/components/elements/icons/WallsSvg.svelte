@@ -19,7 +19,7 @@ path {
 }
 .isActive {
   path {
-    fill: var(--color-accent);
+    fill: var(--color-light);
   }
 }
 </style>

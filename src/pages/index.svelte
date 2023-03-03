@@ -29,18 +29,15 @@ import {
   isAreaSelectionActive,
   isPermalinkReady,
 } from "../js/store.js";
-import { openRailwayMap } from "../js/utils/mapUtils/tileLayers";
 import {
   getCurrentYear,
   getInviteData,
-  loadFromLocalStorage,
   saveToLocalStorage,
 } from "../js/utils/commonUtils";
 import { permalink } from "../js/utils/mapUtils/permalink";
 import { newMarkerIcon } from "../js/utils/mapUtils/icons";
 
 import CloseCrossSvg from "../js/components/elements/icons/CloseCrossSvg.svelte";
-import RailroadSvg from "../js/components/elements/icons/RailroadSvg.svelte";
 import Modal from "../js/components/Modal.svelte";
 import AddSpot from "../js/components/addSpot/AddSpot.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
@@ -49,7 +46,6 @@ import CategoryFilter from "../js/components/CategoryFilter.svelte";
 
 import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
 
-let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isAddSpotSidebarVisible = false;
 let inviteData = getInviteData();
 
@@ -102,18 +98,6 @@ const toggleAreaSelectionMode = (toggle) => {
 if (inviteData) {
   showAuth(true);
 }
-
-const handleChangeModeClick = () => {
-  if (!isRailwayMode) {
-    $map.addLayer(openRailwayMap);
-    isRailwayMode = true;
-  } else {
-    $map.removeLayer(openRailwayMap);
-    isRailwayMode = false;
-  }
-  saveToLocalStorage("railwayMode", isRailwayMode);
-  !$isLighthouseActive ? requestSpots($selectedYear) : requestRecentSpots();
-};
 
 const handleNewMarkerMoveEnd = () => {
   if (!isAddSpotSidebarVisible) {
@@ -196,7 +180,9 @@ const quitAddSpot = () => {
     {/if}
   </div>
 
-  <CategoryFilter />
+  {#if !$isSearchResults && !$selectedUserProfileData.name && !$isAreaSelectionActive && !$isShowOnMapMode}
+    <CategoryFilter />
+  {/if}
 
   <div class="main-top_right_wrapper">
     {#if !$shouldShowAddSpot && !$isAreaSelectionActive}
@@ -253,17 +239,6 @@ const quitAddSpot = () => {
       </a>
     {/if}
   </div>
-
-  {#if !$isSearchResults && !$selectedUserProfileData.name && !$isAreaSelectionActive && !$isShowOnMapMode}
-    <button
-      class="button button-main_screen button-square button-switch_mode"
-      class:active={isRailwayMode}
-      on:click={handleChangeModeClick}
-      transition:fade={{ duration: 200 }}
-      title="Highlight railways">
-      <RailroadSvg isLight={isRailwayMode} />
-    </button>
-  {/if}
 
   {#if !$isSearchResults && !$isShowOnMapMode && !$shouldShowAddSpot && !$selectedUserProfileData.name && ($isAreaSelectionActive || $currentZoom > 14)}
     <button
@@ -412,19 +387,6 @@ const quitAddSpot = () => {
     background-size: 9px 17px;
     color: transparent;
     font-size: 0;
-  }
-
-  &-switch_mode {
-    display: flex;
-    position: absolute;
-    bottom: 18px;
-    left: 70px;
-    align-items: center;
-    justify-content: center;
-
-    &.active {
-      background-color: var(--color-accent);
-    }
   }
 
   &-select_area {
