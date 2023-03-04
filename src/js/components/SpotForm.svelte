@@ -73,9 +73,21 @@ let prevYearValue = "";
 let selectedStatus =
   editSpotData.spotStatus ??
   (currentYear - +year > 10 ? STATUSES.buffed : STATUSES.live);
-let imageFile;
-let imageFilePreview = editSpotData.img || "";
-let imageBlob;
+let image = {
+  file: undefined,
+  filePreview: editSpotData.img || "",
+  blob: undefined,
+};
+let image2 = {
+  file: undefined,
+  filePreview: "",
+  blob: undefined,
+};
+let sketch = {
+  file: undefined,
+  filePreview: "",
+  blob: undefined,
+};
 let linkToVideo = editSpotData.videoLink || "";
 let description = editSpotData.description || "";
 let selectedCategory;
@@ -146,15 +158,24 @@ if (!isEditSpot && !isHunter() && !hasSprays()) {
   });
 }
 
-const onChangeImage = () => {
-  const file = imageFile[0];
+const onChangeImage = (imageType) => {
+  let imageObject = { ...image };
+  if (imageType === "image2") {
+    imageObject = { ...image2 };
+  }
+
+  if (imageType === "sketch") {
+    imageObject = { ...sketch };
+  }
+
+  const file = imageObject.file[0];
   if (file) {
     const reader = new FileReader();
 
     reader.onload = function (e) {
-      const image = new Image();
-      image.src = e.target.result;
-      image.onload = function () {
+      const img = new Image();
+      img.src = e.target.result;
+      img.onload = function () {
         if (file.size > MAX_IMAGE_FILE_SIZE) {
           processImage(
             file,
@@ -164,8 +185,24 @@ const onChangeImage = () => {
             0.8,
             true,
             (blob) => {
-              imageBlob = new File([blob], "image.jpg");
-              imageFilePreview = URL.createObjectURL(imageBlob);
+              const newBlob = new File([blob], "image.jpg");
+              imageObject = {
+                ...imageObject,
+                blob: newBlob,
+                filePreview: URL.createObjectURL(newBlob),
+              };
+
+              if (imageType === "image") {
+                image = { ...imageObject };
+              }
+
+              if (imageType === "image2") {
+                image2 = { ...imageObject };
+              }
+
+              if (imageType === "sketch") {
+                sketch = { ...imageObject };
+              }
             }
           );
         } else {
@@ -177,12 +214,25 @@ const onChangeImage = () => {
             0.85,
             false,
             (blob, isRotated) => {
-              if (isRotated) {
-                imageBlob = new File([blob], "image.jpg");
-                imageFilePreview = URL.createObjectURL(imageBlob);
-              } else {
-                imageBlob = file;
-                imageFilePreview = e.target.result;
+              const newBlob = new File([blob], "image.jpg");
+              imageObject = isRotated
+                ? {
+                    ...imageObject,
+                    blob: newBlob,
+                    filePreview: URL.createObjectURL(newBlob),
+                  }
+                : { ...imageObject, blob: file, filePreview: e.target.result };
+
+              if (imageType === "image") {
+                image = { ...imageObject };
+              }
+
+              if (imageType === "image2") {
+                image2 = { ...imageObject };
+              }
+
+              if (imageType === "sketch") {
+                sketch = { ...imageObject };
               }
             }
           );
@@ -196,6 +246,24 @@ const onChangeImage = () => {
     } else {
       errors.imageFile = ERROR_MESSAGES.fileTooLarge;
     }
+  }
+};
+
+const onRemoveImage = (imageType) => {
+  if (imageType === "image2") {
+    image2 = {
+      file: undefined,
+      filePreview: "",
+      blob: undefined,
+    };
+  }
+
+  if (imageType === "sketch") {
+    sketch = {
+      file: undefined,
+      filePreview: "",
+      blob: undefined,
+    };
   }
 };
 
@@ -218,7 +286,7 @@ const validateYearInput = () => {
 
 const validateImage = () => {
   errors.imageFile =
-    errors.imageFile || !imageFilePreview ? ERROR_MESSAGES.fileEmpty : "";
+    errors.imageFile || !image.filePreview ? ERROR_MESSAGES.fileEmpty : "";
 };
 
 const validateCategory = () => {
@@ -313,7 +381,7 @@ const handleSubmit = () => {
         lng,
         year,
         spotStatus: selectedStatus,
-        img: imageBlob,
+        img: image.blob,
         videoLink: linkToVideo,
         description,
         categoryId: selectedCategory.id,
@@ -358,7 +426,7 @@ const handleSubmit = () => {
       updateSpot(token, editSpotData.id, {
         year,
         spotStatus: selectedStatus,
-        img: imageBlob,
+        img: image.blob,
         videoLink: linkToVideo,
         description,
         categoryId: selectedCategory.id,
@@ -439,21 +507,67 @@ const handleAddMoreClick = () => {
     {/each}
   </div>
   <div class="upload-image">
-    {#if imageFilePreview}
-      <img src={imageFilePreview} alt="Preview" class="preview_image" />
+    {#if image.filePreview}
+      <img src={image.filePreview} alt="Preview" class="preview_image" />
       <label for="upload-image" class="re-upload" />
     {:else}
       <label for="upload-image" class="first_upload">
-        <span>Add Image</span>
+        <span>Add Image (1 of 2)</span>
         <span>Max 10 Mb</span>
       </label>
     {/if}
     {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
     <input
       accept="image/png, image/jpeg"
-      bind:files={imageFile}
-      on:change={onChangeImage}
+      bind:files={image.file}
+      on:change={() => onChangeImage("image")}
       id="upload-image"
+      type="file" />
+  </div>
+  {#if image.filePreview}
+    <div class="upload-image upload-image2">
+      {#if image2.filePreview}
+        <img src={image2.filePreview} alt="Preview" class="preview_image" />
+        <label for="upload-image2" class="re-upload" />
+        <button
+          type="button"
+          class="button delete"
+          on:click={() => onRemoveImage("image2")} />
+      {:else}
+        <label for="upload-image2" class="first_upload">
+          <span>Add Image (2 of 2)</span>
+          <span>Max 10 Mb</span>
+        </label>
+      {/if}
+      {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
+      <input
+        accept="image/png, image/jpeg"
+        bind:files={image2.file}
+        on:change={() => onChangeImage("image2")}
+        id="upload-image2"
+        type="file" />
+    </div>
+  {/if}
+  <div class="upload-image upload-sketch">
+    {#if sketch.filePreview}
+      <img src={sketch.filePreview} alt="Preview" class="preview_image" />
+      <label for="upload-sketch" class="re-upload" />
+      <button
+        type="button"
+        class="button delete"
+        on:click={() => onRemoveImage("sketch")} />
+    {:else}
+      <label for="upload-sketch" class="first_upload">
+        <span>Add Sketch</span>
+        <span>Max 10 Mb</span>
+      </label>
+    {/if}
+    {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
+    <input
+      accept="image/png, image/jpeg"
+      bind:files={sketch.file}
+      on:change={() => onChangeImage("sketch")}
+      id="upload-sketch"
       type="file" />
   </div>
   <div class="description">
@@ -495,15 +609,17 @@ const handleAddMoreClick = () => {
       {/if}
     </div>
   {/if}
-  <FormTextInput
-    label="Link To Video"
-    bind:value={linkToVideo}
-    errorText={errors.linkToVideo}
-    on:input={handleVideoLinkChange}
-    wideOnMobile
-    editSpot={isEditSpot}
-    addSpot={!isEditSpot}
-    link />
+  <div class="link-to-video">
+    <FormTextInput
+      label="Link To Video"
+      bind:value={linkToVideo}
+      errorText={errors.linkToVideo}
+      on:input={handleVideoLinkChange}
+      wideOnMobile
+      editSpot={isEditSpot}
+      addSpot={!isEditSpot}
+      link />
+  </div>
   <div class="link-to-work">
     <FormTextInput
       label="Link To Work"
@@ -564,7 +680,15 @@ form {
 .upload-image {
   position: relative;
   height: 136px;
-  margin: 15px 0;
+  margin: 15px 0 8px;
+
+  &.upload-image2 {
+    margin: 0 0 8px;
+  }
+
+  &.upload-sketch {
+    margin: 0 0 15px;
+  }
 
   .first_upload {
     display: flex;
@@ -614,12 +738,7 @@ form {
     background: rgba(0, 0, 0, 0.45);
     cursor: pointer;
 
-    &:hover {
-      opacity: 1;
-    }
-
-    &::before,
-    &::after {
+    &::before {
       content: "";
       position: absolute;
       top: 50%;
@@ -631,12 +750,45 @@ form {
       width: 68px;
       height: 68px;
       background-color: var(--color-accent);
+      background-image: url(../../images/re-upload.svg);
+      background-size: 24px 24px;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+    }
+  }
+
+  .delete {
+    display: none;
+    position: absolute;
+    top: 50%;
+    right: calc(30% - 34px);
+    width: 68px;
+    height: 68px;
+    transform: translateY(-50%);
+    background-color: var(--color-accent);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-image: url(../../images/trash.svg);
+    background-size: 14px 18px;
+  }
+
+  &:hover {
+    .re-upload {
+      opacity: 1;
     }
 
-    &::after {
-      width: 24px;
-      height: 24px;
-      background: url(../../images/re-upload.svg);
+    .delete {
+      display: block;
+    }
+  }
+}
+
+.upload-image2,
+.upload-sketch {
+  .re-upload {
+    &::before {
+      left: calc(30% - 34px);
+      transform: translateY(-50%);
     }
   }
 }
@@ -726,12 +878,19 @@ form {
   }
 
   .upload-image {
-    grid-column: 1/3;
-    grid-row: 1/5;
-    height: 330px;
-    margin: 0 0 24px;
+    grid-column: 1;
+    grid-row: 1/3;
+    margin-top: 0;
     overflow: hidden;
     border-radius: 2px;
+  }
+
+  .upload-image2 {
+    grid-column: 2;
+  }
+
+  .upload-sketch {
+    grid-row: 3/5;
   }
 
   .description {
@@ -751,6 +910,10 @@ form {
     grid-column: 3;
     grid-row: 3;
   }
+
+  .link-to-video {
+    grid-column: 3;
+  }
 }
 
 @media (max-width: 767px) {
@@ -766,6 +929,10 @@ form {
     .upload-image {
       height: 140px;
       margin-top: 18px;
+    }
+
+    .description {
+      margin-top: 0;
     }
   }
 }
