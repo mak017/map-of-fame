@@ -319,7 +319,8 @@ const handleShowOnMapClick = (showAll) => {
                 : undefined}
               class="spot-card"
               role="button"
-              on:click|preventDefault={() => onSpotClick(spot)}>
+              on:click|preventDefault={() =>
+                !isCurrentUser && onSpotClick(spot)}>
               <img
                 loading="lazy"
                 src={spot.thumbnail}

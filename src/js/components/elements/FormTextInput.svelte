@@ -165,6 +165,8 @@ label:not(.with-label) {
 }
 
 .add-spot {
+  margin-bottom: 15px;
+
   .hint {
     margin-top: 4px;
   }
