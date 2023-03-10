@@ -506,69 +506,71 @@ const handleAddMoreClick = () => {
         className={!isEditSpot ? "addSpot" : ""} />
     {/each}
   </div>
-  <div class="upload-image">
-    {#if image.filePreview}
-      <img src={image.filePreview} alt="Preview" class="preview_image" />
-      <label for="upload-image" class="re-upload" />
-    {:else}
-      <label for="upload-image" class="first_upload">
-        <span>Add Image (1 of 2)</span>
-        <span>Max 10 Mb</span>
-      </label>
-    {/if}
-    {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
-    <input
-      accept="image/png, image/jpeg"
-      bind:files={image.file}
-      on:change={() => onChangeImage("image")}
-      id="upload-image"
-      type="file" />
-  </div>
-  {#if image.filePreview}
-    <div class="upload-image upload-image2">
-      {#if image2.filePreview}
-        <img src={image2.filePreview} alt="Preview" class="preview_image" />
-        <label for="upload-image2" class="re-upload" />
-        <button
-          type="button"
-          class="button delete"
-          on:click={() => onRemoveImage("image2")} />
+  <div class="upload-area">
+    <div class="upload-image">
+      {#if image.filePreview}
+        <img src={image.filePreview} alt="Preview" class="preview_image" />
+        <label for="upload-image" class="re-upload" />
       {:else}
-        <label for="upload-image2" class="first_upload">
-          <span>Add Image (2 of 2)</span>
+        <label for="upload-image" class="first_upload">
+          <span>Add Image (1 of 2)</span>
           <span>Max 10 Mb</span>
         </label>
       {/if}
       {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
       <input
         accept="image/png, image/jpeg"
-        bind:files={image2.file}
-        on:change={() => onChangeImage("image2")}
-        id="upload-image2"
+        bind:files={image.file}
+        on:change={() => onChangeImage("image")}
+        id="upload-image"
         type="file" />
     </div>
-  {/if}
-  <div class="upload-image upload-sketch">
-    {#if sketch.filePreview}
-      <img src={sketch.filePreview} alt="Preview" class="preview_image" />
-      <label for="upload-sketch" class="re-upload" />
-      <button
-        type="button"
-        class="button delete"
-        on:click={() => onRemoveImage("sketch")} />
-    {:else}
-      <label for="upload-sketch" class="first_upload">
-        <span>Add Sketch</span>
-        <span>Max 10 Mb</span>
-      </label>
+    {#if image.filePreview}
+      <div class="upload-image upload-image2">
+        {#if image2.filePreview}
+          <img src={image2.filePreview} alt="Preview" class="preview_image" />
+          <label for="upload-image2" class="re-upload" />
+          <button
+            type="button"
+            class="button delete"
+            on:click={() => onRemoveImage("image2")} />
+        {:else}
+          <label for="upload-image2" class="first_upload">
+            <span>Add Image (2 of 2)</span>
+            <span>Max 10 Mb</span>
+          </label>
+        {/if}
+        {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
+        <input
+          accept="image/png, image/jpeg"
+          bind:files={image2.file}
+          on:change={() => onChangeImage("image2")}
+          id="upload-image2"
+          type="file" />
+      </div>
     {/if}
-    {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
-    <input
-      accept="image/png, image/jpeg"
-      bind:files={sketch.file}
-      on:change={() => onChangeImage("sketch")}
-      id="upload-sketch"
-      type="file" />
+    <div class="upload-image upload-sketch">
+      {#if sketch.filePreview}
+        <img src={sketch.filePreview} alt="Preview" class="preview_image" />
+        <label for="upload-sketch" class="re-upload" />
+        <button
+          type="button"
+          class="button delete"
+          on:click={() => onRemoveImage("sketch")} />
+      {:else}
+        <label for="upload-sketch" class="first_upload">
+          <span>Add Sketch</span>
+          <span>Max 10 Mb</span>
+        </label>
+      {/if}
+      {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
+      <input
+        accept="image/png, image/jpeg"
+        bind:files={sketch.file}
+        on:change={() => onChangeImage("sketch")}
+        id="upload-sketch"
+        type="file" />
+    </div>
   </div>
   <div class="description">
     <FormTextArea
@@ -679,7 +681,7 @@ form {
 
 .upload-image {
   position: relative;
-  height: 136px;
+  max-height: 136px;
   margin: 15px 0 8px;
 
   &.upload-image2 {
@@ -723,7 +725,7 @@ form {
 
   .preview_image {
     width: 100%;
-    height: 100%;
+    height: 136px;
     object-fit: cover;
   }
 
@@ -733,7 +735,7 @@ form {
     right: 0;
     bottom: 0;
     left: 0;
-    transition: opaicty 0.3s;
+    transition: opacity 0.3s;
     opacity: 0;
     background: rgba(0, 0, 0, 0.45);
     cursor: pointer;
@@ -743,12 +745,9 @@ form {
       position: absolute;
       top: 50%;
       left: 50%;
+      width: 54px;
+      height: 54px;
       transform: translate(-50%, -50%);
-    }
-
-    &::before {
-      width: 68px;
-      height: 68px;
       background-color: var(--color-accent);
       background-image: url(../../images/re-upload.svg);
       background-size: 24px 24px;
@@ -761,9 +760,9 @@ form {
     display: none;
     position: absolute;
     top: 50%;
-    right: calc(30% - 34px);
-    width: 68px;
-    height: 68px;
+    right: calc(35% - 27px);
+    width: 54px;
+    height: 54px;
     transform: translateY(-50%);
     background-color: var(--color-accent);
     background-repeat: no-repeat;
@@ -787,7 +786,7 @@ form {
 .upload-sketch {
   .re-upload {
     &::before {
-      left: calc(30% - 34px);
+      left: calc(35% - 27px);
       transform: translateY(-50%);
     }
   }
@@ -844,7 +843,7 @@ form {
 .edit {
   display: grid;
   position: relative;
-  grid-column-gap: 4%;
+  grid-gap: 12px 4%;
   grid-template-columns: 28% 28% 36%;
 
   .save {
@@ -856,16 +855,11 @@ form {
   }
 
   .artists-area {
-    grid-column: 1/3;
-    grid-row: 5/10;
-    margin-top: -9px;
+    grid-column: 3;
+    grid-row: 6;
   }
 
   .artist-crew-pair {
-    display: grid;
-    grid-template-columns: 47.15% 47.15%;
-    grid-column-gap: 5.7%;
-
     + .artist-crew-pair {
       margin-top: 4px;
     }
@@ -877,25 +871,25 @@ form {
     height: 40px;
   }
 
+  .upload-area {
+    grid-column: 1/3;
+    grid-row: 1/8;
+  }
+
   .upload-image {
-    grid-column: 1;
-    grid-row: 1/3;
-    margin-top: 0;
+    max-height: 332px;
+    margin: 0 0 16px;
     overflow: hidden;
     border-radius: 2px;
-  }
 
-  .upload-image2 {
-    grid-column: 2;
-  }
-
-  .upload-sketch {
-    grid-row: 3/5;
+    .preview_image {
+      height: 100%;
+    }
   }
 
   .description {
     grid-column: 3;
-    grid-row: 6;
+    grid-row: auto;
     margin-top: 24px;
   }
 
@@ -913,6 +907,7 @@ form {
 
   .link-to-video {
     grid-column: 3;
+    grid-row: 4;
   }
 }
 
@@ -927,7 +922,7 @@ form {
     }
 
     .upload-image {
-      height: 140px;
+      max-height: 140px;
       margin-top: 18px;
     }
 

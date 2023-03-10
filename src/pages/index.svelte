@@ -141,8 +141,16 @@ const quitAddSpot = () => {
   shouldShowAddSpot.set(false);
   toggleAddSpotSidebarVisible(false);
 };
+
+const handleKeyDown = (e) => {
+  if (e.key === "Escape" && isAddSpotSidebarVisible) {
+    quitAddSpot();
+    return;
+  }
+};
 </script>
 
+<svelte:window on:keydown={handleKeyDown} />
 {#if $shouldShowResetPassword}
   <Modal
     id="reset-password-modal"

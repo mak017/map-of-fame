@@ -11,6 +11,7 @@ export let optionIdentifier;
 export let getOptionLabel;
 export let getSelectionLabel;
 export let addSpot = false;
+export let listPlacement = "auto";
 
 const dispatch = createEventDispatcher();
 </script>
@@ -29,7 +30,8 @@ const dispatch = createEventDispatcher();
     indicatorSvg={`<svg width="8" height="5"viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 5L4.37114e-07 -2.22545e-07L8 4.76837e-07L4 5Z" fill="#393940" /></svg>`}
     Icon={isYear ? SelectIconCalendar : false}
     on:select={(selected) => dispatch("select", selected)}
-    {placeholder} />
+    {placeholder}
+    {listPlacement} />
 </div>
 
 <style lang="scss">

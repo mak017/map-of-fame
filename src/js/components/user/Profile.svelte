@@ -299,7 +299,8 @@ const handleShowOnMapClick = (showAll) => {
               items={yearsToApply}
               selectedValue={{ value: currentYear, label: currentYear }}
               isYear
-              on:select={handleYearSelect} />
+              on:select={handleYearSelect}
+              listPlacement="bottom" />
           </div>
           <button
             type="button"

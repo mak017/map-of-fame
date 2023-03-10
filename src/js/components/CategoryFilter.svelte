@@ -1,5 +1,5 @@
 <script>
-import { fade } from "svelte/transition";
+import { fade, slide } from "svelte/transition";
 
 import { requestRecentSpots, requestSpots } from "../init";
 import {
@@ -53,7 +53,7 @@ const handleCategoryClick = (id) => {
     {/if}
   </button>
   {#if isOpened}
-    <ul class="options">
+    <ul class="options" transition:slide={{ duration: 200 }}>
       {#each categories as category}
         <li>
           <button
