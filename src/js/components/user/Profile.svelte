@@ -297,7 +297,10 @@ const handleShowOnMapClick = (showAll) => {
           <div class="year-select">
             <CustomSelect
               items={yearsToApply}
-              selectedValue={{ value: currentYear, label: currentYear }}
+              selectedValue={{
+                value: currentYear,
+                label: currentYear || EMPTY_YEAR_STRING,
+              }}
               isYear
               on:select={handleYearSelect}
               listPlacement="bottom" />

@@ -67,18 +67,18 @@ textarea {
   bottom: 60px;
 }
 
-.selectContainer {
+.svelte-select {
   input {
     cursor: pointer !important;
   }
 
-  .indicator + div,
-  .clearSelect + div {
+  .chevron + div,
+  .clear-select + div {
     left: -1px !important;
     border: 1px solid var(--color-accent);
   }
 
-  .listContainer {
+  .svelte-select-list {
     border-right: 8px solid transparent;
 
     &::-webkit-scrollbar {
@@ -91,7 +91,7 @@ textarea {
     }
   }
 
-  .listItem {
+  .list-item {
     border: 1px solid transparent;
   }
 
@@ -105,14 +105,14 @@ textarea {
 }
 
 .year-select {
-  .indicator + div {
+  .chevron + div {
     left: 16px !important;
     min-width: 92px !important;
   }
 }
 
 .autocomplete {
-  .selectContainer {
+  .svelte-select {
     padding: 0 !important;
     border-top: 0 !important;
     border-right: 0 !important;
@@ -122,8 +122,8 @@ textarea {
       top: 41px !important;
     }
 
-    .indicator + div,
-    .clearSelect + div {
+    .chevron + div,
+    .clear-select + div {
       border: 0;
     }
   }
@@ -151,7 +151,7 @@ textarea {
     }
   }
 
-  .listContainer:not(:empty) {
+  .svelte-select-list:not(:empty) {
     padding: 4px 0;
     border-right: 8px solid transparent;
     outline: 1px solid var(--color-accent);

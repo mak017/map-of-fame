@@ -443,11 +443,6 @@ const handleSubmit = () => {
   }
 };
 
-const getOptionLabel = (option) => option.name;
-const getSelectionLabel = (option) => {
-  if (option) return option.name;
-};
-
 const handleAddMoreClick = () => {
   artistCrewPairs = [...artistCrewPairs, { artist: "", crew: "" }];
 };
@@ -589,8 +584,7 @@ const handleAddMoreClick = () => {
         placeholder="Art Category"
         optionIdentifier="name"
         addSpot={!isEditSpot}
-        {getOptionLabel}
-        {getSelectionLabel} />
+        label="name" />
     {:else}
       <Spinner height={30} margin="5px 0 5.5px" />
     {/if}
@@ -604,8 +598,7 @@ const handleAddMoreClick = () => {
         placeholder="Spray Paint Used"
         optionIdentifier="name"
         addSpot={!isEditSpot}
-        {getOptionLabel}
-        {getSelectionLabel} />
+        label="name" />
       {#if errors.sprayPaintUsed}
         <span class="error">{errors.sprayPaintUsed}</span>
       {/if}

@@ -1,12 +1,13 @@
 <script>
 import { createEventDispatcher } from "svelte";
 import Select from "svelte-select";
+
 import AutoCompleteItem from "./AutoCompleteItem.svelte";
+import SelectIndicatorSvg from "./icons/SelectIndicatorSvg.svelte";
 
 export let selectedValue = undefined;
 export let items = undefined;
 export let optionIdentifier;
-export let getOptionLabel;
 export let placeholder;
 export let hint = undefined;
 export let loadOptions = undefined;
@@ -14,6 +15,7 @@ export let errorMessage = "";
 export let isSearch = false;
 export let showIndicator = false;
 export let noOptionsMessage = "No options";
+export let label = "label";
 export let externalTypedText = "";
 
 let typedText = "";
@@ -40,18 +42,20 @@ const onType = (label, filterText) => {
   <Select
     {items}
     bind:value={selectedValue}
-    {optionIdentifier}
-    {getOptionLabel}
+    itemId={optionIdentifier}
     {loadOptions}
-    {noOptionsMessage}
-    {showIndicator}
-    getSelectionLabel={getOptionLabel}
+    {label}
+    showChevron={showIndicator && !selectedValue}
     placeholder=""
-    Item={AutoCompleteItem}
-    on:select={onSelect}
+    on:change={onSelect}
     itemFilter={onType}
-    hideEmptyState={!!selectedValue}
-    indicatorSvg={`<svg width="8" height="5"viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 5L4.37114e-07 -2.22545e-07L8 4.76837e-07L4 5Z" fill="#393940" /></svg>`} />
+    hideEmptyState={!!selectedValue}>
+    <div slot="chevron-icon"><SelectIndicatorSvg /></div>
+    <div slot="item" let:item>
+      <AutoCompleteItem {item} />
+    </div>
+    <div slot="empty" class="empty">{noOptionsMessage}</div>
+  </Select>
   {#if placeholder}
     <div class="floating-label">{placeholder}</div>
   {/if}
@@ -68,23 +72,30 @@ const onType = (label, filterText) => {
   position: relative;
   margin-bottom: 20px;
   --border: 1px solid var(--color-dark);
+  --border-focused: 1px solid var(--color-accent);
+  --border-hover: 1px solid var(--color-dark);
+  --border-radius: 0;
+  --indicator-top: 6px;
+  --indicator-right: -10px;
+  --input-color: var(--color-dark);
+  --input-font-size: 16px;
+  --input-padding: 0;
+  --item-first-border-radius: 0;
+  --item-height: auto;
+  --item-line-height: auto;
+  --item-hover-bg: none;
+  --item-is-active-bg: none;
+  --item-is-active-color: var(--color-accent);
+  --item-padding: 0;
+  --list-border-radius: 0;
+  --list-shadow: 0;
+  --placeholder-color: var(--color-dark);
+  --spinner-color: var(--color-accent);
+}
 
-  --borderFocusColor: var(--color-accent);
-  --borderHoverColor: var(--color-dark);
-  --borderRadius: 0;
-  --indicatorTop: 6px;
-  --indicatorRight: -10px;
-  --inputColor: var(--color-dark);
-  --inputFontSize: 16px;
-  --inputPadding: 0;
-  --itemFirstBorderRadius: 0;
-  --itemHoverBG: none;
-  --itemIsActiveBG: none;
-  --itemIsActiveColor: var(--color-accent);
-  --listBorderRadius: 0;
-  --listShadow: 0;
-  --placeholderColor: var(--color-dark);
-  --spinnerColor: var(--color-accent);
+.empty {
+  padding: 20px 0;
+  text-align: center;
 }
 
 .floating-label {
