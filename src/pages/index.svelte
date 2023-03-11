@@ -113,6 +113,10 @@ const handleNewMarkerCancel = () => {
   }
 };
 
+onDestroy(() => {
+  handleNewMarkerCancel();
+});
+
 const showAddSpot = () => {
   const center = $map.getCenter();
   newMarker = L.marker(center, {

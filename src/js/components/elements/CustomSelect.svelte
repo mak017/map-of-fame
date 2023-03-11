@@ -51,6 +51,7 @@ const dispatch = createEventDispatcher();
   --item-is-active-color: var(--color-accent);
   --list-border: 1px solid var(--color-accent);
   --list-border-radius: 0;
+  --list-max-height: 220px;
   --list-shadow: 0;
   --padding: 0 0 0 10px;
   --placeholder-color: var(--color-dark);
@@ -60,12 +61,9 @@ const dispatch = createEventDispatcher();
     --border-hover: 0;
     --chevron-width: 20px;
     --chevron-height: 20px;
-    --list-max-height: 468px;
+    --list-max-height: 310px;
     --padding: 0 16px 0 13px;
     --selected-item-padding: 0 0 0 8px;
-  }
-  &.add-spot {
-    --list-max-height: 190px;
   }
 
   .prepend {
