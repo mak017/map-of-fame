@@ -62,8 +62,8 @@ const getLocationByIp = () =>
       };
     });
 
-const getLocation = async () => {
-  const locationFromUrl = permalink.getMapLocation();
+const getLocation = async (ignoreUrl) => {
+  const locationFromUrl = !ignoreUrl && permalink.getMapLocation();
   if (locationFromUrl) {
     return locationFromUrl;
   }
@@ -100,8 +100,8 @@ export const handleMapViewChange = (map) => {
   }
 };
 
-export const setLocation = (map) => {
-  getLocation()
+export const setLocation = (map, force) => {
+  getLocation(force)
     .then((response) => {
       map.setView(
         response.center || DEFAULT_VIEW.coordinates,
@@ -130,7 +130,7 @@ export const setLocation = (map) => {
         }
 
         performSearch(params);
-      } else {
+      } else if (!force) {
         isInitialized.set(true);
         requestSpots(yearFromStore || getCurrentYear());
       }

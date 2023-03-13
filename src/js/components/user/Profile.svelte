@@ -178,6 +178,10 @@ const handleDelete = (spot) => {
 };
 
 const onLoadMore = () => {
+  if (isShowSpinner) {
+    return;
+  }
+
   offset += MAX_SPOTS_PER_PAGE;
   if (currentYear === ALL_YEARS_STRING) {
     fetchSpots({ offset });

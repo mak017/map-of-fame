@@ -34,6 +34,7 @@ import {
   getInviteData,
   saveToLocalStorage,
 } from "../js/utils/commonUtils";
+import { setLocation } from "../js/utils/mapUtils/locationUtils.js";
 import { permalink } from "../js/utils/mapUtils/permalink";
 import { newMarkerIcon } from "../js/utils/mapUtils/icons";
 
@@ -252,6 +253,14 @@ const handleKeyDown = (e) => {
     {/if}
   </div>
 
+  {#if !$isSearchResults && !$selectedUserProfileData.name && !$isAreaSelectionActive && !$isShowOnMapMode}
+    <button
+      class="button button-main_screen button-square button-location"
+      on:click={() => setLocation($map, true)}
+      transition:fade={{ duration: 200 }}
+      title={"Go to your location"} />
+  {/if}
+
   {#if !$isSearchResults && !$isShowOnMapMode && !$shouldShowAddSpot && !$selectedUserProfileData.name && ($isAreaSelectionActive || $currentZoom > 14)}
     <button
       class="button button-main_screen button-square button-select_area"
@@ -422,6 +431,17 @@ const handleKeyDown = (e) => {
     background-size: 18px 13px;
     color: transparent;
     font-size: 0;
+  }
+
+  &-location {
+    display: flex;
+    position: absolute;
+    bottom: 18px;
+    left: 70px;
+    background-image: url(../images/target.svg);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 20px 20px;
   }
 
   &-clear_search {
