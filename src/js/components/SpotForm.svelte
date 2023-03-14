@@ -382,6 +382,8 @@ const handleSubmit = () => {
         year,
         spotStatus: selectedStatus,
         img: image.blob,
+        additionalImg: image2.blob,
+        sketch: sketch.blob,
         videoLink: linkToVideo,
         description,
         categoryId: selectedCategory.id,

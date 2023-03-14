@@ -218,7 +218,16 @@ const getArtistsString = (artistCrew) => {
         <div class={`title ${data.status.toLowerCase()}`}>{data.status}</div>
       </div>
     </div>
-    <div class="img"><img src={data.img.src} alt={data.img.title} /></div>
+    <div class="img">
+      <img src={data.img.src} alt={`Main image: ${data.img.title}`} />
+    </div>
+    {#if data.additionalImg}
+      <div class="img">
+        <img
+          src={data.additionalImg}
+          alt={`Additional image: ${data.img.title}`} />
+      </div>
+    {/if}
     <div class="bottom">
       <div class="year">{data.year ?? EMPTY_YEAR_STRING}</div>
       <div class="show-on-map-wrapper">
@@ -256,6 +265,11 @@ const getArtistsString = (artistCrew) => {
     </div>
     {#if data.description}
       <div class="description">{data.description}</div>
+    {/if}
+    {#if data.sketchImg}
+      <div class="img">
+        <img src={data.sketchImg} alt={`Sketch image: ${data.img.title}`} />
+      </div>
     {/if}
     {#if data.video}
       <div class="video" class:instagram={data.video.includes("instagr")}>
@@ -398,7 +412,7 @@ const getArtistsString = (artistCrew) => {
 }
 
 .link a {
-  background: url(../../../images/link.svg) 50% 50% / auto no-repeat;
+  background: url(../../../images/web.svg) 50% 50% / auto no-repeat;
   font-size: 0;
 }
 

@@ -73,6 +73,27 @@ export const embedVideoCodeFromBasicUrl = (url) => {
     );
 };
 
+// const isGoogleMapUrl = (url) =>
+//   /(https|http):\/\/(www\.|)google\.[a-z]+\/maps/.test(url);
+
+// export const embedMapFromBasicUrl = (url) => {
+//   const coords = /@([0-9.,\-a-zA-Z]*)/.exec(url);
+//   if (coords != null) {
+//     const coordsArray = coords[1].split(",");
+//     return (
+//       "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d20000!2d" +
+//       coordsArray[1] +
+//       "!3d" +
+//       coordsArray[0] +
+//       "!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2suk!4v1486486434098"
+//     );
+//   }
+
+//   return null;
+
+//   // '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.609469825536!2d14.558796016159334!3d40.74861804331011!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x133bbc03e72a4917%3A0x886cdd5255e39ed5!2sSS%2018%20Tirrena%20Inferiore%2C%2040%2C%2084012%20Angri%20SA%2C%20Italy!5e0!3m2!1sen!2sua!4v1678829459165!5m2!1sen!2sua" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>'
+// };
+
 export const markersReadyEvent = new Event("markersReady");
 
 export const copyToClipboard = (str) => {
