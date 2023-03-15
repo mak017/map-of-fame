@@ -5,6 +5,7 @@ import { goto, params } from "@roxi/routify";
 import {
   embedVideoCodeFromBasicUrl,
   isEmpty,
+  isExternalMapsUrl,
   loadFromLocalStorage,
 } from "../../utils/commonUtils";
 import {
@@ -240,7 +241,7 @@ const getArtistsString = (artistCrew) => {
       </div>
       <div class="buttons">
         {#if data.link}
-          <div class="link">
+          <div class="link" class:externalMap={isExternalMapsUrl(data.link)}>
             <a href={data.link} target="_blank" rel="noreferrer"
               >External link to art</a>
           </div>
@@ -414,6 +415,10 @@ const getArtistsString = (artistCrew) => {
 .link a {
   background: url(../../../images/web.svg) 50% 50% / auto no-repeat;
   font-size: 0;
+}
+
+.externalMap a {
+  background: url(../../../images/panorama.svg) 50% 50% / auto no-repeat;
 }
 
 .share button {
