@@ -4,6 +4,7 @@ import "leaflet.markercluster.placementstrategies";
 import { get } from "svelte/store";
 
 import {
+  areaSpots,
   categoriesList,
   globalGoto,
   openedMarkerData,
@@ -11,6 +12,8 @@ import {
 } from "../../store";
 import { markersReadyEvent } from "../commonUtils";
 import { clusterIcon, markerClusterIcon, markerWithPhoto } from "./icons";
+
+import { MAX_ZOOM } from "../../constants";
 
 let prevMarkers = [];
 let markersLayer = null;
@@ -68,6 +71,7 @@ const createMarker = (data) => {
     icon: markerWithPhoto(icon || thumbnail, id),
   });
   marker.addEventListener("click", () => setMarkerData(data));
+  marker.spotId = id;
   return marker;
 };
 
@@ -110,6 +114,18 @@ const createMarkers = (map, markersData, isSearch) => {
     markersLayer.addLayer(marker);
     prevMarkers.push(marker);
     tempMarkersList.push(marker);
+  });
+  markersLayer.on("clusterclick", (event) => {
+    // eslint-disable-next-line no-underscore-dangle
+    if (event.layer._zoom === MAX_ZOOM) {
+      const $goto = get(globalGoto);
+      const markers = event.layer.getAllChildMarkers();
+      const spots = markersData?.spots.filter((spot) =>
+        markers.some((marker) => marker.spotId === spot.id)
+      );
+      areaSpots.set(spots);
+      $goto("/selected-spots");
+    }
   });
   map.addLayer(markersLayer);
   if (isSearch) {
