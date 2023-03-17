@@ -174,12 +174,6 @@ label:not(.with-label) {
   &:not(.with-label) {
     margin-bottom: 10px;
   }
-
-  &.link {
-    .hint {
-      margin: -1px 0 -15px;
-    }
-  }
 }
 
 .edit-spot {

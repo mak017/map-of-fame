@@ -111,6 +111,17 @@ textarea {
   }
 }
 
+.select {
+  &.add-spot {
+    .svelte-select {
+      padding: 0 !important;
+      border-top: 0 !important;
+      border-right: 0 !important;
+      border-left: 0 !important;
+    }
+  }
+}
+
 .autocomplete {
   .svelte-select {
     padding: 0 !important;

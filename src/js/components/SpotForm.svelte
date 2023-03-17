@@ -80,12 +80,12 @@ let image = {
 };
 let image2 = {
   file: undefined,
-  filePreview: "",
+  filePreview: editSpotData.additionalImg || "",
   blob: undefined,
 };
 let sketch = {
   file: undefined,
-  filePreview: "",
+  filePreview: editSpotData.sketchImg || "",
   blob: undefined,
 };
 let linkToVideo = editSpotData.videoLink || "";
@@ -614,8 +614,7 @@ const handleAddMoreClick = () => {
       on:input={handleVideoLinkChange}
       wideOnMobile
       editSpot={isEditSpot}
-      addSpot={!isEditSpot}
-      link />
+      addSpot={!isEditSpot} />
   </div>
   <div class="link-to-work">
     <FormTextInput
@@ -868,7 +867,7 @@ form {
 
   .upload-area {
     grid-column: 1/3;
-    grid-row: 1/8;
+    grid-row: 1/9;
   }
 
   .upload-image {
@@ -931,8 +930,12 @@ form {
   form {
     &:not(.edit) {
       .upload-image {
-        height: 100px;
+        max-height: 100px;
         margin: 12px 0;
+      }
+
+      .preview_image {
+        height: 100px;
       }
 
       .category {
@@ -952,6 +955,8 @@ form {
       }
 
       .spray {
+        margin-bottom: 12px;
+
         &.with-error {
           margin-bottom: 2px;
         }
