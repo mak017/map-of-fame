@@ -64,6 +64,7 @@
     "@bopen/leaflet-area-selection": "^0.7.0",
     "@types/leaflet": "^1.5.17",
     "leaflet": "^1.7.1",
+    "leaflet-geosearch": "^3.7.0",
     "leaflet.markercluster": "^1.4.1",
     "leaflet.markercluster.placementstrategies": "^0.2.1"
   }

@@ -1,5 +1,6 @@
 <script>
 import L from "leaflet";
+import { SearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import { goto } from "@roxi/routify";
 import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 
@@ -27,6 +28,7 @@ import {
   areaSelection,
   globalGoto,
   isLoading,
+  searchControl,
 } from "./../js/store.js";
 import { getSpotsInArea } from "../js/api/spot.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
@@ -58,6 +60,18 @@ areaSelection.set(
   })
 );
 
+const provider = new OpenStreetMapProvider();
+
+searchControl.set(
+  new SearchControl({
+    provider: provider,
+    position: "topright",
+    style: "button",
+    showMarker: false,
+    searchLabel: "Address",
+  })
+);
+
 // Init leaflet map
 const initMap = (container) => {
   const layers = selectedCategories.includes(2)
@@ -83,6 +97,7 @@ const initMap = (container) => {
   $map.on("zoomend", () => currentZoom.set($map.getZoom()));
 
   $map.addControl($areaSelection);
+  $map.addControl($searchControl);
 
   return {
     destroy: () => {

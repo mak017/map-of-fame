@@ -30,6 +30,7 @@ export const mapBounds = writable([]);
 export const areaSelection = writable(null);
 export const areaSpots = writable(null);
 export const selectedUserProfileData = writable({});
+export const searchControl = writable(null);
 export const shouldDisplayShowOnMap = writable(false);
 export const isShowOnMapMode = writable(false);
 export const isAreaSelectionActive = writable(false);

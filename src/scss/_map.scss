@@ -108,6 +108,12 @@
   user-select: none;
 }
 
+.geosearch {
+  display: none;
+  position: absolute;
+  right: 110px;
+}
+
 @media (max-width: 767px) {
   .leaflet-container .leaflet-control-attribution {
     font-size: 5px;
