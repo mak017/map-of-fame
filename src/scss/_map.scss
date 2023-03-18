@@ -108,10 +108,88 @@
   user-select: none;
 }
 
-.geosearch {
-  display: none;
+.geosearch.leaflet-bar {
+  display: flex;
   position: absolute;
   right: 110px;
+  width: 40px;
+  margin-top: 16px;
+  border: 0;
+  border-radius: 2px;
+  background-color: var(--color-light);
+  transition: width 0.2s cubic-bezier(0.19, 1, 0.22, 1);
+
+  > form {
+    display: none;
+    flex: 1 0 auto;
+  }
+
+  .glass {
+    flex: 1 0 auto;
+    border: 0;
+  }
+
+  .reset {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    background-image: url(images/close-cross.svg);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 24px 24px;
+    cursor: pointer;
+  }
+
+  .results {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 40px;
+    left: 0;
+    padding: 10px 20px;
+    background-color: var(--color-light);
+
+    &.active {
+      display: block;
+    }
+
+    > div {
+      padding: 4px 0;
+      transition: color 0.2s;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--color-accent);
+      }
+    }
+  }
+
+  .leaflet-bar-part {
+    order: -1;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 2px;
+    background-image: url(images/loupe.svg);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 20px 20px;
+
+    &:hover {
+      background-color: var(--color-light);
+    }
+  }
+
+  &.active {
+    width: 468px;
+    border-radius: 0;
+
+    > form {
+      display: flex;
+    }
+  }
 }
 
 @media (max-width: 767px) {
