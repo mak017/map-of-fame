@@ -123,9 +123,11 @@ const handleShowOnMapClick = () => {
   const {
     year,
     coords: { lat, lng },
+    user,
   } = $openedMarkerData;
+  const userId = $selectedUserProfileData.id ?? user.id;
 
-  getUserSpots($selectedUserProfileData.id, token, {
+  getUserSpots(userId, token, {
     year: year ? `${year}` : "",
     offset: 0,
     limit: 99999999999999,
@@ -146,6 +148,7 @@ const handleShowOnMapClick = () => {
       selectedYear.set(year ? `${year}` : EMPTY_YEAR_STRING);
       selectedArtist.set("");
       selectedCrew.set("");
+      selectedUserProfileData.set(user);
       setTimeout(() => {
         $map.setView([lat, lng], MAX_ZOOM);
         $goto("/");

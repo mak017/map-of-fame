@@ -24,6 +24,8 @@
     "comma-dangle": [2, "only-multiline"],
     "no-var": 2,
     "arrow-body-style": [2, "as-needed"],
-    "prefer-const": "error"
+    "prefer-const": "error",
+    "no-restricted-syntax": "off",
+    "no-unused-expressions": "off"
   }
 }

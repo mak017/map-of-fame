@@ -34,6 +34,7 @@ import {
   getInviteData,
   saveToLocalStorage,
 } from "../js/utils/commonUtils";
+import { useObserver } from "./../js/utils/mapUtils/geoSearch.js";
 import { setLocation } from "../js/utils/mapUtils/locationUtils.js";
 import { permalink } from "../js/utils/mapUtils/permalink";
 import { newMarkerIcon } from "../js/utils/mapUtils/icons";
@@ -70,6 +71,7 @@ if ($map && $isInitialized && !$isPermalinkReady) {
 
 onMount(() => {
   $map.on("moveend", updatePermalink);
+  useObserver();
 });
 
 onDestroy(() => {
