@@ -394,8 +394,16 @@ const handleKeyDown = (e) => {
   }
 
   &-open_search {
+    position: absolute;
+    top: 40px;
+    right: 40px;
     margin-right: 12px;
-    background-image: url(../images/loupe.svg);
+    border-radius: 0 0 2px 2px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    background-color: var(--color-lotion);
+    background-image: url(../images/user.svg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: 20px 20px;

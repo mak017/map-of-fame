@@ -19,6 +19,52 @@
       font-weight: 800;
     }
   }
+
+  &,
+  ~ .main-top_left_wrapper {
+    &::after {
+      content: "";
+      position: absolute;
+      z-index: 1000;
+      inset: 0;
+      background-color: var(--color-black);
+      opacity: 0;
+      visibility: hidden;
+      transition: visibility 0.2s, opacity 0.2s;
+    }
+  }
+}
+
+body {
+  &.geo-search-active {
+    .button.button-open_search {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  &.geo-search-overlay {
+    .geosearch.leaflet-bar {
+      z-index: 1;
+    }
+
+    .map {
+      &::after {
+        opacity: 0.5;
+        visibility: visible;
+      }
+    }
+    .main-top_left_wrapper {
+      &::after {
+        opacity: 0.25;
+        visibility: visible;
+      }
+    }
+
+    .leaflet-right {
+      z-index: 1001;
+    }
+  }
 }
 
 .add-mode {
@@ -111,7 +157,7 @@
 .geosearch.leaflet-bar {
   display: flex;
   position: absolute;
-  right: 110px;
+  right: 60px;
   width: 40px;
   margin-top: 16px;
   border: 0;
