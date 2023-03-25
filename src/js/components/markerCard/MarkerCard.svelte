@@ -54,10 +54,23 @@ const strippedUsername = username.substring(1);
 
 let isShareOpened = false;
 let isComplainOpened = false;
+let videoEmbed = "";
 
 onDestroy(() => {
   !$isShowOnMapMode && selectedUserProfileData.set({});
 });
+
+const getVideoEmbed = async (video) =>
+  video && (await embedVideoCodeFromBasicUrl(video));
+
+$: if ($openedMarkerData?.video?.includes("tiktok")) {
+  setTimeout(() => {
+    const video = document.getElementById("video-embedded");
+    const newScript = document.createElement("script");
+    newScript.src = "https://www.tiktok.com/embed.js";
+    video.appendChild(newScript);
+  }, 0);
+}
 
 const getSpotData = async () => {
   if ($openedMarkerData?.id === id) {
@@ -83,6 +96,10 @@ const getSpotData = async () => {
       throw new Error();
     }
 
+    if (video) {
+      videoEmbed = await getVideoEmbed(video);
+    }
+
     const data = {
       ...result,
       status,
@@ -101,7 +118,6 @@ const getSpotData = async () => {
 };
 
 const EMPTY_ARTIST = "Unknown";
-const getVideoEmbed = (video) => video && embedVideoCodeFromBasicUrl(video);
 const token = loadFromLocalStorage("token") || null;
 
 const onShareToggle = (toggle) => (isShareOpened = toggle);
@@ -225,13 +241,6 @@ const getArtistsString = (artistCrew) => {
     <div class="img">
       <img src={data.img.src} alt={`Main image: ${data.img.title}`} />
     </div>
-    {#if data.additionalImg}
-      <div class="img">
-        <img
-          src={data.additionalImg}
-          alt={`Additional image: ${data.img.title}`} />
-      </div>
-    {/if}
     <div class="bottom">
       <div class="year">{data.year ?? EMPTY_YEAR_STRING}</div>
       <div class="show-on-map-wrapper">
@@ -270,14 +279,25 @@ const getArtistsString = (artistCrew) => {
     {#if data.description}
       <div class="description">{data.description}</div>
     {/if}
+    {#if data.additionalImg}
+      <div class="img">
+        <img
+          src={data.additionalImg}
+          alt={`Additional image: ${data.img.title}`} />
+      </div>
+    {/if}
     {#if data.sketchImg}
       <div class="img">
         <img src={data.sketchImg} alt={`Sketch image: ${data.img.title}`} />
       </div>
     {/if}
     {#if data.video}
-      <div class="video" class:instagram={data.video.includes("instagr")}>
-        {@html getVideoEmbed(data.video)}
+      <div
+        id="video-embedded"
+        class="video"
+        class:instagram={data.video.includes("instagr")}
+        class:tiktok={data.video.includes("tiktok")}>
+        {@html videoEmbed}
       </div>
     {/if}
   </div>
@@ -457,14 +477,19 @@ const getArtistsString = (artistCrew) => {
 .video {
   position: relative;
   height: 0;
-  margin-bottom: 24px;
-  padding: 30px 0 56.25%;
+  margin: 30px 0 24px;
+  padding: 0 0 56.25%;
   overflow: hidden;
 
   &.instagram {
     max-width: 370px;
     margin: 0 auto 24px;
     padding-bottom: min(182%, 670px);
+  }
+
+  &.tiktok {
+    height: auto;
+    padding: 0;
   }
 }
 

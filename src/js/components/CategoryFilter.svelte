@@ -76,6 +76,7 @@ const handleCategoryClick = (id) => {
   position: absolute;
   top: 68px;
   left: 18px;
+  transition: opacity 0.2s, visibility 0.2s;
 }
 
 li {

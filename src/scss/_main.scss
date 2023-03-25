@@ -51,6 +51,7 @@ textarea {
     position: absolute;
     top: 16px;
     left: 18px;
+    transition: opacity 0.2s, visibility 0.2s;
   }
 
   &_right_wrapper {
@@ -181,5 +182,13 @@ textarea {
 .artist.title {
   span {
     color: var(--color-dark-grey);
+  }
+}
+
+.video {
+  > iframe {
+    position: absolute;
+    width: 100%;
+    height: 100%;
   }
 }

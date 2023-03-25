@@ -515,6 +515,12 @@ const handleKeyDown = (e) => {
       white-space: nowrap;
     }
 
+    &-open_search {
+      top: 0;
+      right: 0px;
+      margin-right: 0;
+    }
+
     &-clear_search {
       padding: 4px;
     }
