@@ -202,29 +202,20 @@ const onSpotClick = (spot) => {
   selectedUserProfileData.set(user);
   const {
     id,
-    artistCrew,
     spotStatus: status,
-    description,
     img,
     title,
     videoLink: video,
     publicBanner: { banner, bannerUrl },
     location: { lat, lng },
-    year,
-    link,
   } = spot;
   openedMarkerData.set({
-    id,
-    artistCrew,
+    ...spot,
     status,
-    description,
     img: { src: img, title: title || id },
     video,
-    user,
     firm: { banner, bannerUrl },
     coords: { lat, lng },
-    year,
-    link,
   });
   shouldDisplayShowOnMap.set(true);
   $goto("/@:username/spot/:id", {

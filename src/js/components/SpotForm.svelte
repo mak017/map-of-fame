@@ -100,7 +100,6 @@ let errors = {
   imageFile: "",
   linkToVideo: "",
   selectedCategory: "",
-  sprayPaintUsed: "",
   link: "",
   artistCrewPairs: "",
 };
@@ -295,12 +294,6 @@ const validateCategory = () => {
     : "";
 };
 
-const validateFirm = () => {
-  if (!isHunter() && !isEditSpot) {
-    errors.sprayPaintUsed = !sprayPaintUsed ? ERROR_MESSAGES.sprayEmpty : "";
-  }
-};
-
 const validateVideoLinkInput = () => {
   errors.linkToVideo =
     validateVideoLink(linkToVideo) || !linkToVideo
@@ -316,7 +309,6 @@ const validate = () => {
   validateYearInput();
   validateImage();
   validateCategory();
-  validateFirm();
   validateVideoLinkInput();
   validateLink();
 };
@@ -335,12 +327,6 @@ const handleYearChange = () => {
 const handleVideoLinkChange = () => {
   if (isSubmitDisabled || isFormHasErrors()) {
     errors.linkToVideo = "";
-  }
-};
-
-const handleSpraySelect = () => {
-  if (isSubmitDisabled || isFormHasErrors()) {
-    errors.sprayPaintUsed = "";
   }
 };
 
@@ -367,7 +353,6 @@ const handleSubmit = () => {
     !errors.year &&
     !errors.imageFile &&
     !errors.selectedCategory &&
-    !errors.sprayPaintUsed &&
     !errors.linkToVideo &&
     !errors.link
   ) {
@@ -592,18 +577,14 @@ const handleAddMoreClick = () => {
     {/if}
   </div>
   {#if !isHunter() && !isEditSpot}
-    <div class="spray" class:with-error={errors.sprayPaintUsed}>
+    <div class="spray">
       <CustomSelect
         items={$firms}
         bind:selectedValue={sprayPaintUsed}
-        on:select={handleSpraySelect}
         placeholder="Spray Paint Used"
         optionIdentifier="name"
         addSpot={!isEditSpot}
         label="name" />
-      {#if errors.sprayPaintUsed}
-        <span class="error">{errors.sprayPaintUsed}</span>
-      {/if}
     </div>
   {/if}
   <div class="link-to-video">
@@ -798,16 +779,6 @@ form {
 .spray {
   position: relative;
   margin-bottom: 15px;
-
-  &.with-error {
-    margin: 0;
-  }
-
-  .error {
-    display: block;
-    margin-top: 1px;
-    line-height: 1.1;
-  }
 }
 
 .button_wrap {
@@ -956,10 +927,6 @@ form {
 
       .spray {
         margin-bottom: 12px;
-
-        &.with-error {
-          margin-bottom: 2px;
-        }
       }
     }
   }

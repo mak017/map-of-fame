@@ -79,6 +79,8 @@ export const COUNTRY_SEARCH = (ip) =>
 
 export const SETTINGS = () => `${ENDPOINT_ORIGIN}/api/settings`;
 
+export const SITE_YEARS = () => `${ENDPOINT_ORIGIN}/api/site/years`;
+
 export const SPOT = () => `${ENDPOINT_ORIGIN}/api/spot`;
 
 export const SPOT_YEAR = (year, geoRect, categories) => {

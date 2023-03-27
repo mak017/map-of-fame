@@ -86,6 +86,7 @@ const getSpotData = async () => {
       img,
       title,
       videoLink: video,
+      embedLink,
       publicBanner: { banner, bannerUrl },
       location: { lat, lng },
       user,
@@ -107,6 +108,7 @@ const getSpotData = async () => {
       video,
       firm: { banner, bannerUrl },
       coords: { lat, lng },
+      embedLink,
     };
     openedMarkerData.set(data);
     return data;
@@ -252,7 +254,7 @@ const getArtistsString = (artistCrew) => {
         {/if}
       </div>
       <div class="buttons">
-        {#if data.link}
+        {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}
           <div class="link" class:externalMap={isExternalMapsUrl(data.link)}>
             <a href={data.link} target="_blank" rel="noreferrer"
               >External link to art</a>
@@ -290,6 +292,9 @@ const getArtistsString = (artistCrew) => {
       <div class="img">
         <img src={data.sketchImg} alt={`Sketch image: ${data.img.title}`} />
       </div>
+    {/if}
+    {#if data.embedLink}
+      <div class="embed-link">{@html data.embedLink}</div>
     {/if}
     {#if data.video}
       <div

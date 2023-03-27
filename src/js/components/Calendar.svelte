@@ -1,4 +1,5 @@
 <script>
+import { onMount } from "svelte";
 import { goto } from "@roxi/routify";
 
 import { requestSearchSpots } from "./../api/search.js";
@@ -19,16 +20,28 @@ import {
 import { getDatesFilter, getProfileYears } from "../utils/datesUtils.js";
 import { requestSpots } from "../init.js";
 import { getUserSpots } from "../api/spot.js";
+import { getActiveYears } from "../api/settings.js";
 
 import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../constants.js";
 
 let { yearStart, yearEnd, additionalYears } = $settings || {};
+let activeYears;
 
 $: if ($settings) {
   yearStart = $settings.yearStart;
   yearEnd = $settings.yearEnd;
   additionalYears = $settings.additionalYears;
 }
+
+onMount(() => {
+  getActiveYears().then((response) => {
+    const { result, success } = response;
+
+    if (success && result) {
+      activeYears = result.map((item) => item.year);
+    }
+  });
+});
 
 let searchYears = $markersStore.years?.map((year) =>
   year !== null ? `${year}` : EMPTY_YEAR_STRING
@@ -90,6 +103,7 @@ const handleClick = (year) => {
         class="year"
         class:active={`${date}` === $selectedYear}
         class:disabled={+date > getCurrentYear() ||
+          (!activeYears?.includes(+date) && date !== EMPTY_YEAR_STRING) ||
           (searchYears?.length &&
             !searchYears?.includes(date) &&
             date !== ALL_YEARS_STRING) ||

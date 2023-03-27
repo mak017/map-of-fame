@@ -185,6 +185,13 @@ textarea {
   }
 }
 
+.embed-link {
+  > *,
+  iframe {
+    width: 100%;
+  }
+}
+
 .video {
   > iframe {
     position: absolute;
