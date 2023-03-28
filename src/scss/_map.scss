@@ -195,7 +195,9 @@ body {
     top: 100%;
     right: 40px;
     left: 0;
+    max-height: 60vh;
     padding: 10px 20px;
+    overflow: auto;
     background-color: var(--color-light);
 
     &.active {

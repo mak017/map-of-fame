@@ -1,6 +1,5 @@
 import L from "leaflet";
 import "leaflet.markercluster";
-import "leaflet.markercluster.placementstrategies";
 import { get } from "svelte/store";
 
 import {
@@ -91,12 +90,9 @@ const createClusterMarker = (data, map) => {
 const createMarkers = (map, markersData, isSearch) => {
   markersLayer = L.markerClusterGroup({
     chunkedLoading: true,
-    spiderfyOnMaxZoom: true,
+    spiderfyOnMaxZoom: false,
     showCoverageOnHover: false,
     iconCreateFunction: clusterIcon,
-    spiderLegPolylineOptions: { weight: 0 },
-    elementsPlacementStrategy: "default",
-    spiderfyDistanceMultiplier: 2,
   });
   const tempMarkersList = [];
   markersData?.spots?.forEach((item) => {
