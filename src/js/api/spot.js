@@ -133,6 +133,8 @@ export const updateSpot = async (
     year,
     spotStatus,
     img,
+    additionalImg,
+    sketch,
     videoLink,
     description,
     categoryId,
@@ -146,6 +148,8 @@ export const updateSpot = async (
   formData.append("category_id", categoryId);
   formData.append("year", year);
   if (img) formData.append("img", img);
+  if (additionalImg) formData.append("additionalImg", additionalImg);
+  if (sketch) formData.append("sketch", sketch);
   formData.append("video_link", videoLink);
   formData.append("description", description);
   formData.append("link", link);
