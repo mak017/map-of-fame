@@ -110,16 +110,10 @@ textarea {
     left: 16px !important;
     min-width: 92px !important;
   }
-}
 
-.select {
-  &.add-spot {
-    .svelte-select {
-      padding: 0 !important;
-      border-top: 0 !important;
-      border-right: 0 !important;
-      border-left: 0 !important;
-    }
+  .svelte-select-list {
+    left: 50% !important;
+    transform: translateX(-50%);
   }
 }
 

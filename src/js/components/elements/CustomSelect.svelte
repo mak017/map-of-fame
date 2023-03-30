@@ -24,6 +24,7 @@ const dispatch = createEventDispatcher();
     clearable={false}
     searchable={false}
     on:select={(selected) => dispatch("select", selected)}
+    listAutoWidth={!isYear}
     {placeholder}
     {label}>
     <div slot="prepend" class="prepend">
@@ -40,7 +41,7 @@ const dispatch = createEventDispatcher();
   --border: 1px solid var(--color-dark);
   --border-focused: 1px solid var(--color-accent);
   --border-hover: 1px solid var(--color-dark);
-  --border-radius: 0;
+  --border-radius: 2px;
   --indicators-position: relative;
   --indicators-top: -3px;
   --input-color: var(--color-dark);
