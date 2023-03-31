@@ -281,6 +281,9 @@ const getArtistsString = (artistCrew) => {
     {#if data.description}
       <div class="description">{data.description}</div>
     {/if}
+    {#if data.embedLink}
+      <div class="embed-link">{@html data.embedLink}</div>
+    {/if}
     {#if data.additionalImg}
       <div class="img">
         <img
@@ -288,14 +291,11 @@ const getArtistsString = (artistCrew) => {
           alt={`Additional image: ${data.img.title}`} />
       </div>
     {/if}
-    {#if data.sketchImg}
+    <!-- {#if data.sketchImg}
       <div class="img">
         <img src={data.sketchImg} alt={`Sketch image: ${data.img.title}`} />
       </div>
-    {/if}
-    {#if data.embedLink}
-      <div class="embed-link">{@html data.embedLink}</div>
-    {/if}
+    {/if} -->
     {#if data.video}
       <div
         id="video-embedded"

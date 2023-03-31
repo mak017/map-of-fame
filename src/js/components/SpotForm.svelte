@@ -153,6 +153,7 @@ if (!isEditSpot && !isHunter() && !hasSprays()) {
     const { success, result } = response;
     if (success && result) {
       firms.set(result);
+      sprayPaintUsed = result.find((firm) => firm.isDefault)?.id || undefined;
     }
   });
 }
@@ -533,7 +534,7 @@ const handleAddMoreClick = () => {
           type="file" />
       </div>
     {/if}
-    <div class="upload-image upload-sketch">
+    <!-- <div class="upload-image upload-sketch">
       {#if sketch.filePreview}
         <img src={sketch.filePreview} alt="Preview" class="preview_image" />
         <label for="upload-sketch" class="re-upload" />
@@ -554,7 +555,7 @@ const handleAddMoreClick = () => {
         on:change={() => onChangeImage("sketch")}
         id="upload-sketch"
         type="file" />
-    </div>
+    </div> -->
   </div>
   <div class="description">
     <FormTextArea
@@ -578,7 +579,7 @@ const handleAddMoreClick = () => {
       <Spinner height={30} margin="5px 0 5.5px" />
     {/if}
   </div>
-  {#if !isHunter() && !isEditSpot}
+  <!-- {#if !isHunter() && !isEditSpot}
     <div class="spray">
       <CustomSelect
         items={$firms}
@@ -588,7 +589,7 @@ const handleAddMoreClick = () => {
         addSpot={!isEditSpot}
         label="name" />
     </div>
-  {/if}
+  {/if} -->
   <div class="link-to-video">
     <FormTextInput
       label="Link To Video"
@@ -665,9 +666,9 @@ form {
     margin: 0 0 8px;
   }
 
-  &.upload-sketch {
+  /* &.upload-sketch {
     margin: 0 0 15px;
-  }
+  } */
 
   .first_upload {
     display: flex;
@@ -759,8 +760,8 @@ form {
   }
 }
 
-.upload-image2,
-.upload-sketch {
+.upload-image2 {
+  /* .upload-sketch { */
   .re-upload {
     &::before {
       left: calc(35% - 27px);
@@ -778,10 +779,10 @@ form {
   margin-bottom: 15px;
 }
 
-.spray {
+/* .spray {
   position: relative;
   margin-bottom: 15px;
-}
+} */
 
 .button_wrap {
   display: flex;
@@ -927,9 +928,9 @@ form {
         font-size: 11px;
       }
 
-      .spray {
+      /* .spray {
         margin-bottom: 12px;
-      }
+      } */
     }
   }
 }
