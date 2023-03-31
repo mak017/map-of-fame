@@ -4,7 +4,11 @@ import { SearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import { goto } from "@roxi/routify";
 import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 
-import { adjustVhProp, loadFromLocalStorage } from "../js/utils/commonUtils.js";
+import {
+  adjustVhProp,
+  isMobile,
+  loadFromLocalStorage,
+} from "../js/utils/commonUtils.js";
 import {
   handleMapViewChange,
   setLocation,
@@ -29,6 +33,7 @@ import {
   globalGoto,
   isLoading,
   searchControl,
+  isActiveSearchControl,
 } from "./../js/store.js";
 import { getSpotsInArea } from "../js/api/spot.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
@@ -69,6 +74,8 @@ searchControl.set(
     style: "button",
     showMarker: false,
     searchLabel: "Address",
+    maxSuggestions: isMobile() ? 3 : 5,
+    autoClose: true,
   })
 );
 
@@ -95,6 +102,15 @@ const initMap = (container) => {
   $map.on("moveend", () => $isInitialized && handleMapViewChange($map));
 
   $map.on("zoomend", () => currentZoom.set($map.getZoom()));
+
+  document.addEventListener("click", (event) => {
+    if ($isActiveSearchControl) {
+      const geoSearchElement = document.querySelector(".geosearch");
+      if (!geoSearchElement.contains(event.target)) {
+        $searchControl.close();
+      }
+    }
+  });
 
   $map.addControl($areaSelection);
   $map.addControl($searchControl);

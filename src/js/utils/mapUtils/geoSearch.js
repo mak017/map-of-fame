@@ -1,3 +1,5 @@
+import { isActiveSearchControl } from "../../store";
+
 export const useObserver = () => {
   const geoSearch = document.querySelector(".geosearch");
   const { body } = document;
@@ -5,9 +7,13 @@ export const useObserver = () => {
     for (const record of records) {
       const classes = record?.target?.classList;
       if (classes.contains("geosearch")) {
-        classes.contains("active")
-          ? body.classList.add("geo-search-active")
-          : body.classList.remove("geo-search-active");
+        if (classes.contains("active")) {
+          isActiveSearchControl.set(true);
+          body.classList.add("geo-search-active");
+        } else {
+          isActiveSearchControl.set(false);
+          body.classList.remove("geo-search-active");
+        }
       }
 
       if (classes.contains("results")) {

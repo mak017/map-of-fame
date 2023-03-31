@@ -167,8 +167,10 @@ body {
     right 0.2s cubic-bezier(0.19, 1, 0.22, 1), margin 0.2s;
 
   > form {
-    display: none;
+    display: flex;
     flex: 1 0 auto;
+    transition: none;
+    opacity: 0;
   }
 
   .glass {
@@ -209,7 +211,8 @@ body {
       transition: color 0.2s;
       cursor: pointer;
 
-      &:hover {
+      &:hover,
+      &.active {
         color: var(--color-accent);
       }
     }
@@ -217,7 +220,7 @@ body {
 
   .leaflet-bar-part {
     order: -1;
-    width: 40px;
+    flex: 0 0 40px;
     height: 40px;
     padding: 0;
     border-radius: 2px;
@@ -236,7 +239,8 @@ body {
     border-radius: 0;
 
     > form {
-      display: flex;
+      opacity: 1;
+      transition: opacity 0.1s 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19);
     }
   }
 }
