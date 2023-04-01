@@ -1,3 +1,5 @@
+import L from "leaflet";
+
 import { isActiveSearchControl } from "../../store";
 
 export const useObserver = () => {
@@ -17,9 +19,14 @@ export const useObserver = () => {
       }
 
       if (classes.contains("results")) {
-        classes.contains("active")
-          ? body.classList.add("geo-search-overlay")
-          : body.classList.remove("geo-search-overlay");
+        if (classes.contains("active")) {
+          body.classList.add("geo-search-overlay");
+          L.DomEvent.disableScrollPropagation(
+            document.querySelector(".geosearch .results")
+          );
+        } else {
+          body.classList.remove("geo-search-overlay");
+        }
       }
     }
   });
