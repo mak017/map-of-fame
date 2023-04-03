@@ -495,7 +495,9 @@ const handleAddMoreClick = () => {
     <div class="upload-image">
       {#if image.filePreview}
         <img src={image.filePreview} alt="Preview" class="preview_image" />
-        <label for="upload-image" class="re-upload" />
+        <div class="overlay">
+          <label for="upload-image" class="re-upload" />
+        </div>
       {:else}
         <label for="upload-image" class="first_upload">
           <span>Add Image (1 of 2)</span>
@@ -514,11 +516,13 @@ const handleAddMoreClick = () => {
       <div class="upload-image upload-image2">
         {#if image2.filePreview}
           <img src={image2.filePreview} alt="Preview" class="preview_image" />
-          <label for="upload-image2" class="re-upload" />
-          <button
-            type="button"
-            class="button delete"
-            on:click={() => onRemoveImage("image2")} />
+          <div class="overlay">
+            <label for="upload-image2" class="re-upload" />
+            <button
+              type="button"
+              class="button delete"
+              on:click={() => onRemoveImage("image2")} />
+          </div>
         {:else}
           <label for="upload-image2" class="first_upload">
             <span>Add Image (2 of 2)</span>
@@ -707,41 +711,34 @@ form {
     object-fit: cover;
   }
 
-  .re-upload {
+  .overlay {
+    display: flex;
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
+    align-items: center;
+    justify-content: space-evenly;
     transition: opacity 0.3s;
     opacity: 0;
     background: rgba(0, 0, 0, 0.45);
-    cursor: pointer;
+  }
 
-    &::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 54px;
-      height: 54px;
-      transform: translate(-50%, -50%);
-      background-color: var(--color-accent);
-      background-image: url(../../images/re-upload.svg);
-      background-size: 24px 24px;
-      background-repeat: no-repeat;
-      background-position: 50% 50%;
-    }
+  .re-upload {
+    width: 54px;
+    height: 54px;
+    background-color: var(--color-accent);
+    background-image: url(../../images/re-upload.svg);
+    background-size: 24px 24px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    cursor: pointer;
   }
 
   .delete {
-    display: none;
-    position: absolute;
-    top: 50%;
-    right: calc(35% - 27px);
     width: 54px;
     height: 54px;
-    transform: translateY(-50%);
     background-color: var(--color-accent);
     background-repeat: no-repeat;
     background-position: 50% 50%;
@@ -750,22 +747,12 @@ form {
   }
 
   &:hover {
-    .re-upload {
+    .overlay {
       opacity: 1;
     }
 
     .delete {
       display: block;
-    }
-  }
-}
-
-.upload-image2 {
-  /* .upload-sketch { */
-  .re-upload {
-    &::before {
-      left: calc(35% - 27px);
-      transform: translateY(-50%);
     }
   }
 }
@@ -851,7 +838,7 @@ form {
     border-radius: 2px;
 
     .preview_image {
-      height: 100%;
+      height: 332px;
     }
   }
 
@@ -892,6 +879,10 @@ form {
     .upload-image {
       max-height: 140px;
       margin-top: 18px;
+
+      .preview_image {
+        height: 140px;
+      }
     }
 
     .description {

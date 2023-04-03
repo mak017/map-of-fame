@@ -461,7 +461,7 @@ const getArtistsString = (artistCrew) => {
 }
 
 .artist-area {
-  margin-bottom: 65px;
+  margin-bottom: 32px;
   text-align: center;
 }
 
@@ -471,7 +471,7 @@ const getArtistsString = (artistCrew) => {
 }
 
 .description {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   color: var(--color-dark);
   font-size: 18px;
   line-height: 1.22;
@@ -482,7 +482,7 @@ const getArtistsString = (artistCrew) => {
 .video {
   position: relative;
   height: 0;
-  margin: 30px 0 24px;
+  margin: 32px 0 24px;
   padding: 0 0 56.25%;
   overflow: hidden;
 
@@ -529,10 +529,6 @@ const getArtistsString = (artistCrew) => {
 
   .buttons {
     grid-column: 3;
-  }
-
-  .artist-area {
-    margin-bottom: 40px;
   }
 }
 </style>
