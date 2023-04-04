@@ -205,7 +205,7 @@ h2 {
   .bottom-container {
     height: 106px;
     min-height: 106px;
-    margin-top: 56px;
+    margin-top: 15px;
   }
   .autoMargin {
     h2 {

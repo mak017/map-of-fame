@@ -322,7 +322,7 @@ const getArtistsString = (artistCrew) => {
 .card {
   width: 100%;
   max-width: 938px;
-  margin-bottom: 64px;
+  margin-bottom: 32px;
 }
 
 .top {
@@ -477,6 +477,10 @@ const getArtistsString = (artistCrew) => {
   line-height: 1.22;
   white-space: pre-line;
   word-break: break-word;
+}
+
+.embed-link {
+  margin-bottom: 32px;
 }
 
 .video {
