@@ -191,7 +191,7 @@ h2 {
 
 @media (max-width: 767px) {
   .modal {
-    padding: 50px 12px 100px;
+    padding: 50px 12px 50px;
   }
   .close {
     right: 12px;
