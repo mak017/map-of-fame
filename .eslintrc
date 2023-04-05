@@ -9,7 +9,7 @@
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
   },
-  // "plugins": ["svelte3"],
+  "plugins": ["svelte3"],
   // "overrides": [
   //   {
   //     "files": ["*.svelte"],

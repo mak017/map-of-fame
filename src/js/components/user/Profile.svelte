@@ -1,5 +1,5 @@
 <script>
-import { isUserVerifyProgress } from "./../../store.js";
+import { isUserVerifyProgress, profileState } from "./../../store.js";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
 import { goto, params, url } from "@roxi/routify";
@@ -43,20 +43,20 @@ import {
   MAX_SPOTS_PER_PAGE,
 } from "../../constants";
 
-let currentYear;
+// let currentYear;
 let currentSpot;
 let showDeletePopup = false;
 let showInvitesPopup = false;
 let showSharePopup = false;
-let offset = 0;
-let yearsToApply = [];
-let spotsList = [];
+// let offset = 0;
+// let yearsToApply = [];
+// let spotsList = [];
 let newBatch = [];
 let invites = [];
 let unusedInvitesCount = 0;
 let isLoading = true;
 let isShowSpinner = true;
-let user = {};
+// let user = {};
 const token = loadFromLocalStorage("token") || null;
 
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
@@ -70,16 +70,16 @@ let isInitialized = false;
 let isCurrentUser = $userData.username === strippedUsername;
 let name = isCurrentUser
   ? $userData.name ?? $userData.crew
-  : user.name ?? user.crew;
+  : $profileState.user.name ?? $profileState.user.crew;
 
 $: isCurrentUser = $userData.username === strippedUsername;
 $: name = isCurrentUser
   ? $userData.name ?? $userData.crew
-  : user.name ?? user.crew;
+  : $profileState.user.name ?? $profileState.user.crew;
 
 $: if (!isInitialized && !$isUserVerifyProgress) {
   isInitialized = true;
-  if (!isCurrentUser && !user.id) {
+  if (!isCurrentUser && !$profileState.user.id) {
     getUserData(strippedUsername).then((response) => {
       const { success, result, errors } = response;
 
@@ -90,7 +90,8 @@ $: if (!isInitialized && !$isUserVerifyProgress) {
       if (success && result) {
         fetchSpots({ isNewFetch: true });
         shouldDisplayShowOnMap.set(false);
-        user = result;
+        // user = result;
+        profileState.setUser(result);
         isLoading = false;
       }
     });
@@ -123,12 +124,15 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
     if (success && result) {
       const { spots, years } = result;
       if (isNewFetch) {
-        spotsList = [];
+        // spotsList = [];
+        profileState.setSpotsList([]);
       }
       newBatch = spots ? [...spots] : [];
-      yearsToApply = getProfileYears(years);
-      if (currentYear === undefined || year === undefined) {
-        currentYear = yearsToApply[0];
+      const yearsToApply = getProfileYears(years);
+      profileState.setYearsToApply(yearsToApply);
+      if ($profileState.currentYear === undefined || year === undefined) {
+        // currentYear = yearsToApply[0];
+        profileState.setCurrentYear(yearsToApply[0]);
       }
     }
     if (errors && !isEmpty(errors)) {
@@ -141,7 +145,8 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
   });
 };
 
-$: spotsList = [...spotsList, ...newBatch];
+// $: spotsList = [...spotsList, ...newBatch];
+$: profileState.setSpotsList([...$profileState.spotsList, ...newBatch]);
 
 const handleLogout = () => {
   removeFromLocalStorage("token");
@@ -157,8 +162,10 @@ const handleAddSpot = () => {
 
 const handleYearSelect = (event) => {
   const { value } = event.detail.detail;
-  currentYear = value !== EMPTY_YEAR_STRING ? value : "";
-  offset = 0;
+  const currentYear = value !== EMPTY_YEAR_STRING ? value : "";
+  // offset = 0;
+  profileState.setCurrentYear(currentYear);
+  profileState.setOffset(0);
   if (currentYear === ALL_YEARS_STRING) {
     fetchSpots({ isNewFetch: true });
     return;
@@ -182,24 +189,25 @@ const onLoadMore = () => {
     return;
   }
 
-  offset += MAX_SPOTS_PER_PAGE;
+  const offset = $profileState.offset + MAX_SPOTS_PER_PAGE;
+  profileState.setOffset(offset);
   if (currentYear === ALL_YEARS_STRING) {
     fetchSpots({ offset });
     return;
   }
-  fetchSpots({ year: `${currentYear}`, offset });
+  fetchSpots({ year: `${$profileState.currentYear}`, offset });
 };
 
 const onSubmitChanges = () => {
-  if (currentYear === ALL_YEARS_STRING) {
+  if ($profileState.currentYear === ALL_YEARS_STRING) {
     fetchSpots({ isNewFetch: true });
     return;
   }
-  fetchSpots({ year: `${currentYear}`, isNewFetch: true });
+  fetchSpots({ year: `${$profileState.currentYear}`, isNewFetch: true });
 };
 
 const onSpotClick = (spot) => {
-  selectedUserProfileData.set(user);
+  selectedUserProfileData.set($profileState.user);
   const {
     id,
     spotStatus: status,
@@ -219,7 +227,7 @@ const onSpotClick = (spot) => {
   });
   shouldDisplayShowOnMap.set(true);
   $goto("/@:username/spot/:id", {
-    username: isCurrentUser ? strippedUsername : user.username,
+    username: isCurrentUser ? strippedUsername : $profileState.user.username,
     id,
   });
 };
@@ -232,9 +240,9 @@ const handleShowOnMapClick = (showAll) => {
   }
   getUserSpots(strippedUsername, token, {
     year:
-      showAll || currentYear === ALL_YEARS_STRING
+      showAll || $profileState.currentYear === ALL_YEARS_STRING
         ? undefined
-        : `${currentYear}`,
+        : `${$profileState.currentYear}`,
     offset: 0,
     limit: 99999999999999,
   }).then((response) => {
@@ -244,7 +252,11 @@ const handleShowOnMapClick = (showAll) => {
       markersStore.set({ spots, years: getProfileYears(years) });
       isSearchResults.set(false);
       isShowOnMapMode.set(true);
-      selectedYear.set(currentYear ? `${currentYear}` : EMPTY_YEAR_STRING);
+      selectedYear.set(
+        $profileState.currentYear
+          ? `${$profileState.currentYear}`
+          : EMPTY_YEAR_STRING
+      );
       selectedArtist.set("");
       selectedCrew.set("");
       $goto("/");
@@ -285,16 +297,16 @@ const handleShowOnMapClick = (showAll) => {
         >Logout</button>
     {/if}
   </div>
-  {#if !!spotsList.length || isShowSpinner}
+  {#if !!$profileState.spotsList.length || isShowSpinner}
     <div class="data">
-      {#if !!spotsList.length}
+      {#if !!$profileState.spotsList.length}
         <div class="data-top">
           <div class="year-select">
             <CustomSelect
-              items={yearsToApply}
+              items={$profileState.yearsToApply}
               selectedValue={{
-                value: currentYear,
-                label: currentYear || EMPTY_YEAR_STRING,
+                value: $profileState.currentYear,
+                label: $profileState.currentYear || EMPTY_YEAR_STRING,
               }}
               isYear
               on:select={handleYearSelect}
@@ -308,11 +320,11 @@ const handleShowOnMapClick = (showAll) => {
       {/if}
       {#if !isLoading}
         <div class="spots">
-          {#each spotsList as spot}
+          {#each $profileState.spotsList as spot}
             <a
               href={!isCurrentUser
                 ? $url("/@:username/spot/:id", {
-                    username: user.username,
+                    username: $profileState.user.username,
                     id: spot.id,
                   })
                 : undefined}

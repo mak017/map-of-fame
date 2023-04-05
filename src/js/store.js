@@ -40,3 +40,28 @@ export const isFirstTimeVisit = writable(false);
 export const shouldShowAddSpot = writable(null);
 export const shouldShowResetPassword = writable(false);
 export const resetPasswordToken = writable(null);
+
+const createProfileState = () => {
+  const initialState = {
+    offset: 0,
+    spotsList: [],
+    currentYear: undefined,
+    yearsToApply: [],
+    user: {},
+  };
+  const { subscribe, set, update } = writable(initialState);
+
+  return {
+    subscribe,
+    setOffset: (offset) => update((state) => ({ ...state, offset })),
+    setSpotsList: (spotsList) => update((state) => ({ ...state, spotsList })),
+    setCurrentYear: (currentYear) =>
+      update((state) => ({ ...state, currentYear })),
+    setYearsToApply: (yearsToApply) =>
+      update((state) => ({ ...state, yearsToApply })),
+    setUser: (user) => update((state) => ({ ...state, user })),
+    reset: () => set(initialState),
+  };
+};
+
+export const profileState = createProfileState();
