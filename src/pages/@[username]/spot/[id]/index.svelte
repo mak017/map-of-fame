@@ -22,7 +22,7 @@ import Modal from "../../../../js/components/Modal.svelte";
       selectedUserProfileData.set({});
       $shouldDisplayShowOnMap && requestSpots($selectedYear);
     }
-    $goto("/");
+    window.history.back();
   }}
   withAd
   noLogo

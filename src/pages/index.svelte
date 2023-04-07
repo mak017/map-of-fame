@@ -29,26 +29,25 @@ import {
   isAreaSelectionActive,
   isPermalinkReady,
 } from "../js/store.js";
-import { openRailwayMap } from "../js/utils/mapUtils/tileLayers";
 import {
   getCurrentYear,
   getInviteData,
-  loadFromLocalStorage,
   saveToLocalStorage,
 } from "../js/utils/commonUtils";
+import { useObserver } from "./../js/utils/mapUtils/geoSearch.js";
+import { setLocation } from "../js/utils/mapUtils/locationUtils.js";
 import { permalink } from "../js/utils/mapUtils/permalink";
 import { newMarkerIcon } from "../js/utils/mapUtils/icons";
 
 import CloseCrossSvg from "../js/components/elements/icons/CloseCrossSvg.svelte";
-import RailroadSvg from "../js/components/elements/icons/RailroadSvg.svelte";
 import Modal from "../js/components/Modal.svelte";
 import AddSpot from "../js/components/addSpot/AddSpot.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
 import Spinner from "../js/components/elements/Spinner.svelte";
+import CategoryFilter from "../js/components/CategoryFilter.svelte";
 
 import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
 
-let isRailwayMode = loadFromLocalStorage("railwayMode");
 let isAddSpotSidebarVisible = false;
 let inviteData = getInviteData();
 
@@ -72,6 +71,7 @@ if ($map && $isInitialized && !$isPermalinkReady) {
 
 onMount(() => {
   $map.on("moveend", updatePermalink);
+  useObserver();
 });
 
 onDestroy(() => {
@@ -102,18 +102,6 @@ if (inviteData) {
   showAuth(true);
 }
 
-const handleChangeModeClick = () => {
-  if (!isRailwayMode) {
-    $map.addLayer(openRailwayMap);
-    isRailwayMode = true;
-  } else {
-    $map.removeLayer(openRailwayMap);
-    isRailwayMode = false;
-  }
-  saveToLocalStorage("railwayMode", isRailwayMode);
-  !$isLighthouseActive ? requestSpots($selectedYear) : requestRecentSpots();
-};
-
 const handleNewMarkerMoveEnd = () => {
   if (!isAddSpotSidebarVisible) {
     toggleAddSpotSidebarVisible(true);
@@ -127,6 +115,10 @@ const handleNewMarkerCancel = () => {
     $map.removeLayer(newMarker);
   }
 };
+
+onDestroy(() => {
+  handleNewMarkerCancel();
+});
 
 const showAddSpot = () => {
   const center = $map.getCenter();
@@ -156,8 +148,16 @@ const quitAddSpot = () => {
   shouldShowAddSpot.set(false);
   toggleAddSpotSidebarVisible(false);
 };
+
+const handleKeyDown = (e) => {
+  if (e.key === "Escape" && isAddSpotSidebarVisible) {
+    quitAddSpot();
+    return;
+  }
+};
 </script>
 
+<svelte:window on:keydown={handleKeyDown} />
 {#if $shouldShowResetPassword}
   <Modal
     id="reset-password-modal"
@@ -194,6 +194,10 @@ const quitAddSpot = () => {
       </button>
     {/if}
   </div>
+
+  {#if !$isSearchResults && !$selectedUserProfileData.name && !$isAreaSelectionActive && !$isShowOnMapMode}
+    <CategoryFilter />
+  {/if}
 
   <div class="main-top_right_wrapper">
     {#if !$shouldShowAddSpot && !$isAreaSelectionActive}
@@ -253,13 +257,10 @@ const quitAddSpot = () => {
 
   {#if !$isSearchResults && !$selectedUserProfileData.name && !$isAreaSelectionActive && !$isShowOnMapMode}
     <button
-      class="button button-main_screen button-square button-switch_mode"
-      class:active={isRailwayMode}
-      on:click={handleChangeModeClick}
+      class="button button-main_screen button-square button-location"
+      on:click={() => setLocation($map, true)}
       transition:fade={{ duration: 200 }}
-      title="Highlight railways">
-      <RailroadSvg isLight={isRailwayMode} />
-    </button>
+      title={"Go to your location"} />
   {/if}
 
   {#if !$isSearchResults && !$isShowOnMapMode && !$shouldShowAddSpot && !$selectedUserProfileData.name && ($isAreaSelectionActive || $currentZoom > 14)}
@@ -393,8 +394,16 @@ const quitAddSpot = () => {
   }
 
   &-open_search {
+    position: absolute;
+    top: 40px;
+    right: 40px;
     margin-right: 12px;
-    background-image: url(../images/loupe.svg);
+    border-radius: 0 0 2px 2px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    background-color: var(--color-lotion);
+    background-image: url(../images/user.svg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: 20px 20px;
@@ -409,19 +418,6 @@ const quitAddSpot = () => {
     background-size: 9px 17px;
     color: transparent;
     font-size: 0;
-  }
-
-  &-switch_mode {
-    display: flex;
-    position: absolute;
-    bottom: 18px;
-    left: 70px;
-    align-items: center;
-    justify-content: center;
-
-    &.active {
-      background-color: var(--color-accent);
-    }
   }
 
   &-select_area {
@@ -445,6 +441,17 @@ const quitAddSpot = () => {
     background-size: 18px 13px;
     color: transparent;
     font-size: 0;
+  }
+
+  &-location {
+    display: flex;
+    position: absolute;
+    bottom: 18px;
+    left: 70px;
+    background-image: url(../images/target.svg);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 20px 20px;
   }
 
   &-clear_search {
@@ -506,6 +513,12 @@ const quitAddSpot = () => {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    &-open_search {
+      top: 0;
+      right: 0px;
+      margin-right: 0;
     }
 
     &-clear_search {

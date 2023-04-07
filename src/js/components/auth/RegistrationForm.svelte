@@ -76,8 +76,6 @@ const getCountries = () => {
   });
 };
 
-const getOptionLabel = (option) => option.name;
-
 const stripUsername = (username) =>
   username.startsWith("@") ? username.substring(1) : username;
 
@@ -257,8 +255,8 @@ const handleBackClick = () => {
         <AutoComplete
           bind:selectedValue={userType}
           items={userTypeList}
-          optionIdentifier={"name"}
-          {getOptionLabel}
+          optionIdentifier="name"
+          label="name"
           placeholder="Profile Subtype"
           errorMessage={errors.userType}
           showIndicator
@@ -292,8 +290,8 @@ const handleBackClick = () => {
       <AutoComplete
         bind:selectedValue={country}
         items={$countriesList}
-        optionIdentifier={"name"}
-        {getOptionLabel}
+        optionIdentifier="name"
+        label="name"
         placeholder="Country"
         errorMessage={errors.country}
         on:select={() => handleInputChange("country")} />

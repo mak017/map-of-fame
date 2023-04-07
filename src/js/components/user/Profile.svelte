@@ -178,6 +178,10 @@ const handleDelete = (spot) => {
 };
 
 const onLoadMore = () => {
+  if (isShowSpinner) {
+    return;
+  }
+
   offset += MAX_SPOTS_PER_PAGE;
   if (currentYear === ALL_YEARS_STRING) {
     fetchSpots({ offset });
@@ -195,51 +199,42 @@ const onSubmitChanges = () => {
 };
 
 const onSpotClick = (spot) => {
-  if (isCurrentUser) {
-    return;
-  }
   selectedUserProfileData.set(user);
   const {
     id,
-    artistCrew,
     spotStatus: status,
-    description,
     img,
     title,
     videoLink: video,
     publicBanner: { banner, bannerUrl },
     location: { lat, lng },
-    year,
-    link,
   } = spot;
   openedMarkerData.set({
-    id,
-    artistCrew,
+    ...spot,
     status,
-    description,
     img: { src: img, title: title || id },
     video,
-    user,
     firm: { banner, bannerUrl },
     coords: { lat, lng },
-    year,
-    link,
   });
   shouldDisplayShowOnMap.set(true);
   $goto("/@:username/spot/:id", {
-    username: user.username,
+    username: isCurrentUser ? strippedUsername : user.username,
     id,
   });
 };
 
-const handleShowOnMapClick = () => {
+const handleShowOnMapClick = (showAll) => {
   if (!$selectedUserProfileData.id && isCurrentUser) {
     selectedUserProfileData.set($userData ?? {});
   } else {
     selectedUserProfileData.set(user);
   }
   getUserSpots(strippedUsername, token, {
-    year: `${currentYear}`,
+    year:
+      showAll || currentYear === ALL_YEARS_STRING
+        ? undefined
+        : `${currentYear}`,
     offset: 0,
     limit: 99999999999999,
   }).then((response) => {
@@ -297,16 +292,18 @@ const handleShowOnMapClick = () => {
           <div class="year-select">
             <CustomSelect
               items={yearsToApply}
-              selectedValue={{ value: currentYear, label: currentYear }}
+              selectedValue={{
+                value: currentYear,
+                label: currentYear || EMPTY_YEAR_STRING,
+              }}
               isYear
-              on:select={handleYearSelect} />
+              on:select={handleYearSelect}
+              listPlacement="bottom" />
           </div>
-          {#if currentYear !== ALL_YEARS_STRING}
-            <button
-              type="button"
-              class="button show-on-map"
-              on:click={handleShowOnMapClick}>Show on map</button>
-          {/if}
+          <button
+            type="button"
+            class="button show-on-map"
+            on:click={handleShowOnMapClick}>Show on map</button>
         </div>
       {/if}
       {#if !isLoading}
@@ -321,7 +318,8 @@ const handleShowOnMapClick = () => {
                 : undefined}
               class="spot-card"
               role="button"
-              on:click|preventDefault={() => onSpotClick(spot)}>
+              on:click|preventDefault={() =>
+                !isCurrentUser && onSpotClick(spot)}>
               <img
                 loading="lazy"
                 src={spot.thumbnail}
@@ -329,6 +327,13 @@ const handleShowOnMapClick = () => {
                 in:fade={{ duration: 200 }} />
               {#if isCurrentUser}
                 <div class="overlay">
+                  <a
+                    href={$url("/:username/spot/:id", {
+                      username,
+                      id: spot.id,
+                    })}
+                    class="button view"
+                    on:click|preventDefault={() => onSpotClick(spot)}>👁</a>
                   <button
                     type="button"
                     class="button edit"
@@ -372,10 +377,10 @@ const handleShowOnMapClick = () => {
 </div>
 
 {#if $isFirstTimeVisit && !isLoading && !isCurrentUser}
-  <a
-    href={$url("../")}
-    class="go-to-map"
-    on:click={() => selectedUserProfileData.set({})}>Go to map</a>
+  <button
+    type="button"
+    class="button go-to-map"
+    on:click={() => handleShowOnMapClick(true)}>Go to map</button>
 {/if}
 
 {#if showDeletePopup}
@@ -575,6 +580,7 @@ const handleShowOnMapClick = () => {
   }
 }
 
+.view,
 .edit,
 .delete {
   width: 54px;
@@ -583,6 +589,15 @@ const handleShowOnMapClick = () => {
   background-color: var(--color-accent);
   background-repeat: no-repeat;
   background-position: 50% 50%;
+}
+
+.view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-light);
+  text-decoration: none;
+  font-size: 32px;
 }
 
 .edit {

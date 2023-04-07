@@ -1,8 +1,11 @@
 <script>
 import { createEventDispatcher } from "svelte";
 import { fade, slide } from "svelte/transition";
-import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
+
 import { isMobile } from "../utils/commonUtils.js";
+
+import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
+import ArrowLeftSvg from "./elements/icons/ArrowLeftSvg.svelte";
 
 export let id;
 export let title = "";
@@ -60,7 +63,9 @@ const handleResize = () => {
         class="sticky-header"
         on:click={() => modalRef.scrollTo({ top: 0, behavior: "smooth" })}
         transition:slide={{ duration: 200 }}>
-        <div class="back" />
+        <div class="back">
+          <ArrowLeftSvg />
+        </div>
         {title}
         {#if !noClose}
           <button class="close" on:click={close}><CloseCrossSvg /></button>
@@ -182,12 +187,11 @@ h2 {
 .back {
   width: 16px;
   height: 16px;
-  background: url(../../images/back.svg) 50% 50% / contain no-repeat;
 }
 
 @media (max-width: 767px) {
   .modal {
-    padding: 50px 12px 100px;
+    padding: 50px 12px 50px;
   }
   .close {
     right: 12px;
@@ -201,7 +205,7 @@ h2 {
   .bottom-container {
     height: 106px;
     min-height: 106px;
-    margin-top: 56px;
+    margin-top: 15px;
   }
   .autoMargin {
     h2 {

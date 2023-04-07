@@ -83,18 +83,22 @@ export const initApp = () => {
 };
 
 export const requestSpots = (year) => {
-  const isRailwayMode = loadFromLocalStorage("railwayMode");
+  let categories = loadFromLocalStorage("categories");
   let yearForRequest = year;
-  let categories = null;
+
   if (!bounds.length) {
     return null;
   }
+
+  if (!categories) {
+    categories = [1];
+    saveToLocalStorage("categories", categories);
+  }
+
   if (year === EMPTY_YEAR_STRING) {
     yearForRequest = "";
   }
-  if (!isRailwayMode) {
-    categories = [1, 3, 4, 5, 6];
-  }
+
   return getSpots(yearForRequest, bounds, categories).then((response) => {
     const { success, result } = response;
     if (success && result) {
@@ -122,11 +126,13 @@ export const performSearch = ({ artist, crew, year, geoRect, isInitial }) => {
 };
 
 export const requestRecentSpots = () => {
-  const isRailwayMode = loadFromLocalStorage("railwayMode");
-  let categories = null;
-  if (!isRailwayMode) {
-    categories = [1, 3, 4, 5, 6];
+  let categories = loadFromLocalStorage("categories");
+
+  if (!categories) {
+    categories = [1];
+    saveToLocalStorage("categories", categories);
   }
+
   getRecentSpots(7, bounds, categories).then((response) => {
     const { success, result } = response;
     if (success && result) {

@@ -58,30 +58,21 @@ const handleYearSelect = (event) => {
 const onSpotClick = (spot) => {
   const {
     id,
-    artistCrew,
     spotStatus: status,
-    description,
     img,
     title,
     videoLink: video,
     publicBanner: { banner, bannerUrl },
     location: { lat, lng },
-    year,
-    link,
     user,
   } = spot;
   openedMarkerData.set({
-    id,
-    artistCrew,
+    ...spot,
     status,
-    description,
     img: { src: img, title: title || id },
     video,
-    user,
     firm: { banner, bannerUrl },
     coords: { lat, lng },
-    year,
-    link,
   });
 
   $goto("/@:username/spot/:id", {

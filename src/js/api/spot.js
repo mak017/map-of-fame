@@ -51,6 +51,8 @@ export const createSpot = async (
     year,
     spotStatus,
     img,
+    additionalImg,
+    sketch,
     videoLink,
     description,
     categoryId,
@@ -79,6 +81,8 @@ export const createSpot = async (
   if (description) formData.append("description", description);
   if (firmId) formData.append("firm_id", firmId);
   if (link) formData.append("link", link);
+  if (additionalImg) formData.append("additionalImg", additionalImg);
+  if (sketch) formData.append("sketch", sketch);
   const response = await fetch(SPOT(), {
     method: "POST",
     withCredentials: true,
@@ -129,6 +133,8 @@ export const updateSpot = async (
     year,
     spotStatus,
     img,
+    additionalImg,
+    sketch,
     videoLink,
     description,
     categoryId,
@@ -142,6 +148,8 @@ export const updateSpot = async (
   formData.append("category_id", categoryId);
   formData.append("year", year);
   if (img) formData.append("img", img);
+  if (additionalImg) formData.append("additionalImg", additionalImg);
+  if (sketch) formData.append("sketch", sketch);
   formData.append("video_link", videoLink);
   formData.append("description", description);
   formData.append("link", link);

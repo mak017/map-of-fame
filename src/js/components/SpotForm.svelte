@@ -16,10 +16,10 @@ import { requestSpots } from "../init.js";
 import {
   firms,
   isSearchResults,
+  map,
   markersStore,
   selectedArtist,
   selectedCrew,
-  selectedUserProfileData,
   selectedYear,
   settings,
   shouldShowAddSpot,
@@ -43,6 +43,7 @@ import {
   statusesOrdered,
   USER_TYPES,
 } from "../constants";
+import { permalink } from "../utils/mapUtils/permalink.js";
 
 export let marker = null;
 export let editSpotData = {};
@@ -66,15 +67,30 @@ const getInitialYear = () => {
   return "";
 };
 
+const currentYear = getCurrentYear();
 let year = getInitialYear();
 let prevYearValue = "";
-let selectedStatus = editSpotData.spotStatus || STATUSES.live;
-let imageFile;
-let imageFilePreview = editSpotData.img || "";
-let imageBlob;
+let selectedStatus =
+  editSpotData.spotStatus ??
+  (currentYear - +year > 10 ? STATUSES.buffed : STATUSES.live);
+let image = {
+  file: undefined,
+  filePreview: editSpotData.img || "",
+  blob: undefined,
+};
+let image2 = {
+  file: undefined,
+  filePreview: editSpotData.additionalImg || "",
+  blob: undefined,
+};
+let sketch = {
+  file: undefined,
+  filePreview: editSpotData.sketchImg || "",
+  blob: undefined,
+};
 let linkToVideo = editSpotData.videoLink || "";
 let description = editSpotData.description || "";
-let selectedCategory = null;
+let selectedCategory;
 let sprayPaintUsed;
 let link = editSpotData.link || "";
 let isSubmitDisabled = false;
@@ -83,7 +99,7 @@ let errors = {
   year: "",
   imageFile: "",
   linkToVideo: "",
-  sprayPaintUsed: "",
+  selectedCategory: "",
   link: "",
   artistCrewPairs: "",
 };
@@ -100,7 +116,7 @@ let artistCrewPairs =
           crew: isArtist() || isCrew() ? $userData.crew ?? "" : "",
         },
       ];
-const currentYear = getCurrentYear();
+
 const token = loadFromLocalStorage("token") || null;
 
 const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
@@ -111,7 +127,7 @@ $: isSubmitDisabled =
 const getInitialCategory = (categories) =>
   isEditSpot
     ? categories.find((cat) => cat.id === editSpotData.categoryId)
-    : categories[0];
+    : undefined;
 
 const hasCategories = () =>
   Array.isArray($userCategories) && $userCategories.length;
@@ -137,19 +153,29 @@ if (!isEditSpot && !isHunter() && !hasSprays()) {
     const { success, result } = response;
     if (success && result) {
       firms.set(result);
+      sprayPaintUsed = result.find((firm) => firm.isDefault)?.id || undefined;
     }
   });
 }
 
-const onChangeImage = () => {
-  const file = imageFile[0];
+const onChangeImage = (imageType) => {
+  let imageObject = { ...image };
+  if (imageType === "image2") {
+    imageObject = { ...image2 };
+  }
+
+  if (imageType === "sketch") {
+    imageObject = { ...sketch };
+  }
+
+  const file = imageObject.file[0];
   if (file) {
     const reader = new FileReader();
 
     reader.onload = function (e) {
-      const image = new Image();
-      image.src = e.target.result;
-      image.onload = function () {
+      const img = new Image();
+      img.src = e.target.result;
+      img.onload = function () {
         if (file.size > MAX_IMAGE_FILE_SIZE) {
           processImage(
             file,
@@ -159,8 +185,24 @@ const onChangeImage = () => {
             0.8,
             true,
             (blob) => {
-              imageBlob = new File([blob], "image.jpg");
-              imageFilePreview = URL.createObjectURL(imageBlob);
+              const newBlob = new File([blob], "image.jpg");
+              imageObject = {
+                ...imageObject,
+                blob: newBlob,
+                filePreview: URL.createObjectURL(newBlob),
+              };
+
+              if (imageType === "image") {
+                image = { ...imageObject };
+              }
+
+              if (imageType === "image2") {
+                image2 = { ...imageObject };
+              }
+
+              if (imageType === "sketch") {
+                sketch = { ...imageObject };
+              }
             }
           );
         } else {
@@ -172,12 +214,25 @@ const onChangeImage = () => {
             0.85,
             false,
             (blob, isRotated) => {
-              if (isRotated) {
-                imageBlob = new File([blob], "image.jpg");
-                imageFilePreview = URL.createObjectURL(imageBlob);
-              } else {
-                imageBlob = file;
-                imageFilePreview = e.target.result;
+              const newBlob = new File([blob], "image.jpg");
+              imageObject = isRotated
+                ? {
+                    ...imageObject,
+                    blob: newBlob,
+                    filePreview: URL.createObjectURL(newBlob),
+                  }
+                : { ...imageObject, blob: file, filePreview: e.target.result };
+
+              if (imageType === "image") {
+                image = { ...imageObject };
+              }
+
+              if (imageType === "image2") {
+                image2 = { ...imageObject };
+              }
+
+              if (imageType === "sketch") {
+                sketch = { ...imageObject };
               }
             }
           );
@@ -191,6 +246,24 @@ const onChangeImage = () => {
     } else {
       errors.imageFile = ERROR_MESSAGES.fileTooLarge;
     }
+  }
+};
+
+const onRemoveImage = (imageType) => {
+  if (imageType === "image2") {
+    image2 = {
+      file: undefined,
+      filePreview: "",
+      blob: undefined,
+    };
+  }
+
+  if (imageType === "sketch") {
+    sketch = {
+      file: undefined,
+      filePreview: "",
+      blob: undefined,
+    };
   }
 };
 
@@ -213,13 +286,13 @@ const validateYearInput = () => {
 
 const validateImage = () => {
   errors.imageFile =
-    errors.imageFile || !imageFilePreview ? ERROR_MESSAGES.fileEmpty : "";
+    errors.imageFile || !image.filePreview ? ERROR_MESSAGES.fileEmpty : "";
 };
 
-const validateFirm = () => {
-  if (!isHunter() && !isEditSpot) {
-    errors.sprayPaintUsed = !sprayPaintUsed ? ERROR_MESSAGES.sprayEmpty : "";
-  }
+const validateCategory = () => {
+  errors.selectedCategory = !selectedCategory
+    ? ERROR_MESSAGES.categoryEmpty
+    : "";
 };
 
 const validateVideoLinkInput = () => {
@@ -236,7 +309,7 @@ const validateLink = () => {
 const validate = () => {
   validateYearInput();
   validateImage();
-  validateFirm();
+  validateCategory();
   validateVideoLinkInput();
   validateLink();
 };
@@ -258,9 +331,9 @@ const handleVideoLinkChange = () => {
   }
 };
 
-const handleSpraySelect = () => {
+const handleCategorySelect = () => {
   if (isSubmitDisabled || isFormHasErrors()) {
-    errors.sprayPaintUsed = "";
+    errors.selectedCategory = "";
   }
 };
 
@@ -280,7 +353,7 @@ const handleSubmit = () => {
   if (
     !errors.year &&
     !errors.imageFile &&
-    !errors.sprayPaintUsed &&
+    !errors.selectedCategory &&
     !errors.linkToVideo &&
     !errors.link
   ) {
@@ -294,7 +367,9 @@ const handleSubmit = () => {
         lng,
         year,
         spotStatus: selectedStatus,
-        img: imageBlob,
+        img: image.blob,
+        additionalImg: image2.blob,
+        sketch: sketch.blob,
         videoLink: linkToVideo,
         description,
         categoryId: selectedCategory.id,
@@ -307,25 +382,23 @@ const handleSubmit = () => {
         const { success, result, errors: error } = response;
         isInProgress = false;
         if (success && result) {
-          if (
-            ($selectedYear === year ||
-              (!year && $selectedYear === EMPTY_YEAR_STRING)) &&
-            !$selectedUserProfileData.id
-          ) {
-            if (!$isSearchResults) {
-              requestSpots($selectedYear);
-            } else if (isSelectedArtistCrew()) {
-              requestSearchSpots({
-                artist: $selectedArtist,
-                crew: $selectedCrew,
-                year: $selectedYear,
-              }).then((response) => {
-                const { success, result } = response;
-                if (success && result) {
-                  markersStore.set(result);
-                }
-              });
-            }
+          const yearForRequest = year || EMPTY_YEAR_STRING;
+
+          selectedYear.set(yearForRequest);
+          if (!$isSearchResults) {
+            requestSpots($selectedYear);
+            permalink.update({ mapContainer: $map });
+          } else if (isSelectedArtistCrew()) {
+            requestSearchSpots({
+              artist: $selectedArtist,
+              crew: $selectedCrew,
+              year: $selectedYear,
+            }).then((response) => {
+              const { success, result } = response;
+              if (success && result) {
+                markersStore.set(result);
+              }
+            });
           }
           onCancel();
         }
@@ -341,7 +414,9 @@ const handleSubmit = () => {
       updateSpot(token, editSpotData.id, {
         year,
         spotStatus: selectedStatus,
-        img: imageBlob,
+        img: image.blob,
+        additionalImg: image2.blob,
+        sketch: sketch.blob,
         videoLink: linkToVideo,
         description,
         categoryId: selectedCategory.id,
@@ -356,11 +431,6 @@ const handleSubmit = () => {
       });
     }
   }
-};
-
-const getOptionLabel = (option) => option.name;
-const getSelectionLabel = (option) => {
-  if (option) return option.name;
 };
 
 const handleAddMoreClick = () => {
@@ -421,33 +491,76 @@ const handleAddMoreClick = () => {
         className={!isEditSpot ? "addSpot" : ""} />
     {/each}
   </div>
-  <div class="upload-image">
-    {#if imageFilePreview}
-      <img src={imageFilePreview} alt="Preview" class="preview_image" />
-      <label for="upload-image" class="re-upload" />
-    {:else}
-      <label for="upload-image" class="first_upload">
-        <span>Add Image</span>
-        <span>Max 10 Mb</span>
-      </label>
+  <div class="upload-area">
+    <div class="upload-image">
+      {#if image.filePreview}
+        <img src={image.filePreview} alt="Preview" class="preview_image" />
+        <div class="overlay">
+          <label for="upload-image" class="re-upload" />
+        </div>
+      {:else}
+        <label for="upload-image" class="first_upload">
+          <span>Add Image (1 of 2)</span>
+          <span>Max 10 Mb</span>
+        </label>
+      {/if}
+      {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
+      <input
+        accept="image/png, image/jpeg"
+        bind:files={image.file}
+        on:change={() => onChangeImage("image")}
+        id="upload-image"
+        type="file" />
+    </div>
+    {#if image.filePreview}
+      <div class="upload-image upload-image2">
+        {#if image2.filePreview}
+          <img src={image2.filePreview} alt="Preview" class="preview_image" />
+          <div class="overlay">
+            <label for="upload-image2" class="re-upload" />
+            <button
+              type="button"
+              class="button delete"
+              on:click={() => onRemoveImage("image2")} />
+          </div>
+        {:else}
+          <label for="upload-image2" class="first_upload">
+            <span>Add Image (2 of 2)</span>
+            <span>Max 10 Mb</span>
+          </label>
+        {/if}
+        {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
+        <input
+          accept="image/png, image/jpeg"
+          bind:files={image2.file}
+          on:change={() => onChangeImage("image2")}
+          id="upload-image2"
+          type="file" />
+      </div>
     {/if}
-    {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
-    <input
-      accept="image/png, image/jpeg"
-      bind:files={imageFile}
-      on:change={onChangeImage}
-      id="upload-image"
-      type="file" />
+    <!-- <div class="upload-image upload-sketch">
+      {#if sketch.filePreview}
+        <img src={sketch.filePreview} alt="Preview" class="preview_image" />
+        <label for="upload-sketch" class="re-upload" />
+        <button
+          type="button"
+          class="button delete"
+          on:click={() => onRemoveImage("sketch")} />
+      {:else}
+        <label for="upload-sketch" class="first_upload">
+          <span>Add Sketch</span>
+          <span>Max 10 Mb</span>
+        </label>
+      {/if}
+      {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
+      <input
+        accept="image/png, image/jpeg"
+        bind:files={sketch.file}
+        on:change={() => onChangeImage("sketch")}
+        id="upload-sketch"
+        type="file" />
+    </div> -->
   </div>
-  <FormTextInput
-    label="Link To Video"
-    bind:value={linkToVideo}
-    errorText={errors.linkToVideo}
-    on:input={handleVideoLinkChange}
-    wideOnMobile
-    editSpot={isEditSpot}
-    addSpot={!isEditSpot}
-    link />
   <div class="description">
     <FormTextArea
       placeholder="Description"
@@ -458,34 +571,39 @@ const handleAddMoreClick = () => {
   </div>
   <div class="category">
     {#if $userCategories.length > 0}
-      {#each $userCategories as category}
-        <FormRadioButton
-          id={category.id}
-          bind:group={selectedCategory}
-          value={category}
-          label={category.name}
-          className={!isEditSpot ? "addSpot" : ""} />
-      {/each}
+      <CustomSelect
+        items={$userCategories}
+        bind:selectedValue={selectedCategory}
+        on:select={handleCategorySelect}
+        placeholder="Art Category"
+        optionIdentifier="name"
+        addSpot={!isEditSpot}
+        label="name" />
     {:else}
       <Spinner height={30} margin="5px 0 5.5px" />
     {/if}
   </div>
-  {#if !isHunter() && !isEditSpot}
-    <div class="spray" class:with-error={errors.sprayPaintUsed}>
+  <!-- {#if !isHunter() && !isEditSpot}
+    <div class="spray">
       <CustomSelect
         items={$firms}
         bind:selectedValue={sprayPaintUsed}
-        on:select={handleSpraySelect}
         placeholder="Spray Paint Used"
         optionIdentifier="name"
         addSpot={!isEditSpot}
-        {getOptionLabel}
-        {getSelectionLabel} />
-      {#if errors.sprayPaintUsed}
-        <span class="error">{errors.sprayPaintUsed}</span>
-      {/if}
+        label="name" />
     </div>
-  {/if}
+  {/if} -->
+  <div class="link-to-video">
+    <FormTextInput
+      label="Link To Video"
+      bind:value={linkToVideo}
+      errorText={errors.linkToVideo}
+      on:input={handleVideoLinkChange}
+      wideOnMobile
+      editSpot={isEditSpot}
+      addSpot={!isEditSpot} />
+  </div>
   <div class="link-to-work">
     <FormTextInput
       label="Link To Work"
@@ -539,15 +657,22 @@ form {
   text-transform: uppercase;
 }
 
-.status,
-.category {
+.status {
   display: flex;
 }
 
 .upload-image {
   position: relative;
-  height: 136px;
-  margin: 15px 0;
+  max-height: 136px;
+  margin: 15px 0 8px;
+
+  &.upload-image2 {
+    margin: 0 0 8px;
+  }
+
+  /* &.upload-sketch {
+    margin: 0 0 15px;
+  } */
 
   .first_upload {
     display: flex;
@@ -582,44 +707,52 @@ form {
 
   .preview_image {
     width: 100%;
-    height: 100%;
+    height: 136px;
     object-fit: cover;
   }
 
-  .re-upload {
+  .overlay {
+    display: flex;
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    transition: opaicty 0.3s;
+    align-items: center;
+    justify-content: space-evenly;
+    transition: opacity 0.3s;
     opacity: 0;
     background: rgba(0, 0, 0, 0.45);
-    cursor: pointer;
+  }
 
-    &:hover {
+  .re-upload {
+    width: 54px;
+    height: 54px;
+    background-color: var(--color-accent);
+    background-image: url(../../images/re-upload.svg);
+    background-size: 24px 24px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    cursor: pointer;
+  }
+
+  .delete {
+    width: 54px;
+    height: 54px;
+    background-color: var(--color-accent);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-image: url(../../images/trash.svg);
+    background-size: 14px 18px;
+  }
+
+  &:hover {
+    .overlay {
       opacity: 1;
     }
 
-    &::before,
-    &::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    &::before {
-      width: 68px;
-      height: 68px;
-      background-color: var(--color-accent);
-    }
-
-    &::after {
-      width: 24px;
-      height: 24px;
-      background: url(../../images/re-upload.svg);
+    .delete {
+      display: block;
     }
   }
 }
@@ -633,20 +766,10 @@ form {
   margin-bottom: 15px;
 }
 
-.spray {
+/* .spray {
   position: relative;
   margin-bottom: 15px;
-
-  &.with-error {
-    margin: 0;
-  }
-
-  .error {
-    display: block;
-    margin-top: 1px;
-    line-height: 1.1;
-  }
-}
+} */
 
 .button_wrap {
   display: flex;
@@ -675,7 +798,7 @@ form {
 .edit {
   display: grid;
   position: relative;
-  grid-column-gap: 4%;
+  grid-gap: 12px 4%;
   grid-template-columns: 28% 28% 36%;
 
   .save {
@@ -687,16 +810,11 @@ form {
   }
 
   .artists-area {
-    grid-column: 1/3;
-    grid-row: 5/10;
-    margin-top: -9px;
+    grid-column: 3;
+    grid-row: 6;
   }
 
   .artist-crew-pair {
-    display: grid;
-    grid-template-columns: 47.15% 47.15%;
-    grid-column-gap: 5.7%;
-
     + .artist-crew-pair {
       margin-top: 4px;
     }
@@ -708,18 +826,25 @@ form {
     height: 40px;
   }
 
-  .upload-image {
+  .upload-area {
     grid-column: 1/3;
-    grid-row: 1/5;
-    height: 330px;
-    margin: 0 0 24px;
+    grid-row: 1/9;
+  }
+
+  .upload-image {
+    max-height: 332px;
+    margin: 0 0 16px;
     overflow: hidden;
     border-radius: 2px;
+
+    .preview_image {
+      height: 332px;
+    }
   }
 
   .description {
     grid-column: 3;
-    grid-row: 6;
+    grid-row: auto;
     margin-top: 24px;
   }
 
@@ -734,6 +859,11 @@ form {
     grid-column: 3;
     grid-row: 3;
   }
+
+  .link-to-video {
+    grid-column: 3;
+    grid-row: 4;
+  }
 }
 
 @media (max-width: 767px) {
@@ -747,8 +877,16 @@ form {
     }
 
     .upload-image {
-      height: 140px;
+      max-height: 140px;
       margin-top: 18px;
+
+      .preview_image {
+        height: 140px;
+      }
+    }
+
+    .description {
+      margin-top: 0;
     }
   }
 }
@@ -757,8 +895,12 @@ form {
   form {
     &:not(.edit) {
       .upload-image {
-        height: 100px;
+        max-height: 100px;
         margin: 12px 0;
+      }
+
+      .preview_image {
+        height: 100px;
       }
 
       .category {
@@ -777,11 +919,9 @@ form {
         font-size: 11px;
       }
 
-      .spray {
-        &.with-error {
-          margin-bottom: 2px;
-        }
-      }
+      /* .spray {
+        margin-bottom: 12px;
+      } */
     }
   }
 }

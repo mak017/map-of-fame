@@ -165,18 +165,14 @@ label:not(.with-label) {
 }
 
 .add-spot {
+  margin-bottom: 15px;
+
   .hint {
     margin-top: 4px;
   }
 
   &:not(.with-label) {
     margin-bottom: 10px;
-  }
-
-  &.link {
-    .hint {
-      margin: -1px 0 -15px;
-    }
   }
 }
 

@@ -3,77 +3,134 @@
 // For more specific resets, use the reset mixins provided below
 @function elements-of-type($type) {
   @if ($type == block) {
-    @return address, article, aside, blockquote, center, dir, div, dd, details, dl, dt, fieldset,
-    figcaption, figure, form, footer, frameset, h1, h2, h3, h4, h5, h6, hr, header, hgroup,
-    isindex, main, menu, nav, noframes, noscript, ol, p, pre, section, summary, ul;
-  }
-
-  @else if ($type == inline) {
-    @return a, abbr, acronym, audio, b, basefont, bdo, big, br, canvas, cite, code, command,
-    datalist, dfn, em, embed, font, i, img, input, keygen, kbd, label, mark, meter, output,
-    progress, q, rp, rt, ruby, s, samp, select, small, span, strike, strong, sub, sup, textarea,
-    time, tt, u, var, video, wbr;
-  }
-
-  @else if ($type == inline-block) {
+    @return address, article, aside, blockquote, center, dir, div, dd, details,
+      dl, dt, fieldset, figcaption, figure, form, footer, frameset, h1, h2, h3,
+      h4, h5, h6, hr, header, hgroup, isindex, main, menu, nav, noframes,
+      noscript, ol, p, pre, section, summary, ul;
+  } @else if ($type == inline) {
+    @return a, abbr, acronym, audio, b, basefont, bdo, big, br, canvas, cite,
+      code, command, datalist, dfn, em, embed, font, i, img, input, keygen, kbd,
+      label, mark, meter, output, progress, q, rp, rt, ruby, s, samp, select,
+      small, span, strike, strong, sub, sup, textarea, time, tt, u, var, video,
+      wbr;
+  } @else if ($type == inline-block) {
     @return img;
-  }
-
-  @else if ($type == table) {
+  } @else if ($type == table) {
     @return table;
-  }
-
-  @else if ($type == list-item) {
+  } @else if ($type == list-item) {
     @return li;
-  }
-
-  @else if ($type == table-row-group) {
+  } @else if ($type == table-row-group) {
     @return tbody;
-  }
-
-  @else if ($type == table-header-group) {
+  } @else if ($type == table-header-group) {
     @return thead;
-  }
-
-  @else if ($type == table-footer-group) {
+  } @else if ($type == table-footer-group) {
     @return tfoot;
-  }
-
-  @else if ($type == table-row) {
+  } @else if ($type == table-row) {
     @return tr;
-  }
-
-  @else if ($type == table-cell) {
+  } @else if ($type == table-cell) {
     @return th, td;
-  }
-
-  @else if ($type == html5-block) {
-    @return article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav,
-    section, summary;
-  }
-
-  @else if ($type == html5-inline) {
-    @return audio, canvas, command, datalist, embed, keygen, mark, meter, output, progress, rp, rt,
-    ruby, time, video, wbr;
-  }
-
-  @else if ($type == html5) {
-    @return article, aside, audio, canvas, command, datalist, details, embed, figcaption, figure,
-    footer, header, hgroup, keygen, main, mark, menu, meter, nav, output, progress, rp, rt, ruby,
-    section, summary, time, video, wbr;
-  }
-
-  @else if ($type == text-input) {
+  } @else if ($type == html5-block) {
+    @return article, aside, details, figcaption, figure, footer, header, hgroup,
+      main, menu, nav, section, summary;
+  } @else if ($type == html5-inline) {
+    @return audio, canvas, command, datalist, embed, keygen, mark, meter, output,
+      progress, rp, rt, ruby, time, video, wbr;
+  } @else if ($type == html5) {
+    @return article, aside, audio, canvas, command, datalist, details, embed,
+      figcaption, figure, footer, header, hgroup, keygen, main, mark, menu,
+      meter, nav, output, progress, rp, rt, ruby, section, summary, time, video,
+      wbr;
+  } @else if ($type == text-input) {
     @return input, textarea;
   }
 }
 @mixin global-reset {
   @include reset-html5;
 
-  html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  html,
+  body,
+  div,
+  span,
+  applet,
+  object,
+  iframe,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  blockquote,
+  pre,
+  a,
+  abbr,
+  acronym,
+  address,
+  big,
+  cite,
+  code,
+  del,
+  dfn,
+  em,
+  img,
+  ins,
+  kbd,
+  q,
+  s,
+  samp,
+  small,
+  strike,
+  strong,
+  sub,
+  sup,
+  tt,
+  var,
+  b,
+  u,
+  i,
+  center,
+  dl,
+  dt,
+  dd,
+  ol,
+  ul,
+  li,
+  fieldset,
+  form,
+  label,
+  legend,
+  table,
+  caption,
+  tbody,
+  tfoot,
+  thead,
+  tr,
+  th,
+  td,
+  article,
+  aside,
+  canvas,
+  details,
+  embed,
+  figure,
+  figcaption,
+  footer,
+  header,
+  hgroup,
+  menu,
+  nav,
+  output,
+  ruby,
+  section,
+  summary,
+  time,
+  mark,
+  audio,
+  video {
     @include reset-box-model;
 
-@include reset-font;
+    @include reset-font;
   }
 
   // Unlike Eric's original reset, we reset the html element to be compatible
@@ -82,7 +139,8 @@
     @include reset-body;
   }
 
-  ol, ul {
+  ol,
+  ul {
     @include reset-list-style;
   }
 
@@ -90,11 +148,14 @@
     @include reset-table;
   }
 
-  caption, th, td {
+  caption,
+  th,
+  td {
     @include reset-table-cell;
   }
 
-  q, blockquote {
+  q,
+  blockquote {
     @include reset-quotation;
   }
 
@@ -107,21 +168,102 @@
 // mixin the appropriate reset mixin for that element type as well. This could be
 // useful if you want to style a part of your page in a dramatically different way.
 @mixin nested-reset {
-  div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  div,
+  span,
+  applet,
+  object,
+  iframe,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  blockquote,
+  pre,
+  a,
+  abbr,
+  acronym,
+  address,
+  big,
+  cite,
+  code,
+  del,
+  dfn,
+  em,
+  img,
+  ins,
+  kbd,
+  q,
+  s,
+  samp,
+  small,
+  strike,
+  strong,
+  sub,
+  sup,
+  tt,
+  var,
+  b,
+  u,
+  i,
+  center,
+  dl,
+  dt,
+  dd,
+  ol,
+  ul,
+  li,
+  fieldset,
+  form,
+  label,
+  legend,
+  table,
+  caption,
+  tbody,
+  tfoot,
+  thead,
+  tr,
+  th,
+  td,
+  article,
+  aside,
+  canvas,
+  details,
+  embed,
+  figure,
+  figcaption,
+  footer,
+  header,
+  hgroup,
+  menu,
+  nav,
+  output,
+  ruby,
+  section,
+  summary,
+  time,
+  mark,
+  audio,
+  video {
     @include reset-box-model;
 
-@include reset-font;
+    @include reset-font;
   }
 
   table {
     @include reset-table;
   }
 
-  caption, th, td {
+  caption,
+  th,
+  td {
     @include reset-table-cell;
   }
 
-  q, blockquote {
+  q,
+  blockquote {
     @include reset-quotation;
   }
 
@@ -177,7 +319,8 @@
 @mixin reset-quotation {
   quotes: none;
 
-  &:before, &:after {
+  &:before,
+  &:after {
     content: "";
     content: none;
   }
@@ -231,17 +374,31 @@
 
 // Modern CSS reset - https://github.com/hankchizljaw/modern-css-reset/
 /* Box sizing rules */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 /* Remove default padding */
-ul[class], ol[class] {
+ul[class],
+ol[class] {
   padding: 0;
 }
 
 /* Remove default margin */
-body, h1, h2, h3, h4, p, ul[class], ol[class], figure, blockquote, dl, dd {
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+figure,
+blockquote,
+dl,
+dd {
   margin: 0;
 }
 
@@ -258,7 +415,8 @@ body {
 }
 
 /* Remove list styles on ul, ol elements with a class attribute */
-ul[class], ol[class] {
+ul[class],
+ol[class] {
   list-style: none;
 }
 
@@ -268,24 +426,23 @@ a:not([class]) {
 }
 
 /* Make images easier to work with */
-img, picture {
+img,
+picture {
   display: block;
   max-width: 100%;
 }
 
 /* Natural flow and rhythm in articles by default */
-article >* +* {
+article > * + * {
   margin-top: 1em;
 }
 
 /* Inherit fonts for inputs and buttons */
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
-}
-
-/* Blur images when they have no alt attribute */
-img:not([alt]) {
-  filter: blur(10px);
 }
 
 /* Remove all animations and transitions for people that prefer not to see them */

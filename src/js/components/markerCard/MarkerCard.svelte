@@ -5,6 +5,7 @@ import { goto, params } from "@roxi/routify";
 import {
   embedVideoCodeFromBasicUrl,
   isEmpty,
+  isExternalMapsUrl,
   loadFromLocalStorage,
 } from "../../utils/commonUtils";
 import {
@@ -28,7 +29,7 @@ import ShareMarker from "./ShareMarker.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
 import Spinner from "../elements/Spinner.svelte";
 
-import { EMPTY_YEAR_STRING, MAX_ZOOM } from "./../../constants.js";
+import { EMPTY_YEAR_STRING, MAX_ZOOM } from "../../constants.js";
 
 const emojiList = [
   "👽",
@@ -53,10 +54,23 @@ const strippedUsername = username.substring(1);
 
 let isShareOpened = false;
 let isComplainOpened = false;
+let videoEmbed = "";
 
 onDestroy(() => {
   !$isShowOnMapMode && selectedUserProfileData.set({});
 });
+
+const getVideoEmbed = async (video) =>
+  video && (await embedVideoCodeFromBasicUrl(video));
+
+$: if ($openedMarkerData?.video?.includes("tiktok")) {
+  setTimeout(() => {
+    const video = document.getElementById("video-embedded");
+    const newScript = document.createElement("script");
+    newScript.src = "https://www.tiktok.com/embed.js";
+    video.appendChild(newScript);
+  }, 0);
+}
 
 const getSpotData = async () => {
   if ($openedMarkerData?.id === id) {
@@ -72,6 +86,7 @@ const getSpotData = async () => {
       img,
       title,
       videoLink: video,
+      embedLink,
       publicBanner: { banner, bannerUrl },
       location: { lat, lng },
       user,
@@ -82,6 +97,10 @@ const getSpotData = async () => {
       throw new Error();
     }
 
+    if (video) {
+      videoEmbed = await getVideoEmbed(video);
+    }
+
     const data = {
       ...result,
       status,
@@ -89,6 +108,7 @@ const getSpotData = async () => {
       video,
       firm: { banner, bannerUrl },
       coords: { lat, lng },
+      embedLink,
     };
     openedMarkerData.set(data);
     return data;
@@ -100,7 +120,6 @@ const getSpotData = async () => {
 };
 
 const EMPTY_ARTIST = "Unknown";
-const getVideoEmbed = (video) => video && embedVideoCodeFromBasicUrl(video);
 const token = loadFromLocalStorage("token") || null;
 
 const onShareToggle = (toggle) => (isShareOpened = toggle);
@@ -122,9 +141,11 @@ const handleShowOnMapClick = () => {
   const {
     year,
     coords: { lat, lng },
+    user,
   } = $openedMarkerData;
+  const userId = $selectedUserProfileData.id ?? user.id;
 
-  getUserSpots($selectedUserProfileData.id, token, {
+  getUserSpots(userId, token, {
     year: year ? `${year}` : "",
     offset: 0,
     limit: 99999999999999,
@@ -145,6 +166,7 @@ const handleShowOnMapClick = () => {
       selectedYear.set(year ? `${year}` : EMPTY_YEAR_STRING);
       selectedArtist.set("");
       selectedCrew.set("");
+      selectedUserProfileData.set(user);
       setTimeout(() => {
         $map.setView([lat, lng], MAX_ZOOM);
         $goto("/");
@@ -218,7 +240,9 @@ const getArtistsString = (artistCrew) => {
         <div class={`title ${data.status.toLowerCase()}`}>{data.status}</div>
       </div>
     </div>
-    <div class="img"><img src={data.img.src} alt={data.img.title} /></div>
+    <div class="img">
+      <img src={data.img.src} alt={`Main image: ${data.img.title}`} />
+    </div>
     <div class="bottom">
       <div class="year">{data.year ?? EMPTY_YEAR_STRING}</div>
       <div class="show-on-map-wrapper">
@@ -230,8 +254,8 @@ const getArtistsString = (artistCrew) => {
         {/if}
       </div>
       <div class="buttons">
-        {#if data.link}
-          <div class="link">
+        {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}
+          <div class="link" class:externalMap={isExternalMapsUrl(data.link)}>
             <a href={data.link} target="_blank" rel="noreferrer"
               >External link to art</a>
           </div>
@@ -257,9 +281,28 @@ const getArtistsString = (artistCrew) => {
     {#if data.description}
       <div class="description">{data.description}</div>
     {/if}
+    {#if data.embedLink}
+      <div class="embed-link">{@html data.embedLink}</div>
+    {/if}
+    {#if data.additionalImg}
+      <div class="img">
+        <img
+          src={data.additionalImg}
+          alt={`Additional image: ${data.img.title}`} />
+      </div>
+    {/if}
+    <!-- {#if data.sketchImg}
+      <div class="img">
+        <img src={data.sketchImg} alt={`Sketch image: ${data.img.title}`} />
+      </div>
+    {/if} -->
     {#if data.video}
-      <div class="video" class:instagram={data.video.includes("instagr")}>
-        {@html getVideoEmbed(data.video)}
+      <div
+        id="video-embedded"
+        class="video"
+        class:instagram={data.video.includes("instagr")}
+        class:tiktok={data.video.includes("tiktok")}>
+        {@html videoEmbed}
       </div>
     {/if}
   </div>
@@ -279,7 +322,7 @@ const getArtistsString = (artistCrew) => {
 .card {
   width: 100%;
   max-width: 938px;
-  margin-bottom: 64px;
+  margin-bottom: 32px;
 }
 
 .top {
@@ -398,8 +441,12 @@ const getArtistsString = (artistCrew) => {
 }
 
 .link a {
-  background: url(../../../images/link.svg) 50% 50% / auto no-repeat;
+  background: url(../../../images/web.svg) 50% 50% / auto no-repeat;
   font-size: 0;
+}
+
+.externalMap a {
+  background: url(../../../images/panorama.svg) 50% 50% / auto no-repeat;
 }
 
 .share button {
@@ -414,7 +461,7 @@ const getArtistsString = (artistCrew) => {
 }
 
 .artist-area {
-  margin-bottom: 65px;
+  margin-bottom: 32px;
   text-align: center;
 }
 
@@ -424,7 +471,7 @@ const getArtistsString = (artistCrew) => {
 }
 
 .description {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   color: var(--color-dark);
   font-size: 18px;
   line-height: 1.22;
@@ -432,17 +479,26 @@ const getArtistsString = (artistCrew) => {
   word-break: break-word;
 }
 
+.embed-link {
+  margin-bottom: 32px;
+}
+
 .video {
   position: relative;
   height: 0;
-  margin-bottom: 24px;
-  padding: 30px 0 56.25%;
+  margin: 32px 0 24px;
+  padding: 0 0 56.25%;
   overflow: hidden;
 
   &.instagram {
     max-width: 370px;
     margin: 0 auto 24px;
     padding-bottom: min(182%, 670px);
+  }
+
+  &.tiktok {
+    height: auto;
+    padding: 0;
   }
 }
 
@@ -477,10 +533,6 @@ const getArtistsString = (artistCrew) => {
 
   .buttons {
     grid-column: 3;
-  }
-
-  .artist-area {
-    margin-bottom: 40px;
   }
 }
 </style>

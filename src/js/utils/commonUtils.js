@@ -1,3 +1,5 @@
+import { getTikTokEmbed, getYoutubeEmbed } from "../api/external";
+
 import { MOBILE_BREAKPOINT } from "../constants";
 
 const regexYoutube =
@@ -8,6 +10,12 @@ const regexDailymotion =
   /(?:https?:\/\/)?(?:www\.)?(?:dailymotion\.com|dai\.ly)(?:\/video)?\/([^<.,!():"'\s]+)/;
 const regexInstagram =
   /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/(?:p|reel)?\/([^/?#&]+)/;
+const regexTikTok =
+  /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:tiktok\.com)\/(?:@(.*?)\/)?(?:video|v)|(?:https?:\/\/)?:\/\/(?:www\.)?(?:vt)(?:\.tiktok\.com)\/\S*/;
+const regexGoogleMaps =
+  /(?:https?:\/\/)?(?:www\.)?(?:google\.[a-z]+|goo\.gl)(?:\/maps)?\/([^<.,!():"'\s]+)?/;
+const regexYandexMaps =
+  /(?:https?:\/\/)?(?:www\.)?(?:yandex\.[a-z]+)(?:\/maps)?\/-?\/?[a-zA-Z0-9]+/;
 
 export const isMobile = () => window.innerWidth < MOBILE_BREAKPOINT;
 
@@ -16,7 +24,7 @@ export const validateEmail = (email) =>
     email
   );
 
-export const validateUsername = (username) => /^[a-z0-9]+$/i.test(username);
+export const validateUsername = (username) => /^[a-z0-9_.]+$/i.test(username);
 
 export const validatePassword = (password) => /^(?=.*).{8,20}$/.test(password);
 
@@ -24,7 +32,8 @@ export const validateVideoLink = (link) =>
   regexYoutube.test(link) ||
   regexVimeo.test(link) ||
   regexDailymotion.test(link) ||
-  regexInstagram.test(link);
+  regexInstagram.test(link) ||
+  regexTikTok.test(link);
 
 export const isValidHttpUrl = (string) => {
   let url;
@@ -48,7 +57,19 @@ export const removeFromLocalStorage = (key) => localStorage.removeItem(key);
 
 export const isYearLike = (year) => /^\d{0,4}$/.test(year);
 
-export const embedVideoCodeFromBasicUrl = (url) => {
+export const embedVideoCodeFromBasicUrl = async (url) => {
+  if (regexYoutube.test(url)) {
+    const embedResponse = await getYoutubeEmbed(url);
+
+    return embedResponse?.html ?? "";
+  }
+
+  if (url.includes("tiktok")) {
+    const embedResponse = await getTikTokEmbed(url);
+
+    return embedResponse?.html ?? "";
+  }
+
   if (url.includes("instagr")) {
     const [urlWithoutQuery] = url.split("?");
 
@@ -60,10 +81,6 @@ export const embedVideoCodeFromBasicUrl = (url) => {
 
   return url
     .replace(
-      new RegExp(regexYoutube, "g"),
-      '<iframe src="https://www.youtube.com/embed/$1?modestbranding=1&rel=0&wmode=transparent&theme=light&color=white" width="100%" height="100%" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
-    )
-    .replace(
       new RegExp(regexVimeo, "g"),
       '<iframe src="//player.vimeo.com/video/$1?color=ffffff&portrait=0" frameborder="0" width="100%" height="100%" allow="autoplay; fullscreen" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
     )
@@ -72,6 +89,9 @@ export const embedVideoCodeFromBasicUrl = (url) => {
       '<iframe frameborder="0" type="text/html" src="https://www.dailymotion.com/embed/video/$1?logo=0&foreground=ffffff&highlight=1bb4c6&background=000000" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
     );
 };
+
+export const isExternalMapsUrl = (url) =>
+  regexGoogleMaps.test(url) || regexYandexMaps.test(url);
 
 export const markersReadyEvent = new Event("markersReady");
 

@@ -1,10 +1,5 @@
 <script>
 export let item = undefined;
-export const filterText = undefined;
-export const getOptionLabel = undefined;
-export const isFirst = undefined;
-export const isActive = undefined;
-export const isHover = undefined;
 </script>
 
 <div class="item">

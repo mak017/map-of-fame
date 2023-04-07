@@ -2,6 +2,8 @@
 import { createEventDispatcher } from "svelte";
 import { fade } from "svelte/transition";
 
+import ArrowLeftSvg from "./icons/ArrowLeftSvg.svelte";
+
 export let withTransition = false;
 export let editSpot = false;
 
@@ -10,10 +12,11 @@ const dispatch = createEventDispatcher();
 
 <button
   type="button"
-  class="back"
+  class="button back"
   class:edit-spot={editSpot}
   on:click={() => dispatch("click")}
-  transition:fade|local={{ duration: withTransition ? 200 : 0 }} />
+  transition:fade|local={{ duration: withTransition ? 200 : 0 }}
+  ><ArrowLeftSvg /></button>
 
 <style>
 .back {
@@ -22,9 +25,7 @@ const dispatch = createEventDispatcher();
   left: 0;
   width: 20px;
   height: 20px;
-  border: 0;
-  background: url(../../../images/back.svg) 50% 50% / auto no-repeat;
-  cursor: pointer;
+  background: transparent;
 }
 .edit-spot {
   top: -64px;
