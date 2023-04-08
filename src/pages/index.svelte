@@ -28,6 +28,7 @@ import {
   userData,
   isAreaSelectionActive,
   isPermalinkReady,
+  profileState,
 } from "../js/store.js";
 import {
   getCurrentYear,
@@ -210,7 +211,10 @@ const handleKeyDown = (e) => {
           <a
             href={$url("/@:username", { username: $userData.username })}
             class="button button-main_screen button-square button-burger"
-            on:click={isShowOnMapMode.set(false)}
+            on:click={() => {
+              isShowOnMapMode.set(false);
+              profileState.reset();
+            }}
             in:fade={{ duration: 200 }}>Profile</a>
         {:else}
           <a

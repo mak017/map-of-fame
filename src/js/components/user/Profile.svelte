@@ -1,5 +1,5 @@
 <script>
-import { isUserVerifyProgress, profileState } from "./../../store.js";
+import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
 import { goto, params, url } from "@roxi/routify";
@@ -21,6 +21,8 @@ import {
   editSpotData,
   shouldShowAddSpot,
   isFirstTimeVisit,
+  isUserVerifyProgress,
+  profileState,
 } from "../../store";
 import { getProfileYears } from "./../../utils/datesUtils.js";
 import {
@@ -43,30 +45,35 @@ import {
   MAX_SPOTS_PER_PAGE,
 } from "../../constants";
 
-// let currentYear;
 let currentSpot;
 let showDeletePopup = false;
 let showInvitesPopup = false;
 let showSharePopup = false;
-// let offset = 0;
-// let yearsToApply = [];
-// let spotsList = [];
 let newBatch = [];
 let invites = [];
 let unusedInvitesCount = 0;
-let isLoading = true;
-let isShowSpinner = true;
-// let user = {};
+let parentModal = null;
 const token = loadFromLocalStorage("token") || null;
 
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 const toggleSharePopup = (toggle) => (showSharePopup = toggle);
 
+onMount(() => {
+  parentModal = document.getElementById("profile-modal");
+  if ($profileState.scrollOffset) {
+    setTimeout(() => {
+      parentModal.scrollTo({
+        top: $profileState.scrollOffset - parentModal.offsetHeight / 2,
+      });
+      profileState.setScrollOffset(0);
+    }, 0);
+  }
+});
+
 const { username } = $params;
 const strippedUsername = username.substring(1);
 
-let isInitialized = false;
 let isCurrentUser = $userData.username === strippedUsername;
 let name = isCurrentUser
   ? $userData.name ?? $userData.crew
@@ -77,8 +84,8 @@ $: name = isCurrentUser
   ? $userData.name ?? $userData.crew
   : $profileState.user.name ?? $profileState.user.crew;
 
-$: if (!isInitialized && !$isUserVerifyProgress) {
-  isInitialized = true;
+$: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
+  profileState.setIsInitialized(true);
   if (!isCurrentUser && !$profileState.user.id) {
     getUserData(strippedUsername).then((response) => {
       const { success, result, errors } = response;
@@ -90,9 +97,8 @@ $: if (!isInitialized && !$isUserVerifyProgress) {
       if (success && result) {
         fetchSpots({ isNewFetch: true });
         shouldDisplayShowOnMap.set(false);
-        // user = result;
         profileState.setUser(result);
-        isLoading = false;
+        profileState.setIsLoading(false);
       }
     });
   } else {
@@ -114,8 +120,8 @@ $: if (!isInitialized && !$isUserVerifyProgress) {
 }
 
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
-  isLoading = isNewFetch;
-  isShowSpinner = true;
+  profileState.setIsLoading(isNewFetch);
+  profileState.setIsShowSpinner(true);
   getUserSpots(strippedUsername, token, {
     year,
     offset,
@@ -124,14 +130,14 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
     if (success && result) {
       const { spots, years } = result;
       if (isNewFetch) {
-        // spotsList = [];
         profileState.setSpotsList([]);
       }
       newBatch = spots ? [...spots] : [];
+      profileState.setSpotsList([...$profileState.spotsList, ...newBatch]);
+      profileState.setHasMore(newBatch.length === MAX_SPOTS_PER_PAGE);
       const yearsToApply = getProfileYears(years);
       profileState.setYearsToApply(yearsToApply);
       if ($profileState.currentYear === undefined || year === undefined) {
-        // currentYear = yearsToApply[0];
         profileState.setCurrentYear(yearsToApply[0]);
       }
     }
@@ -140,13 +146,10 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
         fetchSpots({});
       }
     }
-    isLoading = false;
-    isShowSpinner = false;
+    profileState.setIsLoading(false);
+    profileState.setIsShowSpinner(false);
   });
 };
-
-// $: spotsList = [...spotsList, ...newBatch];
-$: profileState.setSpotsList([...$profileState.spotsList, ...newBatch]);
 
 const handleLogout = () => {
   removeFromLocalStorage("token");
@@ -163,7 +166,6 @@ const handleAddSpot = () => {
 const handleYearSelect = (event) => {
   const { value } = event.detail.detail;
   const currentYear = value !== EMPTY_YEAR_STRING ? value : "";
-  // offset = 0;
   profileState.setCurrentYear(currentYear);
   profileState.setOffset(0);
   if (currentYear === ALL_YEARS_STRING) {
@@ -185,13 +187,13 @@ const handleDelete = (spot) => {
 };
 
 const onLoadMore = () => {
-  if (isShowSpinner) {
+  if ($profileState.isShowSpinner) {
     return;
   }
 
   const offset = $profileState.offset + MAX_SPOTS_PER_PAGE;
   profileState.setOffset(offset);
-  if (currentYear === ALL_YEARS_STRING) {
+  if ($profileState.currentYear === ALL_YEARS_STRING) {
     fetchSpots({ offset });
     return;
   }
@@ -226,6 +228,8 @@ const onSpotClick = (spot) => {
     coords: { lat, lng },
   });
   shouldDisplayShowOnMap.set(true);
+  const element = document.querySelector(`[data-spot-id="${spot.id}"]`);
+  profileState.setScrollOffset(element.offsetTop);
   $goto("/@:username/spot/:id", {
     username: isCurrentUser ? strippedUsername : $profileState.user.username,
     id,
@@ -277,7 +281,7 @@ const handleShowOnMapClick = (showAll) => {
     </div>
   {/if}
   <div class="top">
-    {#if !isLoading && (name || username)}
+    {#if !$profileState.isLoading && (name || username)}
       <div class="user">
         {#if name}
           <span class="name">{name}</span>
@@ -297,7 +301,7 @@ const handleShowOnMapClick = (showAll) => {
         >Logout</button>
     {/if}
   </div>
-  {#if !!$profileState.spotsList.length || isShowSpinner}
+  {#if !!$profileState.spotsList.length || $profileState.isShowSpinner}
     <div class="data">
       {#if !!$profileState.spotsList.length}
         <div class="data-top">
@@ -318,7 +322,7 @@ const handleShowOnMapClick = (showAll) => {
             on:click={handleShowOnMapClick}>Show on map</button>
         </div>
       {/if}
-      {#if !isLoading}
+      {#if !$profileState.isLoading}
         <div class="spots">
           {#each $profileState.spotsList as spot}
             <a
@@ -331,7 +335,8 @@ const handleShowOnMapClick = (showAll) => {
               class="spot-card"
               role="button"
               on:click|preventDefault={() =>
-                !isCurrentUser && onSpotClick(spot)}>
+                !isCurrentUser && onSpotClick(spot)}
+              data-spot-id={spot.id}>
               <img
                 loading="lazy"
                 src={spot.thumbnail}
@@ -358,20 +363,22 @@ const handleShowOnMapClick = (showAll) => {
               {/if}
             </a>
           {/each}
-          <InfiniteScroll
-            hasMore={newBatch.length === MAX_SPOTS_PER_PAGE}
-            threshold={100}
-            on:loadMore={onLoadMore}
-            elementScroll={document.getElementById("profile-modal")} />
+          {#if parentModal}
+            <InfiniteScroll
+              hasMore={$profileState.hasMore}
+              threshold={100}
+              on:loadMore={onLoadMore}
+              elementScroll={parentModal} />
+          {/if}
         </div>
       {/if}
-      {#if isShowSpinner}
+      {#if $profileState.isShowSpinner}
         <div class="spinner-container">
           <Spinner margin="20px auto" />
         </div>
       {/if}
     </div>
-  {:else if !isShowSpinner}
+  {:else if !$profileState.isShowSpinner}
     <div class="empty-state">
       <img src="../../../images/empty.jpg" alt="Empty" />
       <p>
@@ -388,7 +395,7 @@ const handleShowOnMapClick = (showAll) => {
   {/if}
 </div>
 
-{#if $isFirstTimeVisit && !isLoading && !isCurrentUser}
+{#if $isFirstTimeVisit && !$profileState.isLoading && !isCurrentUser}
   <button
     type="button"
     class="button go-to-map"
