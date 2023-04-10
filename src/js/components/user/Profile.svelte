@@ -178,6 +178,8 @@ const handleYearSelect = (event) => {
 const handleEdit = (spot) => {
   const { id } = spot;
   editSpotData.set(spot);
+  const element = document.querySelector(`[data-spot-id="${spot.id}"]`);
+  profileState.setScrollOffset(element.offsetTop);
   $goto("/@:username/spot/:id/edit", { username: strippedUsername, id });
 };
 

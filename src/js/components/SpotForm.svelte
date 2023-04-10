@@ -18,6 +18,7 @@ import {
   isSearchResults,
   map,
   markersStore,
+  profileState,
   selectedArtist,
   selectedCrew,
   selectedYear,
@@ -291,7 +292,7 @@ const validateImage = () => {
 
 const validateCategory = () => {
   errors.selectedCategory = !selectedCategory
-    ? ERROR_MESSAGES.categoryEmpty
+    ? ERROR_MESSAGES.categorySingleEmpty
     : "";
 };
 
@@ -411,7 +412,7 @@ const handleSubmit = () => {
         }
       });
     } else {
-      updateSpot(token, editSpotData.id, {
+      const updatedData = {
         year,
         spotStatus: selectedStatus,
         img: image.blob,
@@ -422,10 +423,23 @@ const handleSubmit = () => {
         categoryId: selectedCategory.id,
         link,
         artistsCrews: artistCrewPairs,
-      }).then((response) => {
+      };
+      updateSpot(token, editSpotData.id, updatedData).then((response) => {
         const { success, result } = response;
         isInProgress = false;
         if (success && result) {
+          const spots = $profileState.spotsList.map((spot) =>
+            spot.id === editSpotData.id
+              ? {
+                  ...spot,
+                  ...updatedData,
+                  img: spot.img,
+                  additionalImg: image2.filePreview ?? spot.additionalImg,
+                  sketch: sketch.filePreview ?? spot.sketch,
+                }
+              : spot
+          );
+          profileState.setSpotsList(spots);
           onCancel();
         }
       });
@@ -579,6 +593,9 @@ const handleAddMoreClick = () => {
         optionIdentifier="name"
         addSpot={!isEditSpot}
         label="name" />
+      {#if errors.selectedCategory}<span class="error"
+          >{errors.selectedCategory}</span
+        >{/if}
     {:else}
       <Spinner height={30} margin="5px 0 5.5px" />
     {/if}
