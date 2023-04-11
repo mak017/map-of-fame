@@ -148,8 +148,10 @@ export const updateSpot = async (
   formData.append("category_id", categoryId);
   formData.append("year", year);
   if (img) formData.append("img", img);
-  if (additionalImg) formData.append("additionalImg", additionalImg);
-  if (sketch) formData.append("sketch", sketch);
+  if (typeof additionalImg !== "undefined") {
+    formData.append("additionalImg", additionalImg);
+  }
+  if (typeof sketch !== "undefined") formData.append("sketch", sketch);
   formData.append("video_link", videoLink);
   formData.append("description", description);
   formData.append("link", link);

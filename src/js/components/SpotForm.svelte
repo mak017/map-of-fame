@@ -416,8 +416,12 @@ const handleSubmit = () => {
         year,
         spotStatus: selectedStatus,
         img: image.blob,
-        additionalImg: image2.blob,
-        sketch: sketch.blob,
+        additionalImg:
+          image2.blob ??
+          (editSpotData.additionalImg && !image2.filePreview ? "" : undefined),
+        sketch:
+          sketch.blob ??
+          (editSpotData.sketch && !sketch.filePreview ? "" : undefined),
         videoLink: linkToVideo,
         description,
         categoryId: selectedCategory.id,
@@ -433,9 +437,10 @@ const handleSubmit = () => {
               ? {
                   ...spot,
                   ...updatedData,
-                  img: spot.img,
-                  additionalImg: image2.filePreview ?? spot.additionalImg,
-                  sketch: sketch.filePreview ?? spot.sketch,
+                  img: image.filePreview,
+                  thumbnail: image.filePreview,
+                  additionalImg: image2.filePreview,
+                  sketch: sketch.filePreview,
                 }
               : spot
           );
