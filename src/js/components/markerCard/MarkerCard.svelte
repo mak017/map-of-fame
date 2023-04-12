@@ -19,6 +19,7 @@ import {
   selectedUserProfileData,
   selectedYear,
   shouldDisplayShowOnMap,
+  profileState,
 } from "../../store";
 import { getProfileYears } from "../../utils/datesUtils.js";
 import { getSpotById, getUserSpots } from "../../api/spot.js";
@@ -134,6 +135,7 @@ const onUserClick = () => {
     isAreaSelectionActive.set(false);
   }
   openedMarkerData.set(null);
+  profileState.reset();
   $goto("/@:username", { username: user.username });
 };
 

@@ -18,6 +18,7 @@ import {
   isSearchResults,
   map,
   markersStore,
+  profileState,
   selectedArtist,
   selectedCrew,
   selectedYear,
@@ -291,7 +292,7 @@ const validateImage = () => {
 
 const validateCategory = () => {
   errors.selectedCategory = !selectedCategory
-    ? ERROR_MESSAGES.categoryEmpty
+    ? ERROR_MESSAGES.categorySingleEmpty
     : "";
 };
 
@@ -411,21 +412,39 @@ const handleSubmit = () => {
         }
       });
     } else {
-      updateSpot(token, editSpotData.id, {
+      const updatedData = {
         year,
         spotStatus: selectedStatus,
         img: image.blob,
-        additionalImg: image2.blob,
-        sketch: sketch.blob,
+        additionalImg:
+          image2.blob ??
+          (editSpotData.additionalImg && !image2.filePreview ? "" : undefined),
+        sketch:
+          sketch.blob ??
+          (editSpotData.sketch && !sketch.filePreview ? "" : undefined),
         videoLink: linkToVideo,
         description,
         categoryId: selectedCategory.id,
         link,
         artistsCrews: artistCrewPairs,
-      }).then((response) => {
+      };
+      updateSpot(token, editSpotData.id, updatedData).then((response) => {
         const { success, result } = response;
         isInProgress = false;
         if (success && result) {
+          const spots = $profileState.spotsList.map((spot) =>
+            spot.id === editSpotData.id
+              ? {
+                  ...spot,
+                  ...updatedData,
+                  img: image.filePreview,
+                  thumbnail: image.filePreview,
+                  additionalImg: image2.filePreview,
+                  sketch: sketch.filePreview,
+                }
+              : spot
+          );
+          profileState.setSpotsList(spots);
           onCancel();
         }
       });
@@ -579,6 +598,9 @@ const handleAddMoreClick = () => {
         optionIdentifier="name"
         addSpot={!isEditSpot}
         label="name" />
+      {#if errors.selectedCategory}<span class="error"
+          >{errors.selectedCategory}</span
+        >{/if}
     {:else}
       <Spinner height={30} margin="5px 0 5.5px" />
     {/if}
