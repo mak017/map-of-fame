@@ -114,7 +114,7 @@ const validate = () => {
     } else errors.username = "";
 
     if (userType?.name !== USER_TYPES.crew) {
-      errors.name = !strippedUsername ? ERROR_MESSAGES.nameEmpty : "";
+      errors.name = !name ? ERROR_MESSAGES.nameEmpty : "";
     } else {
       errors.crew = !crew ? ERROR_MESSAGES.crewEmpty : "";
     }

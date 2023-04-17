@@ -242,7 +242,7 @@ const handleShowOnMapClick = (showAll) => {
   if (!$selectedUserProfileData.id && isCurrentUser) {
     selectedUserProfileData.set($userData ?? {});
   } else {
-    selectedUserProfileData.set(user);
+    selectedUserProfileData.set($profileState.user);
   }
   getUserSpots(strippedUsername, token, {
     year:
