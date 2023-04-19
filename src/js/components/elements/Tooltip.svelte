@@ -1,4 +1,6 @@
 <script>
+import { clickOutside } from "./../../utils/commonUtils.js";
+
 export let tip = "";
 export let top = false;
 export let right = false;
@@ -8,8 +10,11 @@ export let arrowBottomLeft = false;
 export let active = false;
 </script>
 
-<div class="tooltip-wrapper">
-  <span class="tooltip-slot">
+<div
+  class="tooltip-wrapper"
+  use:clickOutside
+  on:click_outside={() => (active = false)}>
+  <span class="tooltip-slot" on:click|preventDefault={() => (active = true)}>
     <slot />
   </span>
   <div
@@ -43,6 +48,10 @@ export let active = false;
   transition: opacity 150ms, visibility 150ms;
   color: inherit;
   font-family: inherit;
+
+  &-slot {
+    cursor: pointer;
+  }
 }
 
 .default-tip {
@@ -104,11 +113,6 @@ export let active = false;
 }
 
 .tooltip.active {
-  opacity: 1;
-  visibility: initial;
-}
-
-.tooltip-slot:hover + .tooltip {
   opacity: 1;
   visibility: initial;
 }
