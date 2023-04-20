@@ -24,6 +24,8 @@ import FormTextInput from "../elements/FormTextInput.svelte";
 import { ERROR_MESSAGES, USER_TYPES } from "../../constants";
 
 export let inviteData;
+export let isInviteError = false;
+export let setInviteError;
 
 let step = 1;
 let email = "";
@@ -114,7 +116,7 @@ const validate = () => {
     } else errors.username = "";
 
     if (userType?.name !== USER_TYPES.crew) {
-      errors.name = !strippedUsername ? ERROR_MESSAGES.nameEmpty : "";
+      errors.name = !name ? ERROR_MESSAGES.nameEmpty : "";
     } else {
       errors.crew = !crew ? ERROR_MESSAGES.crewEmpty : "";
     }
@@ -178,8 +180,8 @@ const handleSubmit = () => {
           if (Array.isArray(error)) {
             errors.link = error[0];
           }
-          if (error?.message) {
-            errors.link = error.message;
+          if (error?.message || error?.invite) {
+            setInviteError();
           }
           if (error?.username && Array.isArray(error.username)) {
             errors.username = error.username[0];
@@ -229,10 +231,17 @@ const handleBackClick = () => {
   novalidate
   transition:fade={{ duration: 200 }}>
   {#if inviteData?.from}
-    <div class="invite-from">
-      По воле юзера {inviteData.from} <br />
-      ты получил доступ в святую святых, аминь друг мой, да прибудет с тобой силы.
-    </div>
+    {#if isInviteError}
+      <div class="invite-from error" in:fade|local={{ duration: 200 }}>
+        CHEATER or L👀SER? <br />
+        Anyway your invitation code = used or wrong
+      </div>
+    {:else}
+      <div class="invite-from" in:fade|local={{ duration: 200 }}>
+        По воле юзера {inviteData.from} <br />
+        ты получил доступ в святую святых, аминь друг мой, да прибудет с тобой силы.
+      </div>
+    {/if}
   {/if}
   {#if step === 2}
     <ButtonModalBack on:click={handleBackClick} withTransition />
@@ -331,7 +340,12 @@ form {
   font-weight: 600;
   line-height: 22px;
   text-align: center;
+
+  &.error {
+    color: var(--color-error);
+  }
 }
+
 .step {
   margin-bottom: 24px;
   color: var(--color-dark);
@@ -339,15 +353,18 @@ form {
   font-weight: 600;
   text-align: center;
 }
+
 .submit-wrapper {
   margin-top: 36px;
 }
+
 .switch-to-sign-in {
   margin-top: 36px;
   font-size: 18px;
   font-weight: 600;
   line-height: 1.22;
   text-align: center;
+
   a {
     padding: 0;
     border: 0;

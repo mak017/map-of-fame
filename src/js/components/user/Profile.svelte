@@ -242,7 +242,7 @@ const handleShowOnMapClick = (showAll) => {
   if (!$selectedUserProfileData.id && isCurrentUser) {
     selectedUserProfileData.set($userData ?? {});
   } else {
-    selectedUserProfileData.set(user);
+    selectedUserProfileData.set($profileState.user);
   }
   getUserSpots(strippedUsername, token, {
     year:
@@ -321,7 +321,7 @@ const handleShowOnMapClick = (showAll) => {
           <button
             type="button"
             class="button show-on-map"
-            on:click={handleShowOnMapClick}>Show on map</button>
+            on:click={() => handleShowOnMapClick()}>Show on map</button>
         </div>
       {/if}
       {#if !$profileState.isLoading}

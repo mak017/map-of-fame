@@ -624,7 +624,8 @@ const handleAddMoreClick = () => {
       on:input={handleVideoLinkChange}
       wideOnMobile
       editSpot={isEditSpot}
-      addSpot={!isEditSpot} />
+      addSpot={!isEditSpot}
+      tooltip="Add link to your video hosted on Youtube / Vimeo / Dailymotion / Instagram / TikTok" />
   </div>
   <div class="link-to-work">
     <FormTextInput

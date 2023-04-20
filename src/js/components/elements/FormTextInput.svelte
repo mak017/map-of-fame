@@ -1,11 +1,14 @@
 <script>
 import { createEventDispatcher } from "svelte";
 
+import Tooltip from "./Tooltip.svelte";
+
 export let value = "";
 export let placeholder = "";
 export let hint = "";
 export let errorText = "";
 export let label = "";
+export let tooltip = "";
 export let isReadOnly = false;
 export let wideOnMobile = false;
 export let editSpot = false;
@@ -34,7 +37,14 @@ const keyDown = (event) => dispatch("keyDown", event);
   class:invite
   class:extra-margin={extraMargin}
   class:disabled={isDisabled}>
-  {#if label}<span>{label}</span>{/if}
+  {#if label}
+    <span>{label}</span>
+    {#if tooltip}
+      <Tooltip tip={tooltip} top arrowBottomLeft>
+        <span class="info-trigger">info</span>
+      </Tooltip>
+    {/if}
+  {/if}
   <input
     type="text"
     {placeholder}
@@ -137,6 +147,15 @@ label:not(.with-label) {
   border-radius: 2px;
   color: var(--color-dark);
   line-height: 1.25;
+}
+
+.info-trigger {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: url(../../../images/info.svg) 50% 50% / auto no-repeat;
+  color: transparent;
+  text-indent: -9999px;
 }
 
 .hint {
