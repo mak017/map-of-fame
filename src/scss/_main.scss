@@ -114,6 +114,11 @@ textarea {
   .svelte-select-list {
     left: 50% !important;
     transform: translateX(-50%);
+
+    .item {
+      overflow: visible !important;
+      text-overflow: initial !important;
+    }
   }
 }
 
