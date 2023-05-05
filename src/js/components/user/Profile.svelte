@@ -239,10 +239,25 @@ const onSpotClick = (spot) => {
 };
 
 const handleShowOnMapClick = (showAll) => {
+  console.debug(
+    "DEBUG: $selectedUserProfileData >>> ",
+    $selectedUserProfileData?.name ?? $selectedUserProfileData?.crew
+  );
   if (!$selectedUserProfileData.id && isCurrentUser) {
-    selectedUserProfileData.set($userData ?? {});
+    selectedUserProfileData.set(
+      $userData ?? ($profileState.user?.id ? $profileState.user : {})
+    );
+    console.debug("DEBUG: $userData >>> ", $userData?.name ?? $userData?.crew);
+    console.debug(
+      "DEBUG: $profileState.user >>> ",
+      $profileState.user?.name ?? $profileState.user?.crew
+    );
   } else {
     $profileState.user?.id && selectedUserProfileData.set($profileState.user);
+    console.debug(
+      "DEBUG: $profileState.user >>> ",
+      $profileState.user?.name ?? $profileState.user?.crew
+    );
   }
   getUserSpots(strippedUsername, token, {
     year:
