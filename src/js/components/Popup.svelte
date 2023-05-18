@@ -54,6 +54,7 @@ const handleKeyDown = (e) => {
   top: 50%;
   width: 100%;
   max-width: 530px;
+  max-height: 100vh;
   overflow: auto;
   transform: translate(-50%, -50%);
   padding: 36px 36px 32px;

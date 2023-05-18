@@ -106,6 +106,7 @@ li {
   background-color: var(--color-light);
   background-repeat: no-repeat;
   background-position: 50% 50%;
+  color: var(--color-dark);
 
   &-filter {
     background-image: url(../../images/filter.svg);

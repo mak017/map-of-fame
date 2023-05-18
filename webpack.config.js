@@ -71,6 +71,7 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: "[name].css",
+      ignoreOrder: true,
     }),
     new Dotenv(),
     new webpack.optimize.LimitChunkCountPlugin({
