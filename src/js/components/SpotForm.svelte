@@ -57,8 +57,8 @@ const isCrew = () => $userData.type === USER_TYPES.crew.toLowerCase();
 const isHunter = () => $userData.type === USER_TYPES.hunter.toLowerCase();
 
 const getInitialYear = () => {
-  if (editSpotData.year) {
-    return `${editSpotData.year}`;
+  if (typeof editSpotData.year !== "undefined") {
+    return editSpotData.year ? `${editSpotData.year}` : "";
   }
 
   if (validateYear($selectedYear, $settings.yearStart)) {
