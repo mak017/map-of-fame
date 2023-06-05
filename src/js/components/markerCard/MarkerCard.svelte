@@ -18,7 +18,6 @@ import {
   selectedCrew,
   selectedUserProfileData,
   selectedYear,
-  shouldDisplayShowOnMap,
   profileState,
 } from "../../store";
 import { getProfileYears } from "../../utils/datesUtils.js";
@@ -248,12 +247,10 @@ const getArtistsString = (artistCrew) => {
     <div class="bottom">
       <div class="year">{data.year ?? EMPTY_YEAR_STRING}</div>
       <div class="show-on-map-wrapper">
-        {#if $shouldDisplayShowOnMap}
-          <button
-            type="button"
-            class="show-on-map"
-            on:click={handleShowOnMapClick}>Show on map</button>
-        {/if}
+        <button
+          type="button"
+          class="show-on-map"
+          on:click={handleShowOnMapClick}>Show on map</button>
       </div>
       <div class="buttons">
         {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}

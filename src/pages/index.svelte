@@ -23,7 +23,6 @@ import {
   selectedCrew,
   selectedYear,
   selectedUserProfileData,
-  shouldDisplayShowOnMap,
   shouldShowResetPassword,
   userData,
   isAreaSelectionActive,
@@ -90,7 +89,6 @@ const toggleAreaSelectionMode = (toggle) => {
   if (toggle) {
     $map.setMinZoom(15);
     $areaSelection.activate();
-    shouldDisplayShowOnMap.set(false);
     return;
   }
 

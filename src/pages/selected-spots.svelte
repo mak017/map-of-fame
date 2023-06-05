@@ -6,7 +6,6 @@ import {
   areaSelection,
   isAreaSelectionActive,
   areaSpots,
-  shouldDisplayShowOnMap,
 } from "./../js/store.js";
 
 import SelectedSpots from "./../js/components/SelectedSpots.svelte";
@@ -21,7 +20,6 @@ const toggleAreaSelectionMode = (toggle) => {
     $map.setMinZoom(15);
     $areaSelection.activate();
     $goto("/");
-    shouldDisplayShowOnMap.set(false);
     return;
   }
 

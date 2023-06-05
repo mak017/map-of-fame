@@ -16,7 +16,6 @@ import {
   selectedCrew,
   selectedUserProfileData,
   selectedYear,
-  shouldDisplayShowOnMap,
   isSearchResults,
   editSpotData,
   shouldShowAddSpot,
@@ -96,7 +95,6 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
 
       if (success && result) {
         fetchSpots({ isNewFetch: true });
-        shouldDisplayShowOnMap.set(false);
         profileState.setUser(result);
         profileState.setIsLoading(false);
       }
@@ -229,7 +227,6 @@ const onSpotClick = (spot) => {
     firm: { banner, bannerUrl },
     coords: { lat, lng },
   });
-  shouldDisplayShowOnMap.set(true);
   const element = document.querySelector(`[data-spot-id="${spot.id}"]`);
   profileState.setScrollOffset(element.offsetTop);
   $goto("/@:username/spot/:id", {

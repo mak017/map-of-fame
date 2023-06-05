@@ -7,7 +7,6 @@ import {
   categoriesList,
   globalGoto,
   openedMarkerData,
-  shouldDisplayShowOnMap,
 } from "../../store";
 import { markersReadyEvent } from "../commonUtils";
 import { clusterIcon, markerClusterIcon, markerWithPhoto } from "./icons";
@@ -55,7 +54,6 @@ export const setMarkerData = (data) => {
     coords: { lat, lng },
   });
   $goto("/@:username/spot/:id", { username: user.username, id });
-  shouldDisplayShowOnMap.set(false);
   document.getElementById("highlighted").innerHTML = "";
 };
 
