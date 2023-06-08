@@ -94,6 +94,8 @@ let description = editSpotData.description || "";
 let selectedCategory;
 let sprayPaintUsed;
 let link = editSpotData.link || "";
+let shouldHideInProfile =
+  !editSpotData.showInProfile || editSpotData.showInProfile === "0";
 let isSubmitDisabled = false;
 let isInProgress = false;
 let errors = {
@@ -427,6 +429,7 @@ const handleSubmit = () => {
         categoryId: selectedCategory.id,
         link,
         artistsCrews: artistCrewPairs,
+        showInProfile: shouldHideInProfile ? 0 : 1,
       };
       updateSpot(token, editSpotData.id, updatedData).then((response) => {
         const { success, result } = response;
@@ -605,6 +608,17 @@ const handleAddMoreClick = () => {
       <Spinner height={30} margin="5px 0 5.5px" />
     {/if}
   </div>
+  {#if isEditSpot}
+    <label class="checkbox-wrapper">
+      <input
+        type="checkbox"
+        name="hide-in-profile"
+        id="hide-in-profile"
+        checked={shouldHideInProfile}
+        on:change={() => (shouldHideInProfile = !shouldHideInProfile)} />
+      <span>Hide in profile</span>
+    </label>
+  {/if}
   <!-- {#if !isHunter() && !isEditSpot}
     <div class="spray">
       <CustomSelect

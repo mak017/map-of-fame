@@ -140,6 +140,7 @@ export const updateSpot = async (
     categoryId,
     link,
     artistsCrews,
+    showInProfile,
   }
 ) => {
   const bearer = `Bearer ${token}`;
@@ -155,6 +156,7 @@ export const updateSpot = async (
   formData.append("video_link", videoLink);
   formData.append("description", description);
   formData.append("link", link);
+  formData.append("showInProfile", showInProfile);
   if (artistsCrews?.length) {
     artistsCrews.forEach((item, index) => {
       const { artist, crew } = item;

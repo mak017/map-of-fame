@@ -347,6 +347,7 @@ const handleShowOnMapClick = (showAll) => {
                   })
                 : undefined}
               class="spot-card"
+              class:isHidden={!spot.showInProfile || spot.showInProfile === "0"}
               role="button"
               on:click|preventDefault={() =>
                 !isCurrentUser && onSpotClick(spot)}
@@ -606,7 +607,23 @@ const handleShowOnMapClick = (showAll) => {
     background: rgba($color: #000, $alpha: 0.45);
   }
 
+  &.isHidden {
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transition: opacity 0.3s;
+      background: rgba($color: #650d97, $alpha: 0.45);
+    }
+  }
+
   &:hover {
+    &::after {
+      opacity: 0;
+    }
     .overlay {
       opacity: 1;
     }
