@@ -8,7 +8,6 @@ import {
   SPOT_YEAR,
   USER_CATEGORY,
   USER_ID_SPOTS,
-  USER_SPOTS,
 } from "./endpoints";
 
 export const getSpots = async (year, geoRect, categories) => {
@@ -112,16 +111,11 @@ export const getUserSpots = async (
   { limit = MAX_SPOTS_PER_PAGE, offset = 0, year = null }
 ) => {
   const bearer = `Bearer ${token}`;
-  const response =
-    userId === null
-      ? await fetch(USER_SPOTS(limit, offset, year), {
-          method: "GET",
-          withCredentials: true,
-          headers: { Authorization: bearer },
-        })
-      : await fetch(USER_ID_SPOTS(userId, limit, offset, year), {
-          method: "GET",
-        });
+  const response = await fetch(USER_ID_SPOTS(userId, limit, offset, year), {
+    method: "GET",
+    withCredentials: true,
+    headers: { Authorization: bearer },
+  });
   const result = await response.json();
   return result;
 };
