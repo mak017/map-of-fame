@@ -623,6 +623,7 @@ const handleShowOnMapClick = (showAll) => {
   &:hover {
     &::after {
       opacity: 0;
+      z-index: -1;
     }
     .overlay {
       opacity: 1;
