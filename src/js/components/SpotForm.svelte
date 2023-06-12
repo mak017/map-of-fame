@@ -903,6 +903,37 @@ form {
   }
 }
 
+input[type="checkbox"] {
+  display: inline-grid;
+  place-content: center;
+  margin: 0;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid var(--color-accent);
+  border-radius: 0.15em;
+  transform: translateY(-0.075em);
+  background-color: var(--color-accent);
+  font: inherit;
+  color: currentColor;
+  appearance: none;
+}
+
+input[type="checkbox"]::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  transform: scale(0);
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transition: 120ms transform ease-in-out;
+  background-color: CanvasText;
+  box-shadow: inset 1em 1em var(--color-light);
+}
+
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
 @media (max-width: 767px) {
   .edit {
     display: flex;

@@ -615,15 +615,15 @@ const handleShowOnMapClick = (showAll) => {
       right: 0;
       bottom: 0;
       left: 0;
-      transition: opacity 0.3s;
-      background: rgba($color: #650d97, $alpha: 0.45);
+      transition: opacity 0.3s, visibility 0.3s;
+      background: rgba($color: #432fd8, $alpha: 0.45);
     }
   }
 
   &:hover {
     &::after {
       opacity: 0;
-      z-index: -1;
+      visibility: hidden;
     }
     .overlay {
       opacity: 1;

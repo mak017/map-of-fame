@@ -222,10 +222,12 @@ const fetchArtistsCrews = async () => {
   top: 0;
   left: max(calc((100vw - 940px) / 2), 32px);
   z-index: 1;
-  width: 57px;
+  width: 137px;
   height: 76px;
-  background: var(--color-accent) url(../../images/logo.svg) 50% 50%/43px 56px
-    no-repeat;
+  background: var(--color-accent) url(../../images/logo-test2.png) 50% 50% /
+    contain no-repeat;
+  /* background: var(--color-accent) url(../../images/logo.svg) 50% 50%/43px 56px
+    no-repeat; */
   border-radius: 0 0 2px 2px;
 }
 

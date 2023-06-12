@@ -125,10 +125,12 @@ const handleResize = () => {
   position: absolute;
   left: 18vw;
   top: 0px;
-  width: 57px;
+  width: 137px;
   height: 76px;
-  background: var(--color-accent) url(../../images/logo.svg) 50% 50%/43px 56px
-    no-repeat;
+  background: var(--color-accent) url(../../images/logo-test1.png) 50% 50% /
+    contain no-repeat;
+  /* background: var(--color-accent) url(../../images/logo.svg) 50% 50%/43px 56px
+    no-repeat; */
   border-radius: 0 0 2px 2px;
 }
 

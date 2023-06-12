@@ -88,7 +88,7 @@ li {
 
   &:nth-child(even) {
     .button-category.isActive {
-      background-color: rgba(#650d97, 0.9);
+      background-color: rgba(#432fd8, 0.9);
     }
   }
 
