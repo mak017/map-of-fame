@@ -608,17 +608,6 @@ const handleAddMoreClick = () => {
       <Spinner height={30} margin="5px 0 5.5px" />
     {/if}
   </div>
-  {#if isEditSpot}
-    <label class="checkbox-wrapper">
-      <input
-        type="checkbox"
-        name="hide-in-profile"
-        id="hide-in-profile"
-        checked={shouldHideInProfile}
-        on:change={() => (shouldHideInProfile = !shouldHideInProfile)} />
-      <span>Hide in profile</span>
-    </label>
-  {/if}
   <!-- {#if !isHunter() && !isEditSpot}
     <div class="spray">
       <CustomSelect
@@ -652,6 +641,17 @@ const handleAddMoreClick = () => {
       addSpot={!isEditSpot}
       link />
   </div>
+  {#if isEditSpot}
+    <label class="checkbox-wrapper">
+      <input
+        type="checkbox"
+        name="hide-in-profile"
+        id="hide-in-profile"
+        checked={shouldHideInProfile}
+        on:change={() => (shouldHideInProfile = !shouldHideInProfile)} />
+      <span>Hide in profile</span>
+    </label>
+  {/if}
   {#if !editSpotData.img}
     <div class="button_wrap">
       <ButtonPrimary
@@ -907,31 +907,33 @@ input[type="checkbox"] {
   display: inline-grid;
   place-content: center;
   margin: 0;
-  width: 1.15em;
-  height: 1.15em;
-  border: 0.15em solid var(--color-accent);
-  border-radius: 0.15em;
-  transform: translateY(-0.075em);
-  background-color: var(--color-accent);
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--color-accent);
+  border-radius: 2px;
+  transform: translateY(-0.5px);
+  background-color: var(--color-light);
   font: inherit;
   color: currentColor;
   appearance: none;
-}
 
-input[type="checkbox"]::before {
-  content: "";
-  width: 0.65em;
-  height: 0.65em;
-  transform: scale(0);
-  transform-origin: bottom left;
-  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
-  transition: 120ms transform ease-in-out;
-  background-color: CanvasText;
-  box-shadow: inset 1em 1em var(--color-light);
-}
+  &::before {
+    content: "";
+    width: 14px;
+    height: 9px;
+    transform: scale(0);
+    transform-origin: bottom left;
+    background: url(../../images/checkbox.svg) 50% 50% / contain no-repeat;
+    transition: 120ms transform ease-in-out;
+  }
 
-input[type="checkbox"]:checked::before {
-  transform: scale(1);
+  &:checked {
+    background-color: var(--color-accent);
+
+    &::before {
+      transform: scale(1);
+    }
+  }
 }
 
 @media (max-width: 767px) {
@@ -955,6 +957,10 @@ input[type="checkbox"]:checked::before {
 
     .description {
       margin-top: 0;
+    }
+
+    .checkbox-wrapper {
+      margin-bottom: 20px;
     }
   }
 }

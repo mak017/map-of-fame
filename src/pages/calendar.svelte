@@ -10,6 +10,7 @@ import Modal from "../js/components/Modal.svelte";
   on:close={() => $goto("/")}
   title="Years"
   withAd
-  autoMargin>
+  autoMargin
+  testLogo>
   <Calendar />
 </Modal>

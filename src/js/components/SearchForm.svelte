@@ -223,7 +223,7 @@ const fetchArtistsCrews = async () => {
   left: max(calc((100vw - 940px) / 2), 32px);
   z-index: 1;
   width: 137px;
-  height: 76px;
+  height: 48px;
   background: var(--color-accent) url(../../images/logo-test2.png) 50% 50% /
     contain no-repeat;
   /* background: var(--color-accent) url(../../images/logo.svg) 50% 50%/43px 56px
