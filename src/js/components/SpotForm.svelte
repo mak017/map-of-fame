@@ -909,6 +909,7 @@ input[type="checkbox"] {
   margin: 0;
   width: 22px;
   height: 22px;
+  margin-right: 9px;
   border: 1px solid var(--color-accent);
   border-radius: 2px;
   transform: translateY(-0.5px);

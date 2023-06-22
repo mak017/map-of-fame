@@ -609,14 +609,18 @@ const handleShowOnMapClick = (showAll) => {
 
   &.isHidden {
     &::after {
-      content: "";
+      content: "🙈";
+      display: flex;
       position: absolute;
       top: 0;
       right: 0;
       bottom: 0;
       left: 0;
+      align-items: center;
+      justify-content: center;
       transition: opacity 0.3s, visibility 0.3s;
-      background: rgba($color: #432fd8, $alpha: 0.45);
+      background: rgba($color: #432fd8, $alpha: 0.4);
+      font-size: 64px;
     }
   }
 

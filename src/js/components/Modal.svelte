@@ -16,7 +16,6 @@ export let noClose = false;
 export let autoMargin = false;
 export let alwaysOnTop = false;
 export let stickyHeaderOnMobile = false;
-export let testLogo = false;
 export let banner = {};
 
 const dispatch = createEventDispatcher();
@@ -46,7 +45,6 @@ const handleResize = () => {
   class:autoMargin
   class:alwaysOnTop
   class:stickyHeaderOnMobile={stickyHeaderOnMobile && scrollTop > 290}
-  class:testLogo
   {id}
   role="dialog"
   aria-modal="true"
@@ -125,24 +123,14 @@ const handleResize = () => {
 .logo {
   display: block;
   position: absolute;
+  top: 15px;
   left: 18vw;
-  top: 0px;
-  width: 137px;
-  height: 48px;
-  background: var(--color-accent) url(../../images/logo-test1.png) 50% 50% /
-    contain no-repeat;
+  width: 118px;
+  height: 38px;
+  background: url(../../images/logo-test4.png) 50% 50% / contain no-repeat;
   /* background: var(--color-accent) url(../../images/logo.svg) 50% 50%/43px 56px
     no-repeat; */
   border-radius: 0 0 2px 2px;
-}
-
-.testLogo {
-  .logo {
-    top: 25px;
-    width: 105px;
-    height: 36px;
-    background: url(../../images/logo-test3.png) 50% 50% / contain no-repeat;
-  }
 }
 
 h2 {
