@@ -36,12 +36,11 @@ import { url } from "@roxi/routify";
 .logo {
   display: block;
   position: absolute;
+  top: 15px;
   left: 18vw;
-  top: 0;
-  width: 57px;
-  height: 76px;
-  background: var(--color-accent) url(../images/logo.svg) 50% 50%/43px 56px
-    no-repeat;
+  width: 118px;
+  height: 38px;
+  background: url(../images/logo.png) 50% 50% / contain no-repeat;
   border-radius: 0 0 2px 2px;
 }
 .container {
