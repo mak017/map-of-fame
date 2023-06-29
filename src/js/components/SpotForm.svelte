@@ -916,7 +916,7 @@ form {
   }
 
   label {
-    font-size: 14px;
+    font-size: 16px;
     line-height: 17px;
     color: var(--color-dark);
     cursor: pointer;
@@ -955,40 +955,6 @@ form {
     }
   }
 }
-
-/* input[type="checkbox"] {
-  display: inline-grid;
-  place-content: center;
-  margin: 0;
-  width: 22px;
-  height: 22px;
-  margin-right: 9px;
-  border: 1px solid var(--color-accent);
-  border-radius: 2px;
-  transform: translateY(-0.5px);
-  background-color: var(--color-light);
-  font: inherit;
-  color: currentColor;
-  appearance: none;
-
-  &::before {
-    content: "";
-    width: 14px;
-    height: 9px;
-    transform: scale(0);
-    transform-origin: bottom left;
-    background: url(../../images/checkbox.svg) 50% 50% / contain no-repeat;
-    transition: 120ms transform ease-in-out;
-  }
-
-  &:checked {
-    background-color: var(--color-accent);
-
-    &::before {
-      transform: scale(1);
-    }
-  }
-} */
 
 @media (max-width: 767px) {
   .edit {

@@ -197,6 +197,8 @@ h2 {
   }
   .logo {
     left: 12px;
+    width: 87px;
+    height: 28px;
   }
   h2 {
     margin-top: 64px;

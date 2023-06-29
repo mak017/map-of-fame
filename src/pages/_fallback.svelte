@@ -86,6 +86,8 @@ a {
 @media (max-width: 767px) {
   .logo {
     left: 12px;
+    width: 87px;
+    height: 28px;
   }
   h2 {
     margin: 16px 0;
