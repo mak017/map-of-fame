@@ -88,7 +88,7 @@ li {
 
   &:nth-child(even) {
     .button-category.isActive {
-      background-color: rgba(#650d97, 0.9);
+      background-color: rgba(#432fd8, 0.9);
     }
   }
 
@@ -106,6 +106,7 @@ li {
   background-color: var(--color-light);
   background-repeat: no-repeat;
   background-position: 50% 50%;
+  color: var(--color-dark);
 
   &-filter {
     background-image: url(../../images/filter.svg);

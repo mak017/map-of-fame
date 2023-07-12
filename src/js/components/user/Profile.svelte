@@ -16,7 +16,6 @@ import {
   selectedCrew,
   selectedUserProfileData,
   selectedYear,
-  shouldDisplayShowOnMap,
   isSearchResults,
   editSpotData,
   shouldShowAddSpot,
@@ -96,7 +95,6 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
 
       if (success && result) {
         fetchSpots({ isNewFetch: true });
-        shouldDisplayShowOnMap.set(false);
         profileState.setUser(result);
         profileState.setIsLoading(false);
       }
@@ -229,7 +227,6 @@ const onSpotClick = (spot) => {
     firm: { banner, bannerUrl },
     coords: { lat, lng },
   });
-  shouldDisplayShowOnMap.set(true);
   const element = document.querySelector(`[data-spot-id="${spot.id}"]`);
   profileState.setScrollOffset(element.offsetTop);
   $goto("/@:username/spot/:id", {
@@ -350,6 +347,7 @@ const handleShowOnMapClick = (showAll) => {
                   })
                 : undefined}
               class="spot-card"
+              class:isHidden={!spot.showInProfile || spot.showInProfile === "0"}
               role="button"
               on:click|preventDefault={() =>
                 !isCurrentUser && onSpotClick(spot)}
@@ -609,7 +607,28 @@ const handleShowOnMapClick = (showAll) => {
     background: rgba($color: #000, $alpha: 0.45);
   }
 
+  &.isHidden {
+    &::after {
+      content: "🙈";
+      display: flex;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s, visibility 0.3s;
+      background: rgba($color: #432fd8, $alpha: 0.4);
+      font-size: 64px;
+    }
+  }
+
   &:hover {
+    &::after {
+      opacity: 0;
+      visibility: hidden;
+    }
     .overlay {
       opacity: 1;
     }

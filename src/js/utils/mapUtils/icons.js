@@ -9,7 +9,7 @@ export const newMarkerIcon = L.icon({
 export const markerWithPhoto = (src, id) =>
   L.icon({
     iconUrl: src,
-    iconSize: [56, 56],
+    iconSize: [48, 48],
     className: `map-marker-with-photo marker-id-${id}`,
   });
 
@@ -39,7 +39,7 @@ export const clusterIcon = (cluster) => {
     return L.divIcon({
       html: count < 1000 ? count : `${Math.floor(count / 1000)}K`,
       className: "map-marker-cluster",
-      iconSize: [56, 56],
+      iconSize: [48, 48],
     });
   }
   return L.divIcon({
@@ -52,5 +52,5 @@ export const markerClusterIcon = (count) =>
   L.divIcon({
     html: count < 1000 ? count : `${Math.floor(count / 1000)}K`,
     className: "map-marker-cluster",
-    iconSize: [56, 56],
+    iconSize: [48, 48],
   });

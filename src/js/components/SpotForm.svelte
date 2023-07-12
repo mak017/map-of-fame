@@ -57,8 +57,8 @@ const isCrew = () => $userData.type === USER_TYPES.crew.toLowerCase();
 const isHunter = () => $userData.type === USER_TYPES.hunter.toLowerCase();
 
 const getInitialYear = () => {
-  if (editSpotData.year) {
-    return `${editSpotData.year}`;
+  if (typeof editSpotData.year !== "undefined") {
+    return editSpotData.year ? `${editSpotData.year}` : "";
   }
 
   if (validateYear($selectedYear, $settings.yearStart)) {
@@ -94,6 +94,8 @@ let description = editSpotData.description || "";
 let selectedCategory;
 let sprayPaintUsed;
 let link = editSpotData.link || "";
+let shouldHideInProfile =
+  !editSpotData.showInProfile || editSpotData.showInProfile === "0";
 let isSubmitDisabled = false;
 let isInProgress = false;
 let errors = {
@@ -427,6 +429,7 @@ const handleSubmit = () => {
         categoryId: selectedCategory.id,
         link,
         artistsCrews: artistCrewPairs,
+        showInProfile: shouldHideInProfile ? 0 : 1,
       };
       updateSpot(token, editSpotData.id, updatedData).then((response) => {
         const { success, result } = response;
@@ -638,6 +641,17 @@ const handleAddMoreClick = () => {
       addSpot={!isEditSpot}
       link />
   </div>
+  {#if isEditSpot}
+    <div class="checkbox">
+      <input
+        type="checkbox"
+        name="hide-in-profile"
+        id="hide-in-profile"
+        checked={shouldHideInProfile}
+        on:change={() => (shouldHideInProfile = !shouldHideInProfile)} />
+      <label for="hide-in-profile">Hide in profile</label>
+    </div>
+  {/if}
   {#if !editSpotData.img}
     <div class="button_wrap">
       <ButtonPrimary
@@ -889,6 +903,59 @@ form {
   }
 }
 
+.checkbox {
+  display: inline-block;
+  position: relative;
+  padding-left: 37px;
+
+  input {
+    position: absolute;
+    left: -9999px;
+    clip: rect(0 0 0 0);
+    opacity: 0;
+  }
+
+  label {
+    font-size: 16px;
+    line-height: 17px;
+    color: var(--color-dark);
+    cursor: pointer;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 22px;
+      height: 22px;
+      border: 1px solid var(--color-accent);
+      border-radius: 2px;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 7px;
+      left: 4px;
+      width: 14px;
+      height: 9px;
+      background: url(../../images/checkbox.svg) 50% 50% / contain no-repeat;
+      transform: scale(0);
+      transition: transform 0.3s;
+    }
+  }
+
+  input:checked + label {
+    &::before {
+      background-color: var(--color-accent);
+    }
+
+    &::after {
+      transform: scale(1);
+    }
+  }
+}
+
 @media (max-width: 767px) {
   .edit {
     display: flex;
@@ -910,6 +977,10 @@ form {
 
     .description {
       margin-top: 0;
+    }
+
+    .checkbox {
+      margin-bottom: 20px;
     }
   }
 }

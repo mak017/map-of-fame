@@ -76,7 +76,7 @@ export let onCancel;
   }
 
   .drag-to-map {
-    top: 98px;
+    top: 115px;
   }
 }
 </style>
