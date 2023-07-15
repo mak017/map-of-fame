@@ -125,8 +125,8 @@ const handleResize = () => {
   position: absolute;
   top: 15px;
   left: 18vw;
-  width: 118px;
-  height: 38px;
+  width: 132px;
+  height: 51px;
   background: url(../../images/logo.png) 50% 50% / contain no-repeat;
   border-radius: 0 0 2px 2px;
 }
@@ -197,8 +197,8 @@ h2 {
   }
   .logo {
     left: 12px;
-    width: 87px;
-    height: 28px;
+    width: 97px;
+    height: 37px;
   }
   h2 {
     margin-top: 64px;
