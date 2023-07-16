@@ -38,8 +38,8 @@ import { url } from "@roxi/routify";
   position: absolute;
   top: 15px;
   left: 18vw;
-  width: 118px;
-  height: 38px;
+  width: 132px;
+  height: 51px;
   background: url(../images/logo.png) 50% 50% / contain no-repeat;
   border-radius: 0 0 2px 2px;
 }
@@ -86,8 +86,8 @@ a {
 @media (max-width: 767px) {
   .logo {
     left: 12px;
-    width: 87px;
-    height: 28px;
+    width: 97px;
+    height: 37px;
   }
   h2 {
     margin: 16px 0;

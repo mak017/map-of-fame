@@ -222,8 +222,8 @@ const fetchArtistsCrews = async () => {
   top: 15px;
   left: max(calc((100vw - 940px) / 2), 32px);
   z-index: 1;
-  width: 118px;
-  height: 38px;
+  width: 132px;
+  height: 51px;
   background: url(../../images/logo.png) 50% 50% / contain no-repeat;
   border-radius: 0 0 2px 2px;
 }
