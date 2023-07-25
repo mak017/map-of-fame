@@ -42,7 +42,7 @@ const handleResize = () => {
   class="modal"
   class:withAd
   class:accentTitle
-  class:autoMargin
+  class:autoMargin={autoMargin && withAd && banner.url}
   class:alwaysOnTop
   class:stickyHeaderOnMobile={stickyHeaderOnMobile && scrollTop > 290}
   {id}

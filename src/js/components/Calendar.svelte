@@ -53,9 +53,7 @@ const datesFilter = getDatesFilter(
   additionalYears && JSON.parse(additionalYears)
 );
 
-const dates = !isMobile()
-  ? [ALL_YEARS_STRING, ...datesFilter]
-  : [...datesFilter.reverse(), ALL_YEARS_STRING];
+const dates = [...datesFilter.reverse(), ALL_YEARS_STRING];
 
 const token = loadFromLocalStorage("token") || null;
 
@@ -116,8 +114,10 @@ const handleClick = (year) => {
 
 <style lang="scss">
 .years-list {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-column-gap: 16px;
   max-width: 100%;
-  columns: 6;
   text-align: center;
 }
 
@@ -155,9 +155,7 @@ li {
 
 @media (max-width: 767px) {
   .years-list {
-    display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-column-gap: 16px;
   }
 }
 </style>

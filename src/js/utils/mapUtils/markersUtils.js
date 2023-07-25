@@ -91,7 +91,6 @@ const createMarkers = (map, markersData, isSearch) => {
     spiderfyOnMaxZoom: false,
     showCoverageOnHover: false,
     iconCreateFunction: clusterIcon,
-    disableClusteringAtZoom: 19,
   });
   const tempMarkersList = [];
   markersData?.spots?.forEach((item) => {
