@@ -47,6 +47,7 @@ const createProfileState = () => {
     spotsList: [],
     currentYear: undefined,
     yearsToApply: [],
+    invites: [],
     user: {},
     isInitialized: false,
     isLoading: true,
@@ -65,6 +66,7 @@ const createProfileState = () => {
       update((state) => ({ ...state, currentYear })),
     setYearsToApply: (yearsToApply) =>
       update((state) => ({ ...state, yearsToApply })),
+    setInvites: (invites) => update((state) => ({ ...state, invites })),
     setUser: (user) => update((state) => ({ ...state, user })),
     setIsInitialized: (value) =>
       update((state) => ({ ...state, isInitialized: value })),

@@ -49,7 +49,6 @@ let showDeletePopup = false;
 let showInvitesPopup = false;
 let showSharePopup = false;
 let newBatch = [];
-let invites = [];
 let unusedInvitesCount = 0;
 let parentModal = null;
 const token = loadFromLocalStorage("token") || null;
@@ -105,17 +104,18 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
       getInvites(token).then((response) => {
         const { success, result } = response;
         if (success && result) {
-          invites = result;
-          unusedInvitesCount = invites.reduce(
-            (accumulator, invite) =>
-              !invite.invitedUserId ? accumulator + 1 : accumulator,
-            0
-          );
+          profileState.setInvites(result);
         }
       });
     }
   }
 }
+
+$: unusedInvitesCount = $profileState.invites.reduce(
+  (accumulator, invite) =>
+    !invite.invitedUserId ? accumulator + 1 : accumulator,
+  0
+);
 
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
   profileState.setIsLoading(isNewFetch);
@@ -284,7 +284,7 @@ const handleShowOnMapClick = (showAll) => {
 </script>
 
 <div class="container" class:isCurrentUser>
-  {#if invites.length}
+  {#if $profileState.invites.length}
     <div class="invites">
       You have
       <button
@@ -428,9 +428,12 @@ const handleShowOnMapClick = (showAll) => {
 
 {#if showInvitesPopup}
   <Popup
-    title={`Invites ${unusedInvitesCount}/${invites.length} 👽`}
+    title={`Invites ${unusedInvitesCount}/${$profileState.invites.length} 👽`}
     on:close={() => toggleInvitesPopup(false)}>
-    <Invites close={() => toggleInvitesPopup(false)} {invites} {username} />
+    <Invites
+      close={() => toggleInvitesPopup(false)}
+      invites={$profileState.invites}
+      {username} />
   </Popup>
 {/if}
 
