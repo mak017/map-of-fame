@@ -45,13 +45,13 @@ function getExifOrientation(file, callback) {
 function imgToCanvasWithOrientation(img, rawWidth, rawHeight, orientation) {
   let isRotated = false;
   const canvas = document.createElement("canvas");
-  if (orientation > 4) {
-    canvas.width = rawHeight;
-    canvas.height = rawWidth;
-  } else {
-    canvas.width = rawWidth;
-    canvas.height = rawHeight;
-  }
+  // if (orientation > 4) {
+  //   canvas.width = rawHeight;
+  //   canvas.height = rawWidth;
+  // } else {
+  canvas.width = rawWidth;
+  canvas.height = rawHeight;
+  // }
 
   if (orientation > 1) {
     isRotated = true;
@@ -59,31 +59,33 @@ function imgToCanvasWithOrientation(img, rawWidth, rawHeight, orientation) {
   }
 
   const ctx = canvas.getContext("2d");
-  switch (orientation) {
-    case 2:
-      ctx.transform(-1, 0, 0, 1, rawWidth, 0);
-      break;
-    case 3:
-      ctx.transform(-1, 0, 0, -1, rawWidth, rawHeight);
-      break;
-    case 4:
-      ctx.transform(1, 0, 0, -1, 0, rawHeight);
-      break;
-    case 5:
-      ctx.transform(0, 1, 1, 0, 0, 0);
-      break;
-    case 6:
-      ctx.transform(0, 1, -1, 0, rawHeight, 0);
-      break;
-    case 7:
-      ctx.transform(0, -1, -1, 0, rawHeight, rawWidth);
-      break;
-    case 8:
-      ctx.transform(0, -1, 1, 0, 0, rawWidth);
-      break;
-    default:
-    // intentionally left empty
-  }
+  // switch (orientation) {
+  //   case 2:
+  //     ctx.transform(-1, 0, 0, 1, rawWidth, 0);
+  //     break;
+  //   case 3:
+  //     // ctx.transform(-1, 0, 0, -1, rawWidth, rawHeight);
+  //     break;
+  //   case 4:
+  //     ctx.transform(1, 0, 0, -1, 0, rawHeight);
+  //     break;
+  //   case 5:
+  //     ctx.transform(0, 1, 1, 0, 0, 0);
+  //     break;
+  //   case 6:
+  //     // ctx.transform(0, 1, -1, 0, rawHeight, 0);
+  //     ctx.rotate(-0.5 * Math.PI);
+  //     ctx.translate(-rawWidth, 0);
+  //     break;
+  //   case 7:
+  //     ctx.transform(0, -1, -1, 0, rawHeight, rawWidth);
+  //     break;
+  //   case 8:
+  //     ctx.transform(0, -1, 1, 0, 0, rawWidth);
+  //     break;
+  //   default:
+  //   // intentionally left empty
+  // }
   ctx.drawImage(img, 0, 0, rawWidth, rawHeight);
   return { canvas, isRotated };
 }
