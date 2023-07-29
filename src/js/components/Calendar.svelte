@@ -5,6 +5,7 @@ import { goto } from "@roxi/routify";
 import { requestSearchSpots } from "./../api/search.js";
 import {
   isSearchResults,
+  isShowOnMapMode,
   markersStore,
   selectedArtist,
   selectedCrew,
@@ -90,6 +91,31 @@ const handleClick = (year) => {
   }
   $goto("/");
 };
+
+const isDisabled = (date, activeYears) => {
+  if (+date > getCurrentYear()) {
+    return true;
+  }
+  if (
+    !activeYears?.includes(+date) &&
+    date !== EMPTY_YEAR_STRING &&
+    date !== ALL_YEARS_STRING
+  ) {
+    return true;
+  }
+  if (
+    searchYears?.length &&
+    !searchYears?.includes(date) &&
+    date !== ALL_YEARS_STRING
+  ) {
+    return true;
+  }
+  if (!$isSearchResults && !$isShowOnMapMode && date === ALL_YEARS_STRING) {
+    return true;
+  }
+
+  return false;
+};
 </script>
 
 <ol class="years-list">
@@ -100,14 +126,7 @@ const handleClick = (year) => {
         on:click|preventDefault={() => handleClick(date)}
         class="year"
         class:active={`${date}` === $selectedYear}
-        class:disabled={+date > getCurrentYear() ||
-          (!activeYears?.includes(+date) && date !== EMPTY_YEAR_STRING) ||
-          (searchYears?.length &&
-            !searchYears?.includes(date) &&
-            date !== ALL_YEARS_STRING) ||
-          (!$isSearchResults &&
-            !$selectedUserProfileData.id &&
-            date === ALL_YEARS_STRING)}>{date}</a>
+        class:disabled={isDisabled(date, activeYears)}>{date}</a>
     </li>
   {/each}
 </ol>
