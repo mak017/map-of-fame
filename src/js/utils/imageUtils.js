@@ -42,52 +42,14 @@ function getExifOrientation(file, callback) {
 }
 
 // Derived from https://stackoverflow.com/a/40867559, cc by-sa
-function imgToCanvasWithOrientation(img, rawWidth, rawHeight, orientation) {
-  let isRotated = false;
+function imgToCanvas(img, rawWidth, rawHeight) {
   const canvas = document.createElement("canvas");
-  // if (orientation > 4) {
-  //   canvas.width = rawHeight;
-  //   canvas.height = rawWidth;
-  // } else {
   canvas.width = rawWidth;
   canvas.height = rawHeight;
-  // }
-
-  if (orientation > 1) {
-    isRotated = true;
-    console.debug(`EXIF orientation = ${orientation}, rotating picture`);
-  }
 
   const ctx = canvas.getContext("2d");
-  // switch (orientation) {
-  //   case 2:
-  //     ctx.transform(-1, 0, 0, 1, rawWidth, 0);
-  //     break;
-  //   case 3:
-  //     // ctx.transform(-1, 0, 0, -1, rawWidth, rawHeight);
-  //     break;
-  //   case 4:
-  //     ctx.transform(1, 0, 0, -1, 0, rawHeight);
-  //     break;
-  //   case 5:
-  //     ctx.transform(0, 1, 1, 0, 0, 0);
-  //     break;
-  //   case 6:
-  //     // ctx.transform(0, 1, -1, 0, rawHeight, 0);
-  //     ctx.rotate(-0.5 * Math.PI);
-  //     ctx.translate(-rawWidth, 0);
-  //     break;
-  //   case 7:
-  //     ctx.transform(0, -1, -1, 0, rawHeight, rawWidth);
-  //     break;
-  //   case 8:
-  //     ctx.transform(0, -1, 1, 0, 0, rawWidth);
-  //     break;
-  //   default:
-  //   // intentionally left empty
-  // }
   ctx.drawImage(img, 0, 0, rawWidth, rawHeight);
-  return { canvas, isRotated };
+  return canvas;
 }
 
 export const processImage = (
@@ -120,12 +82,7 @@ export const processImage = (
       h = Math.round(h * scale);
       w = Math.round(w * scale);
 
-      const { canvas, isRotated } = imgToCanvasWithOrientation(
-        img,
-        w,
-        h,
-        orientation
-      );
+      const canvas = imgToCanvas(img, w, h, orientation);
 
       canvas.toBlob(
         (blob) => {
@@ -143,7 +100,7 @@ export const processImage = (
             );
           }
 
-          callback(blob, isRotated);
+          callback(blob);
         },
         "image/jpeg",
         quality

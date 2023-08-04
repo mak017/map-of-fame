@@ -77,7 +77,7 @@ const handleClick = (year) => {
     });
   } else if ($selectedUserProfileData.id) {
     getUserSpots($selectedUserProfileData.id, token, {
-      year: yearForRequest,
+      year: yearForRequest === ALL_YEARS_STRING ? undefined : yearForRequest,
       offset: 0,
       limit: 99999999999999,
     }).then((response) => {
