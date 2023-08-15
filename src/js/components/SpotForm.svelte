@@ -209,26 +209,36 @@ const onChangeImage = (imageType) => {
             }
           );
         } else {
-          processImage(file, 0, Infinity, Infinity, 0.85, false, (blob) => {
-            const newBlob = new File([blob], "image.jpg");
-            imageObject = {
-              ...imageObject,
-              blob: file,
-              filePreview: e.target.result,
-            };
+          processImage(
+            file,
+            0,
+            Infinity,
+            Infinity,
+            0.85,
+            false,
+            (blob, isRotated) => {
+              const newBlob = new File([blob], "image.jpg");
+              imageObject = isRotated
+                ? {
+                    ...imageObject,
+                    blob: newBlob,
+                    filePreview: URL.createObjectURL(newBlob),
+                  }
+                : { ...imageObject, blob: file, filePreview: e.target.result };
 
-            if (imageType === "image") {
-              image = { ...imageObject };
-            }
+              if (imageType === "image") {
+                image = { ...imageObject };
+              }
 
-            if (imageType === "image2") {
-              image2 = { ...imageObject };
-            }
+              if (imageType === "image2") {
+                image2 = { ...imageObject };
+              }
 
-            if (imageType === "sketch") {
-              sketch = { ...imageObject };
+              if (imageType === "sketch") {
+                sketch = { ...imageObject };
+              }
             }
-          });
+          );
         }
       };
     };
