@@ -109,3 +109,9 @@ export const SPOT_FROM_POLY = (polygon) => {
 
   return `${ENDPOINT_ORIGIN}/api/spot/fromPoly?${query}`;
 };
+
+export const DRAFT_GET_LAST = () => `${ENDPOINT_ORIGIN}/api/draft/getLast`;
+
+export const DRAFT_UPDATE = () => `${ENDPOINT_ORIGIN}/api/draft/update`;
+
+export const DRAFT_PUBLISH = () => `${ENDPOINT_ORIGIN}/api/draft/publicate`;

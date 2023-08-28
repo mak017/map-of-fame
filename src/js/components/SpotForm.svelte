@@ -1,7 +1,13 @@
 <script>
 import { requestSearchSpots } from "../api/search.js";
 import { getFirmsRequest } from "../api/settings";
-import { createSpot, getUserCategories, updateSpot } from "./../api/spot";
+import {
+  getLastSpotDraft,
+  getUserCategories,
+  publishSpotDraft,
+  updateSpot,
+  updateSpotDraft,
+} from "./../api/spot";
 import {
   getCurrentYear,
   isEmpty,
@@ -161,6 +167,28 @@ if (!isEditSpot && !isHunter() && !hasSprays()) {
   });
 }
 
+const saveDraft = () => {
+  const markerCoords = marker.getLatLng();
+  const { lat, lng } = markerCoords;
+  const requestObject = {
+    lat,
+    lng,
+    year,
+    spotStatus: selectedStatus,
+    img: image.blob ?? "",
+    additionalImg: image2.blob ?? "",
+    sketch: sketch.blob ?? "",
+    videoLink: linkToVideo,
+    description,
+    categoryId: selectedCategory?.id ?? "",
+    link,
+    artistsCrews: artistCrewPairs,
+  };
+  if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
+
+  updateSpotDraft(token, requestObject);
+};
+
 const onChangeImage = (imageType) => {
   let imageObject = { ...image };
   if (imageType === "image2") {
@@ -240,6 +268,8 @@ const onChangeImage = (imageType) => {
             }
           );
         }
+
+        saveDraft();
       };
     };
 
@@ -338,6 +368,8 @@ const handleCategorySelect = () => {
   if (isSubmitDisabled || isFormHasErrors()) {
     errors.selectedCategory = "";
   }
+
+  saveDraft();
 };
 
 const handleLinkChange = () => {
@@ -363,25 +395,8 @@ const handleSubmit = () => {
     const token = loadFromLocalStorage("token") || null;
     isInProgress = true;
     if (!isEditSpot) {
-      const markerCoords = marker.getLatLng();
-      const { lat, lng } = markerCoords;
-      const requestObject = {
-        lat,
-        lng,
-        year,
-        spotStatus: selectedStatus,
-        img: image.blob,
-        additionalImg: image2.blob,
-        sketch: sketch.blob,
-        videoLink: linkToVideo,
-        description,
-        categoryId: selectedCategory.id,
-        link,
-        artistsCrews: artistCrewPairs,
-      };
-      if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
       marker.dragging.disable();
-      createSpot(token, requestObject).then((response) => {
+      publishSpotDraft(token).then((response) => {
         const { success, result, errors: error } = response;
         isInProgress = false;
         if (success && result) {
@@ -476,12 +491,14 @@ const handleAddMoreClick = () => {
         <FormTextInput
           placeholder="Artist Name"
           bind:value={pair.artist}
+          on:blur={saveDraft}
           wideOnMobile
           editSpot={isEditSpot}
           addSpot={!isEditSpot} />
         <FormTextInput
           placeholder="Crew Name"
           bind:value={pair.crew}
+          on:blur={saveDraft}
           wideOnMobile
           editSpot={isEditSpot}
           addSpot={!isEditSpot} />
@@ -499,6 +516,7 @@ const handleAddMoreClick = () => {
     bind:value={year}
     hint={`${$settings.yearStart} - ${currentYear}`}
     on:input={handleYearChange}
+    on:blur={saveDraft}
     errorText={errors.year}
     wideOnMobile
     editSpot={isEditSpot}
@@ -508,6 +526,7 @@ const handleAddMoreClick = () => {
       <FormRadioButton
         id={`status-${status.toLowerCase()}`}
         bind:group={selectedStatus}
+        on:change={saveDraft}
         value={status}
         label={status}
         className={!isEditSpot ? "addSpot" : ""} />
@@ -587,6 +606,7 @@ const handleAddMoreClick = () => {
     <FormTextArea
       placeholder="Description"
       bind:value={description}
+      on:blur={saveDraft}
       height={84}
       isResizable={isEditSpot}
       addSpot={!isEditSpot} />
@@ -623,8 +643,9 @@ const handleAddMoreClick = () => {
     <FormTextInput
       label="Link To Video"
       bind:value={linkToVideo}
-      errorText={errors.linkToVideo}
       on:input={handleVideoLinkChange}
+      on:blur={saveDraft}
+      errorText={errors.linkToVideo}
       wideOnMobile
       editSpot={isEditSpot}
       addSpot={!isEditSpot}
@@ -635,6 +656,7 @@ const handleAddMoreClick = () => {
       label="Link To Work"
       bind:value={link}
       on:input={handleLinkChange}
+      on:blur={saveDraft}
       wideOnMobile
       errorText={errors.link}
       editSpot={isEditSpot}

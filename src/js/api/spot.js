@@ -1,6 +1,8 @@
 import { MAX_SPOTS_PER_PAGE } from "../constants";
 import {
-  SPOT,
+  DRAFT_GET_LAST,
+  DRAFT_PUBLISH,
+  DRAFT_UPDATE,
   SPOT_FROM_POLY,
   SPOT_ID,
   SPOT_ID_FEEDBACK,
@@ -41,7 +43,17 @@ export const getSpotsInArea = async (polygon) => {
   return result;
 };
 
-export const createSpot = async (
+export const getLastSpotDraft = async (token) => {
+  const bearer = `Bearer ${token}`;
+  const response = await fetch(DRAFT_GET_LAST(), {
+    method: "GET",
+    headers: { Authorization: bearer },
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const updateSpotDraft = async (
   token,
   {
     lat,
@@ -64,8 +76,8 @@ export const createSpot = async (
   formData.append("lat", lat);
   formData.append("lng", lng);
   formData.append("spot_status", spotStatus);
-  formData.append("img", img);
-  formData.append("category_id", categoryId);
+  if (img) formData.append("img", img);
+  if (categoryId) formData.append("category_id", categoryId);
   if (artistsCrews?.length) {
     artistsCrews.forEach((item, index) => {
       const { artist, crew } = item;
@@ -82,11 +94,21 @@ export const createSpot = async (
   if (link) formData.append("link", link);
   if (additionalImg) formData.append("additionalImg", additionalImg);
   if (sketch) formData.append("sketch", sketch);
-  const response = await fetch(SPOT(), {
+  const response = await fetch(DRAFT_UPDATE(), {
     method: "POST",
     withCredentials: true,
     headers: { Authorization: bearer },
     body: formData,
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const publishSpotDraft = async (token) => {
+  const bearer = `Bearer ${token}`;
+  const response = await fetch(DRAFT_PUBLISH(), {
+    method: "POST",
+    headers: { Authorization: bearer },
   });
   const result = await response.json();
   return result;
