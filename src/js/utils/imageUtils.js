@@ -131,9 +131,9 @@ export const processImage = (
               isRecursive,
               callback
             );
+          } else {
+            callback(blob, isRotated);
           }
-
-          callback(blob, isRotated);
         },
         "image/jpeg",
         quality

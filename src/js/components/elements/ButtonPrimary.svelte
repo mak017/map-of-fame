@@ -2,7 +2,10 @@
 import { createEventDispatcher } from "svelte";
 import { fade } from "svelte/transition";
 
+import Spinner from "./Spinner.svelte";
+
 export let isDisabled = false;
+export let withLoader = false;
 export let type = "button";
 export let className = "";
 export let text = "";
@@ -13,10 +16,18 @@ const dispatch = createEventDispatcher();
 <button
   {type}
   class={`button${className ? ` ${className}` : ""}`}
+  class:withLoader
   disabled={isDisabled}
   on:click={() => dispatch("click")}
   in:fade={{ duration: 200 }}
-  data-text={text}>{text}</button>
+  data-text={text}
+  ><span class="text">{text}</span>
+  {#if withLoader}
+    <span class="spinner-wrapper">
+      <Spinner isWhite height={28} />
+    </span>
+  {/if}
+</button>
 
 <style lang="scss">
 button {
@@ -31,6 +42,11 @@ button {
   text-transform: uppercase;
 
   user-select: none;
+
+  > span {
+    display: block;
+    transition: transform 0.3s;
+  }
 
   &::after {
     content: attr(data-text);
@@ -76,6 +92,14 @@ button {
     background-color: var(--color-light-grey);
     pointer-events: none;
   }
+
+  &.withLoader {
+    pointer-events: none;
+
+    .text {
+      transform: translateY(130%);
+    }
+  }
 }
 
 .add-spot {
@@ -84,6 +108,14 @@ button {
 
 .search {
   width: 140px;
+}
+
+.spinner-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: appear 0.5s ease-in;
 }
 
 @keyframes glitch {
@@ -151,6 +183,12 @@ button {
     transform: translate(0);
 
     clip-path: var(--slice-1);
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
   }
 }
 

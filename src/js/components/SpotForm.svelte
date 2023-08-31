@@ -1,4 +1,6 @@
 <script>
+import { onDestroy, onMount } from "svelte";
+
 import { requestSearchSpots } from "../api/search.js";
 import { getFirmsRequest } from "../api/settings";
 import {
@@ -104,6 +106,7 @@ let shouldHideInProfile =
   !editSpotData.showInProfile || editSpotData.showInProfile === "0";
 let isSubmitDisabled = false;
 let isInProgress = false;
+let isSubmitting = false;
 let errors = {
   year: "",
   imageFile: "",
@@ -112,6 +115,29 @@ let errors = {
   link: "",
   artistCrewPairs: "",
 };
+let progressState = {
+  coords: false,
+  artist1: false,
+  crew1: false,
+  artist2: false,
+  crew2: false,
+  artist3: false,
+  crew3: false,
+  artist4: false,
+  crew4: false,
+  artist5: false,
+  crew5: false,
+  year: false,
+  selectedStatus: false,
+  image: false,
+  image2: false,
+  sketch: false,
+  description: false,
+  selectedCategory: false,
+  linkToVideo: false,
+  link: false,
+};
+
 const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
   artist: data.artist?.name ?? "",
   crew: data.crew?.name ?? "",
@@ -130,8 +156,8 @@ const token = loadFromLocalStorage("token") || null;
 
 const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
 
-$: isSubmitDisabled =
-  Object.values(errors).some((err) => !!err) || isInProgress;
+$: isSubmitDisabled = Object.values(errors).some((err) => !!err);
+$: isInProgress = Object.values(progressState).some((field) => field);
 
 const getInitialCategory = (categories) =>
   isEditSpot
@@ -167,7 +193,9 @@ if (!isEditSpot && !isHunter() && !hasSprays()) {
   });
 }
 
-const saveDraft = () => {
+const saveDraft = async (field) => {
+  if (!marker) return;
+
   const markerCoords = marker.getLatLng();
   const { lat, lng } = markerCoords;
   const requestObject = {
@@ -175,18 +203,46 @@ const saveDraft = () => {
     lng,
     year,
     spotStatus: selectedStatus,
-    img: image.blob ?? "",
-    additionalImg: image2.blob ?? "",
-    sketch: sketch.blob ?? "",
     videoLink: linkToVideo,
     description,
     categoryId: selectedCategory?.id ?? "",
     link,
     artistsCrews: artistCrewPairs,
   };
+  if (field == "image") requestObject.img = image.blob ?? "";
+  if (field == "image2") requestObject.additionalImg = image2.blob ?? "";
+  if (field == "sketch") requestObject.sketch = sketch.blob ?? "";
   if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
 
-  updateSpotDraft(token, requestObject);
+  progressState[field] = true;
+  await updateSpotDraft(token, requestObject);
+  progressState[field] = false;
+};
+
+const saveDraftCoords = () => saveDraft("coords");
+
+onMount(() => {
+  marker?.on("moveend", saveDraftCoords);
+});
+
+onDestroy(() => {
+  marker?.off("moveend", saveDraftCoords);
+});
+
+const handleProcessedImage = (imageType, imageObject) => {
+  if (imageType === "image") {
+    image = { ...imageObject };
+  }
+
+  if (imageType === "image2") {
+    image2 = { ...imageObject };
+  }
+
+  if (imageType === "sketch") {
+    sketch = { ...imageObject };
+  }
+
+  saveDraft(imageType);
 };
 
 const onChangeImage = (imageType) => {
@@ -222,18 +278,7 @@ const onChangeImage = (imageType) => {
                 blob: newBlob,
                 filePreview: URL.createObjectURL(newBlob),
               };
-
-              if (imageType === "image") {
-                image = { ...imageObject };
-              }
-
-              if (imageType === "image2") {
-                image2 = { ...imageObject };
-              }
-
-              if (imageType === "sketch") {
-                sketch = { ...imageObject };
-              }
+              handleProcessedImage(imageType, imageObject, blob);
             }
           );
         } else {
@@ -253,23 +298,10 @@ const onChangeImage = (imageType) => {
                     filePreview: URL.createObjectURL(newBlob),
                   }
                 : { ...imageObject, blob: file, filePreview: e.target.result };
-
-              if (imageType === "image") {
-                image = { ...imageObject };
-              }
-
-              if (imageType === "image2") {
-                image2 = { ...imageObject };
-              }
-
-              if (imageType === "sketch") {
-                sketch = { ...imageObject };
-              }
+              handleProcessedImage(imageType, imageObject, blob, isRotated);
             }
           );
         }
-
-        saveDraft();
       };
     };
 
@@ -297,6 +329,10 @@ const onRemoveImage = (imageType) => {
       filePreview: "",
       blob: undefined,
     };
+  }
+
+  if (!isEditSpot) {
+    saveDraft(imageType);
   }
 };
 
@@ -369,7 +405,7 @@ const handleCategorySelect = () => {
     errors.selectedCategory = "";
   }
 
-  saveDraft();
+  saveDraft("selectedCategory");
 };
 
 const handleLinkChange = () => {
@@ -393,12 +429,19 @@ const handleSubmit = () => {
     !errors.link
   ) {
     const token = loadFromLocalStorage("token") || null;
-    isInProgress = true;
     if (!isEditSpot) {
+      isSubmitting = true;
+
+      if (isInProgress) {
+        return;
+      }
+
+      isInProgress = true;
       marker.dragging.disable();
+
       publishSpotDraft(token).then((response) => {
         const { success, result, errors: error } = response;
-        isInProgress = false;
+        isSubmitting = false;
         if (success && result) {
           const yearForRequest = year || EMPTY_YEAR_STRING;
 
@@ -426,9 +469,11 @@ const handleSubmit = () => {
             imageFilePreview = "";
           }
           marker.dragging.enable();
+          isInProgress = false;
         }
       });
     } else {
+      isInProgress = true;
       const updatedData = {
         year,
         spotStatus: selectedStatus,
@@ -470,6 +515,10 @@ const handleSubmit = () => {
   }
 };
 
+$: if (isSubmitting && !isInProgress) {
+  handleSubmit();
+}
+
 const handleAddMoreClick = () => {
   artistCrewPairs = [...artistCrewPairs, { artist: "", crew: "" }];
 };
@@ -486,19 +535,19 @@ const handleAddMoreClick = () => {
     </div>
   {/if}
   <div class="artists-area">
-    {#each artistCrewPairs as pair}
+    {#each artistCrewPairs as pair, index}
       <div class="artist-crew-pair">
         <FormTextInput
           placeholder="Artist Name"
           bind:value={pair.artist}
-          on:blur={saveDraft}
+          on:blur={() => saveDraft(`artist${index + 1}`)}
           wideOnMobile
           editSpot={isEditSpot}
           addSpot={!isEditSpot} />
         <FormTextInput
           placeholder="Crew Name"
           bind:value={pair.crew}
-          on:blur={saveDraft}
+          on:blur={() => saveDraft(`crew${index + 1}`)}
           wideOnMobile
           editSpot={isEditSpot}
           addSpot={!isEditSpot} />
@@ -516,7 +565,7 @@ const handleAddMoreClick = () => {
     bind:value={year}
     hint={`${$settings.yearStart} - ${currentYear}`}
     on:input={handleYearChange}
-    on:blur={saveDraft}
+    on:blur={() => saveDraft("year")}
     errorText={errors.year}
     wideOnMobile
     editSpot={isEditSpot}
@@ -526,14 +575,14 @@ const handleAddMoreClick = () => {
       <FormRadioButton
         id={`status-${status.toLowerCase()}`}
         bind:group={selectedStatus}
-        on:change={saveDraft}
+        on:change={() => saveDraft("selectedStatus")}
         value={status}
         label={status}
         className={!isEditSpot ? "addSpot" : ""} />
     {/each}
   </div>
   <div class="upload-area">
-    <div class="upload-image">
+    <div class="upload-image" class:error={errors.imageFile}>
       {#if image.filePreview}
         <img src={image.filePreview} alt="Preview" class="preview_image" />
         <div class="overlay">
@@ -570,7 +619,6 @@ const handleAddMoreClick = () => {
             <span>Max 10 Mb</span>
           </label>
         {/if}
-        {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
         <input
           accept="image/png, image/jpeg"
           bind:files={image2.file}
@@ -606,7 +654,7 @@ const handleAddMoreClick = () => {
     <FormTextArea
       placeholder="Description"
       bind:value={description}
-      on:blur={saveDraft}
+      on:blur={() => saveDraft("description")}
       height={84}
       isResizable={isEditSpot}
       addSpot={!isEditSpot} />
@@ -644,7 +692,7 @@ const handleAddMoreClick = () => {
       label="Link To Video"
       bind:value={linkToVideo}
       on:input={handleVideoLinkChange}
-      on:blur={saveDraft}
+      on:blur={() => saveDraft("linkToVideo")}
       errorText={errors.linkToVideo}
       wideOnMobile
       editSpot={isEditSpot}
@@ -656,7 +704,7 @@ const handleAddMoreClick = () => {
       label="Link To Work"
       bind:value={link}
       on:input={handleLinkChange}
-      on:blur={saveDraft}
+      on:blur={() => saveDraft("link")}
       wideOnMobile
       errorText={errors.link}
       editSpot={isEditSpot}
@@ -680,13 +728,14 @@ const handleAddMoreClick = () => {
         text="Post Art"
         type="submit"
         isDisabled={isSubmitDisabled}
+        withLoader={isSubmitting}
         className={!isEditSpot ? "addSpot" : ""} />
     </div>
     <button
       type="button"
       class="cancel"
       on:click={() => shouldShowAddSpot.set(false)}
-      disabled={isInProgress}>Cancel</button>
+      disabled={isSubmitting}>Cancel</button>
   {/if}
 </form>
 
@@ -732,6 +781,10 @@ form {
   /* &.upload-sketch {
     margin: 0 0 15px;
   } */
+
+  &.error {
+    margin-bottom: 23px;
+  }
 
   .first_upload {
     display: flex;

@@ -59,6 +59,7 @@ h2 {
 
 .form-wrapper {
   padding: 0 20px;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
