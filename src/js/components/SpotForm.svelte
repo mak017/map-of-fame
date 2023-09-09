@@ -534,53 +534,6 @@ const handleAddMoreClick = () => {
         className="add-spot" />
     </div>
   {/if}
-  <div class="artists-area">
-    {#each artistCrewPairs as pair, index}
-      <div class="artist-crew-pair">
-        <FormTextInput
-          placeholder="Artist Name"
-          bind:value={pair.artist}
-          on:blur={() => saveDraft(`artist${index + 1}`)}
-          wideOnMobile
-          editSpot={isEditSpot}
-          addSpot={!isEditSpot} />
-        <FormTextInput
-          placeholder="Crew Name"
-          bind:value={pair.crew}
-          on:blur={() => saveDraft(`crew${index + 1}`)}
-          wideOnMobile
-          editSpot={isEditSpot}
-          addSpot={!isEditSpot} />
-      </div>
-    {/each}
-    {#if artistCrewPairs.length < 5}
-      <button
-        type="button"
-        class="button btn-add-more"
-        on:click={handleAddMoreClick}>Add more</button>
-    {/if}
-  </div>
-  <FormTelInput
-    placeholder="Year"
-    bind:value={year}
-    hint={`${$settings.yearStart} - ${currentYear}`}
-    on:input={handleYearChange}
-    on:blur={() => saveDraft("year")}
-    errorText={errors.year}
-    wideOnMobile
-    editSpot={isEditSpot}
-    addSpot={!isEditSpot} />
-  <div class="status">
-    {#each statusesOrdered as status}
-      <FormRadioButton
-        id={`status-${status.toLowerCase()}`}
-        bind:group={selectedStatus}
-        on:change={() => saveDraft("selectedStatus")}
-        value={status}
-        label={status}
-        className={!isEditSpot ? "addSpot" : ""} />
-    {/each}
-  </div>
   <div class="upload-area">
     <div class="upload-image" class:error={errors.imageFile}>
       {#if image.filePreview}
@@ -649,6 +602,53 @@ const handleAddMoreClick = () => {
         id="upload-sketch"
         type="file" />
     </div> -->
+  </div>
+  <div class="artists-area">
+    {#each artistCrewPairs as pair, index}
+      <div class="artist-crew-pair">
+        <FormTextInput
+          placeholder="Artist Name"
+          bind:value={pair.artist}
+          on:blur={() => saveDraft(`artist${index + 1}`)}
+          wideOnMobile
+          editSpot={isEditSpot}
+          addSpot={!isEditSpot} />
+        <FormTextInput
+          placeholder="Crew Name"
+          bind:value={pair.crew}
+          on:blur={() => saveDraft(`crew${index + 1}`)}
+          wideOnMobile
+          editSpot={isEditSpot}
+          addSpot={!isEditSpot} />
+      </div>
+    {/each}
+    {#if artistCrewPairs.length < 5}
+      <button
+        type="button"
+        class="button btn-add-more"
+        on:click={handleAddMoreClick}>Add more</button>
+    {/if}
+  </div>
+  <FormTelInput
+    placeholder="Year"
+    bind:value={year}
+    hint={`${$settings.yearStart} - ${currentYear}`}
+    on:input={handleYearChange}
+    on:blur={() => saveDraft("year")}
+    errorText={errors.year}
+    wideOnMobile
+    editSpot={isEditSpot}
+    addSpot={!isEditSpot} />
+  <div class="status">
+    {#each statusesOrdered as status}
+      <FormRadioButton
+        id={`status-${status.toLowerCase()}`}
+        bind:group={selectedStatus}
+        on:change={() => saveDraft("selectedStatus")}
+        value={status}
+        label={status}
+        className={!isEditSpot ? "addSpot" : ""} />
+    {/each}
   </div>
   <div class="description">
     <FormTextArea
@@ -767,16 +767,17 @@ form {
 
 .status {
   display: flex;
+  margin-bottom: 18px;
+}
+
+.upload-area {
+  margin-bottom: 24px;
 }
 
 .upload-image {
   position: relative;
   max-height: 136px;
-  margin: 15px 0 8px;
-
-  &.upload-image2 {
-    margin: 0 0 8px;
-  }
+  margin: 0 0 8px;
 
   /* &.upload-sketch {
     margin: 0 0 15px;
@@ -1063,6 +1064,10 @@ form {
 @media (orientation: landscape) and (max-height: 960px) {
   form {
     &:not(.edit) {
+      .upload-area {
+        margin-bottom: 14px;
+      }
+
       .upload-image {
         max-height: 100px;
         margin: 12px 0;
@@ -1070,6 +1075,10 @@ form {
 
       .preview_image {
         height: 100px;
+      }
+
+      .status {
+        margin-bottom: 13px;
       }
 
       .category {
