@@ -36,9 +36,15 @@ export const clusterIcon = (cluster) => {
     count = cluster.getChildCount();
   }
   if (count !== 0) {
+    const className = markers.reduce(
+      (acc, marker) =>
+        marker.spotId ? acc + ` marker-id-${marker.spotId}` : acc,
+      "map-marker-cluster"
+    );
+
     return L.divIcon({
       html: count < 1000 ? count : `${Math.floor(count / 1000)}K`,
-      className: "map-marker-cluster",
+      className,
       iconSize: [48, 48],
     });
   }
