@@ -69,13 +69,15 @@ export const updateSpotDraft = async (
     categoryId,
     firmId,
     link,
+    spotId,
+    showInProfile,
   }
 ) => {
   const bearer = `Bearer ${token}`;
   const formData = new FormData();
-  formData.append("lat", lat);
-  formData.append("lng", lng);
   formData.append("spot_status", spotStatus);
+  if (lat) formData.append("lat", lat);
+  if (lng) formData.append("lng", lng);
   if (img) formData.append("img", img);
   if (categoryId) formData.append("category_id", categoryId);
   if (artistsCrews?.length) {
@@ -94,6 +96,10 @@ export const updateSpotDraft = async (
   if (link) formData.append("link", link);
   if (additionalImg) formData.append("additionalImg", additionalImg);
   if (sketch) formData.append("sketch", sketch);
+  if (spotId) formData.append("spot_id", spotId);
+  if (typeof showInProfile !== "undefined") {
+    formData.append("showInProfile", showInProfile);
+  }
   const response = await fetch(DRAFT_UPDATE(), {
     method: "POST",
     withCredentials: true,
@@ -104,11 +110,14 @@ export const updateSpotDraft = async (
   return result;
 };
 
-export const publishSpotDraft = async (token) => {
+export const publishSpotDraft = async (token, spotId) => {
   const bearer = `Bearer ${token}`;
+  const formData = new FormData();
+  if (spotId) formData.append("spot_id", spotId);
   const response = await fetch(DRAFT_PUBLISH(), {
     method: "POST",
     headers: { Authorization: bearer },
+    body: formData,
   });
   const result = await response.json();
   return result;

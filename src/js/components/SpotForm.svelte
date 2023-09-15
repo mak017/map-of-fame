@@ -194,13 +194,7 @@ if (!isEditSpot && !isHunter() && !hasSprays()) {
 }
 
 const saveDraft = async (field) => {
-  if (!marker) return;
-
-  const markerCoords = marker.getLatLng();
-  const { lat, lng } = markerCoords;
   const requestObject = {
-    lat,
-    lng,
     year,
     spotStatus: selectedStatus,
     videoLink: linkToVideo,
@@ -209,6 +203,17 @@ const saveDraft = async (field) => {
     link,
     artistsCrews: artistCrewPairs,
   };
+
+  if (isEditSpot) {
+    requestObject.spotId = editSpotData.id;
+    requestObject.showInProfile = shouldHideInProfile ? 0 : 1;
+  } else {
+    const markerCoords = marker.getLatLng();
+    const { lat, lng } = markerCoords;
+    requestObject.lat = lat;
+    requestObject.lng = lng;
+  }
+
   if (field == "image") requestObject.img = image.blob ?? "";
   if (field == "image2") requestObject.additionalImg = image2.blob ?? "";
   if (field == "sketch") requestObject.sketch = sketch.blob ?? "";
@@ -429,20 +434,35 @@ const handleSubmit = () => {
     !errors.link
   ) {
     const token = loadFromLocalStorage("token") || null;
-    if (!isEditSpot) {
-      isSubmitting = true;
+    isSubmitting = true;
 
-      if (isInProgress) {
-        return;
-      }
+    if (isInProgress) {
+      return;
+    }
 
-      isInProgress = true;
-      marker.dragging.disable();
+    isInProgress = true;
+    !isEditSpot && marker.dragging.disable();
 
-      publishSpotDraft(token).then((response) => {
-        const { success, result, errors: error } = response;
-        isSubmitting = false;
-        if (success && result) {
+    publishSpotDraft(token, editSpotData?.id).then((response) => {
+      const { success, result, errors: error } = response;
+      isSubmitting = false;
+
+      if (success && result) {
+        if (isEditSpot) {
+          const spots = $profileState.spotsList.map((spot) =>
+            spot.id === editSpotData.id
+              ? {
+                  ...spot,
+                  ...result,
+                  img: image.filePreview,
+                  thumbnail: image.filePreview,
+                  additionalImg: image2.filePreview,
+                  sketch: sketch.filePreview,
+                }
+              : spot
+          );
+          profileState.setSpotsList(spots);
+        } else {
           const yearForRequest = year || EMPTY_YEAR_STRING;
 
           selectedYear.set(yearForRequest);
@@ -461,57 +481,21 @@ const handleSubmit = () => {
               }
             });
           }
-          onCancel();
         }
-        if (error && !isEmpty(error)) {
-          if (error?.img) {
-            errors.imageFile = error.img[0] || "";
-            imageFilePreview = "";
-          }
-          marker.dragging.enable();
-          isInProgress = false;
+        onCancel();
+      }
+      if (error && !isEmpty(error)) {
+        if (error?.img) {
+          errors.imageFile = error.img[0] || "";
+          image.filePreview = "";
         }
-      });
-    } else {
-      isInProgress = true;
-      const updatedData = {
-        year,
-        spotStatus: selectedStatus,
-        img: image.blob,
-        additionalImg:
-          image2.blob ??
-          (editSpotData.additionalImg && !image2.filePreview ? "" : undefined),
-        sketch:
-          sketch.blob ??
-          (editSpotData.sketch && !sketch.filePreview ? "" : undefined),
-        videoLink: linkToVideo,
-        description,
-        categoryId: selectedCategory.id,
-        link,
-        artistsCrews: artistCrewPairs,
-        showInProfile: shouldHideInProfile ? 0 : 1,
-      };
-      updateSpot(token, editSpotData.id, updatedData).then((response) => {
-        const { success, result } = response;
+        if (error?.additionalImg) {
+          image2.filePreview = "";
+        }
+        !isEditSpot && marker.dragging.enable();
         isInProgress = false;
-        if (success && result) {
-          const spots = $profileState.spotsList.map((spot) =>
-            spot.id === editSpotData.id
-              ? {
-                  ...spot,
-                  ...updatedData,
-                  img: image.filePreview,
-                  thumbnail: image.filePreview,
-                  additionalImg: image2.filePreview,
-                  sketch: sketch.filePreview,
-                }
-              : spot
-          );
-          profileState.setSpotsList(spots);
-          onCancel();
-        }
-      });
-    }
+      }
+    });
   }
 };
 
@@ -718,7 +702,10 @@ const handleAddMoreClick = () => {
         name="hide-in-profile"
         id="hide-in-profile"
         checked={shouldHideInProfile}
-        on:change={() => (shouldHideInProfile = !shouldHideInProfile)} />
+        on:change={() => {
+          shouldHideInProfile = !shouldHideInProfile;
+          saveDraft("shouldHideInProfile");
+        }} />
       <label for="hide-in-profile">Hide in profile</label>
     </div>
   {/if}
