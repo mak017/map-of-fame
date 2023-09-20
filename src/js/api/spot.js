@@ -94,8 +94,10 @@ export const updateSpotDraft = async (
   if (description) formData.append("description", description);
   if (firmId) formData.append("firm_id", firmId);
   if (link) formData.append("link", link);
-  if (additionalImg) formData.append("additionalImg", additionalImg);
-  if (sketch) formData.append("sketch", sketch);
+  if (typeof additionalImg !== "undefined") {
+    formData.append("additionalImg", additionalImg);
+  }
+  if (typeof sketch !== "undefined") formData.append("sketch", sketch);
   if (spotId) formData.append("spot_id", spotId);
   if (typeof showInProfile !== "undefined") {
     formData.append("showInProfile", showInProfile);

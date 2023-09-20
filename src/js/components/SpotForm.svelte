@@ -336,9 +336,7 @@ const onRemoveImage = (imageType) => {
     };
   }
 
-  if (!isEditSpot) {
-    saveDraft(imageType);
-  }
+  saveDraft(imageType);
 };
 
 const validateYearInput = () => {
