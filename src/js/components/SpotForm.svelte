@@ -161,7 +161,7 @@ $: isInProgress = Object.values(progressState).some((field) => field);
 
 const getInitialCategory = (categories) =>
   isEditSpot
-    ? categories.find((cat) => cat.id === editSpotData.categoryId)
+    ? categories.find((cat) => cat.id === Number(editSpotData.categoryId))
     : undefined;
 
 const hasCategories = () =>
