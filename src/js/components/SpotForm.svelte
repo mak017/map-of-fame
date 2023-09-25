@@ -512,6 +512,7 @@ const handleAddMoreClick = () => {
       <ButtonPrimary
         text="Save"
         type="submit"
+        withLoader={isSubmitting}
         isDisabled={isSubmitDisabled}
         className="add-spot" />
     </div>
