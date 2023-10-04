@@ -1,7 +1,15 @@
 <script>
+import { onDestroy, onMount } from "svelte";
+
 import { requestSearchSpots } from "../api/search.js";
 import { getFirmsRequest } from "../api/settings";
-import { createSpot, getUserCategories, updateSpot } from "./../api/spot";
+import {
+  getLastSpotDraft,
+  getUserCategories,
+  publishSpotDraft,
+  updateSpot,
+  updateSpotDraft,
+} from "./../api/spot";
 import {
   getCurrentYear,
   isEmpty,
@@ -98,6 +106,7 @@ let shouldHideInProfile =
   !editSpotData.showInProfile || editSpotData.showInProfile === "0";
 let isSubmitDisabled = false;
 let isInProgress = false;
+let isSubmitting = false;
 let errors = {
   year: "",
   imageFile: "",
@@ -106,6 +115,29 @@ let errors = {
   link: "",
   artistCrewPairs: "",
 };
+let progressState = {
+  coords: false,
+  artist1: false,
+  crew1: false,
+  artist2: false,
+  crew2: false,
+  artist3: false,
+  crew3: false,
+  artist4: false,
+  crew4: false,
+  artist5: false,
+  crew5: false,
+  year: false,
+  selectedStatus: false,
+  image: false,
+  image2: false,
+  sketch: false,
+  description: false,
+  selectedCategory: false,
+  linkToVideo: false,
+  link: false,
+};
+
 const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
   artist: data.artist?.name ?? "",
   crew: data.crew?.name ?? "",
@@ -124,12 +156,12 @@ const token = loadFromLocalStorage("token") || null;
 
 const isFormHasErrors = () => Object.values(errors).some((err) => !!err);
 
-$: isSubmitDisabled =
-  Object.values(errors).some((err) => !!err) || isInProgress;
+$: isSubmitDisabled = Object.values(errors).some((err) => !!err);
+$: isInProgress = Object.values(progressState).some((field) => field);
 
 const getInitialCategory = (categories) =>
   isEditSpot
-    ? categories.find((cat) => cat.id === editSpotData.categoryId)
+    ? categories.find((cat) => cat.id === Number(editSpotData.categoryId))
     : undefined;
 
 const hasCategories = () =>
@@ -160,6 +192,63 @@ if (!isEditSpot && !isHunter() && !hasSprays()) {
     }
   });
 }
+
+const saveDraft = async (field) => {
+  const requestObject = {
+    year,
+    spotStatus: selectedStatus,
+    videoLink: linkToVideo,
+    description,
+    categoryId: selectedCategory?.id ?? "",
+    link,
+    artistsCrews: artistCrewPairs,
+  };
+
+  if (isEditSpot) {
+    requestObject.spotId = editSpotData.id;
+    requestObject.showInProfile = shouldHideInProfile ? 0 : 1;
+  } else {
+    const markerCoords = marker.getLatLng();
+    const { lat, lng } = markerCoords;
+    requestObject.lat = lat;
+    requestObject.lng = lng;
+  }
+
+  if (field == "image") requestObject.img = image.blob ?? "";
+  if (field == "image2") requestObject.additionalImg = image2.blob ?? "";
+  if (field == "sketch") requestObject.sketch = sketch.blob ?? "";
+  if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
+
+  progressState[field] = true;
+  await updateSpotDraft(token, requestObject);
+  progressState[field] = false;
+};
+
+const saveDraftCoords = () => saveDraft("coords");
+
+onMount(() => {
+  marker?.on("moveend", saveDraftCoords);
+});
+
+onDestroy(() => {
+  marker?.off("moveend", saveDraftCoords);
+});
+
+const handleProcessedImage = (imageType, imageObject) => {
+  if (imageType === "image") {
+    image = { ...imageObject };
+  }
+
+  if (imageType === "image2") {
+    image2 = { ...imageObject };
+  }
+
+  if (imageType === "sketch") {
+    sketch = { ...imageObject };
+  }
+
+  saveDraft(imageType);
+};
 
 const onChangeImage = (imageType) => {
   let imageObject = { ...image };
@@ -194,18 +283,7 @@ const onChangeImage = (imageType) => {
                 blob: newBlob,
                 filePreview: URL.createObjectURL(newBlob),
               };
-
-              if (imageType === "image") {
-                image = { ...imageObject };
-              }
-
-              if (imageType === "image2") {
-                image2 = { ...imageObject };
-              }
-
-              if (imageType === "sketch") {
-                sketch = { ...imageObject };
-              }
+              handleProcessedImage(imageType, imageObject, blob);
             }
           );
         } else {
@@ -225,18 +303,7 @@ const onChangeImage = (imageType) => {
                     filePreview: URL.createObjectURL(newBlob),
                   }
                 : { ...imageObject, blob: file, filePreview: e.target.result };
-
-              if (imageType === "image") {
-                image = { ...imageObject };
-              }
-
-              if (imageType === "image2") {
-                image2 = { ...imageObject };
-              }
-
-              if (imageType === "sketch") {
-                sketch = { ...imageObject };
-              }
+              handleProcessedImage(imageType, imageObject, blob, isRotated);
             }
           );
         }
@@ -268,6 +335,8 @@ const onRemoveImage = (imageType) => {
       blob: undefined,
     };
   }
+
+  saveDraft(imageType);
 };
 
 const validateYearInput = () => {
@@ -338,6 +407,8 @@ const handleCategorySelect = () => {
   if (isSubmitDisabled || isFormHasErrors()) {
     errors.selectedCategory = "";
   }
+
+  saveDraft("selectedCategory");
 };
 
 const handleLinkChange = () => {
@@ -361,30 +432,35 @@ const handleSubmit = () => {
     !errors.link
   ) {
     const token = loadFromLocalStorage("token") || null;
+    isSubmitting = true;
+
+    if (isInProgress) {
+      return;
+    }
+
     isInProgress = true;
-    if (!isEditSpot) {
-      const markerCoords = marker.getLatLng();
-      const { lat, lng } = markerCoords;
-      const requestObject = {
-        lat,
-        lng,
-        year,
-        spotStatus: selectedStatus,
-        img: image.blob,
-        additionalImg: image2.blob,
-        sketch: sketch.blob,
-        videoLink: linkToVideo,
-        description,
-        categoryId: selectedCategory.id,
-        link,
-        artistsCrews: artistCrewPairs,
-      };
-      if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
-      marker.dragging.disable();
-      createSpot(token, requestObject).then((response) => {
-        const { success, result, errors: error } = response;
-        isInProgress = false;
-        if (success && result) {
+    !isEditSpot && marker.dragging.disable();
+
+    publishSpotDraft(token, editSpotData?.id).then((response) => {
+      const { success, result, errors: error } = response;
+      isSubmitting = false;
+
+      if (success && result) {
+        if (isEditSpot) {
+          const spots = $profileState.spotsList.map((spot) =>
+            spot.id === editSpotData.id
+              ? {
+                  ...spot,
+                  ...result,
+                  img: image.filePreview,
+                  thumbnail: image.filePreview,
+                  additionalImg: image2.filePreview,
+                  sketch: sketch.filePreview,
+                }
+              : spot
+          );
+          profileState.setSpotsList(spots);
+        } else {
           const yearForRequest = year || EMPTY_YEAR_STRING;
 
           selectedYear.set(yearForRequest);
@@ -403,57 +479,27 @@ const handleSubmit = () => {
               }
             });
           }
-          onCancel();
         }
-        if (error && !isEmpty(error)) {
-          if (error?.img) {
-            errors.imageFile = error.img[0] || "";
-            imageFilePreview = "";
-          }
-          marker.dragging.enable();
+        onCancel();
+      }
+      if (error && !isEmpty(error)) {
+        if (error?.img) {
+          errors.imageFile = error.img[0] || "";
+          image.filePreview = "";
         }
-      });
-    } else {
-      const updatedData = {
-        year,
-        spotStatus: selectedStatus,
-        img: image.blob,
-        additionalImg:
-          image2.blob ??
-          (editSpotData.additionalImg && !image2.filePreview ? "" : undefined),
-        sketch:
-          sketch.blob ??
-          (editSpotData.sketch && !sketch.filePreview ? "" : undefined),
-        videoLink: linkToVideo,
-        description,
-        categoryId: selectedCategory.id,
-        link,
-        artistsCrews: artistCrewPairs,
-        showInProfile: shouldHideInProfile ? 0 : 1,
-      };
-      updateSpot(token, editSpotData.id, updatedData).then((response) => {
-        const { success, result } = response;
+        if (error?.additionalImg) {
+          image2.filePreview = "";
+        }
+        !isEditSpot && marker.dragging.enable();
         isInProgress = false;
-        if (success && result) {
-          const spots = $profileState.spotsList.map((spot) =>
-            spot.id === editSpotData.id
-              ? {
-                  ...spot,
-                  ...updatedData,
-                  img: image.filePreview,
-                  thumbnail: image.filePreview,
-                  additionalImg: image2.filePreview,
-                  sketch: sketch.filePreview,
-                }
-              : spot
-          );
-          profileState.setSpotsList(spots);
-          onCancel();
-        }
-      });
-    }
+      }
+    });
   }
 };
+
+$: if (isSubmitting && !isInProgress) {
+  handleSubmit();
+}
 
 const handleAddMoreClick = () => {
   artistCrewPairs = [...artistCrewPairs, { artist: "", crew: "" }];
@@ -466,55 +512,13 @@ const handleAddMoreClick = () => {
       <ButtonPrimary
         text="Save"
         type="submit"
+        withLoader={isSubmitting}
         isDisabled={isSubmitDisabled}
         className="add-spot" />
     </div>
   {/if}
-  <div class="artists-area">
-    {#each artistCrewPairs as pair}
-      <div class="artist-crew-pair">
-        <FormTextInput
-          placeholder="Artist Name"
-          bind:value={pair.artist}
-          wideOnMobile
-          editSpot={isEditSpot}
-          addSpot={!isEditSpot} />
-        <FormTextInput
-          placeholder="Crew Name"
-          bind:value={pair.crew}
-          wideOnMobile
-          editSpot={isEditSpot}
-          addSpot={!isEditSpot} />
-      </div>
-    {/each}
-    {#if artistCrewPairs.length < 5}
-      <button
-        type="button"
-        class="button btn-add-more"
-        on:click={handleAddMoreClick}>Add more</button>
-    {/if}
-  </div>
-  <FormTelInput
-    placeholder="Year"
-    bind:value={year}
-    hint={`${$settings.yearStart} - ${currentYear}`}
-    on:input={handleYearChange}
-    errorText={errors.year}
-    wideOnMobile
-    editSpot={isEditSpot}
-    addSpot={!isEditSpot} />
-  <div class="status">
-    {#each statusesOrdered as status}
-      <FormRadioButton
-        id={`status-${status.toLowerCase()}`}
-        bind:group={selectedStatus}
-        value={status}
-        label={status}
-        className={!isEditSpot ? "addSpot" : ""} />
-    {/each}
-  </div>
   <div class="upload-area">
-    <div class="upload-image">
+    <div class="upload-image" class:error={errors.imageFile}>
       {#if image.filePreview}
         <img src={image.filePreview} alt="Preview" class="preview_image" />
         <div class="overlay">
@@ -551,7 +555,6 @@ const handleAddMoreClick = () => {
             <span>Max 10 Mb</span>
           </label>
         {/if}
-        {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
         <input
           accept="image/png, image/jpeg"
           bind:files={image2.file}
@@ -583,10 +586,58 @@ const handleAddMoreClick = () => {
         type="file" />
     </div> -->
   </div>
+  <div class="artists-area">
+    {#each artistCrewPairs as pair, index}
+      <div class="artist-crew-pair">
+        <FormTextInput
+          placeholder="Artist Name"
+          bind:value={pair.artist}
+          on:blur={() => saveDraft(`artist${index + 1}`)}
+          wideOnMobile
+          editSpot={isEditSpot}
+          addSpot={!isEditSpot} />
+        <FormTextInput
+          placeholder="Crew Name"
+          bind:value={pair.crew}
+          on:blur={() => saveDraft(`crew${index + 1}`)}
+          wideOnMobile
+          editSpot={isEditSpot}
+          addSpot={!isEditSpot} />
+      </div>
+    {/each}
+    {#if artistCrewPairs.length < 5}
+      <button
+        type="button"
+        class="button btn-add-more"
+        on:click={handleAddMoreClick}>Add more</button>
+    {/if}
+  </div>
+  <FormTelInput
+    placeholder="Year"
+    bind:value={year}
+    hint={`${$settings.yearStart} - ${currentYear}`}
+    on:input={handleYearChange}
+    on:blur={() => saveDraft("year")}
+    errorText={errors.year}
+    wideOnMobile
+    editSpot={isEditSpot}
+    addSpot={!isEditSpot} />
+  <div class="status">
+    {#each statusesOrdered as status}
+      <FormRadioButton
+        id={`status-${status.toLowerCase()}`}
+        bind:group={selectedStatus}
+        on:change={() => saveDraft("selectedStatus")}
+        value={status}
+        label={status}
+        className={!isEditSpot ? "addSpot" : ""} />
+    {/each}
+  </div>
   <div class="description">
     <FormTextArea
       placeholder="Description"
       bind:value={description}
+      on:blur={() => saveDraft("description")}
       height={84}
       isResizable={isEditSpot}
       addSpot={!isEditSpot} />
@@ -623,8 +674,9 @@ const handleAddMoreClick = () => {
     <FormTextInput
       label="Link To Video"
       bind:value={linkToVideo}
-      errorText={errors.linkToVideo}
       on:input={handleVideoLinkChange}
+      on:blur={() => saveDraft("linkToVideo")}
+      errorText={errors.linkToVideo}
       wideOnMobile
       editSpot={isEditSpot}
       addSpot={!isEditSpot}
@@ -635,6 +687,7 @@ const handleAddMoreClick = () => {
       label="Link To Work"
       bind:value={link}
       on:input={handleLinkChange}
+      on:blur={() => saveDraft("link")}
       wideOnMobile
       errorText={errors.link}
       editSpot={isEditSpot}
@@ -648,7 +701,10 @@ const handleAddMoreClick = () => {
         name="hide-in-profile"
         id="hide-in-profile"
         checked={shouldHideInProfile}
-        on:change={() => (shouldHideInProfile = !shouldHideInProfile)} />
+        on:change={() => {
+          shouldHideInProfile = !shouldHideInProfile;
+          saveDraft("shouldHideInProfile");
+        }} />
       <label for="hide-in-profile">Hide in profile</label>
     </div>
   {/if}
@@ -658,13 +714,14 @@ const handleAddMoreClick = () => {
         text="Post Art"
         type="submit"
         isDisabled={isSubmitDisabled}
+        withLoader={isSubmitting}
         className={!isEditSpot ? "addSpot" : ""} />
     </div>
     <button
       type="button"
       class="cancel"
       on:click={() => shouldShowAddSpot.set(false)}
-      disabled={isInProgress}>Cancel</button>
+      disabled={isSubmitting}>Cancel</button>
   {/if}
 </form>
 
@@ -696,20 +753,25 @@ form {
 
 .status {
   display: flex;
+  margin-bottom: 18px;
+}
+
+.upload-area {
+  margin-bottom: 24px;
 }
 
 .upload-image {
   position: relative;
   max-height: 136px;
-  margin: 15px 0 8px;
-
-  &.upload-image2 {
-    margin: 0 0 8px;
-  }
+  margin: 0 0 8px;
 
   /* &.upload-sketch {
     margin: 0 0 15px;
   } */
+
+  &.error {
+    margin-bottom: 23px;
+  }
 
   .first_upload {
     display: flex;
@@ -988,6 +1050,10 @@ form {
 @media (orientation: landscape) and (max-height: 960px) {
   form {
     &:not(.edit) {
+      .upload-area {
+        margin-bottom: 14px;
+      }
+
       .upload-image {
         max-height: 100px;
         margin: 12px 0;
@@ -995,6 +1061,10 @@ form {
 
       .preview_image {
         height: 100px;
+      }
+
+      .status {
+        margin-bottom: 13px;
       }
 
       .category {

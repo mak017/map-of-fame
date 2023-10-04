@@ -1,13 +1,18 @@
 <script>
+import { createEventDispatcher } from "svelte";
+
 export let id;
 export let group;
 export let value;
 export let label;
 export let className = "";
+
+const dispatch = createEventDispatcher();
+const change = () => dispatch("change");
 </script>
 
 <div class={`radio${className ? ` ${className}` : ""}`}>
-  <input type="radio" {id} bind:group {value} />
+  <input type="radio" {id} bind:group {value} on:change={change} />
   <label for={id}>{label}</label>
 </div>
 
