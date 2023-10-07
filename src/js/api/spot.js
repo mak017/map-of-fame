@@ -83,13 +83,18 @@ export const updateSpotDraft = async (
   if (artistsCrews?.length) {
     artistsCrews.forEach((item, index) => {
       const { artist, crew } = item;
-      if (artist || crew) {
+      if (
+        artist ||
+        crew ||
+        (index === 0 &&
+          (typeof artist !== "undefined" || typeof crew !== "undefined"))
+      ) {
         formData.append(`artist_crew[${index}][artist]`, artist);
         formData.append(`artist_crew[${index}][crew]`, crew);
       }
     });
   }
-  if (year) formData.append("year", year);
+  if (typeof year !== "undefined") formData.append("year", year);
   if (videoLink) formData.append("video_link", videoLink);
   if (description) formData.append("description", description);
   if (firmId) formData.append("firm_id", firmId);
