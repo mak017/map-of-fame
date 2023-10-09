@@ -211,7 +211,7 @@ const getArtistsString = (artistCrew) => {
   if (
     !artistCrew ||
     artistCrew.length === 0 ||
-    (artistCrew.length === 1 && !artistCrew.artist && !artistCrew.crew)
+    (artistCrew.length === 1 && !artistCrew[0].artist && !artistCrew[0].crew)
   ) {
     return EMPTY_ARTIST;
   }
