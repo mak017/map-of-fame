@@ -95,10 +95,14 @@ export const updateSpotDraft = async (
     });
   }
   if (typeof year !== "undefined") formData.append("year", year);
-  if (videoLink) formData.append("video_link", videoLink);
-  if (description) formData.append("description", description);
+  if (typeof videoLink !== "undefined") {
+    formData.append("video_link", videoLink);
+  }
+  if (typeof description !== "undefined") {
+    formData.append("description", description);
+  }
   if (firmId) formData.append("firm_id", firmId);
-  if (link) formData.append("link", link);
+  if (typeof link !== "undefined") formData.append("link", link);
   if (typeof additionalImg !== "undefined") {
     formData.append("additionalImg", additionalImg);
   }
