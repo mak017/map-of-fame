@@ -149,9 +149,15 @@ const quitAddSpot = () => {
 };
 
 const handleKeyDown = (e) => {
-  if (e.key === "Escape" && isAddSpotSidebarVisible) {
-    quitAddSpot();
-    return;
+  if (e.key === "Escape") {
+    if ($shouldShowAddSpot) {
+      quitAddSpot();
+      return;
+    }
+
+    if ($isAreaSelectionActive) {
+      toggleAreaSelectionMode(false);
+    }
   }
 };
 </script>
@@ -262,7 +268,7 @@ const handleKeyDown = (e) => {
       class="button button-main_screen button-square button-location"
       on:click={() => setLocation($map, true)}
       transition:fade={{ duration: 200 }}
-      title={"Go to your location"} />
+      title="Go to your location" />
   {/if}
 
   {#if !$isSearchResults && !$isShowOnMapMode && !$shouldShowAddSpot && !$selectedUserProfileData.name && ($isAreaSelectionActive || $currentZoom > 14)}

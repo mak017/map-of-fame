@@ -190,6 +190,10 @@ const getRandomEmojis = (count = 1) => {
 const resolveArtistCrew = (pair) => {
   const { artist, crew } = pair;
 
+  if (!artist?.name && !crew?.name) {
+    return EMPTY_ARTIST;
+  }
+
   if (artist?.name && crew?.name) {
     return `${getRandomEmojis()}&nbsp;${artist.name} <span>[${
       crew.name
@@ -204,7 +208,11 @@ const resolveArtistCrew = (pair) => {
 };
 
 const getArtistsString = (artistCrew) => {
-  if (!artistCrew || artistCrew.length === 0) {
+  if (
+    !artistCrew ||
+    artistCrew.length === 0 ||
+    (artistCrew.length === 1 && !artistCrew[0].artist && !artistCrew[0].crew)
+  ) {
     return EMPTY_ARTIST;
   }
 

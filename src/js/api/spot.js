@@ -83,17 +83,26 @@ export const updateSpotDraft = async (
   if (artistsCrews?.length) {
     artistsCrews.forEach((item, index) => {
       const { artist, crew } = item;
-      if (artist || crew) {
+      if (
+        artist ||
+        crew ||
+        (index === 0 &&
+          (typeof artist !== "undefined" || typeof crew !== "undefined"))
+      ) {
         formData.append(`artist_crew[${index}][artist]`, artist);
         formData.append(`artist_crew[${index}][crew]`, crew);
       }
     });
   }
-  if (year) formData.append("year", year);
-  if (videoLink) formData.append("video_link", videoLink);
-  if (description) formData.append("description", description);
+  if (typeof year !== "undefined") formData.append("year", year);
+  if (typeof videoLink !== "undefined") {
+    formData.append("video_link", videoLink);
+  }
+  if (typeof description !== "undefined") {
+    formData.append("description", description);
+  }
   if (firmId) formData.append("firm_id", firmId);
-  if (link) formData.append("link", link);
+  if (typeof link !== "undefined") formData.append("link", link);
   if (typeof additionalImg !== "undefined") {
     formData.append("additionalImg", additionalImg);
   }
