@@ -67,6 +67,11 @@ const update = ({ mapContainer, params, clearParams }) => {
   }
   const search = `/?coords=${latitude},${longitude}&zoom=${zoom}&year=${year}${paramsToSet}`;
   const state = { zoom, center, year, params };
+
+  if (decodeURIComponent(window.location.href).endsWith(search)) {
+    return;
+  }
+
   window.history.replaceState(state, "map", search);
 };
 
