@@ -1,13 +1,13 @@
 <script>
+import FormTextInput from "./../elements/FormTextInput.svelte";
 import { fade } from "svelte/transition";
 import { goto } from "@roxi/routify";
 
 import { preRegContact, preRegEmail } from "./../../api/auth.js";
-import { isMobile, validateEmail } from "../../utils/commonUtils.js";
+import { isMobile } from "../../utils/commonUtils.js";
 
 import FormTextArea from "./../elements/FormTextArea.svelte";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
-import FormEmailInput from "./../elements/FormEmailInput.svelte";
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 
 import { ERROR_MESSAGES } from "../../constants.js";
@@ -17,15 +17,15 @@ export let setIsPreRegistrationSuccess;
 const screens = { INITIAL: "INITIAL", ARTIST: "ARTIST", SUCCESS: "SUCCESS" };
 
 let screen = screens.INITIAL;
-let email = "";
+let link = "";
 let contact = "";
-let errors = { email: "", contact: "" };
+let errors = { link: "", contact: "" };
 let isSubmitDisabled = false;
 let isInProgress = false;
 
 $: isSubmitDisabled =
   isInProgress ||
-  (screen === screens.INITIAL && !!errors.email) ||
+  (screen === screens.INITIAL && !!errors.link) ||
   (screen === screens.ARTIST && !!errors.contact);
 
 const handleInputChange = (input) => {
@@ -35,22 +35,20 @@ const handleInputChange = (input) => {
 };
 
 const submitEmail = () => {
-  if (validateEmail(email)) {
-    errors.email = "";
-    preRegEmail(email).then((response) => {
+  if (link) {
+    errors.link = "";
+    preRegEmail(link).then((response) => {
       const { success, errors: serverError } = response;
       if (success) {
         setIsPreRegistrationSuccess(true);
         screen = screens.SUCCESS;
       }
       if (serverError) {
-        errors.email = serverError?.email?.[0] ?? "Something went wrong";
+        errors.link = serverError?.email?.[0] ?? "Something went wrong";
       }
     });
   } else {
-    errors.email = !email
-      ? ERROR_MESSAGES.emailEmpty
-      : ERROR_MESSAGES.emailInvalid;
+    errors.link = ERROR_MESSAGES.genericEmpty;
   }
 };
 
@@ -76,11 +74,11 @@ const submitContact = () => {
 {#if screen === screens.INITIAL}
   <form on:submit|preventDefault={submitEmail} novalidate>
     <p>Жди нас дорогой друг, мы тебе напишем...</p>
-    <FormEmailInput
-      placeholder="Email"
-      bind:value={email}
-      errorText={errors.email}
-      on:input={() => handleInputChange("email")} />
+    <FormTextInput
+      placeholder="Instagram"
+      bind:value={link}
+      errorText={errors.link}
+      on:input={() => handleInputChange("link")} />
     <div class="submit-wrapper">
       <ButtonPrimary
         text="Send"
