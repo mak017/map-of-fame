@@ -1,4 +1,6 @@
 <script>
+import { goto } from "@roxi/routify";
+
 import {
   isShowOnMapMode,
   selectedUserProfileData,
@@ -16,7 +18,8 @@ import Modal from "../../../../js/components/Modal.svelte";
     if (!$isShowOnMapMode) {
       selectedUserProfileData.set({});
     }
-    window.history.back();
+
+    window.history.length > 1 ? window.history.back() : $goto("/");
   }}
   withAd
   noLogo
