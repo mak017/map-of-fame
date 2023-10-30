@@ -57,6 +57,17 @@ areaSelection.set(
       const { coordinates } = polygon.toGeoJSON().geometry;
       getSpotsInArea(coordinates[0]).then(({ result }) => {
         areaSpots.set(result);
+        let style = "";
+        result.forEach((item, index) => {
+          style += `${index > 0 ? ", " : ""}.marker-id-${item.id}`;
+        });
+        style += `
+            {
+              width: 34px !important;
+              height: 34px !important;
+            }
+          `;
+        document.getElementById("highlighted").innerHTML = style;
         isSpotsFromAreaLoading.set(false);
       });
     },

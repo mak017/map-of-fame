@@ -34,7 +34,6 @@ const toggleAreaSelectionMode = (toggle) => {
   id="selected-spots-modal"
   noLogo
   on:close={() => {
-    toggleAreaSelectionMode(false);
     $goto("/");
   }}>
   <SelectedSpots />

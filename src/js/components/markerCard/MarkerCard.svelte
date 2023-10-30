@@ -19,6 +19,8 @@ import {
   selectedUserProfileData,
   selectedYear,
   profileState,
+  areaSelection,
+  areaSpots,
 } from "../../store";
 import { getProfileYears } from "../../utils/datesUtils.js";
 import { getSpotById, getUserSpots } from "../../api/spot.js";
@@ -29,7 +31,7 @@ import ShareMarker from "./ShareMarker.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
 import Spinner from "../elements/Spinner.svelte";
 
-import { EMPTY_YEAR_STRING, MAX_ZOOM } from "../../constants.js";
+import { EMPTY_YEAR_STRING, MAX_ZOOM, MIN_ZOOM } from "../../constants.js";
 
 const emojiList = [
   "👽",
@@ -126,13 +128,24 @@ const onShareToggle = (toggle) => (isShareOpened = toggle);
 
 const onComplainToggle = (toggle) => (isComplainOpened = toggle);
 
+const resetAreaSelectionMode = () => {
+  if (!$isAreaSelectionActive) return;
+
+  isAreaSelectionActive.set(false);
+  areaSpots.set(null);
+  $map.setMinZoom(MIN_ZOOM);
+  $map.dragging.enable();
+  $areaSelection.deactivate();
+  document.getElementById("highlighted").innerHTML = "";
+};
+
 const onUserClick = () => {
   const { user } = $openedMarkerData;
 
   if (!$selectedUserProfileData.id) {
     selectedUserProfileData.set(user ?? {});
-    isAreaSelectionActive.set(false);
   }
+  resetAreaSelectionMode();
   openedMarkerData.set(null);
   profileState.reset();
   $goto("/@:username", { username: user.username });
@@ -156,6 +169,7 @@ const handleShowOnMapClick = () => {
       const { spots, years } = result;
       markersStore.set({ spots, years: getProfileYears(years) });
       isShowOnMapMode.set(true);
+      resetAreaSelectionMode();
       document.getElementById("highlighted").innerHTML = `
         .marker-id-${id} {
           min-width: 64px;

@@ -6,6 +6,7 @@ import {
   areaSpots,
   categoriesList,
   globalGoto,
+  isAreaSelectionActive,
   openedMarkerData,
 } from "../../store";
 import { markersReadyEvent } from "../commonUtils";
@@ -35,6 +36,7 @@ const clearMarkers = (map) => {
 
 export const setMarkerData = (data) => {
   const $goto = get(globalGoto);
+  const $isAreaSelectionActive = get(isAreaSelectionActive);
   const {
     id,
     spotStatus: status,
@@ -54,7 +56,10 @@ export const setMarkerData = (data) => {
     coords: { lat, lng },
   });
   $goto("/@:username/spot/:id", { username: user.username, id });
-  document.getElementById("highlighted").innerHTML = "";
+
+  if (!$isAreaSelectionActive) {
+    document.getElementById("highlighted").innerHTML = "";
+  }
 };
 
 const createMarker = (data) => {

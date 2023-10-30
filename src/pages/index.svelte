@@ -95,6 +95,7 @@ const toggleAreaSelectionMode = (toggle) => {
   $map.setMinZoom(MIN_ZOOM);
   $map.dragging.enable();
   $areaSelection.deactivate();
+  document.getElementById("highlighted").innerHTML = "";
 };
 
 if (inviteData) {
