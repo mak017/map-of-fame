@@ -65,13 +65,14 @@ areaSelection.set(
             {
               width: 34px !important;
               height: 34px !important;
+              border-width: 2px;
+              font-size: 14px;
             }
           `;
         document.getElementById("highlighted").innerHTML = style;
         isSpotsFromAreaLoading.set(false);
       });
     },
-    onPolygonDblClick: () => !!$areaSpots?.length && $goto("/selected-spots"),
     position: "bottomright",
   })
 );

@@ -2,7 +2,7 @@ import { verifyAuthRequest } from "./api/auth";
 import { requestSearchSpots } from "./api/search";
 import { getCategories, getSettingsRequest } from "./api/settings";
 import { getRecentSpots, getSpots } from "./api/spot";
-import { EMPTY_YEAR_STRING } from "./constants";
+import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "./constants";
 import {
   categoriesList,
   isFirstTimeVisit,
@@ -97,6 +97,10 @@ export const requestSpots = (year) => {
 
   if (year === EMPTY_YEAR_STRING) {
     yearForRequest = "";
+  }
+
+  if (year === ALL_YEARS_STRING) {
+    yearForRequest = undefined;
   }
 
   return getSpots(yearForRequest, bounds, categories).then((response) => {

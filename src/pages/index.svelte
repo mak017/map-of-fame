@@ -87,11 +87,21 @@ const toggleAreaSelectionMode = (toggle) => {
   areaSpots.set(null);
 
   if (toggle) {
+    requestSpots(ALL_YEARS_STRING);
+    selectedYear.set(ALL_YEARS_STRING);
     $map.setMinZoom(15);
     $areaSelection.activate();
     return;
   }
 
+  const yearFromUrl = permalink.getDataFromUrl().year;
+  const year =
+    yearFromUrl && yearFromUrl !== ALL_YEARS_STRING
+      ? yearFromUrl
+      : getCurrentYear();
+
+  requestSpots(year);
+  selectedYear.set(year);
   $map.setMinZoom(MIN_ZOOM);
   $map.dragging.enable();
   $areaSelection.deactivate();
@@ -178,8 +188,7 @@ const handleKeyDown = (e) => {
         href={$url("/calendar")}
         class="button button-main_screen button-open_calendar"
         class:inactive={$isAreaSelectionActive}
-        transition:fade={{ duration: 200 }}
-        >{$isAreaSelectionActive ? ALL_YEARS_STRING : $selectedYear}</a>
+        transition:fade={{ duration: 200 }}>{$selectedYear}</a>
     {/if}
     {#if !$shouldShowAddSpot && !$isSearchResults && !$isShowOnMapMode && !$isAreaSelectionActive}
       <button
@@ -340,7 +349,14 @@ const handleKeyDown = (e) => {
     }
 
     &.inactive {
+      background: var(--color-lotion);
+      color: var(--color-grey);
       pointer-events: none;
+
+      &::before,
+      &::after {
+        opacity: 0.5;
+      }
     }
   }
 

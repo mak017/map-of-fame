@@ -3,24 +3,23 @@ import { onDestroy } from "svelte";
 import { fade } from "svelte/transition";
 import { goto } from "@roxi/routify";
 
-import {
-  areaSelection,
-  areaSpots,
-  isAreaSelectionActive,
-  map,
-  openedMarkerData,
-} from "./../store.js";
+import { areaSpots, clusterSpots, openedMarkerData } from "./../store.js";
 
 import CustomSelect from "./elements/CustomSelect.svelte";
 
-import { ALL_YEARS_STRING, EMPTY_YEAR_STRING, MIN_ZOOM } from "../constants";
+import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../constants";
 
-if (!$areaSpots || !$areaSpots.length) {
+onDestroy(() => {
+  clusterSpots.set([]);
+});
+
+if (!$areaSpots?.length && !$clusterSpots?.length) {
   $goto("/");
 }
 
 let currentYear = ALL_YEARS_STRING;
-let spotsToShow = $areaSpots;
+let spots = $clusterSpots?.length ? $clusterSpots : $areaSpots;
+let spotsToShow = spots;
 let yearsToApply = [
   ALL_YEARS_STRING,
   ...new Set(
@@ -41,8 +40,8 @@ const handleYearSelect = (event) => {
   currentYear = value !== EMPTY_YEAR_STRING ? value : null;
   spotsToShow =
     currentYear === ALL_YEARS_STRING
-      ? $areaSpots
-      : $areaSpots.filter((spot) => spot.year === currentYear);
+      ? spots
+      : spots.filter((spot) => spot.year === currentYear);
 };
 
 const onSpotClick = (spot) => {

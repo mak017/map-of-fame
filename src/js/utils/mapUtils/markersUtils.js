@@ -3,8 +3,8 @@ import "leaflet.markercluster";
 import { get } from "svelte/store";
 
 import {
-  areaSpots,
   categoriesList,
+  clusterSpots,
   globalGoto,
   isAreaSelectionActive,
   openedMarkerData,
@@ -122,7 +122,7 @@ const createMarkers = (map, markersData, isSearch) => {
       const spots = markersData?.spots.filter((spot) =>
         markers.some((marker) => marker.spotId === spot.id)
       );
-      areaSpots.set(spots);
+      clusterSpots.set(spots);
       $goto("/selected-spots");
     }
   });
