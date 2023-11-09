@@ -36,7 +36,9 @@ import {
   isActiveSearchControl,
 } from "./../js/store.js";
 import { getSpotsInArea } from "../js/api/spot.js";
+import { requestSpots } from "../js/init.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
+import { ALL_YEARS_STRING } from "../js/constants.js";
 
 import Loader from "../js/components/elements/Loader.svelte";
 
@@ -48,6 +50,7 @@ areaSelection.set(
   new DrawAreaSelection({
     onPolygonReady: (polygon) => {
       isSpotsFromAreaLoading.set(true);
+      requestSpots(ALL_YEARS_STRING);
       polygon.setStyle({
         color: "var(--color-accent)",
         weight: 4,

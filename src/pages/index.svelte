@@ -87,7 +87,6 @@ const toggleAreaSelectionMode = (toggle) => {
   areaSpots.set(null);
 
   if (toggle) {
-    requestSpots(ALL_YEARS_STRING);
     selectedYear.set(ALL_YEARS_STRING);
     $map.setMinZoom(15);
     $areaSelection.activate();
