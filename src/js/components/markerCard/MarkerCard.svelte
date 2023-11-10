@@ -21,6 +21,8 @@ import {
   profileState,
   areaSelection,
   areaSpots,
+  userData,
+  editSpotData,
 } from "../../store";
 import { getProfileYears } from "../../utils/datesUtils.js";
 import { getSpotById, getUserSpots } from "../../api/spot.js";
@@ -191,6 +193,16 @@ const handleShowOnMapClick = () => {
   });
 };
 
+const handleGoToEdit = (data) => {
+  const { id } = data;
+  editSpotData.set({
+    ...data,
+    img: data.img?.src,
+  });
+
+  $goto("/@:username/spot/:id/edit", { username: strippedUsername, id });
+};
+
 const getRandomEmojis = (count = 1) => {
   let resultString = "";
   for (let index = 0; index < count; index++) {
@@ -327,6 +339,12 @@ const getArtistsString = (artistCrew) => {
       </div>
     {/if}
   </div>
+  {#if strippedUsername === $userData.username}
+    <button
+      type="button"
+      class="button edit"
+      on:click={() => handleGoToEdit(data)}>Edit spot</button>
+  {/if}
   {#if isShareOpened}
     <Popup on:close={() => onShareToggle(false)} title="Share Link">
       <ShareMarker />
@@ -523,6 +541,20 @@ const getArtistsString = (artistCrew) => {
   }
 }
 
+.edit {
+  display: block;
+  position: fixed;
+  top: 152px;
+  left: 0;
+  width: 64px;
+  height: 52px;
+  border-radius: 0 50% 50% 0;
+  background: var(--color-accent) url(../../../images/pencil.svg) 50% 50%/ 20px 20px
+    no-repeat;
+  color: transparent;
+  font-size: 0;
+}
+
 @media (max-width: 1039px) {
   .card {
     margin-bottom: 0;
@@ -554,6 +586,10 @@ const getArtistsString = (artistCrew) => {
 
   .buttons {
     grid-column: 3;
+  }
+
+  .edit {
+    top: 16px;
   }
 }
 </style>
