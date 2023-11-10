@@ -218,8 +218,8 @@ const handleKeyDown = (e) => {
       {#if !($isSearchResults && ($selectedArtist || $selectedCrew)) && !$isShowOnMapMode}
         <a
           href={$url("/search")}
-          class="button button-main_screen button-square button-open_search"
-          in:fade={{ duration: 200 }}>Search</a>
+          class="button button-main_screen button-open_search"
+          in:fade={{ duration: 200 }}>Search Artist</a>
         {#if $isLoggedIn}
           <a
             href={$url("/@:username", { username: $userData.username })}
@@ -422,6 +422,7 @@ const handleKeyDown = (e) => {
     top: 40px;
     right: 40px;
     margin-right: 12px;
+    padding: 8px 55px 8px 12px;
     border-radius: 0 0 2px 2px;
     opacity: 0;
     visibility: hidden;
@@ -429,10 +430,12 @@ const handleKeyDown = (e) => {
     background-color: var(--color-lotion);
     background-image: url(../images/user.svg);
     background-repeat: no-repeat;
-    background-position: 50% 50%;
+    background-position: calc(100% - 8px) 50%;
     background-size: 20px 20px;
-    color: transparent;
-    font-size: 0;
+    color: var(--color-dark);
+    font-size: 16px;
+    text-decoration: none;
+    white-space: nowrap;
   }
 
   &-open_login {
