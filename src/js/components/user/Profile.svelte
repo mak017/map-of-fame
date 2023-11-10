@@ -4,7 +4,7 @@ import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
 import { goto, params, url } from "@roxi/routify";
 
-import { getInvites, getUserData } from "./../../api/auth.js";
+import { editUser, getInvites, getUserData } from "./../../api/auth.js";
 import { getUserSpots } from "../../api/spot";
 import {
   isLoggedIn,
@@ -236,25 +236,12 @@ const onSpotClick = (spot) => {
 };
 
 const handleShowOnMapClick = (showAll) => {
-  console.debug(
-    "DEBUG: $selectedUserProfileData >>> ",
-    $selectedUserProfileData?.name ?? $selectedUserProfileData?.crew
-  );
   if (!$selectedUserProfileData.id && isCurrentUser) {
     selectedUserProfileData.set(
       $userData ?? ($profileState.user?.id ? $profileState.user : {})
     );
-    console.debug("DEBUG: $userData >>> ", $userData?.name ?? $userData?.crew);
-    console.debug(
-      "DEBUG: $profileState.user >>> ",
-      $profileState.user?.name ?? $profileState.user?.crew
-    );
   } else {
     $profileState.user?.id && selectedUserProfileData.set($profileState.user);
-    console.debug(
-      "DEBUG: $profileState.user >>> ",
-      $profileState.user?.name ?? $profileState.user?.crew
-    );
   }
   getUserSpots(strippedUsername, token, {
     year:
@@ -281,6 +268,17 @@ const handleShowOnMapClick = (showAll) => {
     }
   });
 };
+
+const handleHideAllClick = () => {
+  editUser(token, $userData.id, {
+    isSpotsHidden: !$userData.isSpotsHidden,
+  }).then((response) => {
+    const { success, result } = response;
+    if (success && result) {
+      $userData.isSpotsHidden = !$userData.isSpotsHidden;
+    }
+  });
+};
 </script>
 
 <div class="container" class:isCurrentUser>
@@ -294,6 +292,12 @@ const handleShowOnMapClick = (showAll) => {
       for your friends 🖖
     </div>
   {/if}
+  <!-- {#if isCurrentUser}
+    <button
+      type="button"
+      class="button hide-button"
+      on:click={handleHideAllClick}>👮‍♂️ 1312 🙈 HIDE 👮‍♂️</button>
+  {/if} -->
   <div class="top">
     {#if !$profileState.isLoading && (name || username)}
       <div class="user">
@@ -348,6 +352,7 @@ const handleShowOnMapClick = (showAll) => {
                 : undefined}
               class="spot-card"
               class:isHidden={!spot.showInProfile || spot.showInProfile === "0"}
+              class:isFullyHidden={isCurrentUser && $userData.isSpotsHidden}
               role="button"
               on:click|preventDefault={() =>
                 !isCurrentUser && onSpotClick(spot)}
@@ -502,6 +507,20 @@ const handleShowOnMapClick = (showAll) => {
   }
 }
 
+// .hide-button {
+//   margin: -15px 0 26px;
+//   background: none;
+//   color: var(--color-accent);
+//   font-size: 14px;
+//   font-weight: 900;
+//   line-height: 22px;
+//   text-transform: uppercase;
+
+//   &:hover {
+//     opacity: 0.7;
+//   }
+// }
+
 .logout {
   transition: opacity 0.3s;
   opacity: 0.4;
@@ -624,6 +643,23 @@ const handleShowOnMapClick = (showAll) => {
       transition: opacity 0.3s, visibility 0.3s;
       background: rgba($color: #432fd8, $alpha: 0.4);
       font-size: 64px;
+    }
+  }
+
+  &.isFullyHidden {
+    &::after {
+      content: "👮‍♂️🙈👮‍♂️";
+      display: flex;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s, visibility 0.3s;
+      background: rgba($color: #432fd8, $alpha: 0.4);
+      font-size: 48px;
     }
   }
 

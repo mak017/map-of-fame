@@ -69,7 +69,9 @@ areaSelection.set(
               width: 34px !important;
               height: 34px !important;
               border-width: 2px;
+              opacity: 1 !important;
               font-size: 14px;
+              pointer-events: auto;
             }
           `;
         document.getElementById("highlighted").innerHTML = style;
