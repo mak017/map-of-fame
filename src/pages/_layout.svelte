@@ -71,7 +71,7 @@ areaSelection.set(
               border-width: 2px;
               opacity: 1 !important;
               font-size: 14px;
-              pointer-events: auto;
+              pointer-events: auto !important;
             }
           `;
         document.getElementById("highlighted").innerHTML = style;
