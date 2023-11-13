@@ -42,6 +42,7 @@ const handleResize = () => {
 <div
   class="modal"
   class:withAd
+  class:withFooter
   class:accentTitle
   class:autoMargin={autoMargin && withAd && banner.url}
   class:alwaysOnTop
@@ -221,6 +222,10 @@ h2 {
 @media (max-width: 767px) {
   .modal {
     padding: 50px 12px 50px;
+
+    &.withFooter {
+      padding-bottom: 25px;
+    }
   }
   .close {
     right: 12px;
