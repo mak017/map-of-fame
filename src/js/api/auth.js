@@ -155,7 +155,7 @@ export const getUserData = async (username) => {
 export const editUser = async (token, id, { isSpotsHidden }) => {
   const bearer = `Bearer ${token}`;
   const data = new URLSearchParams();
-  data.append("isSpotsHidden", isSpotsHidden);
+  data.append("is_spots_hidden", isSpotsHidden);
   const response = await fetch(USER_ID(id), {
     method: "POST",
     headers: { Authorization: bearer },

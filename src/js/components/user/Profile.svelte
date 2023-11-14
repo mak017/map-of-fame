@@ -271,33 +271,38 @@ const handleShowOnMapClick = (showAll) => {
 
 const handleHideAllClick = () => {
   editUser(token, $userData.id, {
-    isSpotsHidden: !$userData.isSpotsHidden,
+    isSpotsHidden: Number(!$userData.isSpotsHidden),
   }).then((response) => {
     const { success, result } = response;
     if (success && result) {
-      $userData.isSpotsHidden = !$userData.isSpotsHidden;
+      $userData.isSpotsHidden = result.isSpotsHidden === "1";
     }
   });
 };
 </script>
 
 <div class="container" class:isCurrentUser>
-  {#if $profileState.invites.length}
-    <div class="invites">
-      You have
-      <button
-        type="button"
-        class="button"
-        on:click={() => toggleInvitesPopup(true)}>Invite</button>
-      for your friends 🖖
-    </div>
-  {/if}
-  <!-- {#if isCurrentUser}
-    <button
-      type="button"
-      class="button hide-button"
-      on:click={handleHideAllClick}>👮‍♂️ 1312 🙈 HIDE 👮‍♂️</button>
-  {/if} -->
+  <div class="profile-header">
+    {#if $profileState.invites.length}
+      <div class="invites">
+        <button
+          type="button"
+          class="button"
+          on:click={() => toggleInvitesPopup(true)}>🖖 Invites</button>
+        for your friends
+      </div>
+    {/if}
+    {#if isCurrentUser}
+      <div class="hide-all">
+        <button
+          type="button"
+          class="button hide-button"
+          on:click={handleHideAllClick}
+          >{$userData.isSpotsHidden ? "👀 Show" : "🙈 Hide"}</button>
+        all your photos
+      </div>
+    {/if}
+  </div>
   <div class="top">
     {#if !$profileState.isLoading && (name || username)}
       <div class="user">
@@ -487,7 +492,7 @@ const handleHideAllClick = () => {
   }
 }
 
-.invites {
+.profile-header {
   margin-bottom: 26px;
   color: var(--color-dark);
   font-size: 14px;
@@ -507,19 +512,9 @@ const handleHideAllClick = () => {
   }
 }
 
-// .hide-button {
-//   margin: -15px 0 26px;
-//   background: none;
-//   color: var(--color-accent);
-//   font-size: 14px;
-//   font-weight: 900;
-//   line-height: 22px;
-//   text-transform: uppercase;
-
-//   &:hover {
-//     opacity: 0.7;
-//   }
-// }
+.invites {
+  margin-bottom: 5px;
+}
 
 .logout {
   transition: opacity 0.3s;
@@ -723,8 +718,10 @@ const handleHideAllClick = () => {
 }
 
 @media (max-width: 767px) {
-  .container:not(.isCurrentUser) {
-    margin-top: 48px;
+  .container {
+    &:not(.isCurrentUser) {
+      margin-top: 48px;
+    }
   }
 
   .top {
@@ -733,7 +730,7 @@ const handleHideAllClick = () => {
     margin-bottom: 18px;
   }
 
-  .invites {
+  .profile-header {
     position: absolute;
     top: 25px;
     left: 50%;
@@ -744,9 +741,11 @@ const handleHideAllClick = () => {
   }
 
   .logout {
+    position: relative;
+    top: -8px;
     width: 30px;
     height: 30px;
-    margin: -30px 0 52px;
+    margin: -20px 0 52px;
     background: url(../../../images/logout.svg) 50% 50%/27px 27px no-repeat;
     font-size: 0;
   }
