@@ -151,3 +151,16 @@ export const getUserData = async (username) => {
   const result = await response.json();
   return result;
 };
+
+export const editUser = async (token, id, { isSpotsHidden }) => {
+  const bearer = `Bearer ${token}`;
+  const data = new URLSearchParams();
+  data.append("isSpotsHidden", isSpotsHidden);
+  const response = await fetch(USER_ID(id), {
+    method: "POST",
+    headers: { Authorization: bearer },
+    body: data,
+  });
+  const result = await response.json();
+  return result;
+};

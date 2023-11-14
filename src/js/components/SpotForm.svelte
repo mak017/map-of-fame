@@ -43,6 +43,7 @@ import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
 import Spinner from "./elements/Spinner.svelte";
+import PlusSvg from "./elements/icons/PlusSvg.svelte";
 
 import {
   EMPTY_YEAR_STRING,
@@ -609,7 +610,8 @@ const handleAddMoreClick = () => {
       <button
         type="button"
         class="button btn-add-more"
-        on:click={handleAddMoreClick}>Add more</button>
+        on:click={handleAddMoreClick}
+        ><PlusSvg /> <span>Artist/Crew</span></button>
     {/if}
   </div>
   <FormTelInput
@@ -734,21 +736,27 @@ form {
 .artists-area {
   display: flex;
   flex-direction: column;
+  margin-bottom: 12px;
 }
 
 .artist-crew-pair + .artist-crew-pair {
   margin-top: 18px;
 }
 .btn-add-more {
-  display: inline-flex;
-  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 40px;
   padding: 4px 0;
-  background-color: var(--color-light);
-  color: var(--color-accent);
-  font-size: 14px;
-  font-weight: 900;
-  line-height: 1.22;
-  text-transform: uppercase;
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  font-size: 16px;
+  font-weight: 600;
+
+  span {
+    margin-left: 8px;
+  }
 }
 
 .status {
@@ -911,6 +919,7 @@ form {
   .artists-area {
     grid-column: 3;
     grid-row: 6;
+    margin-bottom: 0;
   }
 
   .artist-crew-pair {

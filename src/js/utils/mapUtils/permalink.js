@@ -82,6 +82,11 @@ const getDataFromParams = (params) => {
   return { year, artist, crew };
 };
 
+const getDataFromUrl = (url = window.location.search) => {
+  const params = new URLSearchParams(url);
+  return getDataFromParams(params);
+};
+
 const setStateFromUrl = (params) => {
   const { year, artist, crew } = getDataFromParams(params);
   const additionalYears = settingsObj.additionalYears
@@ -174,4 +179,5 @@ export const permalink = {
   getCustomUrl,
   getInviteUrl,
   getDataFromParams,
+  getDataFromUrl,
 };

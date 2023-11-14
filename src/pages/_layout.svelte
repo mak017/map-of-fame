@@ -36,7 +36,9 @@ import {
   isActiveSearchControl,
 } from "./../js/store.js";
 import { getSpotsInArea } from "../js/api/spot.js";
+import { requestSpots } from "../js/init.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
+import { ALL_YEARS_STRING } from "../js/constants.js";
 
 import Loader from "../js/components/elements/Loader.svelte";
 
@@ -48,6 +50,7 @@ areaSelection.set(
   new DrawAreaSelection({
     onPolygonReady: (polygon) => {
       isSpotsFromAreaLoading.set(true);
+      requestSpots(ALL_YEARS_STRING);
       polygon.setStyle({
         color: "var(--color-accent)",
         weight: 4,
@@ -57,10 +60,24 @@ areaSelection.set(
       const { coordinates } = polygon.toGeoJSON().geometry;
       getSpotsInArea(coordinates[0]).then(({ result }) => {
         areaSpots.set(result);
+        let style = "";
+        result.forEach((item, index) => {
+          style += `${index > 0 ? ", " : ""}.marker-id-${item.id}`;
+        });
+        style += `
+            {
+              width: 34px !important;
+              height: 34px !important;
+              border-width: 2px;
+              opacity: 1 !important;
+              font-size: 14px;
+              pointer-events: auto !important;
+            }
+          `;
+        document.getElementById("highlighted").innerHTML = style;
         isSpotsFromAreaLoading.set(false);
       });
     },
-    onPolygonDblClick: () => !!$areaSpots?.length && $goto("/selected-spots"),
     position: "bottomright",
   })
 );

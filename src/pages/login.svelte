@@ -5,6 +5,6 @@ import LoginForm from "../js/components/auth/LoginForm.svelte";
 import Modal from "../js/components/Modal.svelte";
 </script>
 
-<Modal id="login-modal" on:close={() => $goto("/")} title="Log in">
+<Modal id="login-modal" on:close={() => $goto("/")} title="Log in" withFooter>
   <LoginForm />
 </Modal>

@@ -10,6 +10,7 @@ import ArrowLeftSvg from "./elements/icons/ArrowLeftSvg.svelte";
 export let id;
 export let title = "";
 export let withAd = false;
+export let withFooter = false;
 export let noLogo = false;
 export let accentTitle = false;
 export let noClose = false;
@@ -41,6 +42,7 @@ const handleResize = () => {
 <div
   class="modal"
   class:withAd
+  class:withFooter
   class:accentTitle
   class:autoMargin={autoMargin && withAd && banner.url}
   class:alwaysOnTop
@@ -83,6 +85,11 @@ const handleResize = () => {
         src={banner.img}
         alt=""
         style="object-fit: cover;width: 100%;height: 100%;" />
+    </div>
+  {/if}
+  {#if withFooter}
+    <div class="footer">
+      <a href="https://instagram.com/streeet.karta">@streeet.karta</a>
     </div>
   {/if}
 </div>
@@ -188,9 +195,37 @@ h2 {
   height: 16px;
 }
 
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+
+  a {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-accent);
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1.22;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
 @media (max-width: 767px) {
   .modal {
     padding: 50px 12px 50px;
+
+    &.withFooter {
+      padding-bottom: 25px;
+    }
   }
   .close {
     right: 12px;
