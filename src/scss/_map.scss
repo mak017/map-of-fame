@@ -82,12 +82,11 @@ body {
 }
 
 .area-selection-mode {
-  .map-marker {
-    &-with-photo,
-    &-cluster {
-      opacity: 0;
-      pointer-events: none;
-    }
+  .map-marker-with-photo,
+  .map-marker-cluster,
+  .geosearch.leaflet-bar {
+    opacity: 0;
+    pointer-events: none;
   }
 }
 
