@@ -1,6 +1,6 @@
 <script>
 import { onDestroy } from "svelte";
-import { goto, params } from "@roxi/routify";
+import { goto, params, url } from "@roxi/routify";
 
 import {
   embedVideoCodeFromBasicUrl,
@@ -213,31 +213,50 @@ const getRandomEmojis = (count = 1) => {
   return resultString;
 };
 
-const resolveArtistCrew = (pair) => {
-  const { artist, crew } = pair;
+const getUserLink = (user, text) => {
+  return user?.name
+    ? `<a href=${$url("/@:username", { username: user.username })}>${
+        text ?? user.name
+      }</a>`
+    : text;
+};
 
-  if (!artist?.name && !crew?.name) {
+const resolveArtistCrew = (pair) => {
+  const { artist, crew, user } = pair;
+
+  if (!artist?.name && !crew?.name && !user?.name) {
     return EMPTY_ARTIST;
   }
 
+  if (!artist?.name && !crew?.name && user?.name) {
+    return `${getRandomEmojis()}&nbsp;${getUserLink(user)}`;
+  }
+
   if (artist?.name && crew?.name) {
-    return `${getRandomEmojis()}&nbsp;${artist.name} <span>[${
-      crew.name
-    }]</span>`;
+    return `${getRandomEmojis()}&nbsp;${getUserLink(
+      user,
+      `${artist.name} <span>[${crew.name}]</span>`
+    )}`;
   }
 
   if (artist?.name) {
-    return `${getRandomEmojis()}&nbsp;${artist.name}`;
+    return `${getRandomEmojis()}&nbsp;${getUserLink(user, artist.name)}`;
   }
 
-  return `${getRandomEmojis(3)}&nbsp;<span>[${crew?.name}]</span>`;
+  return `${getRandomEmojis(3)}&nbsp;${getUserLink(
+    user,
+    `<span>[${crew?.name}]</span>`
+  )}`;
 };
 
 const getArtistsString = (artistCrew) => {
   if (
     !artistCrew ||
     artistCrew.length === 0 ||
-    (artistCrew.length === 1 && !artistCrew[0].artist && !artistCrew[0].crew)
+    (artistCrew.length === 1 &&
+      !artistCrew[0].artist &&
+      !artistCrew[0].crew &&
+      !artistCrew[0].user)
   ) {
     return EMPTY_ARTIST;
   }

@@ -33,17 +33,23 @@ export const USER_PASSWORD_TOKEN = () =>
 export const INVITES_GET_FOR_USER = () =>
   `${ENDPOINT_ORIGIN}/api/invites/getForUser`;
 
-export const USER_SEARCH = (artist, crew) => {
-  let url = `${ENDPOINT_ORIGIN}/api/user/search/`;
+export const CREW_ARTIST_SEARCH = (artist, crew) => {
+  let url = `${ENDPOINT_ORIGIN}/api/crewAndArtist/search`;
+
   if (artist) {
     url = url.concat(`?artist=${artist}`);
   }
+
   if (crew) {
     url = artist ? url.concat("&") : url.concat("?");
     url = url.concat(`crew=${crew}`);
   }
+
   return url;
 };
+
+export const USER_SEARCH = (username) =>
+  `${ENDPOINT_ORIGIN}/api/user/search?username=${username}`;
 
 export const USER_CATEGORY = () => `${ENDPOINT_ORIGIN}/api/usercategory`;
 

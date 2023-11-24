@@ -1,14 +1,15 @@
 <script>
+import { createEventDispatcher } from "svelte";
+
 export let item = undefined;
+
+const dispatch = createEventDispatcher();
+const onSelect = (selected) =>
+  console.log("selected", selected) || dispatch("select", selected);
 </script>
 
-<div class="item">
-  <div class="name">{item.name}</div>
-  {#if item.type}
-    <div class="type">
-      {item.type === "artists" ? item.type.slice(0, -1) : item.type}
-    </div>
-  {/if}
+<div class="item" on:click={() => onSelect(item)}>
+  <div class="name">{item.label}</div>
 </div>
 
 <style lang="scss">
@@ -19,7 +20,7 @@ export let item = undefined;
   padding: 7px 20px;
   &:hover {
     .name {
-      opacity: 0.5;
+      opacity: 0.7;
     }
   }
 }
@@ -27,12 +28,5 @@ export let item = undefined;
   color: var(--color-dark);
   font-size: 18px;
   line-height: 1.22;
-}
-.type {
-  opacity: 0.6;
-  color: var(--color-dark);
-  font-size: 13px;
-  line-height: 1.22;
-  text-transform: capitalize;
 }
 </style>

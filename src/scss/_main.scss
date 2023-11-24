@@ -168,7 +168,7 @@ textarea {
     }
   }
 
-  .svelte-select-list:not(:empty) {
+  .svelte-select-list {
     padding: 4px 0;
     border-right: 8px solid transparent;
     outline: 1px solid var(--color-accent);
@@ -180,6 +180,11 @@ textarea {
     &::-webkit-scrollbar-thumb {
       border-radius: 2px;
       background-color: var(--color-accent);
+    }
+
+    &:not(:has(> div)) {
+      padding: 0;
+      outline: none;
     }
   }
 }

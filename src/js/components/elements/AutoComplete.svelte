@@ -17,6 +17,7 @@ export let showIndicator = false;
 export let noOptionsMessage = "No options";
 export let label = "label";
 export let externalTypedText = "";
+export let prependText = "";
 
 let typedText = "";
 
@@ -36,7 +37,7 @@ const onType = (label, filterText) => {
 
 <div
   class="autocomplete"
-  class:not-empty={selectedValue}
+  class:not-empty={selectedValue || prependText}
   class:typed-text={typedText}
   class:is-search={isSearch}>
   <Select
@@ -51,6 +52,7 @@ const onType = (label, filterText) => {
     itemFilter={onType}
     hideEmptyState={!!selectedValue}>
     <div slot="chevron-icon"><SelectIndicatorSvg /></div>
+    <div slot="prepend">{prependText}</div>
     <div slot="item" let:item>
       <AutoCompleteItem {item} />
     </div>

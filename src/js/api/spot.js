@@ -82,15 +82,19 @@ export const updateSpotDraft = async (
   if (categoryId) formData.append("category_id", categoryId);
   if (artistsCrews?.length) {
     artistsCrews.forEach((item, index) => {
-      const { artist, crew } = item;
+      const { artist, crew, username } = item;
       if (
         artist ||
         crew ||
+        username ||
         (index === 0 &&
-          (typeof artist !== "undefined" || typeof crew !== "undefined"))
+          (typeof artist !== "undefined" ||
+            typeof crew !== "undefined" ||
+            typeof username !== "undefined"))
       ) {
         formData.append(`artist_crew[${index}][artist]`, artist);
         formData.append(`artist_crew[${index}][crew]`, crew);
+        formData.append(`artist_crew[${index}][username]`, username);
       }
     });
   }
@@ -195,10 +199,16 @@ export const updateSpot = async (
   formData.append("showInProfile", showInProfile);
   if (artistsCrews?.length) {
     artistsCrews.forEach((item, index) => {
-      const { artist, crew } = item;
-      if (artist || crew || (artistsCrews.length === 1 && index === 0)) {
+      const { artist, crew, username } = item;
+      if (
+        artist ||
+        crew ||
+        username ||
+        (artistsCrews.length === 1 && index === 0)
+      ) {
         formData.append(`artist_crew[${index}][artist]`, artist);
         formData.append(`artist_crew[${index}][crew]`, crew);
+        formData.append(`artist_crew[${index}][username]`, username);
       }
     });
   }

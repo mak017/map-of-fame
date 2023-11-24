@@ -1,13 +1,11 @@
 <script>
 import { onDestroy, onMount } from "svelte";
 
-import { requestSearchSpots } from "../api/search.js";
+import { requestSearchSpots, requestSearchUsername } from "../api/search.js";
 import { getFirmsRequest } from "../api/settings";
 import {
-  getLastSpotDraft,
   getUserCategories,
   publishSpotDraft,
-  updateSpot,
   updateSpotDraft,
 } from "./../api/spot";
 import {
@@ -42,6 +40,7 @@ import FormRadioButton from "./elements/FormRadioButton.svelte";
 import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
+import AutoComplete from "./elements/AutoComplete.svelte";
 import Spinner from "./elements/Spinner.svelte";
 import PlusSvg from "./elements/icons/PlusSvg.svelte";
 
@@ -108,6 +107,7 @@ let shouldHideInProfile =
 let isSubmitDisabled = false;
 let isInProgress = false;
 let isSubmitting = false;
+let usernameTypedText = "";
 let errors = {
   year: "",
   imageFile: "",
@@ -142,6 +142,7 @@ let progressState = {
 const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
   artist: data.artist?.name ?? "",
   crew: data.crew?.name ?? "",
+  user: data.user ?? "",
 }));
 let artistCrewPairs =
   editArtistCrewPairs?.length > 0
@@ -150,6 +151,7 @@ let artistCrewPairs =
         {
           artist: isArtist() ? $userData.name ?? "" : "",
           crew: isArtist() || isCrew() ? $userData.crew ?? "" : "",
+          username: "",
         },
       ];
 
@@ -202,7 +204,10 @@ const saveDraft = async (field) => {
     description,
     categoryId: selectedCategory?.id ?? "",
     link,
-    artistsCrews: artistCrewPairs,
+    artistsCrews: artistCrewPairs.map((item) => ({
+      ...item,
+      username: item.username ? item.username.label : "",
+    })),
   };
 
   if (isEditSpot) {
@@ -503,7 +508,33 @@ $: if (isSubmitting && !isInProgress) {
 }
 
 const handleAddMoreClick = () => {
-  artistCrewPairs = [...artistCrewPairs, { artist: "", crew: "" }];
+  artistCrewPairs = [
+    ...artistCrewPairs,
+    { artist: "", crew: "", username: "" },
+  ];
+};
+
+const getOptionLabel = (option) =>
+  console.log("option.username", option.username) || option.username;
+
+const fetchUsers = async (filterText) => {
+  const text = filterText ? filterText.replace(" ", "_") : "";
+  usernameTypedText = text;
+  if (text.length > 2) {
+    const response = await requestSearchUsername(filterText);
+    const { success, result } = response;
+    if (success && result) {
+      console.log(
+        "data",
+        result.map((item) => ({ value: item.id, label: item.username }))
+      );
+      return result.map((item) => ({ value: item.id, label: item.username }));
+    }
+  } else {
+    return new Promise((resolve) => {
+      resolve([]);
+    });
+  }
 };
 </script>
 
@@ -604,6 +635,25 @@ const handleAddMoreClick = () => {
           wideOnMobile
           editSpot={isEditSpot}
           addSpot={!isEditSpot} />
+        <AutoComplete
+          bind:selectedValue={pair.username}
+          loadOptions={fetchUsers}
+          externalTypedText={usernameTypedText}
+          placeholder="Username"
+          noOptionsMessage="No options"
+          prependText="streeet.art/@"
+          on:select={() => {
+            usernameTypedText = "";
+            saveDraft(`username${index + 1}`);
+          }} />
+        <!-- <AutoComplete
+          bind:selectedValue={pair.username}
+          items={$countriesList}
+          optionIdentifier="name"
+          label="name"
+          placeholder="Country"
+          errorMessage={errors.country}
+          on:select={() => handleInputChange("country")} /> -->
       </div>
     {/each}
     {#if artistCrewPairs.length < 5}

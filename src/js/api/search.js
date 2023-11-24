@@ -1,7 +1,17 @@
-import { SPOT_SEARCH, USER_SEARCH } from "./endpoints";
+import { CREW_ARTIST_SEARCH, SPOT_SEARCH, USER_SEARCH } from "./endpoints";
 
 export const requestSearchArtistsCrews = async (artist, crew) => {
-  const response = await fetch(USER_SEARCH(artist, crew), { method: "GET" });
+  const response = await fetch(CREW_ARTIST_SEARCH(artist, crew), {
+    method: "GET",
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const requestSearchUsername = async (username) => {
+  const response = await fetch(USER_SEARCH(username), {
+    method: "GET",
+  });
   const result = await response.json();
   return result;
 };
