@@ -114,7 +114,7 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
 $: unusedInvitesCount = $profileState.invites.reduce(
   (accumulator, invite) =>
     !invite.invitedUserId ? accumulator + 1 : accumulator,
-  0
+  0,
 );
 
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
@@ -238,7 +238,7 @@ const onSpotClick = (spot) => {
 const handleShowOnMapClick = (showAll) => {
   if (!$selectedUserProfileData.id && isCurrentUser) {
     selectedUserProfileData.set(
-      $userData ?? ($profileState.user?.id ? $profileState.user : {})
+      $userData ?? ($profileState.user?.id ? $profileState.user : {}),
     );
   } else {
     $profileState.user?.id && selectedUserProfileData.set($profileState.user);
@@ -260,7 +260,7 @@ const handleShowOnMapClick = (showAll) => {
       selectedYear.set(
         $profileState.currentYear
           ? `${$profileState.currentYear}`
-          : EMPTY_YEAR_STRING
+          : EMPTY_YEAR_STRING,
       );
       selectedArtist.set("");
       selectedCrew.set("");
@@ -298,7 +298,7 @@ const handleHideAllClick = () => {
           type="button"
           class="button hide-button"
           on:click={handleHideAllClick}
-          >{$userData.isSpotsHidden ? "👀 Show" : "🙈 Hide"}</button>
+          >{$userData.isSpotsHidden ? "👀 Show" : "🚨 Hide"}</button>
         all your photos
       </div>
     {/if}
@@ -635,7 +635,9 @@ const handleHideAllClick = () => {
       left: 0;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.3s, visibility 0.3s;
+      transition:
+        opacity 0.3s,
+        visibility 0.3s;
       background: rgba($color: #432fd8, $alpha: 0.4);
       font-size: 64px;
     }
@@ -652,7 +654,9 @@ const handleHideAllClick = () => {
       left: 0;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.3s, visibility 0.3s;
+      transition:
+        opacity 0.3s,
+        visibility 0.3s;
       background: rgba($color: #432fd8, $alpha: 0.4);
       font-size: 48px;
     }
@@ -728,6 +732,10 @@ const handleHideAllClick = () => {
     position: relative;
     flex-direction: column-reverse;
     margin-bottom: 18px;
+  }
+
+  .invites {
+    margin-bottom: 20px;
   }
 
   .profile-header {
