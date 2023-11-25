@@ -742,6 +742,7 @@ const handleHideAllClick = () => {
     position: absolute;
     top: 25px;
     left: 50%;
+    z-index: 1;
     width: fit-content;
     max-width: 71vw;
     transform: translateX(-50%);
