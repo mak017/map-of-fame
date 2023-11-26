@@ -47,28 +47,14 @@ body {
     }
   }
 
-  // &.geo-search-overlay {
-  //   .geosearch.leaflet-bar {
-  //     z-index: 1;
-  //   }
-
-  //   .map {
-  //     &::after {
-  //       opacity: 0.5;
-  //       visibility: visible;
-  //     }
-  //   }
-  //   .main-top_left_wrapper {
-  //     &::after {
-  //       opacity: 0.25;
-  //       visibility: visible;
-  //     }
-  //   }
-
-  //   .leaflet-top.leaflet-right {
-  //     z-index: 1001;
-  //   }
-  // }
+  &.geo-search-overlay {
+    .button.button-open_search {
+      width: 40px;
+      color: transparent;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
 }
 
 .add-mode {
@@ -82,12 +68,11 @@ body {
 }
 
 .area-selection-mode {
-  .map-marker {
-    &-with-photo,
-    &-cluster {
-      opacity: 0;
-      pointer-events: none;
-    }
+  .map-marker-with-photo,
+  .map-marker-cluster,
+  .geosearch.leaflet-bar {
+    opacity: 0;
+    pointer-events: none;
   }
 }
 
