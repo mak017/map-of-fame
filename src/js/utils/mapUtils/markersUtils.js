@@ -16,11 +16,6 @@ import { MAX_ZOOM } from "../../constants";
 
 let prevMarkers = [];
 let markersLayer = null;
-let categories = [];
-
-categoriesList.subscribe((value) => {
-  categories = value;
-});
 
 const clearMarkers = (map) => {
   if (prevMarkers.length) {
@@ -100,7 +95,7 @@ const createMarkers = (map, markersData, isSearch) => {
   const tempMarkersList = [];
   markersData?.spots?.forEach((item) => {
     const marker = createMarker(item);
-    marker.isAdditionalCategory = categories.find(
+    marker.isAdditionalCategory = get(categoriesList).find(
       (category) => category.id === item.categoryId
     )?.isAdditional;
     markersLayer.addLayer(marker);

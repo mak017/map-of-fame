@@ -36,9 +36,7 @@ import {
   isActiveSearchControl,
 } from "./../js/store.js";
 import { getSpotsInArea } from "../js/api/spot.js";
-import { requestSpots } from "../js/init.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
-import { ALL_YEARS_STRING } from "../js/constants.js";
 
 import Loader from "../js/components/elements/Loader.svelte";
 
@@ -50,7 +48,6 @@ areaSelection.set(
   new DrawAreaSelection({
     onPolygonReady: (polygon) => {
       isSpotsFromAreaLoading.set(true);
-      requestSpots(ALL_YEARS_STRING);
       polygon.setStyle({
         color: "var(--color-accent)",
         weight: 4,
@@ -60,11 +57,9 @@ areaSelection.set(
       const { coordinates } = polygon.toGeoJSON().geometry;
       getSpotsInArea(coordinates[0]).then(({ result }) => {
         areaSpots.set(result);
-        let style = "";
-        result.forEach((item, index) => {
-          style += `${index > 0 ? ", " : ""}.marker-id-${item.id}`;
-        });
-        style += `
+        markersStore.set({ spots: result });
+        const style = `
+        .map-marker-with-photo, .map-marker-cluster
             {
               width: 34px !important;
               height: 34px !important;
@@ -79,7 +74,7 @@ areaSelection.set(
       });
     },
     position: "bottomright",
-  })
+  }),
 );
 
 const provider = new OpenStreetMapProvider();
@@ -93,7 +88,7 @@ searchControl.set(
     searchLabel: "Address",
     maxSuggestions: isMobile() ? 3 : 5,
     autoClose: true,
-  })
+  }),
 );
 
 // Init leaflet map

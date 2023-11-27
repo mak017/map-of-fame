@@ -1,6 +1,9 @@
+import { get } from "svelte/store";
+
 import { getCurrentYear } from "../commonUtils";
 import { permalink } from "./permalink";
 import {
+  isAreaSelectionActive,
   isInitialized,
   isLighthouseActive,
   isPermalinkReady,
@@ -20,36 +23,7 @@ import {
   ALL_YEARS_STRING,
 } from "../../constants";
 
-let yearFromStore;
-let artistFromStore;
-let crewFromStore;
-let isSearch;
-let isShowOnMapModeValue;
-let isLighthouseMode;
-
-selectedYear.subscribe((value) => {
-  yearFromStore = value;
-});
-
-selectedArtist.subscribe((value) => {
-  artistFromStore = value;
-});
-
-selectedCrew.subscribe((value) => {
-  crewFromStore = value;
-});
-
-isSearchResults.subscribe((value) => {
-  isSearch = value;
-});
-
-isShowOnMapMode.subscribe((value) => {
-  isShowOnMapModeValue = value;
-});
-
-isLighthouseActive.subscribe((value) => {
-  isLighthouseMode = value;
-});
+const yearFromStore = get(selectedYear);
 
 const getLocationByIp = () =>
   fetch("https://ipinfo.io/json?token=f7826cd7c9e44b")
@@ -90,12 +64,16 @@ export const handleMapViewChange = (map) => {
   const bounds = getBounds(map);
   mapBounds.set(bounds);
 
-  if (isLighthouseMode) {
+  if (get(isAreaSelectionActive)) {
+    return;
+  }
+
+  if (get(isLighthouseActive)) {
     requestRecentSpots();
     return;
   }
 
-  if (!isSearch && !isShowOnMapModeValue) {
+  if (!get(isSearchResults) && !get(isShowOnMapMode)) {
     requestSpots(yearFromStore);
   }
 };
@@ -112,6 +90,8 @@ export const setLocation = (map, force) => {
       map.setView(DEFAULT_VIEW.coordinates, DEFAULT_VIEW.zoom);
     })
     .finally(() => {
+      const artistFromStore = get(selectedArtist);
+      const crewFromStore = get(selectedCrew);
       permalink.setup(map);
       isPermalinkReady.set(true);
       const bounds = getBounds(map);
