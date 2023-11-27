@@ -57,11 +57,9 @@ const dispatch = createEventDispatcher();
   --padding: 0 0 0 10px;
   --placeholder-color: var(--color-dark);
   &.year {
-    --border: 0;
-    --border-focused: 0;
-    --border-hover: 0;
     --chevron-width: 20px;
     --chevron-height: 20px;
+    --height: 40px;
     --list-max-height: 310px;
     --padding: 0 16px 0 13px;
     --selected-item-padding: 0 0 0 8px;
