@@ -60,6 +60,7 @@ const dispatch = createEventDispatcher();
     --chevron-width: 20px;
     --chevron-height: 20px;
     --height: 40px;
+    --indicators-right: -4px;
     --list-max-height: 310px;
     --padding: 0 16px 0 13px;
     --selected-item-padding: 0 0 0 8px;
