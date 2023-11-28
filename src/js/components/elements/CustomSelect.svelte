@@ -1,6 +1,7 @@
 <script>
-import Select from "svelte-select";
 import { createEventDispatcher } from "svelte";
+import Select from "svelte-select";
+
 import SelectIconCalendar from "./icons/SelectIconCalendar.svelte";
 import SelectIndicatorSvg from "./icons/SelectIndicatorSvg.svelte";
 
@@ -24,7 +25,6 @@ const dispatch = createEventDispatcher();
     clearable={false}
     searchable={false}
     on:select={(selected) => dispatch("select", selected)}
-    listAutoWidth={!isYear}
     {placeholder}
     {label}>
     <div slot="prepend" class="prepend">

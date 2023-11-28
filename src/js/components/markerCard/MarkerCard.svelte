@@ -27,11 +27,12 @@ import {
 import { getProfileYears } from "../../utils/datesUtils.js";
 import { getSpotById, getUserSpots } from "../../api/spot.js";
 
-import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
-import Popup from "../Popup.svelte";
-import ShareMarker from "./ShareMarker.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
+import MapSvg from "../elements/icons/MapSvg.svelte";
 import Spinner from "../elements/Spinner.svelte";
+import Popup from "../Popup.svelte";
+import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
+import ShareMarker from "./ShareMarker.svelte";
 
 import { EMPTY_YEAR_STRING, MAX_ZOOM, MIN_ZOOM } from "../../constants.js";
 
@@ -284,7 +285,8 @@ const getArtistsString = (artistCrew) => {
         <button
           type="button"
           class="show-on-map"
-          on:click={handleShowOnMapClick}>Show on map</button>
+          on:click={handleShowOnMapClick}
+          ><span>Show on</span> <MapSvg /></button>
       </div>
       <div class="buttons">
         {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}
@@ -447,6 +449,9 @@ const getArtistsString = (artistCrew) => {
 }
 
 .show-on-map {
+  display: flex;
+  align-items: center;
+  margin: auto;
   padding: 0;
   border: 0;
   background: none;
@@ -456,6 +461,10 @@ const getArtistsString = (artistCrew) => {
   line-height: 22px;
   text-transform: uppercase;
   cursor: pointer;
+
+  > span {
+    margin-right: 6px;
+  }
 }
 
 .buttons {

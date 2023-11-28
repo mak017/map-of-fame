@@ -470,7 +470,7 @@ const handleHideAllClick = () => {
   align-items: baseline;
   align-self: stretch;
   justify-content: space-between;
-  margin-bottom: 6px;
+  margin-bottom: 20px;
 }
 
 .user {
