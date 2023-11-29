@@ -30,12 +30,13 @@ import {
   removeFromLocalStorage,
 } from "../../utils/commonUtils";
 
-import Invites from "./Invites.svelte";
 import Spinner from "./../elements/Spinner.svelte";
 import CustomSelect from "../elements/CustomSelect.svelte";
-import DeleteSpot from "./DeleteSpot.svelte";
-import Popup from "../Popup.svelte";
+import MapSvg from "../elements/icons/MapSvg.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
+import Popup from "../Popup.svelte";
+import Invites from "./Invites.svelte";
+import DeleteSpot from "./DeleteSpot.svelte";
 import ShareProfile from "./ShareProfile.svelte";
 
 import {
@@ -74,13 +75,13 @@ const strippedUsername = username.substring(1);
 
 let isCurrentUser = $userData.username === strippedUsername;
 let name = isCurrentUser
-  ? $userData.name ?? $userData.crew
-  : $profileState.user.name ?? $profileState.user.crew;
+  ? $userData.artist ?? $userData.crew
+  : $profileState.user.artist ?? $profileState.user.crew;
 
 $: isCurrentUser = $userData.username === strippedUsername;
 $: name = isCurrentUser
-  ? $userData.name ?? $userData.crew
-  : $profileState.user.name ?? $profileState.user.crew;
+  ? $userData.artist ?? $userData.crew
+  : $profileState.user.artist ?? $profileState.user.crew;
 
 $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   profileState.setIsInitialized(true);
@@ -342,7 +343,8 @@ const handleHideAllClick = () => {
           <button
             type="button"
             class="button show-on-map"
-            on:click={() => handleShowOnMapClick()}>Show on map</button>
+            on:click={() => handleShowOnMapClick()}
+            ><span>Show on</span> <MapSvg /></button>
         </div>
       {/if}
       {#if !$profileState.isLoading}
@@ -468,7 +470,7 @@ const handleHideAllClick = () => {
   align-items: baseline;
   align-self: stretch;
   justify-content: space-between;
-  margin-bottom: 6px;
+  margin-bottom: 20px;
 }
 
 .user {
@@ -532,12 +534,18 @@ const handleHideAllClick = () => {
 }
 
 .show-on-map {
+  display: flex;
+  align-items: center;
   background: none;
   color: var(--color-accent);
   font-size: 14px;
   font-weight: 900;
   line-height: 22px;
   text-transform: uppercase;
+
+  > span {
+    margin-right: 6px;
+  }
 }
 
 .empty-state {

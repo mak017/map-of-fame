@@ -48,7 +48,7 @@ export const createUserRequest = async ({
   const data = new URLSearchParams();
   data.append("username", username);
   if (type !== USER_TYPES.crew.toLowerCase()) {
-    data.append("name", name);
+    data.append("artist", name);
   }
   data.append("email", email);
   data.append("password", password);

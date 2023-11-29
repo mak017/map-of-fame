@@ -148,7 +148,7 @@ let artistCrewPairs =
     ? editArtistCrewPairs
     : [
         {
-          artist: isArtist() ? $userData.name ?? "" : "",
+          artist: isArtist() ? $userData.artist ?? "" : "",
           crew: isArtist() || isCrew() ? $userData.crew ?? "" : "",
         },
       ];
@@ -285,7 +285,7 @@ const onChangeImage = (imageType) => {
                 filePreview: URL.createObjectURL(newBlob),
               };
               handleProcessedImage(imageType, imageObject, blob);
-            }
+            },
           );
         } else {
           processImage(
@@ -305,7 +305,7 @@ const onChangeImage = (imageType) => {
                   }
                 : { ...imageObject, blob: file, filePreview: e.target.result };
               handleProcessedImage(imageType, imageObject, blob, isRotated);
-            }
+            },
           );
         }
       };
@@ -420,7 +420,7 @@ const handleLinkChange = () => {
 
 const isSelectedArtistCrew = () =>
   artistCrewPairs.some(
-    (pair) => pair.artist === $selectedArtist && pair.crew === $selectedCrew
+    (pair) => pair.artist === $selectedArtist && pair.crew === $selectedCrew,
   );
 
 const handleSubmit = () => {
@@ -458,7 +458,7 @@ const handleSubmit = () => {
                   additionalImg: image2.filePreview,
                   sketch: sketch.filePreview,
                 }
-              : spot
+              : spot,
           );
           profileState.setSpotsList(spots);
         } else {

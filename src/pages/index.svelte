@@ -209,7 +209,7 @@ const handleKeyDown = (e) => {
     {/if}
   </div>
 
-  {#if !$isSearchResults && !$selectedUserProfileData.name && !$isAreaSelectionActive && !$isShowOnMapMode}
+  {#if !$isSearchResults && !$selectedUserProfileData.artist && !$isAreaSelectionActive && !$isShowOnMapMode}
     <CategoryFilter />
   {/if}
 
@@ -238,7 +238,7 @@ const handleKeyDown = (e) => {
       {:else}
         <div class="selection selected-artist">
           <span
-            >{$selectedArtist || $selectedUserProfileData?.name || ""}
+            >{$selectedArtist || $selectedUserProfileData?.artist || ""}
             {$selectedCrew || $selectedUserProfileData?.crew || ""}</span>
           <button
             class="button button-square button-clear_search"
@@ -272,7 +272,7 @@ const handleKeyDown = (e) => {
     {/if}
   </div>
 
-  {#if !$isSearchResults && !$selectedUserProfileData.name && !$isAreaSelectionActive && !$isShowOnMapMode}
+  {#if !$isSearchResults && !$selectedUserProfileData.artist && !$isAreaSelectionActive && !$isShowOnMapMode}
     <button
       class="button button-main_screen button-square button-location"
       on:click={() => setLocation($map, true)}
@@ -280,7 +280,7 @@ const handleKeyDown = (e) => {
       title="Go to your location" />
   {/if}
 
-  {#if !$isSearchResults && !$isShowOnMapMode && !$shouldShowAddSpot && !$selectedUserProfileData.name && ($isAreaSelectionActive || $currentZoom > 14)}
+  {#if !$isSearchResults && !$isShowOnMapMode && !$shouldShowAddSpot && !$selectedUserProfileData.artist && ($isAreaSelectionActive || $currentZoom > 14)}
     <button
       class="button button-main_screen button-square button-select_area"
       class:active={$isAreaSelectionActive}
@@ -426,7 +426,9 @@ const handleKeyDown = (e) => {
     border-radius: 0 0 2px 2px;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s, visibility 0.2s;
+    transition:
+      opacity 0.2s,
+      visibility 0.2s;
     background-color: var(--color-lotion);
     background-image: url(../images/user.svg);
     background-repeat: no-repeat;
