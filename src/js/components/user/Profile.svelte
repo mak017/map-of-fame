@@ -75,13 +75,13 @@ const strippedUsername = username.substring(1);
 
 let isCurrentUser = $userData.username === strippedUsername;
 let name = isCurrentUser
-  ? $userData.artist ?? $userData.crew
-  : $profileState.user.artist ?? $profileState.user.crew;
+  ? $userData.artist?.name ?? $userData.crew?.name
+  : $profileState.user.artist?.name ?? $profileState.user.crew?.name;
 
 $: isCurrentUser = $userData.username === strippedUsername;
 $: name = isCurrentUser
-  ? $userData.artist ?? $userData.crew
-  : $profileState.user.artist ?? $profileState.user.crew;
+  ? $userData.artist?.name ?? $userData.crew?.name
+  : $profileState.user.artist?.name ?? $profileState.user.crew?.name;
 
 $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   profileState.setIsInitialized(true);

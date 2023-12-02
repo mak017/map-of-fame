@@ -23,8 +23,6 @@ import {
   ALL_YEARS_STRING,
 } from "../../constants";
 
-const yearFromStore = get(selectedYear);
-
 const getLocationByIp = () =>
   fetch("https://ipinfo.io/json?token=f7826cd7c9e44b")
     .then((response) => response.json())
@@ -74,6 +72,7 @@ export const handleMapViewChange = (map) => {
   }
 
   if (!get(isSearchResults) && !get(isShowOnMapMode)) {
+    const yearFromStore = get(selectedYear);
     requestSpots(yearFromStore);
   }
 };
@@ -96,6 +95,7 @@ export const setLocation = (map, force) => {
       isPermalinkReady.set(true);
       const bounds = getBounds(map);
       const shouldSearch = artistFromStore || crewFromStore;
+      const yearFromStore = get(selectedYear);
       mapBounds.set(bounds);
       if (shouldSearch) {
         const params = {

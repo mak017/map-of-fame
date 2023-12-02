@@ -264,9 +264,9 @@ const getArtistsString = (artistCrew) => {
         <div class="subtitle">Posted by</div>
         <button type="button" class="button" on:click={onUserClick}>
           <div class="title">
-            {data.user?.artist ||
-              data.user?.crew ||
-              $selectedUserProfileData?.artist ||
+            {data.user?.artist?.name ||
+              data.user?.crew?.name ||
+              $selectedUserProfileData?.artist?.name ||
               ""}
           </div>
         </button>
