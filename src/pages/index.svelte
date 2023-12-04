@@ -238,8 +238,8 @@ const handleKeyDown = (e) => {
       {:else}
         <div class="selection selected-artist">
           <span
-            >{$selectedArtist || $selectedUserProfileData?.artist || ""}
-            {$selectedCrew || $selectedUserProfileData?.crew || ""}</span>
+            >{$selectedArtist || $selectedUserProfileData?.artist?.name || ""}
+            {$selectedCrew || $selectedUserProfileData?.crew?.name || ""}</span>
           <button
             class="button button-square button-clear_search"
             on:click|stopPropagation={() => {
@@ -272,7 +272,7 @@ const handleKeyDown = (e) => {
     {/if}
   </div>
 
-  {#if !$isSearchResults && !$selectedUserProfileData.artist && !$isAreaSelectionActive && !$isShowOnMapMode}
+  {#if !$isSearchResults && !$selectedUserProfileData.artist?.name && !$isAreaSelectionActive && !$isShowOnMapMode}
     <button
       class="button button-main_screen button-square button-location"
       on:click={() => setLocation($map, true)}
@@ -280,7 +280,7 @@ const handleKeyDown = (e) => {
       title="Go to your location" />
   {/if}
 
-  {#if !$isSearchResults && !$isShowOnMapMode && !$shouldShowAddSpot && !$selectedUserProfileData.artist && ($isAreaSelectionActive || $currentZoom > 14)}
+  {#if !$isSearchResults && !$isShowOnMapMode && !$shouldShowAddSpot && !$selectedUserProfileData.artist?.name && ($isAreaSelectionActive || $currentZoom > 14)}
     <button
       class="button button-main_screen button-square button-select_area"
       class:active={$isAreaSelectionActive}
