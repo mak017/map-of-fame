@@ -52,6 +52,7 @@ const handleKeyDown = (e) => {
   position: fixed;
   left: 50%;
   top: 50%;
+  z-index: 1;
   width: 100%;
   max-width: 530px;
   max-height: 100vh;

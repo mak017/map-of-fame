@@ -148,8 +148,8 @@ let artistCrewPairs =
     ? editArtistCrewPairs
     : [
         {
-          artist: isArtist() ? $userData.artist ?? "" : "",
-          crew: isArtist() || isCrew() ? $userData.crew ?? "" : "",
+          artist: isArtist() ? $userData.artist?.name ?? "" : "",
+          crew: isArtist() || isCrew() ? $userData.crew?.name ?? "" : "",
         },
       ];
 
