@@ -1,6 +1,6 @@
 <script>
 import { onDestroy } from "svelte";
-import { goto, params } from "@roxi/routify";
+import { goto, params, url } from "@roxi/routify";
 
 import {
   embedVideoCodeFromBasicUrl,
@@ -214,31 +214,52 @@ const getRandomEmojis = (count = 1) => {
   return resultString;
 };
 
-const resolveArtistCrew = (pair) => {
-  const { artist, crew } = pair;
+const getUserLink = (user, text) => {
+  return user?.username
+    ? `<a href=${$url("/@:username", { username: user.username })}>${
+        text ?? user.artist?.name ?? user.crew?.name
+      }</a>`
+    : text;
+};
 
-  if (!artist?.name && !crew?.name) {
+const resolveArtistCrew = (pair) => {
+  const { artist, crew, artistUser, crewUser } = pair;
+  const hasArtist = !!(artist?.name || artistUser?.id);
+  const hasCrew = !!(crew?.name || crewUser?.id);
+  console.log("hasArtist", hasArtist);
+  console.log("hasCrew", hasCrew);
+
+  if (!hasArtist && !hasCrew) {
     return EMPTY_ARTIST;
   }
 
-  if (artist?.name && crew?.name) {
-    return `${getRandomEmojis()}&nbsp;${artist.name} <span>[${
-      crew.name
-    }]</span>`;
+  if (hasArtist && hasCrew) {
+    return `${getRandomEmojis()}&nbsp;${getUserLink(
+      artistUser,
+      artist?.name,
+    )} <span>[${getUserLink(crewUser, crew?.name)}]</span>`;
   }
 
-  if (artist?.name) {
-    return `${getRandomEmojis()}&nbsp;${artist.name}`;
+  if (hasArtist) {
+    return `${getRandomEmojis()}&nbsp;${getUserLink(artistUser, artist?.name)}`;
   }
 
-  return `${getRandomEmojis(3)}&nbsp;<span>[${crew?.name}]</span>`;
+  console.log("crewUser", crewUser);
+  return `${getRandomEmojis(3)}&nbsp;<span>[${getUserLink(
+    crewUser,
+    crew?.name,
+  )}]</span>`;
 };
 
 const getArtistsString = (artistCrew) => {
   if (
     !artistCrew ||
     artistCrew.length === 0 ||
-    (artistCrew.length === 1 && !artistCrew[0].artist && !artistCrew[0].crew)
+    (artistCrew.length === 1 &&
+      !artistCrew[0].artist &&
+      !artistCrew[0].crew &&
+      !artistCrew[0].artistUser &&
+      !artistCrew[0].crewUser)
   ) {
     return EMPTY_ARTIST;
   }

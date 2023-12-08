@@ -30,6 +30,12 @@ export const USER_PASSWORD = () => `${ENDPOINT_ORIGIN}/api/user/password`;
 export const USER_PASSWORD_TOKEN = () =>
   `${ENDPOINT_ORIGIN}/api/user/password/token`;
 
+export const USER_SERACH_BY_ARTIST = (artist) =>
+  `${ENDPOINT_ORIGIN}/api/user/searchByArtist?artist=${artist}`;
+
+export const USER_SERACH_BY_CREW = (crew) =>
+  `${ENDPOINT_ORIGIN}/api/user/searchByCrew?crew=${crew}`;
+
 export const INVITES_GET_FOR_USER = () =>
   `${ENDPOINT_ORIGIN}/api/invites/getForUser`;
 

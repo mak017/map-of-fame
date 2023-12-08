@@ -1,13 +1,15 @@
 <script>
 import { onDestroy, onMount } from "svelte";
 
-import { requestSearchSpots } from "../api/search.js";
+import {
+  requestSearchSpots,
+  requestSearchUserByArtist,
+  requestSearchUserByCrew,
+} from "../api/search.js";
 import { getFirmsRequest } from "../api/settings";
 import {
-  getLastSpotDraft,
   getUserCategories,
   publishSpotDraft,
-  updateSpot,
   updateSpotDraft,
 } from "./../api/spot";
 import {
@@ -42,6 +44,7 @@ import FormRadioButton from "./elements/FormRadioButton.svelte";
 import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
+import CustomAutoComplete from "./elements/CustomAutoComplete.svelte";
 import Spinner from "./elements/Spinner.svelte";
 import PlusSvg from "./elements/icons/PlusSvg.svelte";
 
@@ -108,6 +111,8 @@ let shouldHideInProfile =
 let isSubmitDisabled = false;
 let isInProgress = false;
 let isSubmitting = false;
+let isSelectingAutocomplete = false;
+let isAutocompleteEmpty = true;
 let errors = {
   year: "",
   imageFile: "",
@@ -150,6 +155,8 @@ let artistCrewPairs =
         {
           artist: isArtist() ? $userData.artist?.name ?? "" : "",
           crew: isArtist() || isCrew() ? $userData.crew?.name ?? "" : "",
+          userArtist: isArtist() ? $userData.id : "",
+          userCrew: isCrew() ? $userData.id : "",
         },
       ];
 
@@ -505,6 +512,40 @@ $: if (isSubmitting && !isInProgress) {
 const handleAddMoreClick = () => {
   artistCrewPairs = [...artistCrewPairs, { artist: "", crew: "" }];
 };
+
+const fetchUsersByArtist = async (filterText, index) => {
+  artistCrewPairs[index].artist = filterText;
+  artistCrewPairs[index].userArtist = "";
+  isSelectingAutocomplete = false;
+  const response = await requestSearchUserByArtist(filterText);
+  const { success, result } = response;
+  if (success && result) {
+    console.log("data", result);
+    isAutocompleteEmpty = !result.length;
+    return result.map((item) => ({
+      id: item.id,
+      name: item.artist,
+      type: `@${item.username}`,
+    }));
+  }
+};
+
+const fetchUsersByCrew = async (filterText, index) => {
+  artistCrewPairs[index].crew = filterText;
+  artistCrewPairs[index].userCrew = "";
+  isSelectingAutocomplete = false;
+  const response = await requestSearchUserByCrew(filterText);
+  const { success, result } = response;
+  if (success && result) {
+    console.log("data", result);
+    isAutocompleteEmpty = !result.length;
+    return result.map((item) => ({
+      id: item.id,
+      name: item.crew,
+      type: `@${item.username}`,
+    }));
+  }
+};
 </script>
 
 <form class:edit={isEditSpot} on:submit|preventDefault={handleSubmit}>
@@ -590,20 +631,42 @@ const handleAddMoreClick = () => {
   <div class="artists-area">
     {#each artistCrewPairs as pair, index}
       <div class="artist-crew-pair">
-        <FormTextInput
-          placeholder="Artist Name"
-          bind:value={pair.artist}
-          on:blur={() => saveDraft(`artist${index + 1}`)}
-          wideOnMobile
-          editSpot={isEditSpot}
-          addSpot={!isEditSpot} />
-        <FormTextInput
-          placeholder="Crew Name"
-          bind:value={pair.crew}
-          on:blur={() => saveDraft(`crew${index + 1}`)}
-          wideOnMobile
-          editSpot={isEditSpot}
-          addSpot={!isEditSpot} />
+        <CustomAutoComplete
+          getItems={(text) => fetchUsersByArtist(text, index)}
+          selectedValue={artistCrewPairs[index].userArtist}
+          text={artistCrewPairs[index].artist}
+          showList={!isAutocompleteEmpty}
+          label="Artist Name"
+          on:change={(event) => {
+            isSelectingAutocomplete = true;
+            artistCrewPairs[index].artist = "";
+            artistCrewPairs[index].userArtist = event.detail?.id;
+            saveDraft(`artist${index + 1}`);
+          }}
+          on:blur={() => {
+            setTimeout(() => {
+              !isSelectingAutocomplete && saveDraft(`artist${index + 1}`);
+              isSelectingAutocomplete = false;
+            }, 200);
+          }} />
+        <CustomAutoComplete
+          getItems={(text) => fetchUsersByCrew(text, index)}
+          selectedValue={artistCrewPairs[index].userCrew}
+          text={artistCrewPairs[index].crew}
+          showList={!isAutocompleteEmpty}
+          label="Crew Name"
+          on:change={(event) => {
+            isSelectingAutocomplete = true;
+            artistCrewPairs[index].crew = "";
+            artistCrewPairs[index].userCrew = event.detail?.id;
+            saveDraft(`crew${index + 1}`);
+          }}
+          on:blur={() => {
+            setTimeout(() => {
+              !isSelectingAutocomplete && saveDraft(`crew${index + 1}`);
+              isSelectingAutocomplete = false;
+            }, 200);
+          }} />
       </div>
     {/each}
     {#if artistCrewPairs.length < 5}
