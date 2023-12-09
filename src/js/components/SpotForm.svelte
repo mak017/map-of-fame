@@ -145,8 +145,10 @@ let progressState = {
 };
 
 const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
-  artist: data.artist?.name ?? "",
-  crew: data.crew?.name ?? "",
+  artist: data.artist?.name ?? data.artistUser?.artist?.name ?? "",
+  crew: data.crew?.name ?? data.crewUser?.crew?.name ?? "",
+  userArtist: data.artistUser?.id ?? "",
+  userCrew: data.crewUser?.id ?? "",
 }));
 let artistCrewPairs =
   editArtistCrewPairs?.length > 0
