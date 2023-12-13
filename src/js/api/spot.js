@@ -94,15 +94,29 @@ export const updateSpotDraft = async (
             typeof userCrew !== "undefined" ||
             typeof userArtist !== "undefined"))
       ) {
-        userArtist
-          ? formData.append(
-              `artist_crew[${index}][user_by_artist_id]`,
-              userArtist
-            )
-          : formData.append(`artist_crew[${index}][artist]`, artist);
-        userCrew
-          ? formData.append(`artist_crew[${index}][user_by_crew_id]`, userCrew)
-          : formData.append(`artist_crew[${index}][crew]`, crew);
+        if (!userArtist && !artist) {
+          formData.append(`artist_crew[${index}][user_by_artist_id]`, "");
+          formData.append(`artist_crew[${index}][artist]`, "");
+        } else {
+          userArtist
+            ? formData.append(
+                `artist_crew[${index}][user_by_artist_id]`,
+                userArtist
+              )
+            : formData.append(`artist_crew[${index}][artist]`, artist);
+        }
+
+        if (!userCrew && !crew) {
+          formData.append(`artist_crew[${index}][user_by_crew_id]`, "");
+          formData.append(`artist_crew[${index}][crew]`, "");
+        } else {
+          userCrew
+            ? formData.append(
+                `artist_crew[${index}][user_by_crew_id]`,
+                userCrew
+              )
+            : formData.append(`artist_crew[${index}][crew]`, crew);
+        }
       }
     });
   }

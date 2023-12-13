@@ -265,7 +265,7 @@ textarea {
   }
 
   a {
-    color: var(--color-accent);
+    color: inherit;
 
     &:hover {
       text-decoration: none;

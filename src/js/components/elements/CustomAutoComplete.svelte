@@ -4,6 +4,7 @@ import AutoComplete from "simple-svelte-autocomplete";
 
 export let getItems = undefined;
 export let selectedValue = undefined;
+export let data = undefined;
 export let text = "";
 export let showList = false;
 export let label = "";
@@ -25,10 +26,12 @@ const beforeChange = (selected) => dispatch("beforechange", selected);
     maxItemsToShowInList={5}
     showLoadingIndicator
     hideArrow
+    showClear={selectedValue}
     dropdownClassName={showList ? "" : "empty"}
     {onBlur}
     {onChange}
     {beforeChange}
+    bind:selectedItem={data}
     bind:value={selectedValue}
     bind:text>
     <div slot="item" let:item let:label>
@@ -40,6 +43,11 @@ const beforeChange = (selected) => dispatch("beforechange", selected);
   {#if label}
     <div class="floating-label">{label}</div>
   {/if}
+  {#if data}
+    <div class="selected-type">
+      <span class="hidden">{data.name}</span> ({data.type})
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
@@ -48,6 +56,7 @@ const beforeChange = (selected) => dispatch("beforechange", selected);
   margin-bottom: 10px;
   padding-top: 8px;
 }
+
 .floating-label {
   position: absolute;
   top: 8px;
@@ -67,6 +76,22 @@ const beforeChange = (selected) => dispatch("beforechange", selected);
     font-size: 13px;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+}
+
+.selected-type {
+  position: absolute;
+  top: 12px;
+  max-width: calc(100% - 30px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .hidden {
+    opacity: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
   }
 }
 </style>
