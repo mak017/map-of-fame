@@ -8,10 +8,12 @@ export let data = undefined;
 export let text = "";
 export let showList = false;
 export let label = "";
+export let inputClassName = "";
 
 const dispatch = createEventDispatcher();
 const onBlur = (selected) => dispatch("blur", selected);
 const onChange = (selected) => dispatch("change", selected);
+const onFocus = (selected) => dispatch("focus", selected);
 const beforeChange = (selected) => dispatch("beforechange", selected);
 </script>
 
@@ -26,11 +28,13 @@ const beforeChange = (selected) => dispatch("beforechange", selected);
     maxItemsToShowInList={5}
     showLoadingIndicator
     hideArrow
-    showClear={selectedValue}
+    lock
     dropdownClassName={showList ? "" : "empty"}
+    {inputClassName}
     {onBlur}
     {onChange}
     {beforeChange}
+    {onFocus}
     bind:selectedItem={data}
     bind:value={selectedValue}
     bind:text>
@@ -45,7 +49,9 @@ const beforeChange = (selected) => dispatch("beforechange", selected);
   {/if}
   {#if data}
     <div class="selected-type">
-      <span class="hidden">{data.name}</span> ({data.type})
+      <span class:hidden={data.name}
+        >{data.name || data.artist?.name || data.crew?.name}</span>
+      ({data.type || data.username})
     </div>
   {/if}
 </div>
@@ -87,11 +93,14 @@ const beforeChange = (selected) => dispatch("beforechange", selected);
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  .hidden {
-    opacity: 0;
+  span {
     font-size: 16px;
     font-weight: 600;
     line-height: 20px;
+  }
+
+  .hidden {
+    opacity: 0;
   }
 }
 </style>

@@ -149,6 +149,8 @@ const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
   crew: data.crew?.name ?? data.crewUser?.crew?.name ?? "",
   userArtist: data.artistUser?.id ?? "",
   userCrew: data.crewUser?.id ?? "",
+  artistData: data.artistUser,
+  crewData: data.crewUser,
 }));
 let artistCrewPairs =
   editArtistCrewPairs?.length > 0
@@ -523,7 +525,6 @@ const fetchUsersByArtist = async (filterText, index) => {
   const response = await requestSearchUserByArtist(filterText);
   const { success, result } = response;
   if (success && result) {
-    console.log("data", result);
     isAutocompleteEmpty = !result.length;
     return result.map((item) => ({
       id: item.id,
@@ -641,10 +642,14 @@ const fetchUsersByCrew = async (filterText, index) => {
           text={artistCrewPairs[index].artist}
           showList={!isAutocompleteEmpty}
           label="Artist Name"
+          inputClassName={`artist-input-${index}`}
           on:change={(event) => {
             isSelectingAutocomplete = true;
             if (!event.detail) {
               artistCrewPairs[index].artist = "";
+              setTimeout(() => {
+                document.querySelector(`.artist-input-${index}`)?.blur();
+              }, 0);
             }
             artistCrewPairs[index].userArtist = event.detail?.id;
             artistCrewPairs[index].artistData = event.detail;
@@ -652,7 +657,6 @@ const fetchUsersByCrew = async (filterText, index) => {
           }}
           on:blur={() => {
             setTimeout(() => {
-              console.log(">>> blur");
               !isSelectingAutocomplete && saveDraft(`artist${index + 1}`);
               isSelectingAutocomplete = false;
             }, 200);
@@ -664,10 +668,14 @@ const fetchUsersByCrew = async (filterText, index) => {
           text={artistCrewPairs[index].crew}
           showList={!isAutocompleteEmpty}
           label="Crew Name"
+          inputClassName={`crew-input-${index}`}
           on:change={(event) => {
             isSelectingAutocomplete = true;
             if (!event.detail) {
               artistCrewPairs[index].crew = "";
+              setTimeout(() => {
+                document.querySelector(`.crew-input-${index}`)?.blur();
+              }, 0);
             }
             artistCrewPairs[index].userCrew = event.detail?.id;
             artistCrewPairs[index].crewData = event.detail;
