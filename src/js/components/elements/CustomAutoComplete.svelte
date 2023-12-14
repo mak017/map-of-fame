@@ -29,6 +29,7 @@ const beforeChange = (selected) => dispatch("beforechange", selected);
     showLoadingIndicator
     hideArrow
     lock
+    closeOnBlur={!selectedValue && !text}
     dropdownClassName={showList ? "" : "empty"}
     {inputClassName}
     {onBlur}
