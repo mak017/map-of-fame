@@ -151,6 +151,8 @@ const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
   userCrew: data.crewUser?.id ?? "",
   artistData: data.artistUser,
   crewData: data.crewUser,
+  isTouchedArtist: false,
+  isTouchedCrew: false,
 }));
 let artistCrewPairs =
   editArtistCrewPairs?.length > 0
@@ -633,7 +635,7 @@ const fetchUsersByCrew = async (filterText, index) => {
     </div> -->
   </div>
   <div class="artists-area">
-    {#each artistCrewPairs as _, index}
+    {#each artistCrewPairs as pair, index}
       <div class="artist-crew-pair">
         <CustomAutoComplete
           getItems={(text) => fetchUsersByArtist(text, index)}
@@ -642,13 +644,17 @@ const fetchUsersByCrew = async (filterText, index) => {
           text={artistCrewPairs[index].artist}
           showList={!isAutocompleteEmpty}
           label="Artist Name"
-          inputClassName={`artist-input-${index}`}
+          inputId={`artist-input-${index}`}
           on:change={(event) => {
+            if (isEditSpot && !pair.isTouchedArtist) {
+              artistCrewPairs[index].isTouchedArtist = true;
+              return;
+            }
             isSelectingAutocomplete = true;
             if (!event.detail) {
               artistCrewPairs[index].artist = "";
               setTimeout(() => {
-                document.querySelector(`.artist-input-${index}`)?.blur();
+                document.getElementById(`artist-input-${index}`)?.blur();
               }, 0);
             }
             artistCrewPairs[index].userArtist = event.detail?.id;
@@ -668,13 +674,17 @@ const fetchUsersByCrew = async (filterText, index) => {
           text={artistCrewPairs[index].crew}
           showList={!isAutocompleteEmpty}
           label="Crew Name"
-          inputClassName={`crew-input-${index}`}
+          inputId={`crew-input-${index}`}
           on:change={(event) => {
+            if (isEditSpot && !pair.isTouchedCrew) {
+              artistCrewPairs[index].isTouchedCrew = true;
+              return;
+            }
             isSelectingAutocomplete = true;
             if (!event.detail) {
               artistCrewPairs[index].crew = "";
               setTimeout(() => {
-                document.querySelector(`.crew-input-${index}`)?.blur();
+                document.getElementById(`crew-input-${index}`)?.blur();
               }, 0);
             }
             artistCrewPairs[index].userCrew = event.detail?.id;

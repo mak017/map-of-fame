@@ -8,7 +8,7 @@ export let data = undefined;
 export let text = "";
 export let showList = false;
 export let label = "";
-export let inputClassName = "";
+export let inputId = "";
 
 const dispatch = createEventDispatcher();
 const onBlur = (selected) => dispatch("blur", selected);
@@ -31,7 +31,7 @@ const beforeChange = (selected) => dispatch("beforechange", selected);
     lock
     closeOnBlur={!selectedValue && !text}
     dropdownClassName={showList ? "" : "empty"}
-    {inputClassName}
+    {inputId}
     {onBlur}
     {onChange}
     {beforeChange}
