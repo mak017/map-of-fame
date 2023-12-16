@@ -1,5 +1,5 @@
 <script>
-import { createEventDispatcher } from "svelte";
+import { createEventDispatcher, onDestroy, onMount } from "svelte";
 import AutoComplete from "simple-svelte-autocomplete";
 
 export let getItems = undefined;
@@ -9,12 +9,27 @@ export let text = "";
 export let showList = false;
 export let label = "";
 export let inputId = "";
+export let onInputChange = () => {};
+export let onInputBlur = () => {};
+let inputElement;
 
 const dispatch = createEventDispatcher();
 const onBlur = (selected) => dispatch("blur", selected);
 const onChange = (selected) => dispatch("change", selected);
 const onFocus = (selected) => dispatch("focus", selected);
 const beforeChange = (selected) => dispatch("beforechange", selected);
+
+onMount(() => {
+  inputElement = document.getElementById(inputId);
+
+  inputElement.addEventListener("keydown", onInputChange, false);
+  inputElement.addEventListener("blur", onInputBlur, false);
+});
+
+onDestroy(() => {
+  inputElement.removeEventListener("keydown", onInputChange);
+  inputElement.removeEventListener("blur", onInputBlur);
+});
 </script>
 
 <div class="autocomplete-container" class:not-empty={selectedValue || text}>

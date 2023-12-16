@@ -1,5 +1,7 @@
 <script>
 import { onDestroy, onMount } from "svelte";
+import isEqual from "lodash.isequal";
+import cloneDeep from "lodash.clonedeep";
 
 import {
   requestSearchSpots,
@@ -143,6 +145,7 @@ let progressState = {
   linkToVideo: false,
   link: false,
 };
+let savedRequestParams = {};
 
 const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
   artist: data.artist?.name ?? data.artistUser?.artist?.name ?? "",
@@ -233,6 +236,9 @@ const saveDraft = async (field) => {
   if (field == "sketch") requestObject.sketch = sketch.blob ?? "";
   if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
 
+  if (isEqual(requestObject, savedRequestParams)) return;
+
+  savedRequestParams = cloneDeep(requestObject);
   progressState[field] = true;
   await updateSpotDraft(token, requestObject);
   progressState[field] = false;
@@ -524,6 +530,12 @@ const fetchUsersByArtist = async (filterText, index) => {
   artistCrewPairs[index].userArtist = "";
   artistCrewPairs[index].artistData = undefined;
   isSelectingAutocomplete = false;
+
+  if (
+    isAutocompleteEmpty &&
+    savedRequestParams.artistsCrews?.[index]?.artist === filterText
+  )
+    return;
   const response = await requestSearchUserByArtist(filterText);
   const { success, result } = response;
   if (success && result) {
@@ -541,6 +553,12 @@ const fetchUsersByCrew = async (filterText, index) => {
   artistCrewPairs[index].userCrew = "";
   artistCrewPairs[index].crewData = undefined;
   isSelectingAutocomplete = false;
+
+  if (
+    isAutocompleteEmpty &&
+    savedRequestParams.artistsCrews?.[index]?.crew === filterText
+  )
+    return;
   const response = await requestSearchUserByCrew(filterText);
   const { success, result } = response;
   if (success && result) {
@@ -645,6 +663,11 @@ const fetchUsersByCrew = async (filterText, index) => {
           showList={!isAutocompleteEmpty}
           label="Artist Name"
           inputId={`artist-input-${index}`}
+          onInputBlur={(event) => {
+            if (event.target.value !== pair.artist) {
+              artistCrewPairs[index].artist = event.target.value;
+            }
+          }}
           on:change={(event) => {
             if (isEditSpot && !pair.isTouchedArtist) {
               artistCrewPairs[index].isTouchedArtist = true;
@@ -675,6 +698,11 @@ const fetchUsersByCrew = async (filterText, index) => {
           showList={!isAutocompleteEmpty}
           label="Crew Name"
           inputId={`crew-input-${index}`}
+          onInputBlur={(event) => {
+            if (event.target.value !== pair.crew) {
+              artistCrewPairs[index].crew = event.target.value;
+            }
+          }}
           on:change={(event) => {
             if (isEditSpot && !pair.isTouchedCrew) {
               artistCrewPairs[index].isTouchedCrew = true;
