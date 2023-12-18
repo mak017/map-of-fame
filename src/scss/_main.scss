@@ -257,6 +257,12 @@ textarea {
       }
     }
   }
+
+  &-container.empty {
+    .autocomplete-list {
+      display: none;
+    }
+  }
 }
 
 .artist.title {

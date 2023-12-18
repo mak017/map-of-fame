@@ -32,7 +32,10 @@ onDestroy(() => {
 });
 </script>
 
-<div class="autocomplete-container" class:not-empty={selectedValue || text}>
+<div
+  class="autocomplete-container"
+  class:not-empty={selectedValue || text}
+  class:empty={!selectedValue && !text}>
   <AutoComplete
     searchFunction={getItems}
     delay="200"
@@ -67,7 +70,7 @@ onDestroy(() => {
     <div class="selected-type">
       <span class:hidden={data.name}
         >{data.name || data.artist?.name || data.crew?.name}</span>
-      ({data.type || data.username})
+      ({data.type || `@${data.username}`})
     </div>
   {/if}
 </div>
