@@ -82,15 +82,41 @@ export const updateSpotDraft = async (
   if (categoryId) formData.append("category_id", categoryId);
   if (artistsCrews?.length) {
     artistsCrews.forEach((item, index) => {
-      const { artist, crew } = item;
+      const { artist, crew, userArtist, userCrew } = item;
       if (
         artist ||
         crew ||
+        userArtist ||
+        userCrew ||
         (index === 0 &&
-          (typeof artist !== "undefined" || typeof crew !== "undefined"))
+          (typeof artist !== "undefined" ||
+            typeof crew !== "undefined" ||
+            typeof userCrew !== "undefined" ||
+            typeof userArtist !== "undefined"))
       ) {
-        formData.append(`artist_crew[${index}][artist]`, artist);
-        formData.append(`artist_crew[${index}][crew]`, crew);
+        if (!userArtist && !artist) {
+          formData.append(`artist_crew[${index}][user_by_artist_id]`, "");
+          formData.append(`artist_crew[${index}][artist]`, "");
+        } else {
+          userArtist
+            ? formData.append(
+                `artist_crew[${index}][user_by_artist_id]`,
+                userArtist
+              )
+            : formData.append(`artist_crew[${index}][artist]`, artist);
+        }
+
+        if (!userCrew && !crew) {
+          formData.append(`artist_crew[${index}][user_by_crew_id]`, "");
+          formData.append(`artist_crew[${index}][crew]`, "");
+        } else {
+          userCrew
+            ? formData.append(
+                `artist_crew[${index}][user_by_crew_id]`,
+                userCrew
+              )
+            : formData.append(`artist_crew[${index}][crew]`, crew);
+        }
       }
     });
   }

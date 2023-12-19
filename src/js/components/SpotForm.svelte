@@ -1,13 +1,17 @@
 <script>
 import { onDestroy, onMount } from "svelte";
+import isEqual from "lodash.isequal";
+import cloneDeep from "lodash.clonedeep";
 
-import { requestSearchSpots } from "../api/search.js";
+import {
+  requestSearchSpots,
+  requestSearchUserByArtist,
+  requestSearchUserByCrew,
+} from "../api/search.js";
 import { getFirmsRequest } from "../api/settings";
 import {
-  getLastSpotDraft,
   getUserCategories,
   publishSpotDraft,
-  updateSpot,
   updateSpotDraft,
 } from "./../api/spot";
 import {
@@ -42,6 +46,7 @@ import FormRadioButton from "./elements/FormRadioButton.svelte";
 import FormTextArea from "./elements/FormTextArea.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
 import CustomSelect from "./elements/CustomSelect.svelte";
+import CustomAutoComplete from "./elements/CustomAutoComplete.svelte";
 import Spinner from "./elements/Spinner.svelte";
 import PlusSvg from "./elements/icons/PlusSvg.svelte";
 
@@ -108,6 +113,8 @@ let shouldHideInProfile =
 let isSubmitDisabled = false;
 let isInProgress = false;
 let isSubmitting = false;
+let isSelectingAutocomplete = false;
+let isAutocompleteEmpty = true;
 let errors = {
   year: "",
   imageFile: "",
@@ -138,10 +145,17 @@ let progressState = {
   linkToVideo: false,
   link: false,
 };
+let savedRequestParams = {};
 
 const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
-  artist: data.artist?.name ?? "",
-  crew: data.crew?.name ?? "",
+  artist: data.artist?.name ?? data.artistUser?.artist?.name ?? "",
+  crew: data.crew?.name ?? data.crewUser?.crew?.name ?? "",
+  userArtist: data.artistUser?.id ?? "",
+  userCrew: data.crewUser?.id ?? "",
+  artistData: data.artistUser,
+  crewData: data.crewUser,
+  isTouchedArtist: false,
+  isTouchedCrew: false,
 }));
 let artistCrewPairs =
   editArtistCrewPairs?.length > 0
@@ -150,6 +164,8 @@ let artistCrewPairs =
         {
           artist: isArtist() ? $userData.artist?.name ?? "" : "",
           crew: isArtist() || isCrew() ? $userData.crew?.name ?? "" : "",
+          userArtist: "",
+          userCrew: "",
         },
       ];
 
@@ -220,6 +236,9 @@ const saveDraft = async (field) => {
   if (field == "sketch") requestObject.sketch = sketch.blob ?? "";
   if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
 
+  if (isEqual(requestObject, savedRequestParams)) return;
+
+  savedRequestParams = cloneDeep(requestObject);
   progressState[field] = true;
   await updateSpotDraft(token, requestObject);
   progressState[field] = false;
@@ -505,6 +524,52 @@ $: if (isSubmitting && !isInProgress) {
 const handleAddMoreClick = () => {
   artistCrewPairs = [...artistCrewPairs, { artist: "", crew: "" }];
 };
+
+const fetchUsersByArtist = async (filterText, index) => {
+  artistCrewPairs[index].artist = filterText;
+  artistCrewPairs[index].userArtist = "";
+  artistCrewPairs[index].artistData = undefined;
+  isSelectingAutocomplete = false;
+
+  if (
+    isAutocompleteEmpty &&
+    savedRequestParams.artistsCrews?.[index]?.artist === filterText
+  )
+    return;
+  const response = await requestSearchUserByArtist(filterText);
+  const { success, result } = response;
+  if (success && result) {
+    isAutocompleteEmpty = !result.length;
+    return result.map((item) => ({
+      id: item.id,
+      name: item.artist,
+      type: `@${item.username}`,
+    }));
+  }
+};
+
+const fetchUsersByCrew = async (filterText, index) => {
+  artistCrewPairs[index].crew = filterText;
+  artistCrewPairs[index].userCrew = "";
+  artistCrewPairs[index].crewData = undefined;
+  isSelectingAutocomplete = false;
+
+  if (
+    isAutocompleteEmpty &&
+    savedRequestParams.artistsCrews?.[index]?.crew === filterText
+  )
+    return;
+  const response = await requestSearchUserByCrew(filterText);
+  const { success, result } = response;
+  if (success && result) {
+    isAutocompleteEmpty = !result.length;
+    return result.map((item) => ({
+      id: item.id,
+      name: item.crew,
+      type: `@${item.username}`,
+    }));
+  }
+};
 </script>
 
 <form class:edit={isEditSpot} on:submit|preventDefault={handleSubmit}>
@@ -590,20 +655,76 @@ const handleAddMoreClick = () => {
   <div class="artists-area">
     {#each artistCrewPairs as pair, index}
       <div class="artist-crew-pair">
-        <FormTextInput
-          placeholder="Artist Name"
-          bind:value={pair.artist}
-          on:blur={() => saveDraft(`artist${index + 1}`)}
-          wideOnMobile
-          editSpot={isEditSpot}
-          addSpot={!isEditSpot} />
-        <FormTextInput
-          placeholder="Crew Name"
-          bind:value={pair.crew}
-          on:blur={() => saveDraft(`crew${index + 1}`)}
-          wideOnMobile
-          editSpot={isEditSpot}
-          addSpot={!isEditSpot} />
+        <CustomAutoComplete
+          getItems={(text) => fetchUsersByArtist(text, index)}
+          selectedValue={artistCrewPairs[index].userArtist}
+          data={artistCrewPairs[index].artistData}
+          text={artistCrewPairs[index].artist}
+          showList={!isAutocompleteEmpty}
+          label="Artist Name"
+          inputId={`artist-input-${index}`}
+          onInputBlur={(event) => {
+            if (event.target.value !== pair.artist) {
+              artistCrewPairs[index].artist = event.target.value;
+            }
+          }}
+          on:change={(event) => {
+            if (isEditSpot && !pair.isTouchedArtist) {
+              artistCrewPairs[index].isTouchedArtist = true;
+              return;
+            }
+            isSelectingAutocomplete = true;
+            if (!event.detail) {
+              artistCrewPairs[index].artist = "";
+              setTimeout(() => {
+                document.getElementById(`artist-input-${index}`)?.blur();
+              }, 0);
+            }
+            artistCrewPairs[index].userArtist = event.detail?.id;
+            artistCrewPairs[index].artistData = event.detail;
+            saveDraft(`artist${index + 1}`);
+          }}
+          on:blur={() => {
+            setTimeout(() => {
+              !isSelectingAutocomplete && saveDraft(`artist${index + 1}`);
+              isSelectingAutocomplete = false;
+            }, 200);
+          }} />
+        <CustomAutoComplete
+          getItems={(text) => fetchUsersByCrew(text, index)}
+          selectedValue={artistCrewPairs[index].userCrew}
+          data={artistCrewPairs[index].crewData}
+          text={artistCrewPairs[index].crew}
+          showList={!isAutocompleteEmpty}
+          label="Crew Name"
+          inputId={`crew-input-${index}`}
+          onInputBlur={(event) => {
+            if (event.target.value !== pair.crew) {
+              artistCrewPairs[index].crew = event.target.value;
+            }
+          }}
+          on:change={(event) => {
+            if (isEditSpot && !pair.isTouchedCrew) {
+              artistCrewPairs[index].isTouchedCrew = true;
+              return;
+            }
+            isSelectingAutocomplete = true;
+            if (!event.detail) {
+              artistCrewPairs[index].crew = "";
+              setTimeout(() => {
+                document.getElementById(`crew-input-${index}`)?.blur();
+              }, 0);
+            }
+            artistCrewPairs[index].userCrew = event.detail?.id;
+            artistCrewPairs[index].crewData = event.detail;
+            saveDraft(`crew${index + 1}`);
+          }}
+          on:blur={() => {
+            setTimeout(() => {
+              !isSelectingAutocomplete && saveDraft(`crew${index + 1}`);
+              isSelectingAutocomplete = false;
+            }, 200);
+          }} />
       </div>
     {/each}
     {#if artistCrewPairs.length < 5}

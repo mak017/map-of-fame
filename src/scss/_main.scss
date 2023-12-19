@@ -182,11 +182,100 @@ textarea {
       background-color: var(--color-accent);
     }
   }
+
+  &-container &.select {
+    width: 100%;
+
+    .autocomplete-input.input {
+      width: 530px;
+      max-width: 100%;
+      padding: 6px 0;
+      border: 0;
+      border-bottom: 1px solid var(--color-dark);
+      color: var(--color-dark);
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 20px;
+
+      &::placeholder {
+        padding-left: 2px;
+        color: var(--color-dark);
+        font-weight: normal;
+      }
+
+      &:focus {
+        border-bottom-color: var(--color-accent);
+        outline: 0;
+      }
+    }
+
+    .autocomplete-list {
+      margin-top: 5px;
+      padding: 4px 0;
+      border: 1px solid var(--color-accent);
+
+      &.empty {
+        display: none;
+      }
+
+      &-item {
+        padding: 7px 20px;
+        color: var(--color-dark);
+        transition: color 0.3s;
+
+        &.selected {
+          background-color: transparent;
+          color: var(--color-dark);
+
+          .name {
+            opacity: 0.5;
+          }
+        }
+
+        > div {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          &:hover {
+            .name {
+              opacity: 0.5;
+            }
+          }
+        }
+
+        .name {
+          font-size: 18px;
+          line-height: 1.22;
+        }
+
+        .type {
+          opacity: 0.6;
+          font-size: 13px;
+          line-height: 1.22;
+        }
+      }
+    }
+  }
+
+  &-container.empty {
+    .autocomplete-list {
+      display: none;
+    }
+  }
 }
 
 .artist.title {
   span {
     color: var(--color-dark-grey);
+  }
+
+  a {
+    color: inherit;
+
+    &:hover {
+      text-decoration: none;
+    }
   }
 }
 
@@ -211,5 +300,16 @@ textarea {
   .tiktok-embed {
     margin-top: 0;
     margin-bottom: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .autocomplete {
+    &-container &.select {
+      .autocomplete-input.input {
+        width: 100%;
+        max-width: none;
+      }
+    }
   }
 }
