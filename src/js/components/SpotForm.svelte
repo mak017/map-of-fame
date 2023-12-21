@@ -522,7 +522,10 @@ $: if (isSubmitting && !isInProgress) {
 }
 
 const handleAddMoreClick = () => {
-  artistCrewPairs = [...artistCrewPairs, { artist: "", crew: "" }];
+  artistCrewPairs = [
+    ...artistCrewPairs,
+    { artist: "", crew: "", isTouchedArtist: true, isTouchedCrew: true },
+  ];
 };
 
 const fetchUsersByArtist = async (filterText, index) => {
