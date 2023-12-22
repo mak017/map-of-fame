@@ -112,6 +112,15 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   }
 }
 
+$: if (
+  $profileState.isInitialized &&
+  !$isUserVerifyProgress &&
+  typeof $profileState.user.username === "string" &&
+  strippedUsername !== $profileState.user.username
+) {
+  window.location.reload();
+}
+
 $: unusedInvitesCount = $profileState.invites.reduce(
   (accumulator, invite) =>
     !invite.invitedUserId ? accumulator + 1 : accumulator,
