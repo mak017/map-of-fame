@@ -28,8 +28,8 @@ import { getProfileYears } from "../../utils/datesUtils.js";
 import { getSpotById, getUserSpots } from "../../api/spot.js";
 
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
-import MapSvg from "../elements/icons/MapSvg.svelte";
 import Spinner from "../elements/Spinner.svelte";
+import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
 import Popup from "../Popup.svelte";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import ShareMarker from "./ShareMarker.svelte";
@@ -300,11 +300,7 @@ const getArtistsString = (artistCrew) => {
     <div class="bottom">
       <div class="year">{data.year ?? EMPTY_YEAR_STRING}</div>
       <div class="show-on-map-wrapper">
-        <button
-          type="button"
-          class="show-on-map"
-          on:click={handleShowOnMapClick}
-          ><span>Show on</span> <MapSvg /></button>
+        <ShowOnMapButton onClick={handleShowOnMapClick} />
       </div>
       <div class="buttons">
         {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}
@@ -466,25 +462,6 @@ const getArtistsString = (artistCrew) => {
 
 .show-on-map-wrapper {
   text-align: center;
-}
-
-.show-on-map {
-  display: flex;
-  align-items: center;
-  margin: auto;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--color-accent);
-  font-size: 14px;
-  font-weight: 900;
-  line-height: 22px;
-  text-transform: uppercase;
-  cursor: pointer;
-
-  > span {
-    margin-right: 6px;
-  }
 }
 
 .buttons {

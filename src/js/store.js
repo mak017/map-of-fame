@@ -29,6 +29,7 @@ export const isLighthouseActive = writable(false);
 export const mapBounds = writable([]);
 export const areaSelection = writable(null);
 export const areaSpots = writable(null);
+export const areaCoords = writable([]);
 export const clusterSpots = writable(null);
 export const selectedUserProfileData = writable({});
 export const searchControl = writable(null);

@@ -1,26 +1,61 @@
 <script>
 import { onDestroy } from "svelte";
 import { fade } from "svelte/transition";
-import { goto } from "@roxi/routify";
+import { goto, params } from "@roxi/routify";
 
-import { areaSpots, clusterSpots, openedMarkerData } from "./../store.js";
+import {
+  areaSpots,
+  clusterSpots,
+  isAreaSelectionActive,
+  isSearchResults,
+  isShowOnMapMode,
+  markersStore,
+  openedMarkerData,
+  selectedArtist,
+  selectedCrew,
+  selectedYear,
+} from "./../store.js";
+import { requestSpotsInArea } from "../init.js";
 
 import CustomSelect from "./elements/CustomSelect.svelte";
 
 import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../constants";
+import ShowOnMapButton from "./elements/ShowOnMapButton.svelte";
+
+let isLoadedFromMap = true;
 
 onDestroy(() => {
   clusterSpots.set([]);
+
+  if (!isLoadedFromMap) {
+    document.getElementById("highlighted").innerHTML = "";
+  }
 });
 
 if (!$areaSpots?.length && !$clusterSpots?.length) {
-  $goto("/");
+  const { poly } = $params;
+  const coords = poly.split(",").reduce((acc, coord) => {
+    const lastItem = acc[acc?.length - 1];
+
+    if (lastItem?.length === 1) {
+      acc[acc.length - 1].push(coord);
+    } else {
+      acc.push([coord]);
+    }
+
+    return acc;
+  }, []);
+  if (coords.length < 4 || !coords.every((coord) => coord.length === 2)) {
+    $goto("/");
+  } else {
+    requestSpotsInArea(coords);
+    isLoadedFromMap = false;
+  }
 }
 
-let currentYear = ALL_YEARS_STRING;
-let spots = $clusterSpots?.length ? $clusterSpots : $areaSpots;
-let spotsToShow = spots;
-let yearsToApply = [
+const getSpots = () => ($clusterSpots?.length ? $clusterSpots : $areaSpots);
+
+const getYears = () => [
   ALL_YEARS_STRING,
   ...new Set(
     $areaSpots
@@ -30,10 +65,21 @@ let yearsToApply = [
         (a, b) =>
           (a === EMPTY_YEAR_STRING) - (b === EMPTY_YEAR_STRING) ||
           -(a > b) ||
-          +(a < b)
-      )
+          +(a < b),
+      ),
   ),
 ];
+
+let currentYear = ALL_YEARS_STRING;
+let spots = getSpots();
+let spotsToShow = spots;
+let yearsToApply = getYears();
+
+$: if ($areaSpots || $clusterSpots) {
+  spots = getSpots();
+  spotsToShow = spots;
+  yearsToApply = getYears();
+}
 
 const handleYearSelect = (event) => {
   const { value } = event.detail.detail;
@@ -69,6 +115,17 @@ const onSpotClick = (spot) => {
     id,
   });
 };
+
+const handleShowOnMapClick = () => {
+  markersStore.set({ spots, years: yearsToApply });
+  isSearchResults.set(false);
+  isShowOnMapMode.set(true);
+  isAreaSelectionActive.set(true);
+  selectedYear.set(currentYear);
+  selectedArtist.set("");
+  selectedCrew.set("");
+  $goto("/");
+};
 </script>
 
 <div class="container">
@@ -84,6 +141,7 @@ const onSpotClick = (spot) => {
           isYear
           on:select={handleYearSelect} />
       </div>
+      <ShowOnMapButton onClick={handleShowOnMapClick} />
     </div>
     <div class="spots">
       {#if spotsToShow}

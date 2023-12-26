@@ -32,7 +32,7 @@ import {
 
 import Spinner from "./../elements/Spinner.svelte";
 import CustomSelect from "../elements/CustomSelect.svelte";
-import MapSvg from "../elements/icons/MapSvg.svelte";
+import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
 import Popup from "../Popup.svelte";
 import Invites from "./Invites.svelte";
@@ -349,11 +349,7 @@ const handleHideAllClick = () => {
               on:select={handleYearSelect}
               listPlacement="bottom" />
           </div>
-          <button
-            type="button"
-            class="button show-on-map"
-            on:click={() => handleShowOnMapClick()}
-            ><span>Show on</span> <MapSvg /></button>
+          <ShowOnMapButton onClick={handleShowOnMapClick} />
         </div>
       {/if}
       {#if !$profileState.isLoading}
@@ -539,21 +535,6 @@ const handleHideAllClick = () => {
 
   &:hover {
     opacity: 1;
-  }
-}
-
-.show-on-map {
-  display: flex;
-  align-items: center;
-  background: none;
-  color: var(--color-accent);
-  font-size: 14px;
-  font-weight: 900;
-  line-height: 22px;
-  text-transform: uppercase;
-
-  > span {
-    margin-right: 6px;
   }
 }
 

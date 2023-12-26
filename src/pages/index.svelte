@@ -28,6 +28,7 @@ import {
   isAreaSelectionActive,
   isPermalinkReady,
   profileState,
+  areaCoords,
 } from "../js/store.js";
 import {
   getCurrentYear,
@@ -104,6 +105,7 @@ const toggleAreaSelectionMode = (toggle) => {
   $map.setMinZoom(MIN_ZOOM);
   $map.dragging.enable();
   $areaSelection.deactivate();
+  isShowOnMapMode.set(false);
   document.getElementById("highlighted").innerHTML = "";
 };
 
@@ -259,7 +261,9 @@ const handleKeyDown = (e) => {
       {/if}
     {:else if $isAreaSelectionActive && ($areaSpots || $isSpotsFromAreaLoading)}
       <a
-        href={$url("/selected-spots")}
+        href={$url("/selected-spots", {
+          poly: $areaCoords,
+        })}
         class="selection selected-area-spots"
         class:active={!$isSpotsFromAreaLoading && $areaSpots.length > 0}
         transition:fade={{ duration: 200 }}>
@@ -280,7 +284,7 @@ const handleKeyDown = (e) => {
       title="Go to your location" />
   {/if}
 
-  {#if !$isSearchResults && !$isShowOnMapMode && !$shouldShowAddSpot && !$selectedUserProfileData.artist?.name && ($isAreaSelectionActive || $currentZoom > 14)}
+  {#if !$isSearchResults && !$shouldShowAddSpot && !$selectedUserProfileData.artist?.name && ($isAreaSelectionActive || $currentZoom > 14)}
     <button
       class="button button-main_screen button-square button-select_area"
       class:active={$isAreaSelectionActive}

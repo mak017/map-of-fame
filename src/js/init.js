@@ -1,15 +1,18 @@
 import { verifyAuthRequest } from "./api/auth";
 import { requestSearchSpots } from "./api/search";
 import { getCategories, getSettingsRequest } from "./api/settings";
-import { getRecentSpots, getSpots } from "./api/spot";
+import { getRecentSpots, getSpots, getSpotsInArea } from "./api/spot";
 import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "./constants";
 import {
+  areaCoords,
+  areaSpots,
   categoriesList,
   isFirstTimeVisit,
   isInitialized,
   isLighthouseActive,
   isLoggedIn,
   isSearchResults,
+  isSpotsFromAreaLoading,
   isUserVerifyProgress,
   mapBounds,
   markersStore,
@@ -144,5 +147,26 @@ export const requestRecentSpots = () => {
       isLighthouseActive.set(true);
       markersStore.set(result);
     }
+  });
+};
+
+export const requestSpotsInArea = (coords) => {
+  getSpotsInArea(coords).then(({ result }) => {
+    areaCoords.set(coords);
+    areaSpots.set(result);
+    markersStore.set({ spots: result });
+    const style = `
+      .map-marker-with-photo, .map-marker-cluster
+          {
+            width: 34px !important;
+            height: 34px !important;
+            border-width: 2px;
+            opacity: 1 !important;
+            font-size: 14px;
+            pointer-events: auto !important;
+          }
+        `;
+    document.getElementById("highlighted").innerHTML = style;
+    isSpotsFromAreaLoading.set(false);
   });
 };
