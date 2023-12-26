@@ -277,7 +277,7 @@ const getArtistsString = (artistCrew) => {
   <Spinner height={40} margin="auto" />
 {:then data}
   <div class="card">
-    <div class="top">
+    <div class={`top ${data.status.toLowerCase()}`}>
       <div class="posted-by">
         <div class="subtitle">Posted by</div>
         <button type="button" class="button" on:click={onUserClick}>
@@ -291,7 +291,7 @@ const getArtistsString = (artistCrew) => {
       </div>
       <div class="status">
         <div class="subtitle">Status</div>
-        <div class={`title ${data.status.toLowerCase()}`}>{data.status}</div>
+        <div class="title">{data.status}</div>
       </div>
     </div>
     <div class="img">
@@ -386,6 +386,35 @@ const getArtistsString = (artistCrew) => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 24px;
+
+  .posted-by {
+    max-width: 60%;
+  }
+
+  .status {
+    text-align: right;
+  }
+
+  &.buffed {
+    .posted-by {
+      max-width: 72%;
+    }
+
+    .status .title {
+      color: var(--color-error);
+      text-decoration-line: line-through;
+    }
+  }
+
+  &.live {
+    .posted-by {
+      max-width: 85%;
+    }
+
+    .status .title {
+      color: var(--color-success);
+    }
+  }
 }
 
 .subtitle {
@@ -396,34 +425,25 @@ const getArtistsString = (artistCrew) => {
 }
 
 .title {
+  max-width: 100%;
+  overflow: hidden;
   color: var(--color-dark);
   font-size: 24px;
   font-weight: 900;
   line-height: 1.22;
   text-align: left;
   text-transform: uppercase;
+  text-overflow: ellipsis;
 }
 
 .posted-by {
   .button {
+    max-width: 100%;
     background: none;
   }
 
   .title {
     color: var(--color-accent);
-  }
-}
-
-.status {
-  text-align: right;
-
-  .buffed {
-    color: var(--color-error);
-    text-decoration-line: line-through;
-  }
-
-  .live {
-    color: var(--color-success);
   }
 }
 
