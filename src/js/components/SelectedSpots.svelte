@@ -18,9 +18,9 @@ import {
 import { requestSpotsInArea } from "../init.js";
 
 import CustomSelect from "./elements/CustomSelect.svelte";
+import ShowOnMapButton from "./elements/ShowOnMapButton.svelte";
 
 import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../constants";
-import ShowOnMapButton from "./elements/ShowOnMapButton.svelte";
 
 let isLoadedFromMap = true;
 
@@ -141,7 +141,9 @@ const handleShowOnMapClick = () => {
           isYear
           on:select={handleYearSelect} />
       </div>
-      <ShowOnMapButton onClick={handleShowOnMapClick} />
+      {#if currentYear === ALL_YEARS_STRING}
+        <ShowOnMapButton onClick={handleShowOnMapClick} />
+      {/if}
     </div>
     <div class="spots">
       {#if spotsToShow}
