@@ -479,7 +479,10 @@ const handleHideAllClick = () => {
 }
 
 .user {
+  max-width: 100%;
+  overflow: hidden;
   color: var(--color-dark);
+  text-overflow: ellipsis;
 
   .name {
     margin-bottom: 4px;
