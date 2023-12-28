@@ -5,7 +5,7 @@ import { url } from "@roxi/routify";
 <div class="wrapper">
   <div class="logo" />
   <div class="container">
-    <img alt="Page not found" src="../images/404.gif" />
+    <img alt="Page not found" src="/images/404.gif" />
     <h1>404</h1>
     <h2>Rage not found</h2>
     <p>
