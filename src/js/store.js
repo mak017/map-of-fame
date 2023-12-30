@@ -48,6 +48,7 @@ const createProfileState = () => {
     scrollOffset: 0,
     spotsList: [],
     currentYear: undefined,
+    sortBy: "created_at",
     yearsToApply: [],
     invites: [],
     user: {},
@@ -70,6 +71,7 @@ const createProfileState = () => {
       update((state) => ({ ...state, yearsToApply })),
     setInvites: (invites) => update((state) => ({ ...state, invites })),
     setUser: (user) => update((state) => ({ ...state, user })),
+    setSorting: (sortBy) => update((state) => ({ ...state, sortBy })),
     setIsInitialized: (value) =>
       update((state) => ({ ...state, isInitialized: value })),
     setIsLoading: (value) =>

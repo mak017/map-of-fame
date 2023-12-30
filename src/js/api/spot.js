@@ -176,14 +176,17 @@ export const feedbackOnSpot = async (spotId, { userId, message, reason }) => {
 export const getUserSpots = async (
   userId,
   token,
-  { limit = MAX_SPOTS_PER_PAGE, offset = 0, year = null }
+  { limit = MAX_SPOTS_PER_PAGE, offset = 0, year = null, sortBy }
 ) => {
   const bearer = `Bearer ${token}`;
-  const response = await fetch(USER_ID_SPOTS(userId, limit, offset, year), {
-    method: "GET",
-    withCredentials: true,
-    headers: { Authorization: bearer },
-  });
+  const response = await fetch(
+    USER_ID_SPOTS(userId, limit, offset, sortBy, year),
+    {
+      method: "GET",
+      withCredentials: true,
+      headers: { Authorization: bearer },
+    }
+  );
   const result = await response.json();
   return result;
 };

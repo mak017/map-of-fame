@@ -133,6 +133,7 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
   getUserSpots(strippedUsername, token, {
     year,
     offset,
+    sortBy: $profileState.sortBy,
   }).then((response) => {
     const { success, result, errors } = response;
     if (success && result) {
@@ -289,6 +290,13 @@ const handleHideAllClick = () => {
     }
   });
 };
+
+const handleSortingChange = (value) => () => {
+  if ($profileState.sortBy === value) return;
+
+  profileState.setSorting(value);
+  fetchSpots({ isNewFetch: true });
+};
 </script>
 
 <div class="container" class:isCurrentUser>
@@ -349,7 +357,25 @@ const handleHideAllClick = () => {
               on:select={handleYearSelect}
               listPlacement="bottom" />
           </div>
-          <ShowOnMapButton onClick={handleShowOnMapClick} />
+          <div class="sorting">
+            <span>Sort by: </span>
+            <button
+              type="button"
+              class={`button${
+                $profileState.sortBy === "created_at" ? " active" : ""
+              }`}
+              on:click={handleSortingChange("created_at")}>Default</button>
+            {" / "}
+            <button
+              type="button"
+              class={`button${
+                $profileState.sortBy === "year" ? " active" : ""
+              }`}
+              on:click={handleSortingChange("year")}>Year</button>
+          </div>
+          <div class="show-on-map">
+            <ShowOnMapButton onClick={handleShowOnMapClick} />
+          </div>
         </div>
       {/if}
       {#if !$profileState.isLoading}
@@ -571,20 +597,45 @@ const handleHideAllClick = () => {
   }
 }
 
-.year-select {
-  width: 114px;
-  height: 40px;
-}
-
 .data {
   flex: 1 0 auto;
   width: 100%;
 
   &-top {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
     margin-bottom: 16px;
   }
+}
+
+.year-select {
+  width: 114px;
+  height: 40px;
+}
+
+.sorting {
+  margin-left: 24px;
+  line-height: 40px;
+
+  .button {
+    background: none;
+    color: var(--color-accent);
+    font-size: 16px;
+    font-weight: 500;
+
+    &.active {
+      font-weight: 700;
+    }
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+.show-on-map {
+  margin-left: auto;
+  line-height: 40px;
 }
 
 .spots {
@@ -758,6 +809,10 @@ const handleHideAllClick = () => {
     margin: -20px 0 52px;
     background: url(../../../images/logout.svg) 50% 50%/27px 27px no-repeat;
     font-size: 0;
+  }
+
+  .sorting {
+    margin-left: auto;
   }
 
   .go-to-map {
