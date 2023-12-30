@@ -371,6 +371,7 @@ const handleSortingChange = (value) => () => {
               class={`button${
                 $profileState.sortBy === "year" ? " active" : ""
               }`}
+              disabled={$profileState.currentYear !== ALL_YEARS_STRING}
               on:click={handleSortingChange("year")}>Year</button>
           </div>
           <div class="show-on-map">
@@ -625,6 +626,10 @@ const handleSortingChange = (value) => () => {
 
     &.active {
       font-weight: 700;
+    }
+
+    &:disabled {
+      opacity: 0.5;
     }
 
     &:hover {
