@@ -41,14 +41,14 @@
 
 body {
   &.geo-search-active {
-    .button.button-open_search {
+    .button.button-main_screen.button-open_search {
       opacity: 1;
       visibility: visible;
     }
   }
 
   &.geo-search-overlay {
-    .button.button-open_search {
+    .button.button-main_screen.button-open_search {
       width: 40px;
       color: transparent;
       padding-left: 0;
