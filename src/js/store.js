@@ -38,6 +38,7 @@ export const isShowOnMapMode = writable(false);
 export const isAreaSelectionActive = writable(false);
 export const isSpotsFromAreaLoading = writable(false);
 export const isFirstTimeVisit = writable(false);
+export const withHunters = writable(true);
 export const shouldShowAddSpot = writable(null);
 export const shouldShowResetPassword = writable(false);
 export const resetPasswordToken = writable(null);

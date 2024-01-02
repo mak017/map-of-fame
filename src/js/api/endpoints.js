@@ -81,8 +81,10 @@ export const SITE_YEARS = () => `${ENDPOINT_ORIGIN}/api/site/years`;
 
 export const SPOT = () => `${ENDPOINT_ORIGIN}/api/spot`;
 
-export const SPOT_YEAR = (year, geoRect, categories) => {
-  let url = `${ENDPOINT_ORIGIN}/api/spot?${getGeoRect(geoRect)}`;
+export const SPOT_YEAR = (year, geoRect, categories, withHunters) => {
+  let url = `${ENDPOINT_ORIGIN}/api/spot?hunters=${
+    withHunters ? 1 : 0
+  }${getGeoRect(geoRect)}`;
 
   if (year) {
     url += `&year=${year}`;

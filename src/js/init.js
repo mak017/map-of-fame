@@ -1,8 +1,9 @@
+import { get } from "svelte/store";
+
 import { verifyAuthRequest } from "./api/auth";
 import { requestSearchSpots } from "./api/search";
 import { getCategories, getSettingsRequest } from "./api/settings";
 import { getRecentSpots, getSpots, getSpotsInArea } from "./api/spot";
-import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "./constants";
 import {
   areaCoords,
   areaSpots,
@@ -18,6 +19,7 @@ import {
   markersStore,
   settings,
   userData,
+  withHunters,
 } from "./store";
 import {
   isEmpty,
@@ -28,11 +30,7 @@ import {
 import { permalink } from "./utils/mapUtils/permalink";
 import { transformSettings } from "./utils/transformers";
 
-let bounds;
-
-mapBounds.subscribe((value) => {
-  bounds = value;
-});
+import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "./constants";
 
 export const getSettings = () =>
   getSettingsRequest().then((response) => {
@@ -86,6 +84,8 @@ export const initApp = () => {
 };
 
 export const requestSpots = (year) => {
+  const bounds = get(mapBounds);
+  const $withHunters = get(withHunters);
   let categories = loadFromLocalStorage("categories");
   let yearForRequest = year;
 
@@ -106,14 +106,16 @@ export const requestSpots = (year) => {
     yearForRequest = undefined;
   }
 
-  return getSpots(yearForRequest, bounds, categories).then((response) => {
-    const { success, result } = response;
-    if (success && result) {
-      isSearchResults.set(false);
-      isLighthouseActive.set(false);
-      markersStore.set(result);
+  return getSpots(yearForRequest, bounds, categories, $withHunters).then(
+    (response) => {
+      const { success, result } = response;
+      if (success && result) {
+        isSearchResults.set(false);
+        isLighthouseActive.set(false);
+        markersStore.set(result);
+      }
     }
-  });
+  );
 };
 
 export const performSearch = ({ artist, crew, year, geoRect, isInitial }) => {
@@ -133,6 +135,7 @@ export const performSearch = ({ artist, crew, year, geoRect, isInitial }) => {
 };
 
 export const requestRecentSpots = () => {
+  const bounds = get(mapBounds);
   let categories = loadFromLocalStorage("categories");
 
   if (!categories) {
