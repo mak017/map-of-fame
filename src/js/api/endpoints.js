@@ -113,14 +113,16 @@ export const SPOT_ID_FEEDBACK = (id) =>
 
 export const SPOT_SEARCH = () => `${ENDPOINT_ORIGIN}/api/spot/search`;
 
-export const SPOT_FROM_POLY = (polygon) => {
+export const SPOT_FROM_POLY = (polygon, withHunters) => {
   const query = polygon.reduce((acc, coords, index) => {
     const [lng, lat] = coords;
     const chunk = `poly[${index}][lat]=${lat}&poly[${index}][lng]=${lng}`;
     return index === 0 ? chunk : `${acc}&${chunk}`;
   }, "");
 
-  return `${ENDPOINT_ORIGIN}/api/spot/fromPoly?${query}`;
+  return `${ENDPOINT_ORIGIN}/api/spot/fromPoly?${query}&hunters=${
+    withHunters ? 1 : 0
+  }`;
 };
 
 export const DRAFT_GET_LAST = () => `${ENDPOINT_ORIGIN}/api/draft/getLast`;

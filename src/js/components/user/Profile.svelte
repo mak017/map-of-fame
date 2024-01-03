@@ -357,26 +357,27 @@ const handleSortingChange = (value) => () => {
               on:select={handleYearSelect}
               listPlacement="bottom" />
           </div>
-          <div class="sorting">
-            <span>Sort by: </span>
-            <button
-              type="button"
-              class={`button${
-                $profileState.sortBy === "created_at" ? " active" : ""
-              }`}
-              on:click={handleSortingChange("created_at")}>Default</button>
-            {" / "}
-            <button
-              type="button"
-              class={`button${
-                $profileState.sortBy === "year" ? " active" : ""
-              }`}
-              disabled={$profileState.currentYear !== ALL_YEARS_STRING}
-              on:click={handleSortingChange("year")}>Year</button>
-          </div>
-          <div class="show-on-map">
-            <ShowOnMapButton onClick={handleShowOnMapClick} />
-          </div>
+          {#if $profileState.currentYear === ALL_YEARS_STRING}
+            <div class="sorting">
+              <span>Sort by: </span>
+              <button
+                type="button"
+                class={`button${
+                  $profileState.sortBy === "created_at" ? " active" : ""
+                }`}
+                on:click={handleSortingChange("created_at")}>Default</button>
+              {" / "}
+              <button
+                type="button"
+                class={`button${
+                  $profileState.sortBy === "year" ? " active" : ""
+                }`}
+                on:click={handleSortingChange("year")}>Year</button>
+            </div>
+            <div class="show-on-map">
+              <ShowOnMapButton onClick={handleShowOnMapClick} />
+            </div>
+          {/if}
         </div>
       {/if}
       {#if !$profileState.isLoading}

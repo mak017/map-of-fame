@@ -154,7 +154,8 @@ export const requestRecentSpots = () => {
 };
 
 export const requestSpotsInArea = (coords) => {
-  getSpotsInArea(coords).then(({ result }) => {
+  const $withHunters = get(withHunters);
+  getSpotsInArea(coords, $withHunters).then(({ result }) => {
     areaCoords.set(coords);
     areaSpots.set(result);
     markersStore.set({ spots: result });

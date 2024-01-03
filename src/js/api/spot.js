@@ -45,8 +45,10 @@ export const getSpotById = async (id) => {
   return result;
 };
 
-export const getSpotsInArea = async (polygon) => {
-  const response = await fetch(SPOT_FROM_POLY(polygon), { method: "GET" });
+export const getSpotsInArea = async (polygon, withHunters = true) => {
+  const response = await fetch(SPOT_FROM_POLY(polygon, withHunters), {
+    method: "GET",
+  });
   const result = await response.json();
   return result;
 };
