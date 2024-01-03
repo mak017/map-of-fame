@@ -9,7 +9,7 @@ const regexVimeo =
 const regexDailymotion =
   /(?:https?:\/\/)?(?:www\.)?(?:dailymotion\.com|dai\.ly)(?:\/video)?\/([^<.,!():"'\s]+)/;
 const regexInstagram =
-  /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/(?:p|reel)?\/([^/?#&]+)/;
+  /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/(?:p|reel|tv)?\/([^/?#&]+)/;
 const regexTikTok =
   /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:tiktok\.com)\/(?:@(.*?)\/)?(?:video|v)|(?:https?:\/\/)?:\/\/(?:www\.)?(?:vt)(?:\.tiktok\.com)\/\S*/;
 const regexGoogleMaps =

@@ -193,7 +193,7 @@ const handleKeyDown = (e) => {
         class:inactive={$isAreaSelectionActive}
         transition:fade={{ duration: 200 }}>{$selectedYear}</a>
     {/if}
-    {#if !$shouldShowAddSpot && !$isSearchResults && !$isShowOnMapMode}
+    {#if !$shouldShowAddSpot && !$isSearchResults && !$isShowOnMapMode && !$isAreaSelectionActive}
       <div class="hunters-switcher">
         <HuntersSvg isActive={$withHunters} />
         <button
