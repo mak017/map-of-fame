@@ -322,7 +322,7 @@ const handleSortingChange = (value) => () => {
     {/if}
   </div>
   <div class="top">
-    {#if !$profileState.isLoading && (name || username)}
+    {#if name || username}
       <div class="user">
         {#if name}
           <span class="name">{name}</span>
