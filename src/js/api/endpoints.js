@@ -17,8 +17,8 @@ export const USER = () => `${ENDPOINT_ORIGIN}/api/user`;
 
 export const USER_ID = (id) => `${ENDPOINT_ORIGIN}/api/user/${id}`;
 
-export const USER_ID_SPOTS = (id, limit, offset, year) => {
-  let url = `${ENDPOINT_ORIGIN}/api/user/${id}/spots?limit=${limit}&offset=${offset}`;
+export const USER_ID_SPOTS = (id, limit, offset, sortBy, year) => {
+  let url = `${ENDPOINT_ORIGIN}/api/user/${id}/spots?limit=${limit}&offset=${offset}&sortBy=${sortBy}`;
   if (typeof year === "string") {
     url = url.concat(`&year=${year}`);
   }
@@ -81,8 +81,10 @@ export const SITE_YEARS = () => `${ENDPOINT_ORIGIN}/api/site/years`;
 
 export const SPOT = () => `${ENDPOINT_ORIGIN}/api/spot`;
 
-export const SPOT_YEAR = (year, geoRect, categories) => {
-  let url = `${ENDPOINT_ORIGIN}/api/spot?${getGeoRect(geoRect)}`;
+export const SPOT_YEAR = (year, geoRect, categories, withHunters) => {
+  let url = `${ENDPOINT_ORIGIN}/api/spot?hunters=${
+    withHunters ? 1 : 0
+  }${getGeoRect(geoRect)}`;
 
   if (year) {
     url += `&year=${year}`;
@@ -111,14 +113,16 @@ export const SPOT_ID_FEEDBACK = (id) =>
 
 export const SPOT_SEARCH = () => `${ENDPOINT_ORIGIN}/api/spot/search`;
 
-export const SPOT_FROM_POLY = (polygon) => {
+export const SPOT_FROM_POLY = (polygon, withHunters) => {
   const query = polygon.reduce((acc, coords, index) => {
     const [lng, lat] = coords;
     const chunk = `poly[${index}][lat]=${lat}&poly[${index}][lng]=${lng}`;
     return index === 0 ? chunk : `${acc}&${chunk}`;
   }, "");
 
-  return `${ENDPOINT_ORIGIN}/api/spot/fromPoly?${query}`;
+  return `${ENDPOINT_ORIGIN}/api/spot/fromPoly?${query}&hunters=${
+    withHunters ? 1 : 0
+  }`;
 };
 
 export const DRAFT_GET_LAST = () => `${ENDPOINT_ORIGIN}/api/draft/getLast`;

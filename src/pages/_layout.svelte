@@ -28,14 +28,13 @@ import {
   map,
   currentZoom,
   isSpotsFromAreaLoading,
-  areaSpots,
   areaSelection,
   globalGoto,
   isLoading,
   searchControl,
   isActiveSearchControl,
 } from "./../js/store.js";
-import { getSpotsInArea } from "../js/api/spot.js";
+import { requestSpotsInArea } from "../js/init.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
 
 import Loader from "../js/components/elements/Loader.svelte";
@@ -55,23 +54,7 @@ areaSelection.set(
       });
 
       const { coordinates } = polygon.toGeoJSON().geometry;
-      getSpotsInArea(coordinates[0]).then(({ result }) => {
-        areaSpots.set(result);
-        markersStore.set({ spots: result });
-        const style = `
-        .map-marker-with-photo, .map-marker-cluster
-            {
-              width: 34px !important;
-              height: 34px !important;
-              border-width: 2px;
-              opacity: 1 !important;
-              font-size: 14px;
-              pointer-events: auto !important;
-            }
-          `;
-        document.getElementById("highlighted").innerHTML = style;
-        isSpotsFromAreaLoading.set(false);
-      });
+      requestSpotsInArea(coordinates[0]);
     },
     position: "bottomright",
   }),

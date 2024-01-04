@@ -1,20 +1,25 @@
+import { get } from "svelte/store";
+
 import { verifyAuthRequest } from "./api/auth";
 import { requestSearchSpots } from "./api/search";
 import { getCategories, getSettingsRequest } from "./api/settings";
-import { getRecentSpots, getSpots } from "./api/spot";
-import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "./constants";
+import { getRecentSpots, getSpots, getSpotsInArea } from "./api/spot";
 import {
+  areaCoords,
+  areaSpots,
   categoriesList,
   isFirstTimeVisit,
   isInitialized,
   isLighthouseActive,
   isLoggedIn,
   isSearchResults,
+  isSpotsFromAreaLoading,
   isUserVerifyProgress,
   mapBounds,
   markersStore,
   settings,
   userData,
+  withHunters,
 } from "./store";
 import {
   isEmpty,
@@ -25,11 +30,7 @@ import {
 import { permalink } from "./utils/mapUtils/permalink";
 import { transformSettings } from "./utils/transformers";
 
-let bounds;
-
-mapBounds.subscribe((value) => {
-  bounds = value;
-});
+import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "./constants";
 
 export const getSettings = () =>
   getSettingsRequest().then((response) => {
@@ -83,6 +84,8 @@ export const initApp = () => {
 };
 
 export const requestSpots = (year) => {
+  const bounds = get(mapBounds);
+  const $withHunters = get(withHunters);
   let categories = loadFromLocalStorage("categories");
   let yearForRequest = year;
 
@@ -103,14 +106,16 @@ export const requestSpots = (year) => {
     yearForRequest = undefined;
   }
 
-  return getSpots(yearForRequest, bounds, categories).then((response) => {
-    const { success, result } = response;
-    if (success && result) {
-      isSearchResults.set(false);
-      isLighthouseActive.set(false);
-      markersStore.set(result);
+  return getSpots(yearForRequest, bounds, categories, $withHunters).then(
+    (response) => {
+      const { success, result } = response;
+      if (success && result) {
+        isSearchResults.set(false);
+        isLighthouseActive.set(false);
+        markersStore.set(result);
+      }
     }
-  });
+  );
 };
 
 export const performSearch = ({ artist, crew, year, geoRect, isInitial }) => {
@@ -130,6 +135,7 @@ export const performSearch = ({ artist, crew, year, geoRect, isInitial }) => {
 };
 
 export const requestRecentSpots = () => {
+  const bounds = get(mapBounds);
   let categories = loadFromLocalStorage("categories");
 
   if (!categories) {
@@ -144,5 +150,27 @@ export const requestRecentSpots = () => {
       isLighthouseActive.set(true);
       markersStore.set(result);
     }
+  });
+};
+
+export const requestSpotsInArea = (coords) => {
+  const $withHunters = get(withHunters);
+  getSpotsInArea(coords, $withHunters).then(({ result }) => {
+    areaCoords.set(coords);
+    areaSpots.set(result);
+    markersStore.set({ spots: result });
+    const style = `
+      .map-marker-with-photo, .map-marker-cluster
+          {
+            width: 34px !important;
+            height: 34px !important;
+            border-width: 2px;
+            opacity: 1 !important;
+            font-size: 14px;
+            pointer-events: auto !important;
+          }
+        `;
+    document.getElementById("highlighted").innerHTML = style;
+    isSpotsFromAreaLoading.set(false);
   });
 };

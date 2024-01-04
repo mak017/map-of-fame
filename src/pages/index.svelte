@@ -28,6 +28,8 @@ import {
   isAreaSelectionActive,
   isPermalinkReady,
   profileState,
+  areaCoords,
+  withHunters,
 } from "../js/store.js";
 import {
   getCurrentYear,
@@ -40,6 +42,7 @@ import { permalink } from "../js/utils/mapUtils/permalink";
 import { newMarkerIcon } from "../js/utils/mapUtils/icons";
 
 import CloseCrossSvg from "../js/components/elements/icons/CloseCrossSvg.svelte";
+import HuntersSvg from "../js/components/elements/icons/HuntersSvg.svelte";
 import Modal from "../js/components/Modal.svelte";
 import AddSpot from "../js/components/addSpot/AddSpot.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
@@ -104,6 +107,7 @@ const toggleAreaSelectionMode = (toggle) => {
   $map.setMinZoom(MIN_ZOOM);
   $map.dragging.enable();
   $areaSelection.deactivate();
+  isShowOnMapMode.set(false);
   document.getElementById("highlighted").innerHTML = "";
 };
 
@@ -190,22 +194,19 @@ const handleKeyDown = (e) => {
         transition:fade={{ duration: 200 }}>{$selectedYear}</a>
     {/if}
     {#if !$shouldShowAddSpot && !$isSearchResults && !$isShowOnMapMode && !$isAreaSelectionActive}
-      <button
-        class="button button-square button-lighthouse"
-        class:active={$isLighthouseActive}
-        disabled={+$selectedYear !== getCurrentYear()}
-        on:click={handleLighthouseClick}
-        transition:fade={{ duration: 200 }}>
-        <svg
-          width="9"
-          height="15"
-          viewBox="0 0 9 15"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M8.59095 6.18163H5.20517L8.12795 0.657462C8.20028 0.521392 8.19986 0.354423 8.12678 0.218811C8.05327 0.0833129 7.91861 0 7.77276 0H2.86365C2.68755 0 2.53127 0.121078 2.47576 0.300407L0.0212066 8.23985C-0.020768 8.37374 0.00043238 8.52137 0.0771372 8.63593C0.154268 8.7506 0.277742 8.81835 0.409099 8.81835H3.87967L1.66961 14.3876C1.59046 14.5855 1.65683 14.816 1.82622 14.9313C1.99284 15.0458 2.21667 15.0157 2.35112 14.8525L8.89659 6.91302C9.00366 6.78382 9.03008 6.59877 8.96414 6.4413C8.89819 6.28337 8.75203 6.18163 8.59095 6.18163Z" />
-        </svg>
-      </button>
+      <div class="hunters-switcher">
+        <HuntersSvg isActive={$withHunters} />
+        <button
+          type="button"
+          class="button button-main_screen"
+          class:isActive={$withHunters}
+          on:click={() => {
+            withHunters.set(!$withHunters);
+            requestSpots($selectedYear);
+          }}>
+          <span>Hunters</span>
+        </button>
+      </div>
     {/if}
   </div>
 
@@ -259,7 +260,9 @@ const handleKeyDown = (e) => {
       {/if}
     {:else if $isAreaSelectionActive && ($areaSpots || $isSpotsFromAreaLoading)}
       <a
-        href={$url("/selected-spots")}
+        href={$url("/selected-spots", {
+          poly: $areaCoords,
+        })}
         class="selection selected-area-spots"
         class:active={!$isSpotsFromAreaLoading && $areaSpots.length > 0}
         transition:fade={{ duration: 200 }}>
@@ -280,7 +283,7 @@ const handleKeyDown = (e) => {
       title="Go to your location" />
   {/if}
 
-  {#if !$isSearchResults && !$isShowOnMapMode && !$shouldShowAddSpot && !$selectedUserProfileData.artist?.name && ($isAreaSelectionActive || $currentZoom > 14)}
+  {#if !$isSearchResults && !$shouldShowAddSpot && !$selectedUserProfileData.artist?.name && ($isAreaSelectionActive || $currentZoom > 14)}
     <button
       class="button button-main_screen button-square button-select_area"
       class:active={$isAreaSelectionActive}
@@ -359,64 +362,6 @@ const handleKeyDown = (e) => {
     }
   }
 
-  &-lighthouse {
-    display: flex;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-    margin-left: 12px;
-    overflow: hidden;
-    background-color: var(--color-dark);
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 22px;
-      height: 22px;
-      transform: translate(-50%, -50%) scale(0);
-      transition: transform 0.3s;
-      border-radius: 50%;
-      background-color: var(--color-accent);
-    }
-
-    svg {
-      position: relative;
-      transition: transform 0.3s;
-      fill: var(--color-light);
-    }
-
-    &:disabled {
-      background-color: var(--color-light);
-
-      svg {
-        fill: rgba($color: #000, $alpha: 0.2);
-      }
-    }
-
-    &:hover {
-      &::before {
-        transform: translate(-50%, -50%) scale(1);
-      }
-
-      svg {
-        transform: scale(1.5);
-      }
-    }
-
-    &.active,
-    &:active {
-      &::before {
-        transform: translate(-50%, -50%) scale(3);
-      }
-
-      svg {
-        transform: scale(1);
-      }
-    }
-  }
-
   &-open_search {
     position: absolute;
     top: 40px;
@@ -490,6 +435,89 @@ const handleKeyDown = (e) => {
   }
 }
 
+.hunters-switcher {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 2px;
+  background: var(--color-light);
+  color: var(--color-dark);
+
+  > button {
+    position: absolute;
+    left: 0;
+    height: 40px;
+    padding: 8px 12px;
+    transform: scaleX(0.5);
+    transform-origin: left;
+    transition:
+      visibility 0.3s 0.5s ease-in-out,
+      transform 0.3s 0.5s ease-in-out;
+    visibility: hidden;
+
+    > span {
+      display: flex;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s 0.3s ease-in-out;
+
+      &::before {
+        content: "";
+        width: 24px;
+        height: 15px;
+        margin-right: 12px;
+        border-radius: 15px;
+        background-color: var(--color-dark);
+        transition: background-color 0.3s;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 13px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        transform: translateY(-50%);
+        background-color: var(--color-light);
+        transition: transform 0.3s;
+      }
+    }
+
+    &.isActive {
+      span {
+        &::before {
+          background-color: var(--color-accent);
+        }
+
+        &::after {
+          transform: translate(10px, -50%);
+        }
+      }
+    }
+  }
+
+  &:hover {
+    > button {
+      transform: scaleX(1);
+      transition:
+        visibility 0.3s ease-in-out,
+        transform 0.3s ease-in-out;
+      visibility: visible;
+
+      > span {
+        opacity: 1;
+        transition: opacity 0.3s 0.3s ease-in-out;
+      }
+    }
+  }
+}
+
 .selection {
   display: flex;
   align-items: center;
@@ -556,6 +584,19 @@ const handleKeyDown = (e) => {
 
     &-select_area {
       bottom: 68px;
+    }
+  }
+
+  .main-top_right_wrapper {
+    transition: visibility 0s 0.7s;
+  }
+
+  .main-top_left_wrapper {
+    &:has(.hunters-switcher:hover) {
+      ~ .main-top_right_wrapper {
+        visibility: hidden;
+        transition: visibility 0s;
+      }
     }
   }
 

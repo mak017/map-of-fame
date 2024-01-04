@@ -32,7 +32,7 @@ import {
 
 import Spinner from "./../elements/Spinner.svelte";
 import CustomSelect from "../elements/CustomSelect.svelte";
-import MapSvg from "../elements/icons/MapSvg.svelte";
+import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
 import Popup from "../Popup.svelte";
 import Invites from "./Invites.svelte";
@@ -133,6 +133,7 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
   getUserSpots(strippedUsername, token, {
     year,
     offset,
+    sortBy: $profileState.sortBy,
   }).then((response) => {
     const { success, result, errors } = response;
     if (success && result) {
@@ -289,6 +290,13 @@ const handleHideAllClick = () => {
     }
   });
 };
+
+const handleSortingChange = (value) => () => {
+  if ($profileState.sortBy === value) return;
+
+  profileState.setSorting(value);
+  fetchSpots({ isNewFetch: true });
+};
 </script>
 
 <div class="container" class:isCurrentUser>
@@ -314,7 +322,7 @@ const handleHideAllClick = () => {
     {/if}
   </div>
   <div class="top">
-    {#if !$profileState.isLoading && (name || username)}
+    {#if name || username}
       <div class="user">
         {#if name}
           <span class="name">{name}</span>
@@ -349,11 +357,27 @@ const handleHideAllClick = () => {
               on:select={handleYearSelect}
               listPlacement="bottom" />
           </div>
-          <button
-            type="button"
-            class="button show-on-map"
-            on:click={() => handleShowOnMapClick()}
-            ><span>Show on</span> <MapSvg /></button>
+          {#if $profileState.currentYear === ALL_YEARS_STRING}
+            <div class="sorting">
+              <span>Sort by: </span>
+              <button
+                type="button"
+                class={`button${
+                  $profileState.sortBy === "created_at" ? " active" : ""
+                }`}
+                on:click={handleSortingChange("created_at")}>Default</button>
+              {" / "}
+              <button
+                type="button"
+                class={`button${
+                  $profileState.sortBy === "year" ? " active" : ""
+                }`}
+                on:click={handleSortingChange("year")}>Year</button>
+            </div>
+            <div class="show-on-map">
+              <ShowOnMapButton onClick={handleShowOnMapClick} />
+            </div>
+          {/if}
         </div>
       {/if}
       {#if !$profileState.isLoading}
@@ -483,7 +507,10 @@ const handleHideAllClick = () => {
 }
 
 .user {
+  max-width: 100%;
+  overflow: hidden;
   color: var(--color-dark);
+  text-overflow: ellipsis;
 
   .name {
     margin-bottom: 4px;
@@ -542,21 +569,6 @@ const handleHideAllClick = () => {
   }
 }
 
-.show-on-map {
-  display: flex;
-  align-items: center;
-  background: none;
-  color: var(--color-accent);
-  font-size: 14px;
-  font-weight: 900;
-  line-height: 22px;
-  text-transform: uppercase;
-
-  > span {
-    margin-right: 6px;
-  }
-}
-
 .empty-state {
   margin: auto 0;
   text-align: center;
@@ -587,20 +599,49 @@ const handleHideAllClick = () => {
   }
 }
 
-.year-select {
-  width: 114px;
-  height: 40px;
-}
-
 .data {
   flex: 1 0 auto;
   width: 100%;
 
   &-top {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
     margin-bottom: 16px;
   }
+}
+
+.year-select {
+  width: 114px;
+  height: 40px;
+}
+
+.sorting {
+  margin-left: 24px;
+  line-height: 40px;
+
+  .button {
+    background: none;
+    color: var(--color-accent);
+    font-size: 16px;
+    font-weight: 500;
+
+    &.active {
+      font-weight: 700;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+    }
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+.show-on-map {
+  margin-left: auto;
+  line-height: 40px;
 }
 
 .spots {
@@ -774,6 +815,10 @@ const handleHideAllClick = () => {
     margin: -20px 0 52px;
     background: url(../../../images/logout.svg) 50% 50%/27px 27px no-repeat;
     font-size: 0;
+  }
+
+  .sorting {
+    margin-left: auto;
   }
 
   .go-to-map {

@@ -28,8 +28,8 @@ import { getProfileYears } from "../../utils/datesUtils.js";
 import { getSpotById, getUserSpots } from "../../api/spot.js";
 
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
-import MapSvg from "../elements/icons/MapSvg.svelte";
 import Spinner from "../elements/Spinner.svelte";
+import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
 import Popup from "../Popup.svelte";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import ShareMarker from "./ShareMarker.svelte";
@@ -277,7 +277,7 @@ const getArtistsString = (artistCrew) => {
   <Spinner height={40} margin="auto" />
 {:then data}
   <div class="card">
-    <div class="top">
+    <div class={`top ${data.status.toLowerCase()}`}>
       <div class="posted-by">
         <div class="subtitle">Posted by</div>
         <button type="button" class="button" on:click={onUserClick}>
@@ -291,7 +291,7 @@ const getArtistsString = (artistCrew) => {
       </div>
       <div class="status">
         <div class="subtitle">Status</div>
-        <div class={`title ${data.status.toLowerCase()}`}>{data.status}</div>
+        <div class="title">{data.status}</div>
       </div>
     </div>
     <div class="img">
@@ -300,11 +300,7 @@ const getArtistsString = (artistCrew) => {
     <div class="bottom">
       <div class="year">{data.year ?? EMPTY_YEAR_STRING}</div>
       <div class="show-on-map-wrapper">
-        <button
-          type="button"
-          class="show-on-map"
-          on:click={handleShowOnMapClick}
-          ><span>Show on</span> <MapSvg /></button>
+        <ShowOnMapButton onClick={handleShowOnMapClick} />
       </div>
       <div class="buttons">
         {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}
@@ -390,6 +386,35 @@ const getArtistsString = (artistCrew) => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 24px;
+
+  .posted-by {
+    max-width: 60%;
+  }
+
+  .status {
+    text-align: right;
+  }
+
+  &.buffed {
+    .posted-by {
+      max-width: 72%;
+    }
+
+    .status .title {
+      color: var(--color-error);
+      text-decoration-line: line-through;
+    }
+  }
+
+  &.live {
+    .posted-by {
+      max-width: 85%;
+    }
+
+    .status .title {
+      color: var(--color-success);
+    }
+  }
 }
 
 .subtitle {
@@ -400,34 +425,25 @@ const getArtistsString = (artistCrew) => {
 }
 
 .title {
+  max-width: 100%;
+  overflow: hidden;
   color: var(--color-dark);
   font-size: 24px;
   font-weight: 900;
   line-height: 1.22;
   text-align: left;
   text-transform: uppercase;
+  text-overflow: ellipsis;
 }
 
 .posted-by {
   .button {
+    max-width: 100%;
     background: none;
   }
 
   .title {
     color: var(--color-accent);
-  }
-}
-
-.status {
-  text-align: right;
-
-  .buffed {
-    color: var(--color-error);
-    text-decoration-line: line-through;
-  }
-
-  .live {
-    color: var(--color-success);
   }
 }
 
@@ -466,25 +482,6 @@ const getArtistsString = (artistCrew) => {
 
 .show-on-map-wrapper {
   text-align: center;
-}
-
-.show-on-map {
-  display: flex;
-  align-items: center;
-  margin: auto;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--color-accent);
-  font-size: 14px;
-  font-weight: 900;
-  line-height: 22px;
-  text-transform: uppercase;
-  cursor: pointer;
-
-  > span {
-    margin-right: 6px;
-  }
 }
 
 .buttons {

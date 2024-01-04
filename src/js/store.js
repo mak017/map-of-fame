@@ -29,6 +29,7 @@ export const isLighthouseActive = writable(false);
 export const mapBounds = writable([]);
 export const areaSelection = writable(null);
 export const areaSpots = writable(null);
+export const areaCoords = writable([]);
 export const clusterSpots = writable(null);
 export const selectedUserProfileData = writable({});
 export const searchControl = writable(null);
@@ -37,6 +38,7 @@ export const isShowOnMapMode = writable(false);
 export const isAreaSelectionActive = writable(false);
 export const isSpotsFromAreaLoading = writable(false);
 export const isFirstTimeVisit = writable(false);
+export const withHunters = writable(true);
 export const shouldShowAddSpot = writable(null);
 export const shouldShowResetPassword = writable(false);
 export const resetPasswordToken = writable(null);
@@ -47,6 +49,7 @@ const createProfileState = () => {
     scrollOffset: 0,
     spotsList: [],
     currentYear: undefined,
+    sortBy: "created_at",
     yearsToApply: [],
     invites: [],
     user: {},
@@ -69,6 +72,7 @@ const createProfileState = () => {
       update((state) => ({ ...state, yearsToApply })),
     setInvites: (invites) => update((state) => ({ ...state, invites })),
     setUser: (user) => update((state) => ({ ...state, user })),
+    setSorting: (sortBy) => update((state) => ({ ...state, sortBy })),
     setIsInitialized: (value) =>
       update((state) => ({ ...state, isInitialized: value })),
     setIsLoading: (value) =>
