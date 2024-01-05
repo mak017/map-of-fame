@@ -29,19 +29,23 @@ import {
   loadFromLocalStorage,
   removeFromLocalStorage,
 } from "../../utils/commonUtils";
+import { processImage } from "../../utils/imageUtils.js";
 
-import Spinner from "./../elements/Spinner.svelte";
-import CustomSelect from "../elements/CustomSelect.svelte";
-import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
-import ShareSvg from "../elements/icons/ShareSvg.svelte";
 import Popup from "../Popup.svelte";
 import Invites from "./Invites.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import ShareProfile from "./ShareProfile.svelte";
+import Spinner from "./../elements/Spinner.svelte";
+import CustomSelect from "../elements/CustomSelect.svelte";
+import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
+import PlusSvg from "../elements/icons/PlusSvg.svelte";
+import ShareSvg from "../elements/icons/ShareSvg.svelte";
 
 import {
   ALL_YEARS_STRING,
   EMPTY_YEAR_STRING,
+  ERROR_MESSAGES,
+  MAX_IMAGE_FILE_SIZE,
   MAX_SPOTS_PER_PAGE,
 } from "../../constants";
 
@@ -52,6 +56,13 @@ let showSharePopup = false;
 let newBatch = [];
 let unusedInvitesCount = 0;
 let parentModal = null;
+let userBg = null;
+let uploadedBg = {
+  file: undefined,
+  filePreview: "",
+  blob: undefined,
+};
+let errors = { uploadedBg: "" };
 const token = loadFromLocalStorage("token") || null;
 
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
@@ -82,6 +93,9 @@ $: isCurrentUser = $userData.username === strippedUsername;
 $: name = isCurrentUser
   ? $userData.artist?.name ?? $userData.crew?.name
   : $profileState.user.artist?.name ?? $profileState.user.crew?.name;
+$: userBg = isCurrentUser
+  ? $userData.background
+  : $profileState.user.background;
 
 $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   profileState.setIsInitialized(true);
@@ -297,9 +311,98 @@ const handleSortingChange = (value) => () => {
   profileState.setSorting(value);
   fetchSpots({ isNewFetch: true });
 };
+
+const handleProcessedImage = (imageObject) => {
+  uploadedBg = { ...imageObject };
+
+  editUser(token, $userData.id, {
+    background: uploadedBg.blob,
+  }).then((response) => {
+    const { success, result } = response;
+    if (success && result) {
+      $userData.background = result.background;
+    }
+  });
+};
+
+const handleImageChange = () => {
+  let imageObject = { ...uploadedBg };
+  const file = uploadedBg.file[0];
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      const img = new Image();
+      img.src = e.target.result;
+      img.onload = function () {
+        if (file.size > MAX_IMAGE_FILE_SIZE) {
+          processImage(
+            file,
+            MAX_IMAGE_FILE_SIZE,
+            4200,
+            4200,
+            0.8,
+            true,
+            (blob) => {
+              const newBlob = new File([blob], "image.jpg");
+              imageObject = {
+                ...imageObject,
+                blob: newBlob,
+                filePreview: URL.createObjectURL(newBlob),
+              };
+              handleProcessedImage(imageObject);
+            },
+          );
+        } else {
+          processImage(
+            file,
+            0,
+            Infinity,
+            Infinity,
+            0.85,
+            false,
+            (blob, isRotated) => {
+              const newBlob = new File([blob], "image.jpg");
+              imageObject = isRotated
+                ? {
+                    ...imageObject,
+                    blob: newBlob,
+                    filePreview: URL.createObjectURL(newBlob),
+                  }
+                : { ...imageObject, blob: file, filePreview: e.target.result };
+              handleProcessedImage(imageObject);
+            },
+          );
+        }
+      };
+    };
+
+    if (file.size < MAX_IMAGE_FILE_SIZE * 6) {
+      errors.uploadedBg = "";
+      reader.readAsDataURL(file);
+    } else {
+      errors.uploadedBg = ERROR_MESSAGES.fileTooLarge;
+    }
+  }
+};
+
+const getBgStyleUrl = (uploadedBg, userBg) => {
+  if (!uploadedBg.filePreview && !userBg) return;
+
+  return `url(${uploadedBg.filePreview || userBg}) 50%/cover no-repeat`;
+};
 </script>
 
-<div class="container" class:isCurrentUser>
+<div
+  class="container"
+  class:isCurrentUser
+  class:hasBg={uploadedBg.filePreview || userBg}>
+  <div
+    class="user-bg"
+    style={`background: ${
+      getBgStyleUrl(uploadedBg, userBg) ?? "var(--color-accent)"
+    };`}>
+  </div>
   <div class="profile-header">
     {#if $profileState.invites.length}
       <div class="invites">
@@ -325,12 +428,14 @@ const handleSortingChange = (value) => () => {
     {#if name || username}
       <div class="user">
         {#if name}
-          <span class="name">{name}</span>
-          <button
-            type="button"
-            class="button name"
-            on:click={() => toggleSharePopup(true)}
-            ><ShareSvg color="dark" /></button>
+          <div class="name-wrapper">
+            <span class="name">{name}</span>
+            <button
+              type="button"
+              class="button name"
+              on:click={() => toggleSharePopup(true)}
+              ><ShareSvg color="dark" /></button>
+          </div>
         {/if}
         {#if username}
           <div class="username">{username}</div>
@@ -338,8 +443,22 @@ const handleSortingChange = (value) => () => {
       </div>
     {/if}
     {#if isCurrentUser}
+      <div class="user-bg-control">
+        <input
+          accept="image/png, image/jpeg"
+          bind:files={uploadedBg.file}
+          on:change={handleImageChange}
+          id="upload-bg"
+          type="file" />
+        <label
+          for="upload-bg"
+          type="button"
+          class="button"
+          title="Add background image"
+          ><PlusSvg color="var(--color-dark)" /></label>
+      </div>
       <button type="button" class="button logout" on:click={handleLogout}
-        >Logout</button>
+        ><span>Logout</span></button>
     {/if}
   </div>
   {#if !!$profileState.spotsList.length || $profileState.isShowSpinner}
@@ -498,40 +617,69 @@ const handleSortingChange = (value) => () => {
   max-width: 938px;
 }
 
+.user-bg {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: -1;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  opacity: 0.25;
+
+  &-control {
+    input {
+      position: absolute;
+      left: -9999px;
+      clip: rect(0 0 0 0);
+      opacity: 0;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 0;
+      background-color: var(--color-light);
+      transition: opacity 0.3s;
+    }
+  }
+}
+
+.hasBg {
+  .user-bg {
+    opacity: 1;
+  }
+
+  .user-bg-control {
+    label {
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
 .top {
   display: flex;
   align-items: baseline;
   align-self: stretch;
   justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.user {
-  max-width: 100%;
-  overflow: hidden;
-  color: var(--color-dark);
-  text-overflow: ellipsis;
-
-  .name {
-    margin-bottom: 4px;
-    background: none;
-    color: inherit;
-    font-size: 24px;
-    font-weight: 900;
-    line-height: 1.22;
-    text-transform: uppercase;
-  }
-
-  &name {
-    opacity: 0.4;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.25;
-  }
+  margin-bottom: 30px;
 }
 
 .profile-header {
   margin-bottom: 26px;
+  padding: 2px 8px;
+  background-color: var(--color-light);
   color: var(--color-dark);
   font-size: 14px;
   line-height: 17px;
@@ -554,17 +702,53 @@ const handleSortingChange = (value) => () => {
   margin-bottom: 5px;
 }
 
+.user {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--color-dark);
+  text-overflow: ellipsis;
+
+  .name {
+    margin-bottom: 4px;
+    background: none;
+    color: inherit;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.22;
+    text-transform: uppercase;
+
+    &-wrapper {
+      padding: 6px 10px;
+      background-color: var(--color-light);
+    }
+  }
+
+  &name {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: var(--color-light);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+}
+
 .logout {
+  padding: 6px 10px;
+  border-radius: 0;
   transition: opacity 0.3s;
-  opacity: 0.4;
-  background: none;
+  background-color: var(--color-light);
   color: var(--color-accent);
   font-size: 18px;
   font-weight: 900;
   line-height: 1.22;
   text-transform: uppercase;
 
-  &:hover {
+  > span {
+    opacity: 0.4;
+  }
+
+  &:hover > span {
     opacity: 1;
   }
 }
@@ -786,10 +970,8 @@ const handleSortingChange = (value) => () => {
     }
   }
 
-  .top {
-    position: relative;
-    flex-direction: column-reverse;
-    margin-bottom: 18px;
+  .user-bg {
+    height: 250px;
   }
 
   .invites {
@@ -807,13 +989,24 @@ const handleSortingChange = (value) => () => {
     text-align: center;
   }
 
+  .top {
+    position: relative;
+    flex-direction: column-reverse;
+    margin-bottom: 18px;
+  }
+
+  .user-bg-control {
+    margin: 5px auto;
+  }
+
   .logout {
     position: relative;
     top: -8px;
-    width: 30px;
-    height: 30px;
-    margin: -20px 0 52px;
-    background: url(../../../images/logout.svg) 50% 50%/27px 27px no-repeat;
+    width: 48px;
+    height: 48px;
+    margin: -20px 0 32px;
+    background: var(--color-light) url(../../../images/logout.svg) 50% 50%/27px
+      27px no-repeat;
     font-size: 0;
   }
 

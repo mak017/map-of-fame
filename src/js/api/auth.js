@@ -152,14 +152,22 @@ export const getUserData = async (username) => {
   return result;
 };
 
-export const editUser = async (token, id, { isSpotsHidden }) => {
+export const editUser = async (token, id, { isSpotsHidden, background }) => {
   const bearer = `Bearer ${token}`;
-  const data = new URLSearchParams();
-  data.append("is_spots_hidden", isSpotsHidden);
+  const formData = new FormData();
+
+  if (typeof isSpotsHidden === "boolean") {
+    formData.append("is_spots_hidden", isSpotsHidden);
+  }
+
+  if (typeof background !== "undefined") {
+    formData.append("background", background);
+  }
+
   const response = await fetch(USER_ID(id), {
     method: "POST",
     headers: { Authorization: bearer },
-    body: data,
+    body: formData,
   });
   const result = await response.json();
   return result;

@@ -119,8 +119,8 @@ const handleResize = () => {
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 34px;
-  height: 34px;
+  width: 48px;
+  height: 48px;
   padding: 0;
   border: 0;
   background: inherit;
