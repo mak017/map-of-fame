@@ -18,10 +18,16 @@ export const USER = () => `${ENDPOINT_ORIGIN}/api/user`;
 export const USER_ID = (id) => `${ENDPOINT_ORIGIN}/api/user/${id}`;
 
 export const USER_ID_SPOTS = (id, limit, offset, sortBy, year) => {
-  let url = `${ENDPOINT_ORIGIN}/api/user/${id}/spots?limit=${limit}&offset=${offset}&sortBy=${sortBy}`;
+  let url = `${ENDPOINT_ORIGIN}/api/user/${id}/spots?limit=${limit}&offset=${offset}`;
+
+  if (typeof sortBy === "string") {
+    url = url.concat(`&sortBy=${sortBy}`);
+  }
+
   if (typeof year === "string") {
     url = url.concat(`&year=${year}`);
   }
+
   return url;
 };
 
