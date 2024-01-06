@@ -397,51 +397,62 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
   class="container"
   class:isCurrentUser
   class:hasBg={uploadedBg.filePreview || userBg}>
-  <div
-    class="user-bg"
-    style={`background: ${
-      getBgStyleUrl(uploadedBg, userBg) ?? "var(--color-accent)"
-    };`}>
-  </div>
-  <div class="profile-header">
-    {#if $profileState.invites.length}
-      <div class="invites">
-        <button
-          type="button"
-          class="button"
-          on:click={() => toggleInvitesPopup(true)}>🖖 Invites</button>
-        for your friends
-      </div>
-    {/if}
-    {#if isCurrentUser}
-      <div class="hide-all">
-        <button
-          type="button"
-          class="button hide-button"
-          on:click={handleHideAllClick}
-          >{$userData.isSpotsHidden ? "👀 Show" : "🚨 Hide"}</button>
-        all your photos
-      </div>
-    {/if}
-  </div>
-  <div class="top">
-    {#if name || username}
-      <div class="user">
-        {#if name}
-          <div class="name-wrapper">
-            <span class="name">{name}</span>
+  <div class="user-bg-wrapper">
+    <div
+      class="user-bg"
+      style={`background: ${
+        getBgStyleUrl(uploadedBg, userBg) ?? "var(--color-accent)"
+      };`}>
+    </div>
+    <div class="user-data">
+      {#if isCurrentUser}
+        <div class="profile-header">
+          {#if $profileState.invites.length}
+            <div class="invites">
+              <button
+                type="button"
+                class="button"
+                on:click={() => toggleInvitesPopup(true)}>🖖 Invites</button>
+              for your friends
+            </div>
+          {/if}
+          <div class="hide-all">
             <button
               type="button"
-              class="button name"
-              on:click={() => toggleSharePopup(true)}
-              ><ShareSvg color="dark" /></button>
+              class="button hide-button"
+              on:click={handleHideAllClick}
+              >{$userData.isSpotsHidden ? "👀 Show" : "🚨 Hide"}</button>
+            all your photos
+          </div>
+        </div>
+      {/if}
+      <div class="top">
+        {#if name || username}
+          <div class="user">
+            {#if name}
+              <div class="name-wrapper">
+                <span class="name">{name}</span>
+              </div>
+            {/if}
+            {#if username}
+              <div class="username">{username}</div>
+            {/if}
           </div>
         {/if}
-        {#if username}
-          <div class="username">{username}</div>
+        {#if isCurrentUser}
+          <button type="button" class="button logout" on:click={handleLogout}
+            ><span>Logout</span></button>
         {/if}
       </div>
-    {/if}
+      {#if name}
+        <div class="buttons-wrapper">
+          <button
+            type="button"
+            class="button name"
+            on:click={() => toggleSharePopup(true)}><ShareSvg /></button>
+        </div>
+      {/if}
+    </div>
     {#if isCurrentUser}
       <div class="user-bg-control">
         <input
@@ -457,8 +468,6 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
           title="Add background image"
           ><PlusSvg color="var(--color-dark)" /></label>
       </div>
-      <button type="button" class="button logout" on:click={handleLogout}
-        ><span>Logout</span></button>
     {/if}
   </div>
   {#if !!$profileState.spotsList.length || $profileState.isShowSpinner}
@@ -617,6 +626,38 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
   max-width: 938px;
 }
 
+.user-bg-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 240px;
+  margin-bottom: 24px;
+  padding: 32px 0;
+
+  .user-data {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 0 auto;
+    width: 100%;
+  }
+
+  .buttons-wrapper {
+    position: absolute;
+    right: 0;
+    bottom: -44px;
+
+    .name {
+      width: 44px;
+      height: 44px;
+      border-radius: 0;
+      background-color: var(--color-lotion);
+    }
+  }
+}
+
 .user-bg {
   display: flex;
   position: absolute;
@@ -641,11 +682,15 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
 
     label {
       display: flex;
+      position: absolute;
+      top: 185px;
+      left: 50%;
       align-items: center;
       justify-content: center;
       width: 48px;
       height: 48px;
       border-radius: 0;
+      transform: translateX(-50%);
       background-color: var(--color-light);
       transition: opacity 0.3s;
     }
@@ -668,16 +713,7 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
   }
 }
 
-.top {
-  display: flex;
-  align-items: baseline;
-  align-self: stretch;
-  justify-content: space-between;
-  margin-bottom: 30px;
-}
-
 .profile-header {
-  margin-bottom: 26px;
   padding: 2px 8px;
   background-color: var(--color-light);
   color: var(--color-dark);
@@ -698,6 +734,14 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
   }
 }
 
+.top {
+  display: flex;
+  align-items: baseline;
+  align-self: stretch;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
 .invites {
   margin-bottom: 5px;
 }
@@ -710,9 +754,8 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
 
   .name {
     margin-bottom: 4px;
-    background: none;
     color: inherit;
-    font-size: 24px;
+    font-size: 48px;
     font-weight: 900;
     line-height: 1.22;
     text-transform: uppercase;
@@ -970,6 +1013,15 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
     }
   }
 
+  .user-bg-wrapper {
+    height: 250px;
+    padding: 12px 0;
+
+    .buttons-wrapper {
+      bottom: -34px;
+    }
+  }
+
   .user-bg {
     height: 250px;
   }
@@ -980,7 +1032,7 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
 
   .profile-header {
     position: absolute;
-    top: 25px;
+    top: 5px;
     left: 50%;
     z-index: 1;
     width: fit-content;
@@ -992,16 +1044,21 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
   .top {
     position: relative;
     flex-direction: column-reverse;
-    margin-bottom: 18px;
+  }
+
+  .user .name {
+    font-size: 24px;
   }
 
   .user-bg-control {
-    margin: 5px auto;
+    label {
+      top: 110px;
+    }
   }
 
   .logout {
     position: relative;
-    top: -8px;
+    top: -58px;
     width: 48px;
     height: 48px;
     margin: -20px 0 32px;

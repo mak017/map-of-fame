@@ -152,7 +152,11 @@ export const getUserData = async (username) => {
   return result;
 };
 
-export const editUser = async (token, id, { isSpotsHidden, background }) => {
+export const editUser = async (
+  token,
+  id,
+  { isSpotsHidden, background, about }
+) => {
   const bearer = `Bearer ${token}`;
   const formData = new FormData();
 
@@ -162,6 +166,10 @@ export const editUser = async (token, id, { isSpotsHidden, background }) => {
 
   if (typeof background !== "undefined") {
     formData.append("background", background);
+  }
+
+  if (typeof about !== "undefined") {
+    formData.append("about", about);
   }
 
   const response = await fetch(USER_ID(id), {
