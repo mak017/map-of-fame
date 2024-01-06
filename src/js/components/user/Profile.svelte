@@ -374,10 +374,10 @@ const handleSortingChange = (value) => () => {
                 }`}
                 on:click={handleSortingChange("year")}>Year</button>
             </div>
-            <div class="show-on-map">
-              <ShowOnMapButton onClick={handleShowOnMapClick} />
-            </div>
           {/if}
+          <div class="show-on-map">
+            <ShowOnMapButton onClick={() => handleShowOnMapClick(false)} />
+          </div>
         </div>
       {/if}
       {#if !$profileState.isLoading}
@@ -627,6 +627,7 @@ const handleSortingChange = (value) => () => {
 
     &.active {
       font-weight: 700;
+      pointer-events: none;
     }
 
     &:disabled {
