@@ -602,10 +602,10 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
                 class:active={$profileState.sortBy === "year"}
                 on:click={handleSortingChange("year")}>Year</button>
             </div>
-            <div class="show-on-map">
-              <ShowOnMapButton onClick={handleShowOnMapClick} />
-            </div>
           {/if}
+          <div class="show-on-map">
+            <ShowOnMapButton onClick={() => handleShowOnMapClick(false)} />
+          </div>
         </div>
       {/if}
       {#if !$profileState.isLoading}
@@ -1039,6 +1039,7 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
 
     &.active {
       font-weight: 700;
+      pointer-events: none;
     }
 
     &:disabled {
