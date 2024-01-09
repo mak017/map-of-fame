@@ -40,6 +40,8 @@ import CustomSelect from "../elements/CustomSelect.svelte";
 import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
 import PlusSvg from "../elements/icons/PlusSvg.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
+import PencilSvg from "../elements/icons/PencilSvg.svelte";
+import SelectIndicatorSvg from "../elements/icons/SelectIndicatorSvg.svelte";
 
 import {
   ALL_YEARS_STRING,
@@ -47,6 +49,7 @@ import {
   ERROR_MESSAGES,
   MAX_IMAGE_FILE_SIZE,
   MAX_SPOTS_PER_PAGE,
+  USER_ABOUT_TEXT_LIMIT,
 } from "../../constants";
 
 let currentSpot;
@@ -63,6 +66,14 @@ let uploadedBg = {
   blob: undefined,
 };
 let errors = { uploadedBg: "" };
+
+let about = "";
+let isEditableAbout = false;
+let userDescrElement;
+let isExpandableAbout = false;
+let isExpandedAbout = false;
+let aboutCharacterCount = 0;
+
 const token = loadFromLocalStorage("token") || null;
 
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
@@ -71,6 +82,7 @@ const toggleSharePopup = (toggle) => (showSharePopup = toggle);
 
 onMount(() => {
   parentModal = document.getElementById("profile-modal");
+
   if ($profileState.scrollOffset) {
     setTimeout(() => {
       parentModal.scrollTo({
@@ -79,6 +91,15 @@ onMount(() => {
       profileState.setScrollOffset(0);
     }, 0);
   }
+
+  userDescrElement = document.getElementById("user-description");
+  const observer = new MutationObserver(() => {
+    aboutCharacterCount = userDescrElement.textContent?.length;
+  });
+  observer.observe(userDescrElement, {
+    characterData: true,
+    subtree: true,
+  });
 });
 
 const { username } = $params;
@@ -96,6 +117,16 @@ $: name = isCurrentUser
 $: userBg = isCurrentUser
   ? $userData.background
   : $profileState.user.background;
+$: about = isCurrentUser ? $userData.about : $profileState.user.about;
+$: if (about) {
+  aboutCharacterCount = about.replace(/(\r\n)/gm, "\n").length;
+}
+
+$: if (about && userDescrElement) {
+  setTimeout(() => {
+    isExpandableAbout = userDescrElement.scrollHeight > 120;
+  }, 0);
+}
 
 $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   profileState.setIsInitialized(true);
@@ -391,6 +422,37 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
 
   return `url(${uploadedBg.filePreview || userBg}) 50%/cover no-repeat`;
 };
+
+const initDescrEditing = () => {
+  isEditableAbout = true;
+  setTimeout(() => {
+    userDescrElement.focus();
+  }, 0);
+};
+
+const handleDescrBlur = (isEditable) => (event) => {
+  if (!isEditable) return;
+
+  const { textContent } = event.target;
+  const trimmedText = textContent.trim();
+
+  if (trimmedText === about || trimmedText.length > USER_ABOUT_TEXT_LIMIT)
+    return;
+
+  editUser(token, $userData.id, {
+    about: trimmedText,
+  }).then((response) => {
+    const { success, result } = response;
+    if (success && result) {
+      $userData.about = result.about;
+    }
+  });
+
+  userDescrElement.scrollTo(0, 0);
+  isEditableAbout = false;
+};
+
+const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
 </script>
 
 <div
@@ -470,6 +532,46 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
       </div>
     {/if}
   </div>
+  <div class="description" class:isExpandedAbout>
+    <div
+      id="user-description"
+      class="text"
+      class:isEditableAbout
+      contenteditable={isEditableAbout ? "plaintext-only" : false}
+      on:blur={handleDescrBlur(isEditableAbout)}>
+      {@html isEditableAbout || !isCurrentUser
+        ? about ?? ""
+        : prepareAboutText(about) ?? "Write something about you."}
+    </div>
+    {#if isEditableAbout}
+      <div
+        class="char-counter"
+        title={aboutCharacterCount > USER_ABOUT_TEXT_LIMIT
+          ? `${USER_ABOUT_TEXT_LIMIT} symbols limit exceeded, changes will not be saved`
+          : `You typed ${aboutCharacterCount} from ${USER_ABOUT_TEXT_LIMIT} symbols`}>
+        <span class:invalid={aboutCharacterCount > USER_ABOUT_TEXT_LIMIT}
+          >{aboutCharacterCount}</span>
+        / {USER_ABOUT_TEXT_LIMIT}
+      </div>
+    {/if}
+    {#if isCurrentUser && !isEditableAbout}
+      <button
+        type="button"
+        class="button button-edit"
+        on:click={initDescrEditing}>
+        <PencilSvg fill="var(--color-accent)" /></button>
+    {/if}
+    {#if isExpandableAbout && !isEditableAbout}
+      <div class="expand-wrapper">
+        <button
+          type="button"
+          class="button button-expand"
+          on:click={() => (isExpandedAbout = !isExpandedAbout)}
+          >{isExpandedAbout ? "Show less" : "Show more"}
+          <span><SelectIndicatorSvg /></span></button>
+      </div>
+    {/if}
+  </div>
   {#if !!$profileState.spotsList.length || $profileState.isShowSpinner}
     <div class="data">
       {#if !!$profileState.spotsList.length}
@@ -490,16 +592,14 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
               <span>Sort by: </span>
               <button
                 type="button"
-                class={`button${
-                  $profileState.sortBy === "created_at" ? " active" : ""
-                }`}
+                class="button"
+                class:active={$profileState.sortBy === "created_at"}
                 on:click={handleSortingChange("created_at")}>Default</button>
               {" / "}
               <button
                 type="button"
-                class={`button${
-                  $profileState.sortBy === "year" ? " active" : ""
-                }`}
+                class="button"
+                class:active={$profileState.sortBy === "year"}
                 on:click={handleSortingChange("year")}>Year</button>
             </div>
             <div class="show-on-map">
@@ -542,7 +642,7 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
                   <button
                     type="button"
                     class="button edit"
-                    on:click={() => handleEdit(spot)} />
+                    on:click={() => handleEdit(spot)}><PencilSvg /></button>
                   <button
                     type="button"
                     class="button delete"
@@ -711,11 +811,16 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
       }
     }
   }
+
+  .profile-header,
+  .user .name-wrapper,
+  .username {
+    background-color: var(--color-light);
+  }
 }
 
 .profile-header {
   padding: 2px 8px;
-  background-color: var(--color-light);
   color: var(--color-dark);
   font-size: 14px;
   line-height: 17px;
@@ -762,14 +867,12 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
 
     &-wrapper {
       padding: 6px 10px;
-      background-color: var(--color-light);
     }
   }
 
   &name {
     display: inline-block;
     padding: 4px 10px;
-    background-color: var(--color-light);
     font-size: 16px;
     font-weight: 600;
     line-height: 1.25;
@@ -793,6 +896,88 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
 
   &:hover > span {
     opacity: 1;
+  }
+}
+
+.description {
+  display: flex;
+  position: relative;
+  align-self: flex-start;
+  flex-wrap: wrap;
+  max-width: 100%;
+  margin-bottom: 32px;
+  font-size: 14px;
+
+  .text {
+    overflow: hidden;
+    min-width: 225px;
+    max-width: calc(100% - 30px);
+    max-height: 105px;
+    font-weight: 600;
+
+    &.isEditableAbout {
+      overflow: auto;
+      max-width: 100%;
+      min-height: 45px;
+      max-height: 330px;
+      padding: 10px 8px 20px;
+      border: 1px solid var(--color-black);
+      border-radius: 2px;
+    }
+  }
+
+  .button-edit {
+    align-self: flex-end;
+    margin-left: 10px;
+    background: none;
+  }
+
+  .expand-wrapper {
+    width: 100%;
+  }
+
+  .button-expand {
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+    background: none;
+    transition: opacity 0.3s;
+    font-size: 13px;
+
+    > span {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 4px;
+      transition: transform 0.3s;
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .char-counter {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    padding: 0 2px;
+    background-color: var(--color-light);
+    font-size: 13px;
+
+    .invalid {
+      color: var(--color-error);
+      font-weight: 700;
+    }
+  }
+
+  &.isExpandedAbout {
+    .text {
+      max-height: none;
+    }
+
+    .button-expand > span {
+      transform: rotate(180deg);
+    }
   }
 }
 
@@ -979,8 +1164,9 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
 }
 
 .edit {
-  background-image: url(../../../images/pencil.svg);
-  background-size: 20px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .delete {
@@ -1065,6 +1251,16 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
     background: var(--color-light) url(../../../images/logout.svg) 50% 50%/27px
       27px no-repeat;
     font-size: 0;
+  }
+
+  .description {
+    .text {
+      max-height: 85px;
+
+      &.isEditableAbout {
+        max-height: 265px;
+      }
+    }
   }
 
   .sorting {

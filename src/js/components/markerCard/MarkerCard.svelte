@@ -27,10 +27,11 @@ import {
 import { getProfileYears } from "../../utils/datesUtils.js";
 import { getSpotById, getUserSpots } from "../../api/spot.js";
 
-import ShareSvg from "../elements/icons/ShareSvg.svelte";
+import Popup from "../Popup.svelte";
 import Spinner from "../elements/Spinner.svelte";
 import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
-import Popup from "../Popup.svelte";
+import ShareSvg from "../elements/icons/ShareSvg.svelte";
+import PencilSvg from "../elements/icons/PencilSvg.svelte";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import ShareMarker from "./ShareMarker.svelte";
 
@@ -361,7 +362,8 @@ const getArtistsString = (artistCrew) => {
     <button
       type="button"
       class="button edit"
-      on:click={() => handleGoToEdit(data)}>Edit spot</button>
+      title="Edit spot"
+      on:click={() => handleGoToEdit(data)}><PencilSvg /></button>
   {/if}
   {#if isShareOpened}
     <Popup on:close={() => onShareToggle(false)} title="Share Link">
@@ -575,8 +577,7 @@ const getArtistsString = (artistCrew) => {
   width: 64px;
   height: 52px;
   border-radius: 0 50% 50% 0;
-  background: var(--color-accent) url(../../../images/pencil.svg) 50% 50%/ 20px 20px
-    no-repeat;
+  background: var(--color-accent);
   color: transparent;
   font-size: 0;
 }
