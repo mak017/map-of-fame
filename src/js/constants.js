@@ -14,6 +14,8 @@ export const MAX_SPOTS_PER_PAGE = 36;
 
 export const MAX_IMAGE_FILE_SIZE = 5120000;
 
+export const USER_ABOUT_TEXT_LIMIT = 1000;
+
 export const STATUSES = { live: "Live", buffed: "Buffed", unknown: "Unknown" };
 
 export const USER_TYPES = {

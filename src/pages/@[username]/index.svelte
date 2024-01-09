@@ -10,6 +10,7 @@ import Profile from "../../js/components/user/Profile.svelte";
 <Modal
   id="profile-modal"
   noLogo
+  noPaddingTop
   on:close={() => {
     $goto("/");
     !$isShowOnMapMode && selectedUserProfileData.set({});

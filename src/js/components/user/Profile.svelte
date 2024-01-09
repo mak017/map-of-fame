@@ -29,20 +29,27 @@ import {
   loadFromLocalStorage,
   removeFromLocalStorage,
 } from "../../utils/commonUtils";
+import { processImage } from "../../utils/imageUtils.js";
 
-import Spinner from "./../elements/Spinner.svelte";
-import CustomSelect from "../elements/CustomSelect.svelte";
-import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
-import ShareSvg from "../elements/icons/ShareSvg.svelte";
 import Popup from "../Popup.svelte";
 import Invites from "./Invites.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import ShareProfile from "./ShareProfile.svelte";
+import Spinner from "./../elements/Spinner.svelte";
+import CustomSelect from "../elements/CustomSelect.svelte";
+import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
+import PlusSvg from "../elements/icons/PlusSvg.svelte";
+import ShareSvg from "../elements/icons/ShareSvg.svelte";
+import PencilSvg from "../elements/icons/PencilSvg.svelte";
+import SelectIndicatorSvg from "../elements/icons/SelectIndicatorSvg.svelte";
 
 import {
   ALL_YEARS_STRING,
   EMPTY_YEAR_STRING,
+  ERROR_MESSAGES,
+  MAX_IMAGE_FILE_SIZE,
   MAX_SPOTS_PER_PAGE,
+  USER_ABOUT_TEXT_LIMIT,
 } from "../../constants";
 
 let currentSpot;
@@ -52,6 +59,21 @@ let showSharePopup = false;
 let newBatch = [];
 let unusedInvitesCount = 0;
 let parentModal = null;
+let userBg = null;
+let uploadedBg = {
+  file: undefined,
+  filePreview: "",
+  blob: undefined,
+};
+let errors = { uploadedBg: "" };
+
+let about = "";
+let isEditableAbout = false;
+let userDescrElement;
+let isExpandableAbout = false;
+let isExpandedAbout = false;
+let aboutCharacterCount = 0;
+
 const token = loadFromLocalStorage("token") || null;
 
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
@@ -60,6 +82,7 @@ const toggleSharePopup = (toggle) => (showSharePopup = toggle);
 
 onMount(() => {
   parentModal = document.getElementById("profile-modal");
+
   if ($profileState.scrollOffset) {
     setTimeout(() => {
       parentModal.scrollTo({
@@ -68,6 +91,15 @@ onMount(() => {
       profileState.setScrollOffset(0);
     }, 0);
   }
+
+  userDescrElement = document.getElementById("user-description");
+  const observer = new MutationObserver(() => {
+    aboutCharacterCount = userDescrElement.textContent?.length;
+  });
+  observer.observe(userDescrElement, {
+    characterData: true,
+    subtree: true,
+  });
 });
 
 const { username } = $params;
@@ -82,6 +114,19 @@ $: isCurrentUser = $userData.username === strippedUsername;
 $: name = isCurrentUser
   ? $userData.artist?.name ?? $userData.crew?.name
   : $profileState.user.artist?.name ?? $profileState.user.crew?.name;
+$: userBg = isCurrentUser
+  ? $userData.background
+  : $profileState.user.background;
+$: about = isCurrentUser ? $userData.about : $profileState.user.about;
+$: if (about) {
+  aboutCharacterCount = about.replace(/(\r\n)/gm, "\n").length;
+}
+
+$: if (about && userDescrElement) {
+  setTimeout(() => {
+    isExpandableAbout = userDescrElement.scrollHeight > 120;
+  }, 0);
+}
 
 $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   profileState.setIsInitialized(true);
@@ -297,49 +342,234 @@ const handleSortingChange = (value) => () => {
   profileState.setSorting(value);
   fetchSpots({ isNewFetch: true });
 };
+
+const handleProcessedImage = (imageObject) => {
+  uploadedBg = { ...imageObject };
+
+  editUser(token, $userData.id, {
+    background: uploadedBg.blob,
+  }).then((response) => {
+    const { success, result } = response;
+    if (success && result) {
+      $userData.background = result.background;
+    }
+  });
+};
+
+const handleImageChange = () => {
+  let imageObject = { ...uploadedBg };
+  const file = uploadedBg.file[0];
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      const img = new Image();
+      img.src = e.target.result;
+      img.onload = function () {
+        if (file.size > MAX_IMAGE_FILE_SIZE) {
+          processImage(
+            file,
+            MAX_IMAGE_FILE_SIZE,
+            4200,
+            4200,
+            0.8,
+            true,
+            (blob) => {
+              const newBlob = new File([blob], "image.jpg");
+              imageObject = {
+                ...imageObject,
+                blob: newBlob,
+                filePreview: URL.createObjectURL(newBlob),
+              };
+              handleProcessedImage(imageObject);
+            },
+          );
+        } else {
+          processImage(
+            file,
+            0,
+            Infinity,
+            Infinity,
+            0.85,
+            false,
+            (blob, isRotated) => {
+              const newBlob = new File([blob], "image.jpg");
+              imageObject = isRotated
+                ? {
+                    ...imageObject,
+                    blob: newBlob,
+                    filePreview: URL.createObjectURL(newBlob),
+                  }
+                : { ...imageObject, blob: file, filePreview: e.target.result };
+              handleProcessedImage(imageObject);
+            },
+          );
+        }
+      };
+    };
+
+    if (file.size < MAX_IMAGE_FILE_SIZE * 6) {
+      errors.uploadedBg = "";
+      reader.readAsDataURL(file);
+    } else {
+      errors.uploadedBg = ERROR_MESSAGES.fileTooLarge;
+    }
+  }
+};
+
+const getBgStyleUrl = (uploadedBg, userBg) => {
+  if (!uploadedBg.filePreview && !userBg) return;
+
+  return `url(${uploadedBg.filePreview || userBg}) 50%/cover no-repeat`;
+};
+
+const initDescrEditing = () => {
+  isEditableAbout = true;
+  setTimeout(() => {
+    userDescrElement.focus();
+  }, 0);
+};
+
+const handleDescrBlur = (isEditable) => (event) => {
+  if (!isEditable) return;
+
+  const { textContent } = event.target;
+  const trimmedText = textContent.trim();
+
+  if (trimmedText === about || trimmedText.length > USER_ABOUT_TEXT_LIMIT)
+    return;
+
+  editUser(token, $userData.id, {
+    about: trimmedText,
+  }).then((response) => {
+    const { success, result } = response;
+    if (success && result) {
+      $userData.about = result.about;
+    }
+  });
+
+  userDescrElement.scrollTo(0, 0);
+  isEditableAbout = false;
+};
+
+const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
 </script>
 
-<div class="container" class:isCurrentUser>
-  <div class="profile-header">
-    {#if $profileState.invites.length}
-      <div class="invites">
-        <button
-          type="button"
-          class="button"
-          on:click={() => toggleInvitesPopup(true)}>🖖 Invites</button>
-        for your friends
+<div
+  class="container"
+  class:isCurrentUser
+  class:hasBg={uploadedBg.filePreview || userBg}>
+  <div class="user-bg-wrapper">
+    <div
+      class="user-bg"
+      style={`background: ${
+        getBgStyleUrl(uploadedBg, userBg) ?? "var(--color-accent)"
+      };`}>
+    </div>
+    <div class="user-data">
+      {#if isCurrentUser}
+        <div class="profile-header">
+          {#if $profileState.invites.length}
+            <div class="invites">
+              <button
+                type="button"
+                class="button"
+                on:click={() => toggleInvitesPopup(true)}>🖖 Invites</button>
+              for your friends
+            </div>
+          {/if}
+          <div class="hide-all">
+            <button
+              type="button"
+              class="button hide-button"
+              on:click={handleHideAllClick}
+              >{$userData.isSpotsHidden ? "👀 Show" : "🚨 Hide"}</button>
+            all your photos
+          </div>
+        </div>
+      {/if}
+      <div class="top">
+        {#if name || username}
+          <div class="user">
+            {#if name}
+              <div class="name-wrapper">
+                <span class="name">{name}</span>
+              </div>
+            {/if}
+            {#if username}
+              <div class="username">{username}</div>
+            {/if}
+          </div>
+        {/if}
+        {#if isCurrentUser}
+          <button type="button" class="button logout" on:click={handleLogout}
+            ><span>Logout</span></button>
+        {/if}
       </div>
-    {/if}
-    {#if isCurrentUser}
-      <div class="hide-all">
-        <button
-          type="button"
-          class="button hide-button"
-          on:click={handleHideAllClick}
-          >{$userData.isSpotsHidden ? "👀 Show" : "🚨 Hide"}</button>
-        all your photos
-      </div>
-    {/if}
-  </div>
-  <div class="top">
-    {#if name || username}
-      <div class="user">
-        {#if name}
-          <span class="name">{name}</span>
+      {#if name}
+        <div class="buttons-wrapper">
           <button
             type="button"
             class="button name"
-            on:click={() => toggleSharePopup(true)}
-            ><ShareSvg color="dark" /></button>
-        {/if}
-        {#if username}
-          <div class="username">{username}</div>
-        {/if}
+            on:click={() => toggleSharePopup(true)}><ShareSvg /></button>
+        </div>
+      {/if}
+    </div>
+    {#if isCurrentUser}
+      <div class="user-bg-control">
+        <input
+          accept="image/png, image/jpeg"
+          bind:files={uploadedBg.file}
+          on:change={handleImageChange}
+          id="upload-bg"
+          type="file" />
+        <label
+          for="upload-bg"
+          type="button"
+          class="button"
+          title="Add background image"
+          ><PlusSvg color="var(--color-dark)" /></label>
       </div>
     {/if}
-    {#if isCurrentUser}
-      <button type="button" class="button logout" on:click={handleLogout}
-        >Logout</button>
+  </div>
+  <div class="description" class:isExpandedAbout>
+    <div
+      id="user-description"
+      class="text"
+      class:isEditableAbout
+      contenteditable={isEditableAbout ? "plaintext-only" : false}
+      on:blur={handleDescrBlur(isEditableAbout)}>
+      {@html isEditableAbout || !isCurrentUser
+        ? about ?? ""
+        : prepareAboutText(about) ?? "Write something about you."}
+    </div>
+    {#if isEditableAbout}
+      <div
+        class="char-counter"
+        title={aboutCharacterCount > USER_ABOUT_TEXT_LIMIT
+          ? `${USER_ABOUT_TEXT_LIMIT} symbols limit exceeded, changes will not be saved`
+          : `You typed ${aboutCharacterCount} from ${USER_ABOUT_TEXT_LIMIT} symbols`}>
+        <span class:invalid={aboutCharacterCount > USER_ABOUT_TEXT_LIMIT}
+          >{aboutCharacterCount}</span>
+        / {USER_ABOUT_TEXT_LIMIT}
+      </div>
+    {/if}
+    {#if isCurrentUser && !isEditableAbout}
+      <button
+        type="button"
+        class="button button-edit"
+        on:click={initDescrEditing}>
+        <PencilSvg fill="var(--color-accent)" /></button>
+    {/if}
+    {#if isExpandableAbout && !isEditableAbout}
+      <div class="expand-wrapper">
+        <button
+          type="button"
+          class="button button-expand"
+          on:click={() => (isExpandedAbout = !isExpandedAbout)}
+          >{isExpandedAbout ? "Show less" : "Show more"}
+          <span><SelectIndicatorSvg /></span></button>
+      </div>
     {/if}
   </div>
   {#if !!$profileState.spotsList.length || $profileState.isShowSpinner}
@@ -362,16 +592,14 @@ const handleSortingChange = (value) => () => {
               <span>Sort by: </span>
               <button
                 type="button"
-                class={`button${
-                  $profileState.sortBy === "created_at" ? " active" : ""
-                }`}
+                class="button"
+                class:active={$profileState.sortBy === "created_at"}
                 on:click={handleSortingChange("created_at")}>Default</button>
               {" / "}
               <button
                 type="button"
-                class={`button${
-                  $profileState.sortBy === "year" ? " active" : ""
-                }`}
+                class="button"
+                class:active={$profileState.sortBy === "year"}
                 on:click={handleSortingChange("year")}>Year</button>
             </div>
           {/if}
@@ -414,7 +642,7 @@ const handleSortingChange = (value) => () => {
                   <button
                     type="button"
                     class="button edit"
-                    on:click={() => handleEdit(spot)} />
+                    on:click={() => handleEdit(spot)}><PencilSvg /></button>
                   <button
                     type="button"
                     class="button delete"
@@ -498,40 +726,101 @@ const handleSortingChange = (value) => () => {
   max-width: 938px;
 }
 
-.top {
+.user-bg-wrapper {
   display: flex;
-  align-items: baseline;
-  align-self: stretch;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 240px;
+  margin-bottom: 24px;
+  padding: 32px 0;
 
-.user {
-  max-width: 100%;
-  overflow: hidden;
-  color: var(--color-dark);
-  text-overflow: ellipsis;
-
-  .name {
-    margin-bottom: 4px;
-    background: none;
-    color: inherit;
-    font-size: 24px;
-    font-weight: 900;
-    line-height: 1.22;
-    text-transform: uppercase;
+  .user-data {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 0 auto;
+    width: 100%;
   }
 
-  &name {
-    opacity: 0.4;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.25;
+  .buttons-wrapper {
+    position: absolute;
+    right: 0;
+    bottom: -44px;
+
+    .name {
+      width: 44px;
+      height: 44px;
+      border-radius: 0;
+      background-color: var(--color-lotion);
+    }
+  }
+}
+
+.user-bg {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: -1;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  opacity: 0.25;
+
+  &-control {
+    input {
+      position: absolute;
+      left: -9999px;
+      clip: rect(0 0 0 0);
+      opacity: 0;
+    }
+
+    label {
+      display: flex;
+      position: absolute;
+      top: 185px;
+      left: 50%;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 0;
+      transform: translateX(-50%);
+      background-color: var(--color-light);
+      transition: opacity 0.3s;
+    }
+  }
+}
+
+.hasBg {
+  .user-bg {
+    opacity: 1;
+  }
+
+  .user-bg-control {
+    label {
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .profile-header,
+  .user .name-wrapper,
+  .username {
+    background-color: var(--color-light);
   }
 }
 
 .profile-header {
-  margin-bottom: 26px;
+  padding: 2px 8px;
   color: var(--color-dark);
   font-size: 14px;
   line-height: 17px;
@@ -550,22 +839,145 @@ const handleSortingChange = (value) => () => {
   }
 }
 
+.top {
+  display: flex;
+  align-items: baseline;
+  align-self: stretch;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
 .invites {
   margin-bottom: 5px;
 }
 
+.user {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--color-dark);
+  text-overflow: ellipsis;
+
+  .name {
+    margin-bottom: 4px;
+    color: inherit;
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1.22;
+    text-transform: uppercase;
+
+    &-wrapper {
+      padding: 6px 10px;
+    }
+  }
+
+  &name {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+}
+
 .logout {
+  padding: 6px 10px;
+  border-radius: 0;
   transition: opacity 0.3s;
-  opacity: 0.4;
-  background: none;
+  background-color: var(--color-light);
   color: var(--color-accent);
   font-size: 18px;
   font-weight: 900;
   line-height: 1.22;
   text-transform: uppercase;
 
-  &:hover {
+  > span {
+    opacity: 0.4;
+  }
+
+  &:hover > span {
     opacity: 1;
+  }
+}
+
+.description {
+  display: flex;
+  position: relative;
+  align-self: flex-start;
+  flex-wrap: wrap;
+  max-width: 100%;
+  margin-bottom: 32px;
+  font-size: 14px;
+
+  .text {
+    overflow: hidden;
+    min-width: 225px;
+    max-width: calc(100% - 30px);
+    max-height: 105px;
+    font-weight: 600;
+
+    &.isEditableAbout {
+      overflow: auto;
+      max-width: 100%;
+      min-height: 45px;
+      max-height: 330px;
+      padding: 10px 8px 20px;
+      border: 1px solid var(--color-black);
+      border-radius: 2px;
+    }
+  }
+
+  .button-edit {
+    align-self: flex-end;
+    margin-left: 10px;
+    background: none;
+  }
+
+  .expand-wrapper {
+    width: 100%;
+  }
+
+  .button-expand {
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+    background: none;
+    transition: opacity 0.3s;
+    font-size: 13px;
+
+    > span {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 4px;
+      transition: transform 0.3s;
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .char-counter {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    padding: 0 2px;
+    background-color: var(--color-light);
+    font-size: 13px;
+
+    .invalid {
+      color: var(--color-error);
+      font-weight: 700;
+    }
+  }
+
+  &.isExpandedAbout {
+    .text {
+      max-height: none;
+    }
+
+    .button-expand > span {
+      transform: rotate(180deg);
+    }
   }
 }
 
@@ -753,8 +1165,9 @@ const handleSortingChange = (value) => () => {
 }
 
 .edit {
-  background-image: url(../../../images/pencil.svg);
-  background-size: 20px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .delete {
@@ -787,10 +1200,17 @@ const handleSortingChange = (value) => () => {
     }
   }
 
-  .top {
-    position: relative;
-    flex-direction: column-reverse;
-    margin-bottom: 18px;
+  .user-bg-wrapper {
+    height: 250px;
+    padding: 12px 0;
+
+    .buttons-wrapper {
+      bottom: -34px;
+    }
+  }
+
+  .user-bg {
+    height: 250px;
   }
 
   .invites {
@@ -799,7 +1219,7 @@ const handleSortingChange = (value) => () => {
 
   .profile-header {
     position: absolute;
-    top: 25px;
+    top: 5px;
     left: 50%;
     z-index: 1;
     width: fit-content;
@@ -808,14 +1228,40 @@ const handleSortingChange = (value) => () => {
     text-align: center;
   }
 
+  .top {
+    position: relative;
+    flex-direction: column-reverse;
+  }
+
+  .user .name {
+    font-size: 24px;
+  }
+
+  .user-bg-control {
+    label {
+      top: 110px;
+    }
+  }
+
   .logout {
     position: relative;
-    top: -8px;
-    width: 30px;
-    height: 30px;
-    margin: -20px 0 52px;
-    background: url(../../../images/logout.svg) 50% 50%/27px 27px no-repeat;
+    top: -58px;
+    width: 48px;
+    height: 48px;
+    margin: -20px 0 32px;
+    background: var(--color-light) url(../../../images/logout.svg) 50% 50%/27px
+      27px no-repeat;
     font-size: 0;
+  }
+
+  .description {
+    .text {
+      max-height: 85px;
+
+      &.isEditableAbout {
+        max-height: 265px;
+      }
+    }
   }
 
   .sorting {
