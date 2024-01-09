@@ -92,7 +92,7 @@ export const SPOT_YEAR = (year, geoRect, categories, withHunters) => {
     withHunters ? 1 : 0
   }${getGeoRect(geoRect)}`;
 
-  if (year) {
+  if (typeof year !== "undefined") {
     url += `&year=${year}`;
   }
 

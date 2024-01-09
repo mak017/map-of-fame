@@ -40,6 +40,7 @@ onDestroy(() => {
     searchFunction={getItems}
     delay="200"
     localFiltering={false}
+    cleanUserText={false}
     labelFieldName="name"
     valueFieldName="id"
     minCharactersToSearch={2}
