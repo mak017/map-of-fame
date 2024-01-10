@@ -427,6 +427,8 @@ const initDescrEditing = () => {
   isEditableAbout = true;
   setTimeout(() => {
     userDescrElement.focus();
+    document.execCommand("selectAll", false, null);
+    document.getSelection().collapseToEnd();
   }, 0);
 };
 
@@ -450,6 +452,7 @@ const handleDescrBlur = (isEditable) => (event) => {
 
   userDescrElement.scrollTo(0, 0);
   isEditableAbout = false;
+  isExpandableAbout = userDescrElement.scrollHeight > 120;
 };
 
 const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
@@ -532,11 +535,10 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
       </div>
     {/if}
   </div>
-  <div class="description" class:isExpandedAbout>
+  <div class="description" class:isExpandedAbout class:isEditableAbout>
     <div
       id="user-description"
       class="text"
-      class:isEditableAbout
       contenteditable={isEditableAbout ? "plaintext-only" : false}
       on:blur={handleDescrBlur(isEditableAbout)}>
       {@html isEditableAbout || !isCurrentUser
@@ -914,9 +916,13 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
     max-width: calc(100% - 30px);
     max-height: 105px;
     font-weight: 600;
+  }
 
-    &.isEditableAbout {
+  &.isEditableAbout {
+    width: 100%;
+    .text {
       overflow: auto;
+      width: 100%;
       max-width: 100%;
       min-height: 45px;
       max-height: 330px;
@@ -1251,10 +1257,10 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
   .description {
     .text {
       max-height: 85px;
+    }
 
-      &.isEditableAbout {
-        max-height: 265px;
-      }
+    &.isEditableAbout .text {
+      max-height: 265px;
     }
   }
 
