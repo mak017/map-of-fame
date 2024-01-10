@@ -160,7 +160,7 @@ export const editUser = async (
   const bearer = `Bearer ${token}`;
   const formData = new FormData();
 
-  if (typeof isSpotsHidden === "boolean") {
+  if (typeof isSpotsHidden !== "undefined") {
     formData.append("is_spots_hidden", isSpotsHidden);
   }
 

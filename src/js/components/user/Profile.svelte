@@ -1035,10 +1035,10 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
     background: none;
     color: var(--color-accent);
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 400;
 
     &.active {
-      font-weight: 700;
+      font-weight: 600;
       pointer-events: none;
     }
 
@@ -1194,12 +1194,6 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
 }
 
 @media (max-width: 767px) {
-  .container {
-    &:not(.isCurrentUser) {
-      margin-top: 48px;
-    }
-  }
-
   .user-bg-wrapper {
     height: 250px;
     padding: 12px 0;
@@ -1245,7 +1239,7 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
 
   .logout {
     position: relative;
-    top: -58px;
+    top: -68px;
     width: 48px;
     height: 48px;
     margin: -20px 0 32px;
