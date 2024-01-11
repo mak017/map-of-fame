@@ -25,6 +25,7 @@ import {
 } from "../../store";
 import { getProfileYears } from "./../../utils/datesUtils.js";
 import {
+  clickOutside,
   isEmpty,
   loadFromLocalStorage,
   removeFromLocalStorage,
@@ -540,7 +541,9 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
       id="user-description"
       class="text"
       contenteditable={isEditableAbout ? "plaintext-only" : false}
-      on:blur={handleDescrBlur(isEditableAbout)}>
+      on:blur={handleDescrBlur(isEditableAbout)}
+      use:clickOutside
+      on:click_outside={() => (isEditableAbout = false)}>
       {@html isEditableAbout || !isCurrentUser
         ? about ?? ""
         : prepareAboutText(about) ?? "Write something about you."}
