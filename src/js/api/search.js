@@ -14,15 +14,20 @@ export const requestSearchArtistsCrews = async (artist, crew) => {
 };
 
 export const requestSearchUserByArtist = async (artist) => {
-  const response = await fetch(USER_SERACH_BY_ARTIST(artist), {
-    method: "GET",
-  });
+  const response = await fetch(
+    USER_SERACH_BY_ARTIST(encodeURIComponent(artist)),
+    {
+      method: "GET",
+    }
+  );
   const result = await response.json();
   return result;
 };
 
 export const requestSearchUserByCrew = async (crew) => {
-  const response = await fetch(USER_SERACH_BY_CREW(crew), { method: "GET" });
+  const response = await fetch(USER_SERACH_BY_CREW(encodeURIComponent(crew)), {
+    method: "GET",
+  });
   const result = await response.json();
   return result;
 };

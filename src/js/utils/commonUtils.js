@@ -150,8 +150,25 @@ export const isEmpty = (value) => {
 
 /** Dispatch event on click outside of node */
 export const clickOutside = (node) => {
+  let lastMouseDownX = 0;
+  let lastMouseDownY = 0;
+  let lastMouseDownWasOutside = false;
+
+  const mouseDownListener = (event) => {
+    lastMouseDownX = event.offsetX;
+    lastMouseDownY = event.offsetY;
+    lastMouseDownWasOutside = !event.composedPath().includes(node);
+  };
+  document.addEventListener("mousedown", mouseDownListener);
+
   const handleClick = (event) => {
-    if (node && !node.contains(event.target) && !event.defaultPrevented) {
+    const deltaX = event.offsetX - lastMouseDownX;
+    const deltaY = event.offsetY - lastMouseDownY;
+    const distSq = deltaX * deltaX + deltaY * deltaY;
+    const isDrag = distSq > 3;
+    const isDragException = isDrag && !lastMouseDownWasOutside;
+
+    if (!node.contains(event.target) && !isDragException) {
       node.dispatchEvent(new CustomEvent("click_outside", node));
     }
   };
@@ -161,6 +178,7 @@ export const clickOutside = (node) => {
   return {
     destroy() {
       document.removeEventListener("click", handleClick, true);
+      document.removeEventListener("mousedown", mouseDownListener);
     },
   };
 };

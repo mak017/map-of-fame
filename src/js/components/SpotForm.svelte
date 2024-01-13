@@ -303,7 +303,7 @@ const onChangeImage = (imageType) => {
                 blob: newBlob,
                 filePreview: URL.createObjectURL(newBlob),
               };
-              handleProcessedImage(imageType, imageObject, blob);
+              handleProcessedImage(imageType, imageObject);
             },
           );
         } else {
@@ -323,7 +323,7 @@ const onChangeImage = (imageType) => {
                     filePreview: URL.createObjectURL(newBlob),
                   }
                 : { ...imageObject, blob: file, filePreview: e.target.result };
-              handleProcessedImage(imageType, imageObject, blob, isRotated);
+              handleProcessedImage(imageType, imageObject);
             },
           );
         }

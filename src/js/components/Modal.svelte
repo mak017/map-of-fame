@@ -14,6 +14,7 @@ export let withFooter = false;
 export let noLogo = false;
 export let accentTitle = false;
 export let noClose = false;
+export let noPaddingTop = false;
 export let autoMargin = false;
 export let alwaysOnTop = false;
 export let stickyHeaderOnMobile = false;
@@ -47,6 +48,7 @@ const handleResize = () => {
   class:autoMargin={autoMargin && withAd && banner.url}
   class:alwaysOnTop
   class:stickyHeaderOnMobile={stickyHeaderOnMobile && scrollTop > 290}
+  class:noPaddingTop
   {id}
   role="dialog"
   aria-modal="true"
@@ -109,8 +111,13 @@ const handleResize = () => {
   padding: max(5vh, 54px) 32px 5vh;
   overflow: auto;
   background: var(--color-light);
+
   &.withAd {
     justify-content: flex-start;
+  }
+
+  &.noPaddingTop {
+    padding-top: 0;
   }
 }
 
@@ -119,8 +126,9 @@ const handleResize = () => {
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 34px;
-  height: 34px;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
   padding: 0;
   border: 0;
   background: inherit;
