@@ -954,6 +954,7 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
     align-items: center;
     opacity: 0.7;
     background: none;
+    color: inherit;
     transition: opacity 0.3s;
     font-size: 13px;
 
