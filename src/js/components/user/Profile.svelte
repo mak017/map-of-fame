@@ -543,7 +543,11 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
       contenteditable={isEditableAbout ? "plaintext-only" : false}
       on:blur={handleDescrBlur(isEditableAbout)}
       use:clickOutside
-      on:click_outside={() => (isEditableAbout = false)}>
+      on:click_outside={() => {
+        if (isEditableAbout) {
+          isEditableAbout = false;
+        }
+      }}>
       {@html isEditableAbout || !isCurrentUser
         ? about ?? ""
         : prepareAboutText(about) ?? "Write something about you."}
