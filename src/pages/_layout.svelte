@@ -68,7 +68,7 @@ searchControl.set(
     position: "topright",
     style: "button",
     showMarker: false,
-    searchLabel: "Address",
+    searchLabel: "Search",
     maxSuggestions: isMobile() ? 3 : 5,
     autoClose: true,
   }),
@@ -101,8 +101,16 @@ const initMap = (container) => {
   document.addEventListener("click", (event) => {
     if ($isActiveSearchControl) {
       const geoSearchElement = document.querySelector(".geosearch");
-      if (!geoSearchElement.contains(event.target)) {
+      const artistSearchElement = document.querySelector(".search-artist");
+      if (
+        !geoSearchElement.contains(event.target) &&
+        !artistSearchElement?.contains(event.target)
+      ) {
         $searchControl.close();
+      }
+
+      if (event.target.classList.contains("item")) {
+        $searchControl.clearResults();
       }
     }
   });

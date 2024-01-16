@@ -45,6 +45,11 @@ body {
       opacity: 1;
       visibility: visible;
     }
+
+    .main-top_right_wrapper .search.search-artist {
+      opacity: 1;
+      visibility: visible;
+    }
   }
 
   &.geo-search-overlay {
@@ -158,13 +163,22 @@ body {
   > form {
     display: flex;
     flex: 1 0 auto;
+    margin-left: 108px;
     transition: none;
     opacity: 0;
   }
 
   .glass {
     flex: 1 0 auto;
+    padding: 6px 12px;
     border: 0;
+    font-size: 16px;
+    font-weight: 600;
+
+    &::placeholder {
+      color: var(--color-dark);
+      font-weight: normal;
+    }
   }
 
   .reset {
@@ -184,7 +198,7 @@ body {
     display: none;
     position: absolute;
     top: 100%;
-    right: 40px;
+    right: 0;
     left: 0;
     max-height: 60vh;
     padding: 10px 20px;
@@ -244,10 +258,6 @@ body {
         opacity: 0;
         visibility: hidden;
       }
-
-      .main-top_right_wrapper {
-        top: 56px;
-      }
     }
   }
 
@@ -260,5 +270,23 @@ body {
     width: calc(100vw - 36px);
     margin-right: 18px;
     margin-left: 18px;
+
+    &::before {
+      content: "";
+      flex: 0 0 82px;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    > form {
+      order: 1;
+      max-width: calc(100% - 122px);
+      margin-left: 0;
+    }
+
+    .glass {
+      max-width: calc(100% - 40px);
+      padding: 6px;
+    }
   }
 }

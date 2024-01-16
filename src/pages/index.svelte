@@ -3,7 +3,7 @@ import { onDestroy, onMount } from "svelte";
 import { fade } from "svelte/transition";
 import L from "leaflet";
 import "@bopen/leaflet-area-selection/dist/index.css";
-import { url } from "@roxi/routify";
+import { goto, url } from "@roxi/routify";
 
 import { requestRecentSpots, requestSpots } from "../js/init.js";
 import {
@@ -32,6 +32,8 @@ import {
   withHunters,
 } from "../js/store.js";
 import {
+  clickOutside,
+  debounce,
   getCurrentYear,
   getInviteData,
   saveToLocalStorage,
@@ -41,13 +43,14 @@ import { setLocation } from "../js/utils/mapUtils/locationUtils.js";
 import { permalink } from "../js/utils/mapUtils/permalink";
 import { newMarkerIcon } from "../js/utils/mapUtils/icons";
 
+import Modal from "../js/components/Modal.svelte";
+import CategoryFilter from "../js/components/CategoryFilter.svelte";
+import Spinner from "../js/components/elements/Spinner.svelte";
 import CloseCrossSvg from "../js/components/elements/icons/CloseCrossSvg.svelte";
 import HuntersSvg from "../js/components/elements/icons/HuntersSvg.svelte";
-import Modal from "../js/components/Modal.svelte";
+import SelectIndicatorSvg from "../js/components/elements/icons/SelectIndicatorSvg.svelte";
 import AddSpot from "../js/components/addSpot/AddSpot.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
-import Spinner from "../js/components/elements/Spinner.svelte";
-import CategoryFilter from "../js/components/CategoryFilter.svelte";
 
 import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
 
@@ -55,6 +58,10 @@ let isAddSpotSidebarVisible = false;
 let inviteData = getInviteData();
 
 let newMarker;
+
+let selectedSearch = "Artist";
+let isSearchSelectorOpened = false;
+let searchArtistText = "";
 
 const updatePermalink = () => permalink.update({ mapContainer: $map });
 
@@ -148,15 +155,6 @@ const showAddSpot = () => {
 $: if ($shouldShowAddSpot) showAddSpot();
 $: if ($shouldShowAddSpot === false) handleNewMarkerCancel();
 
-const handleLighthouseClick = () => {
-  if (!$isLighthouseActive) {
-    requestRecentSpots();
-  } else {
-    requestSpots($selectedYear);
-    isLighthouseActive.set(false);
-  }
-};
-
 const quitAddSpot = () => {
   shouldShowAddSpot.set(false);
   toggleAddSpotSidebarVisible(false);
@@ -174,6 +172,12 @@ const handleKeyDown = (e) => {
     }
   }
 };
+
+const handleSearchInput = () => {
+  $goto("/search", { text: searchArtistText });
+};
+
+const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
 </script>
 
 <svelte:window on:keydown={handleKeyDown} />
@@ -217,10 +221,41 @@ const handleKeyDown = (e) => {
   <div class="main-top_right_wrapper">
     {#if !$shouldShowAddSpot && !$isAreaSelectionActive}
       {#if !($isSearchResults && ($selectedArtist || $selectedCrew)) && !$isShowOnMapMode}
-        <a
-          href={$url("/search")}
-          class="button button-main_screen button-open_search"
-          in:fade={{ duration: 200 }}>Search Artist</a>
+        <div
+          class="search search-artist"
+          class:isArtistSearch={selectedSearch === "Artist"}
+          class:isAddressSearch={selectedSearch === "Address"}>
+          <div
+            class="search-select"
+            class:isSearchSelectorOpened
+            use:clickOutside
+            on:click_outside={() => (isSearchSelectorOpened = false)}>
+            <div
+              class="selected"
+              on:click={() =>
+                (isSearchSelectorOpened = !isSearchSelectorOpened)}>
+              {selectedSearch} <span><SelectIndicatorSvg /></span>
+            </div>
+            <div class="options">
+              <div
+                class="item"
+                on:click={() => {
+                  selectedSearch =
+                    selectedSearch === "Artist" ? "Address" : "Artist";
+                  isSearchSelectorOpened = false;
+                }}>
+                {selectedSearch === "Artist" ? "Address" : "Artist"}
+              </div>
+            </div>
+          </div>
+          <form>
+            <input
+              type="text"
+              placeholder="Search"
+              bind:value={searchArtistText}
+              on:input={debouncedSearchChange()} />
+          </form>
+        </div>
         {#if $isLoggedIn}
           <a
             href={$url("/@:username", { username: $userData.username })}
@@ -362,29 +397,6 @@ const handleKeyDown = (e) => {
     }
   }
 
-  &-open_search {
-    position: absolute;
-    top: 40px;
-    right: 40px;
-    margin-right: 12px;
-    padding: 8px 55px 8px 12px;
-    border-radius: 0 0 2px 2px;
-    opacity: 0;
-    visibility: hidden;
-    transition:
-      opacity 0.2s,
-      visibility 0.2s;
-    background-color: var(--color-lotion);
-    background-image: url(../images/user.svg);
-    background-repeat: no-repeat;
-    background-position: calc(100% - 8px) 50%;
-    background-size: 20px 20px;
-    color: var(--color-dark);
-    font-size: 16px;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
   &-open_login {
     background-image: url(../images/lock.svg);
     background-repeat: no-repeat;
@@ -518,6 +530,93 @@ const handleKeyDown = (e) => {
   }
 }
 
+.search-artist {
+  display: flex;
+  position: absolute;
+  right: 40px;
+  margin-right: 52px;
+  opacity: 0;
+  visibility: hidden;
+
+  .search-select {
+    position: relative;
+    width: 112px;
+    border-right: 1px solid var(--color-grey);
+
+    .selected {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 40px;
+      padding: 0 12px;
+      cursor: pointer;
+
+      > span {
+        transition: transform 0.3s;
+        line-height: 0;
+      }
+    }
+
+    .options {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      opacity: 0;
+      visibility: hidden;
+
+      .item {
+        padding: 0 12px 8px;
+        cursor: pointer;
+      }
+    }
+
+    &.isSearchSelectorOpened {
+      background-color: var(--color-lotion);
+
+      .selected > span {
+        transform: rotate(180deg);
+      }
+
+      .options {
+        border-radius: 0 0 2px 2px;
+        opacity: 1;
+        visibility: visible;
+        background-color: inherit;
+      }
+    }
+  }
+
+  input {
+    width: 280px;
+    height: 40px;
+    max-width: 100%;
+    padding: 6px 12px;
+    border: 0;
+    background-color: var(--color-light);
+    color: var(--color-dark);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+
+    &::placeholder {
+      color: var(--color-dark);
+      font-weight: normal;
+    }
+
+    &:focus {
+      outline: 0;
+    }
+  }
+
+  &.isAddressSearch {
+    margin-right: 332px;
+    form {
+      display: none;
+    }
+  }
+}
+
 .selection {
   display: flex;
   align-items: center;
@@ -572,12 +671,6 @@ const handleKeyDown = (e) => {
       white-space: nowrap;
     }
 
-    &-open_search {
-      top: 0;
-      right: 0px;
-      margin-right: 0;
-    }
-
     &-clear_search {
       padding: 4px;
     }
@@ -597,6 +690,44 @@ const handleKeyDown = (e) => {
         visibility: hidden;
         transition: visibility 0s;
       }
+    }
+  }
+
+  .search-artist {
+    top: 0;
+    right: 0;
+    width: calc(100vw - 76px);
+    margin-right: 0;
+
+    .search-select {
+      flex: 0 0 82px;
+
+      .selected {
+        padding: 0 4px;
+      }
+
+      .options .item {
+        padding: 0 4px 8px;
+      }
+    }
+
+    form {
+      flex: 1 0 auto;
+      max-width: calc(100% - 122px);
+    }
+
+    input {
+      width: 100%;
+      padding: 6px;
+    }
+
+    &.isAddressSearch {
+      position: fixed;
+      top: 16px;
+      right: auto;
+      left: 58px;
+      width: 82px;
+      margin-right: 0;
     }
   }
 
