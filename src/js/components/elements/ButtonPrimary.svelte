@@ -6,6 +6,7 @@ import Spinner from "./Spinner.svelte";
 
 export let isDisabled = false;
 export let withLoader = false;
+export let hideText = false;
 export let type = "button";
 export let className = "";
 export let text = "";
@@ -17,6 +18,7 @@ const dispatch = createEventDispatcher();
   {type}
   class={`button${className ? ` ${className}` : ""}`}
   class:withLoader
+  class:hideText
   disabled={isDisabled}
   on:click={() => dispatch("click")}
   in:fade={{ duration: 200 }}
@@ -26,6 +28,9 @@ const dispatch = createEventDispatcher();
     <span class="spinner-wrapper">
       <Spinner isWhite height={28} />
     </span>
+  {/if}
+  {#if $$slots.icon}
+    <slot name="icon" />
   {/if}
 </button>
 
@@ -70,7 +75,9 @@ button {
     --slice-3: inset(10% -6px 85% 0);
     --slice-4: inset(40% -6px 43% 0);
     --slice-5: inset(80% -6px 5% 0);
-    text-shadow: -3px -3px 0 #f8f005, 3px 3px 0 #00e6f6;
+    text-shadow:
+      -3px -3px 0 #f8f005,
+      3px 3px 0 #00e6f6;
   }
 
   &:hover {
@@ -98,6 +105,14 @@ button {
 
     .text {
       transform: translateY(130%);
+    }
+  }
+
+  &.hideText {
+    .text {
+      position: absolute;
+      opacity: 0;
+      visibility: hidden;
     }
   }
 }
@@ -197,6 +212,10 @@ button {
     width: 100%;
     max-width: 350px;
     margin: 0 auto;
+  }
+
+  .search {
+    padding: 0;
   }
 }
 

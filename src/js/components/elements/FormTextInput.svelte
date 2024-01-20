@@ -54,7 +54,7 @@ const keyDown = (event) => dispatch("keyDown", event);
     on:click={isReadOnly && this.select()}
     on:keydown={keyDown}
     readonly={isReadOnly} />
-  {#if placeholder}
+  {#if placeholder && !search}
     <div class="floating-label">{placeholder}</div>
   {/if}
   {#if errorText || hint}
@@ -211,13 +211,19 @@ label:not(.with-label) {
   margin-bottom: 0;
   &:not(.with-label) {
     input {
-      width: 336px;
+      width: 100%;
       padding: 2px 0 10px;
       line-height: 25px;
-      &:not(:placeholder-shown) + .floating-label {
-        transform: translateY(-19px);
+      font-size: 24px;
+      font-weight: 900;
+
+      &::placeholder {
+        opacity: 1;
       }
     }
+  }
+
+  .floating-label {
   }
 }
 
@@ -254,7 +260,7 @@ label:not(.with-label) {
   }
 
   .search {
-    margin-bottom: 20px;
+    // margin-bottom: 20px;
     &:not(.with-label) {
       input {
         width: 100%;

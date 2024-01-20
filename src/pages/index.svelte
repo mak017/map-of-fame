@@ -174,7 +174,9 @@ const handleKeyDown = (e) => {
 };
 
 const handleSearchInput = () => {
-  $goto("/search", { text: searchArtistText });
+  if (searchArtistText) {
+    $goto("/search", { text: searchArtistText });
+  }
 };
 
 const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
@@ -248,12 +250,11 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
               </div>
             </div>
           </div>
-          <form>
+          <form on:submit|preventDefault={handleSearchInput}>
             <input
               type="text"
               placeholder="Search"
-              bind:value={searchArtistText}
-              on:input={debouncedSearchChange()} />
+              bind:value={searchArtistText} />
           </form>
         </div>
         {#if $isLoggedIn}
