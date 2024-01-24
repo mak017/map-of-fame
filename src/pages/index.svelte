@@ -5,7 +5,7 @@ import L from "leaflet";
 import "@bopen/leaflet-area-selection/dist/index.css";
 import { goto, url } from "@roxi/routify";
 
-import { requestRecentSpots, requestSpots } from "../js/init.js";
+import { requestSpots } from "../js/init.js";
 import {
   areaSelection,
   areaSpots,
@@ -15,9 +15,7 @@ import {
   isSpotsFromAreaLoading,
   isInitialized,
   isFirstTimeVisit,
-  isLighthouseActive,
   isLoggedIn,
-  isSearchResults,
   isShowOnMapMode,
   selectedArtist,
   selectedCrew,
@@ -199,7 +197,7 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
         class:inactive={$isAreaSelectionActive}
         transition:fade={{ duration: 200 }}>{$selectedYear}</a>
     {/if}
-    {#if !$shouldShowAddSpot && !$isSearchResults && !$isShowOnMapMode && !$isAreaSelectionActive}
+    {#if !$shouldShowAddSpot && !$isShowOnMapMode && !$isAreaSelectionActive}
       <div class="hunters-switcher">
         <HuntersSvg isActive={$withHunters} />
         <button
@@ -216,13 +214,13 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
     {/if}
   </div>
 
-  {#if !$isSearchResults && !$selectedUserProfileData.artist && !$isAreaSelectionActive && !$isShowOnMapMode}
+  {#if !$selectedUserProfileData.artist && !$isAreaSelectionActive && !$isShowOnMapMode}
     <CategoryFilter />
   {/if}
 
   <div class="main-top_right_wrapper">
     {#if !$shouldShowAddSpot && !$isAreaSelectionActive}
-      {#if !($isSearchResults && ($selectedArtist || $selectedCrew)) && !$isShowOnMapMode}
+      {#if !($selectedArtist || $selectedCrew) && !$isShowOnMapMode}
         <div
           class="search search-artist"
           class:isArtistSearch={selectedSearch === "Artist"}
@@ -311,7 +309,7 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
     {/if}
   </div>
 
-  {#if !$isSearchResults && !$selectedUserProfileData.artist?.name && !$isAreaSelectionActive && !$isShowOnMapMode}
+  {#if !$selectedUserProfileData.artist?.name && !$isAreaSelectionActive && !$isShowOnMapMode}
     <button
       class="button button-main_screen button-square button-location"
       on:click={() => setLocation($map, true)}
@@ -319,7 +317,7 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
       title="Go to your location" />
   {/if}
 
-  {#if !$isSearchResults && !$shouldShowAddSpot && !$selectedUserProfileData.artist?.name && ($isAreaSelectionActive || $currentZoom > 14)}
+  {#if !$shouldShowAddSpot && !$selectedUserProfileData.artist?.name && ($isAreaSelectionActive || $currentZoom > 14)}
     <button
       class="button button-main_screen button-square button-select_area"
       class:active={$isAreaSelectionActive}
@@ -334,7 +332,7 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
     </button>
   {/if}
 
-  {#if $isLoggedIn && !$isAreaSelectionActive && !$isSearchResults && !$isShowOnMapMode}
+  {#if $isLoggedIn && !$isAreaSelectionActive && !$isShowOnMapMode}
     <AddSpot
       {isAddSpotSidebarVisible}
       {showAddSpot}

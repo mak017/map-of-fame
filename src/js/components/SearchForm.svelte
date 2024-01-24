@@ -1,62 +1,31 @@
 <script>
-import { goto, params, url } from "@roxi/routify";
 import { onMount } from "svelte";
+import InfiniteScroll from "svelte-infinite-scroll";
+import { goto, params, url } from "@roxi/routify";
+import highlightWords from "highlight-words";
 
-import { isShowOnMapMode, searchState, selectedYear } from "./../store.js";
-import {
-  isMobile,
-  loadFromLocalStorage,
-  saveToLocalStorage,
-} from "./../utils/commonUtils.js";
+import { searchState } from "./../store.js";
+import { isMobile } from "./../utils/commonUtils.js";
 import {
   requestPhotoWall,
   requestSearchArtistsCrews,
-  requestSearchSpots,
 } from "./../api/search.js";
-import { permalink } from "../utils/mapUtils/permalink";
-import {
-  isLighthouseActive,
-  isSearchResults,
-  markersStore,
-  selectedArtist,
-  selectedCrew,
-} from "../store";
 
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormTextInput from "./elements/FormTextInput.svelte";
-import GridViewSvg from "./elements/icons/GridViewSvg.svelte";
-import ListViewSvg from "./elements/icons/ListViewSvg.svelte";
-
-import {
-  ALL_YEARS_STRING,
-  ERROR_MESSAGES,
-  MAX_SPOTS_PER_PAGE,
-} from "../constants";
 import FormRadioButton from "./elements/FormRadioButton.svelte";
-import { getUserSpots } from "../api/spot.js";
-import { getProfileYears } from "../utils/datesUtils.js";
-import InfiniteScroll from "svelte-infinite-scroll";
+import Spinner from "./elements/Spinner.svelte";
 import LoupeSvg from "./elements/icons/LoupeSvg.svelte";
 
-const token = loadFromLocalStorage("token") || null;
-const searchHistoryLimit = isMobile() ? 5 : 10;
-const EMPTY_ARTIST_OR_CREW = "---";
+import { ERROR_MESSAGES, MAX_SPOTS_PER_PAGE } from "../constants";
+
 let { text: textFromUrl } = $params;
 
-// let artist = "";
-// let crew = "";
 let text = textFromUrl ?? "";
 let searchedText = "";
 let error = "";
 let newBatch = [];
 let parentModal = null;
-// let fetchedList = [];
-// let fetchedGrid = [];
-// let gridTotal = 0;
-// let isFetched = false;
-// let currentView = "list";
-let savedPreviousSearches = loadFromLocalStorage("prevSearchResults") || [];
-let previousSearches = savedPreviousSearches.slice(0, searchHistoryLimit);
 
 const validateForm = () => {
   if (text.length === 0) {
@@ -64,30 +33,17 @@ const validateForm = () => {
   }
 };
 
-const fetchArtistsCrews = async (offset = 0, isNewFetch) => {
+const fetchArtistsCrews = async () => {
   validateForm();
   if (!error) {
-    searchState.setIsLoading(isNewFetch);
+    searchState.setIsLoading(true);
     searchState.setIsShowSpinner(true);
-    const response = await requestSearchArtistsCrews(
-      text,
-      MAX_SPOTS_PER_PAGE,
-      offset,
-    );
-    const { success, result, errors } = response;
+    const response = await requestSearchArtistsCrews(text);
+    const { success, result } = response;
     if (success && result) {
-      if (isNewFetch) {
-        searchState.setList([]);
-      }
-      newBatch = result ? [...result] : [];
-      searchState.setList([...$searchState.list, ...newBatch]);
-      searchState.setHasMore(newBatch.length === MAX_SPOTS_PER_PAGE);
+      searchState.setList(result);
       searchState.setIsFetched(true);
       searchedText = text;
-    }
-    if (!success && errors) {
-      console.log("errors", errors);
-      // error = errors.artist?.[0] ?? "";
     }
     searchState.setIsLoading(false);
     searchState.setIsShowSpinner(false);
@@ -100,7 +56,7 @@ const fetchPhotoWall = async (offset = 0, isNewFetch) => {
     searchState.setIsLoading(isNewFetch);
     searchState.setIsShowSpinner(true);
     const response = await requestPhotoWall(text, MAX_SPOTS_PER_PAGE, offset);
-    const { success, result, errors } = response;
+    const { success, result } = response;
     if (success && result) {
       if (isNewFetch) {
         searchState.setGrid([]);
@@ -111,10 +67,6 @@ const fetchPhotoWall = async (offset = 0, isNewFetch) => {
       searchState.setHasMore(newBatch.length === MAX_SPOTS_PER_PAGE);
       searchState.setIsFetched(true);
     }
-    if (!success && errors) {
-      console.log("errors", errors);
-      // error = errors.artist?.[0] ?? "";
-    }
     searchState.setIsLoading(false);
     searchState.setIsShowSpinner(false);
   }
@@ -122,8 +74,11 @@ const fetchPhotoWall = async (offset = 0, isNewFetch) => {
 
 onMount(() => {
   if (textFromUrl) {
-    fetchArtistsCrews(0, true);
+    fetchArtistsCrews();
     fetchPhotoWall(0, true);
+  } else {
+    searchState.setIsLoading(false);
+    searchState.setIsShowSpinner(false);
   }
 
   parentModal = document.getElementById("search-modal");
@@ -140,53 +95,6 @@ onMount(() => {
 
 $: isSubmitDisabled = !!error;
 
-const saveCurrentSearch = (artist, crew) => {
-  if (
-    !previousSearches.some(
-      (result) => result.artist === artist && result.crew === crew,
-    )
-  ) {
-    const updatedSearches = [{ artist, crew }, ...previousSearches];
-    saveToLocalStorage("prevSearchResults", updatedSearches);
-  }
-};
-
-// const handleArtistClick = (artist, crew) => {
-//   saveCurrentSearch(artist, crew);
-//   requestSearchSpots({ artist, crew }).then((response) => {
-//     const { success, result } = response;
-//     if (success && result) {
-//       selectedArtist.set(artist);
-//       selectedCrew.set(crew);
-//       markersStore.set(result);
-//       isSearchResults.set(true);
-//       isLighthouseActive.set(false);
-//       if (result?.spots?.length) {
-//         selectedYear.set(ALL_YEARS_STRING);
-//       }
-//       permalink.update({ params: { artist, crew } });
-//     }
-//   });
-// };
-
-const handleUserClick = (username) => {
-  getUserSpots(username, token, {
-    offset: 0,
-    limit: 99999999999999,
-  }).then((response) => {
-    const { success, result } = response;
-    if (success && result) {
-      const { spots, years } = result;
-      markersStore.set({ spots, years: getProfileYears(years) });
-      // isSearchResults.set(false);
-      isShowOnMapMode.set(true);
-      selectedArtist.set(username);
-      selectedYear.set(ALL_YEARS_STRING);
-      $goto("/");
-    }
-  });
-};
-
 const handleInputChange = () => {
   if (isSubmitDisabled) {
     error = "";
@@ -202,13 +110,13 @@ const handleLoadMore = () => {
 
   const offset = $searchState.offset + MAX_SPOTS_PER_PAGE;
   searchState.setOffset(offset);
-  $searchState.currentView === "list"
-    ? fetchArtistsCrews(offset)
-    : fetchPhotoWall(offset);
+  if ($searchState.currentView === "grid") {
+    fetchPhotoWall(offset);
+  }
 };
 
 const handleSubmit = () => {
-  fetchArtistsCrews(0, true);
+  fetchArtistsCrews();
   fetchPhotoWall(0, true);
 };
 </script>
@@ -283,19 +191,35 @@ const handleSubmit = () => {
                 {#if isMobile()}
                   <div class="head">Username</div>
                 {/if}
-                <div class="value">{item.username}</div>
+                <div class="value">
+                  {#each highlightWords( { text: item.username, query: searchedText }, ) as chunk (chunk.key)}
+                    <span class:highlight={chunk.match}>{chunk.text}</span>
+                  {/each}
+                </div>
               </div>
               <div class="cell artist">
                 {#if isMobile()}
                   <div class="head">Artist</div>
                 {/if}
-                <div class="value">{item.artist ?? ""}</div>
+                <div class="value">
+                  {#if item.artist}
+                    {#each highlightWords( { text: item.artist, query: searchedText }, ) as chunk (chunk.key)}
+                      <span class:highlight={chunk.match}>{chunk.text}</span>
+                    {/each}
+                  {/if}
+                </div>
               </div>
               <div class="cell crew">
                 {#if isMobile()}
                   <div class="head">Crew</div>
                 {/if}
-                <div class="value">{item.crew ?? ""}</div>
+                <div class="value">
+                  {#if item.crew}
+                    {#each highlightWords( { text: item.crew, query: searchedText }, ) as chunk (chunk.key)}
+                      <span class:highlight={chunk.match}>{chunk.text}</span>
+                    {/each}
+                  {/if}
+                </div>
               </div>
               <div class="cell spots">
                 {#if isMobile()}
@@ -319,14 +243,23 @@ const handleSubmit = () => {
                 alt={`${item.artist ?? ""} ${item.crew ?? ""}`} />
               <div class="item">
                 <div class="artist">
-                  {item.artistCrew[0].artist?.name ?? ""}
+                  <div class="head">Artist</div>
+                  <div class="value">
+                    {item.artistCrew[0].artist?.name ?? ""}
+                  </div>
                 </div>
                 <div class="crew">
-                  {item.artistCrew[0].crew?.name ?? ""}
+                  <div class="head">Crew</div>
+                  <div class="value">{item.artistCrew[0].crew?.name ?? ""}</div>
                 </div>
               </div>
             </div>
           {/each}
+          {#if $searchState.isShowSpinner}
+            <div class="spinner-container">
+              <Spinner margin="20px auto" />
+            </div>
+          {/if}
         {:else}
           <div class="empty">
             <div class="img-wrapper">
@@ -339,7 +272,7 @@ const handleSubmit = () => {
                 ? "Artist/Crew Not Found"
                 : "Nothing found"}
             </div>
-            <div class="text2">{text}</div>
+            <div class="text2">{searchedText}</div>
           </div>
         {/if}
         {#if parentModal}
@@ -352,31 +285,6 @@ const handleSubmit = () => {
       </div>
     </div>
   {/if}
-  <!-- {:else}
-    <div class="content">
-      <div class="content-caption">
-        <div class="history-icon">
-          <img src="../../images/history.svg" alt="Search History icon" />
-        </div>
-      </div>
-      <div class="previous-searches list">
-        {#each previousSearches as item}
-          <div
-            class="item-wrapper"
-            on:click={() => handleArtistClick(item.artist, item.crew)}>
-            <div class="item">
-              <div class="artist">
-                {item.artist ? item.artist : EMPTY_ARTIST_OR_CREW}
-              </div>
-              <div class="crew">
-                {item.crew ? item.crew : EMPTY_ARTIST_OR_CREW}
-              </div>
-            </div>
-          </div>
-        {/each}
-      </div>
-    </div>
-  {/if} -->
 </div>
 
 <style lang="scss">
@@ -386,7 +294,6 @@ const handleSubmit = () => {
   align-items: flex-end;
   width: 100%;
   max-width: 940px;
-  margin-top: -60px;
 }
 
 .logo {
@@ -423,7 +330,7 @@ form {
   justify-content: space-between;
   width: 100%;
   margin-bottom: 8px;
-  padding: 16px 0;
+  padding: 20px 0 16px;
   background: var(--color-light);
 }
 
@@ -486,10 +393,14 @@ form {
   }
 }
 
+.highlight {
+  background: var(--color-highlight);
+}
+
 .grid {
   display: grid;
   grid-auto-rows: 160px;
-  grid-gap: 4vmin;
+  grid-gap: min(38px, 4vmin) min(18px, 4vmin);
   grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
   justify-content: space-between;
   width: 100%;
@@ -501,27 +412,26 @@ form {
     object-fit: cover;
   }
 
+  .item-wrapper {
+    transition: color 0.3s;
+    color: var(--color-dark);
+  }
+
   .item {
     display: flex;
     justify-content: space-between;
-    margin-top: 16px;
+    margin-top: 12px;
   }
-}
 
-.item-wrapper {
-  transition: color 0.3s;
-  color: var(--color-dark);
-  cursor: pointer;
-
-  &:hover {
-    color: var(--color-accent);
+  .head {
+    margin-bottom: 4px;
+    color: color-mix(in srgb, var(--color-dark) 60%, transparent);
+    font-size: 13px;
   }
-}
 
-.item {
-  font-size: 24px;
-  font-weight: 900;
-  line-height: 29px;
+  .value {
+    font-size: 14px;
+  }
 }
 
 .artist,
@@ -580,19 +490,20 @@ form {
 
 @media (max-width: 767px) {
   .container {
-    margin-top: -20px;
+    align-items: flex-start;
+    margin-top: 20px;
   }
 
   .logo {
     display: none;
   }
   form {
-    display: flex;
+    top: -50px;
     align-items: flex-end;
-    position: static;
     width: 100%;
     max-width: 530px;
-    padding: 0;
+    padding: 0 0 20px;
+    overflow: hidden;
   }
 
   .input-wrapper {
@@ -612,10 +523,10 @@ form {
   }
 
   .content-caption {
-    top: 8px;
+    top: 0;
     width: 100vw;
     margin: 0 -12px;
-    padding: 16px 12px;
+    padding: 4px 12px 16px;
   }
 
   .list {
@@ -663,6 +574,10 @@ form {
     .item {
       grid-template-columns: minmax(100px, 336px) minmax(100px, 336px);
     }
+  }
+
+  .grid {
+    row-gap: 38px;
   }
 }
 </style>

@@ -16,7 +16,6 @@ import {
   selectedCrew,
   selectedUserProfileData,
   selectedYear,
-  isSearchResults,
   editSpotData,
   shouldShowAddSpot,
   isFirstTimeVisit,
@@ -312,7 +311,6 @@ const handleShowOnMapClick = (showAll) => {
     if (success && result) {
       const { spots, years } = result;
       markersStore.set({ spots, years: getProfileYears(years) });
-      isSearchResults.set(false);
       isShowOnMapMode.set(true);
       selectedYear.set(
         $profileState.currentYear

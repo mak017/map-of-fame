@@ -7,12 +7,8 @@ import {
   PHOTO_WALL,
 } from "./endpoints";
 
-export const requestSearchArtistsCrews = async (
-  text,
-  limit = MAX_SPOTS_PER_PAGE,
-  offset = 0
-) => {
-  const response = await fetch(CREW_ARTIST_SEARCH(text, limit, offset), {
+export const requestSearchArtistsCrews = async (text) => {
+  const response = await fetch(CREW_ARTIST_SEARCH(text), {
     method: "GET",
   });
   const result = await response.json();

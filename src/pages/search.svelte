@@ -17,10 +17,8 @@ const handleResize = () => {
 <Modal
   id="search-modal"
   on:close={() => $goto("/")}
-  title="Search"
   withAd
   alwaysOnTop
-  noLogo={!isMobileWidth}
-  stickyHeaderOnMobile>
+  noLogo={!isMobileWidth}>
   <SearchForm />
 </Modal>

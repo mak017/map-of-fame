@@ -7,7 +7,6 @@ import {
   areaSpots,
   clusterSpots,
   isAreaSelectionActive,
-  isSearchResults,
   isShowOnMapMode,
   markersStore,
   openedMarkerData,
@@ -118,7 +117,6 @@ const onSpotClick = (spot) => {
 
 const handleShowOnMapClick = () => {
   markersStore.set({ spots, years: yearsToApply });
-  isSearchResults.set(false);
   isShowOnMapMode.set(true);
   isAreaSelectionActive.set(true);
   selectedYear.set(currentYear);

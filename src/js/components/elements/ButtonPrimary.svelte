@@ -30,7 +30,9 @@ const dispatch = createEventDispatcher();
     </span>
   {/if}
   {#if $$slots.icon}
-    <slot name="icon" />
+    <span class="icon">
+      <slot name="icon" />
+    </span>
   {/if}
 </button>
 
@@ -103,8 +105,9 @@ button {
   &.withLoader {
     pointer-events: none;
 
-    .text {
-      transform: translateY(130%);
+    .text,
+    .icon {
+      transform: translateY(150%);
     }
   }
 

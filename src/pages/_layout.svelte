@@ -22,7 +22,6 @@ import {
   isAreaSelectionActive,
   mapBounds,
   markersStore,
-  isSearchResults,
   isShowOnMapMode,
   isInitialized,
   map,
@@ -88,7 +87,7 @@ const initMap = (container) => {
     $map.fitBounds($mapBounds);
 
     if ($markersStore?.spots?.length) {
-      placeMarkers($map, $markersStore, $isSearchResults || $isShowOnMapMode);
+      placeMarkers($map, $markersStore, $isShowOnMapMode);
     }
   } else {
     setLocation($map);
@@ -127,7 +126,7 @@ const initMap = (container) => {
 };
 
 $: if ($map && $markersStore) {
-  placeMarkers($map, $markersStore, $isSearchResults || $isShowOnMapMode);
+  placeMarkers($map, $markersStore, $isShowOnMapMode);
 }
 </script>
 
