@@ -75,7 +75,7 @@ const fetchPhotoWall = async (offset = 0, isNewFetch) => {
 onMount(() => {
   if (textFromUrl) {
     fetchArtistsCrews();
-    fetchPhotoWall(0, true);
+    fetchPhotoWall(1, true);
   } else {
     searchState.setIsLoading(false);
     searchState.setIsShowSpinner(false);
@@ -192,7 +192,7 @@ const handleSubmit = () => {
                   <div class="head">Username</div>
                 {/if}
                 <div class="value">
-                  {#each highlightWords( { text: item.username, query: searchedText }, ) as chunk (chunk.key)}
+                  {#each highlightWords( { text: `@${item.username}`, query: searchedText }, ) as chunk (chunk.key)}
                     <span class:highlight={chunk.match}>{chunk.text}</span>
                   {/each}
                 </div>
@@ -237,23 +237,28 @@ const handleSubmit = () => {
           {/each}
         {:else if $searchState.currentView === "grid" && $searchState.grid.length}
           {#each $searchState.grid as item}
-            <div class="item-wrapper">
+            <a
+              href={$url("/@:username/spot/:id", {
+                username: item.username,
+                id: item.id,
+              })}
+              class="item-wrapper">
               <img
                 src={item.thumbnail}
-                alt={`${item.artist ?? ""} ${item.crew ?? ""}`} />
+                alt={`${item.artist?.name ?? ""} ${item.crew?.name ?? ""}`} />
               <div class="item">
                 <div class="artist">
                   <div class="head">Artist</div>
                   <div class="value">
-                    {item.artistCrew[0].artist?.name ?? ""}
+                    {item.artist?.name ?? ""}
                   </div>
                 </div>
                 <div class="crew">
                   <div class="head">Crew</div>
-                  <div class="value">{item.artistCrew[0].crew?.name ?? ""}</div>
+                  <div class="value">{item.crew?.name ?? ""}</div>
                 </div>
               </div>
-            </div>
+            </a>
           {/each}
           {#if $searchState.isShowSpinner}
             <div class="spinner-container">
@@ -415,6 +420,11 @@ form {
   .item-wrapper {
     transition: color 0.3s;
     color: var(--color-dark);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-accent);
+    }
   }
 
   .item {
@@ -431,6 +441,10 @@ form {
 
   .value {
     font-size: 14px;
+  }
+
+  .crew {
+    text-align: end;
   }
 }
 

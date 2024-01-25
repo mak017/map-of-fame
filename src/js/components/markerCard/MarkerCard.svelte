@@ -267,7 +267,7 @@ const getArtistsString = (artistCrew) => {
 
     accumulator = accumulator.concat(currentName);
     if (index < artistCrew.length - 1) {
-      accumulator = accumulator.concat("; ");
+      accumulator = accumulator.concat(" | ");
     }
     return accumulator;
   }, "");

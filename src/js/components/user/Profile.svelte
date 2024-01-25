@@ -601,7 +601,7 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
                 type="button"
                 class="button"
                 class:active={$profileState.sortBy === "created_at"}
-                on:click={handleSortingChange("created_at")}>Default</button>
+                on:click={handleSortingChange("created_at")}>Upload</button>
               {" / "}
               <button
                 type="button"
