@@ -75,7 +75,7 @@ const fetchPhotoWall = async (offset = 0, isNewFetch) => {
 onMount(() => {
   if (textFromUrl) {
     fetchArtistsCrews();
-    fetchPhotoWall(1, true);
+    fetchPhotoWall(0, true);
   } else {
     searchState.setIsLoading(false);
     searchState.setIsShowSpinner(false);

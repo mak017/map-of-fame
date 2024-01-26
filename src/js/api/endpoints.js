@@ -46,7 +46,7 @@ export const INVITES_GET_FOR_USER = () =>
   `${ENDPOINT_ORIGIN}/api/invites/getForUser`;
 
 export const CREW_ARTIST_SEARCH = (text) =>
-  `${ENDPOINT_ORIGIN}/api/crewAndArtist/search?search=${text}&limit=1000&offset=1`;
+  `${ENDPOINT_ORIGIN}/api/crewAndArtist/search?search=${text}`;
 
 export const PHOTO_WALL = (text, limit, offset) =>
   `${ENDPOINT_ORIGIN}/api/photoWall?search=${text}&limit=${limit}&offset=${offset}`;
