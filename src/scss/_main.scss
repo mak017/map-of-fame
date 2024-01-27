@@ -270,6 +270,7 @@ textarea {
     color: var(--color-dark-grey);
 
     &.divider {
+      opacity: 0.5;
       font-weight: normal;
     }
   }

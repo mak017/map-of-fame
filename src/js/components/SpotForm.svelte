@@ -226,8 +226,14 @@ const saveDraft = async (field) => {
     requestObject.lng = lng;
   }
 
-  if (field == "image") requestObject.img = image.blob ?? "";
-  if (field == "image2") requestObject.additionalImg = image2.blob ?? "";
+  if (field == "image") {
+    requestObject.img = image.blob ?? "";
+    delete requestObject.artistsCrews;
+  }
+  if (field == "image2") {
+    requestObject.additionalImg = image2.blob ?? "";
+    delete requestObject.artistsCrews;
+  }
   if (field == "sketch") requestObject.sketch = sketch.blob ?? "";
   if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
 
