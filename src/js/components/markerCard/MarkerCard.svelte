@@ -78,19 +78,6 @@ $: if ($openedMarkerData?.video?.includes("tiktok")) {
   }, 0);
 }
 
-$: if ($openedMarkerData?.video?.includes("t.me/")) {
-  setTimeout(() => {
-    const [, post] = $openedMarkerData.video.split("t.me/");
-    const video = document.getElementById("video-embedded");
-    const s = document.createElement("script");
-    s.async = true;
-    s.src = "https://telegram.org/js/telegram-widget.js?22";
-    s.setAttribute("data-telegram-post", post);
-    s.setAttribute("data-width", "100%");
-    video.appendChild(s);
-  }, 0);
-}
-
 const getSpotData = async () => {
   if ($openedMarkerData?.id === id) {
     return $openedMarkerData;

@@ -12,8 +12,6 @@ const regexInstagram =
   /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/(?:p|reel|tv)?\/([^/?#&]+)/;
 const regexTikTok =
   /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:tiktok\.com)\/(?:@(.*?)\/)?(?:video|v)|(?:https?:\/\/)?:\/\/(?:www\.)?(?:vt)(?:\.tiktok\.com)\/\S*/;
-const regexTelegramPost =
-  /(?:https?:\/\/)?(?:www\.)?(?:t\.me)\/([a-zA-Z0-9_]+)\/(\d+)/;
 const regexGoogleMaps =
   /(?:https?:\/\/)?(?:www\.)?(?:google\.[a-z]+|goo\.gl)(?:\/maps)?\/([^<.,!():"'\s]+)?/;
 const regexYandexMaps =
@@ -35,8 +33,7 @@ export const validateVideoLink = (link) =>
   regexVimeo.test(link) ||
   regexDailymotion.test(link) ||
   regexInstagram.test(link) ||
-  regexTikTok.test(link) ||
-  regexTelegramPost.test(link);
+  regexTikTok.test(link);
 
 export const isValidHttpUrl = (string) => {
   let url;
@@ -81,10 +78,6 @@ export const embedVideoCodeFromBasicUrl = async (url) => {
         new RegExp(regexInstagram, "g"),
         '<iframe frameborder="0" type="text/html" src="//instagram.com/p/$1/embed" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
       );
-    }
-
-    if (url.includes("t.me/")) {
-      return "";
     }
 
     return url
