@@ -38,7 +38,7 @@ const fetchArtistsCrews = async () => {
   if (!error) {
     searchState.setIsLoading(true);
     searchState.setIsShowSpinner(true);
-    const response = await requestSearchArtistsCrews(text);
+    const response = await requestSearchArtistsCrews(text.toLowerCase());
     const { success, result } = response;
     if (success && result) {
       searchState.setList(result);
@@ -55,7 +55,11 @@ const fetchPhotoWall = async (offset = 0, isNewFetch) => {
   if (!error) {
     searchState.setIsLoading(isNewFetch);
     searchState.setIsShowSpinner(true);
-    const response = await requestPhotoWall(text, MAX_SPOTS_PER_PAGE, offset);
+    const response = await requestPhotoWall(
+      text.toLowerCase(),
+      MAX_SPOTS_PER_PAGE,
+      offset,
+    );
     const { success, result } = response;
     if (success && result) {
       if (isNewFetch) {
@@ -172,7 +176,9 @@ const handleSubmit = () => {
       </div>
     {/if}
     <div class="content">
-      <div class="search-result {$searchState.currentView}">
+      <div
+        class="search-result {$searchState.currentView}"
+        class:isEmpty={!$searchState.list.length && !$searchState.grid.length}>
         {#if $searchState.currentView == "list" && $searchState.list.length}
           {#if !isMobile()}
             <div class="list-head">
@@ -239,7 +245,7 @@ const handleSubmit = () => {
           {#each $searchState.grid as item}
             <a
               href={$url("/@:username/spot/:id", {
-                username: item.username,
+                username: item.user.name,
                 id: item.id,
               })}
               class="item-wrapper">
@@ -362,7 +368,10 @@ form {
   }
 
   &-head {
+    position: sticky;
+    top: 120px;
     margin-bottom: 16px;
+    background-color: var(--color-light);
     color: color-mix(in srgb, var(--color-dark) 60%, transparent);
     font-size: 13px;
     font-weight: 400;
@@ -404,15 +413,15 @@ form {
 
 .grid {
   display: grid;
-  grid-auto-rows: 160px;
-  grid-gap: min(38px, 4vmin) min(18px, 4vmin);
+  grid-auto-rows: 200px;
+  grid-gap: min(24px, 4vmin) min(18px, 4vmin);
   grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
   justify-content: space-between;
   width: 100%;
 
   img {
     width: 100%;
-    height: calc(100% - 40px);
+    height: calc(100% - 57px);
     border-radius: 2px;
     object-fit: cover;
   }
@@ -436,11 +445,13 @@ form {
   .head {
     margin-bottom: 4px;
     color: color-mix(in srgb, var(--color-dark) 60%, transparent);
-    font-size: 13px;
+    font-size: 12px;
+    line-height: 1.2;
   }
 
   .value {
     font-size: 14px;
+    line-height: 1.2;
   }
 
   .crew {
@@ -454,6 +465,10 @@ form {
   text-overflow: ellipsis;
 }
 
+.search-result.isEmpty {
+  display: block;
+}
+
 .empty {
   display: flex;
   flex-direction: column;
@@ -461,22 +476,13 @@ form {
   justify-content: center;
   grid-column: 1/4;
   grid-row: 1/3;
+  padding-top: 10px;
   color: var(--color-dark);
 
   .img-wrapper {
     position: relative;
     width: 100%;
     max-width: 410px;
-    height: 0;
-    padding-top: 38.839%;
-
-    > img {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      height: auto;
-      transform: translateX(-50%);
-    }
   }
 
   .text1 {
@@ -492,16 +498,6 @@ form {
   }
 }
 
-.previous-searches {
-  .item-wrapper {
-    color: rgba(#b0b0b3, 0.6);
-
-    &:hover {
-      color: var(--color-accent);
-    }
-  }
-}
-
 @media (max-width: 767px) {
   .container {
     align-items: flex-start;
@@ -514,9 +510,10 @@ form {
   form {
     top: -50px;
     align-items: flex-end;
-    width: 100%;
+    width: 100vw;
     max-width: 530px;
-    padding: 0 0 20px;
+    margin: 0 -12px;
+    padding: 0 12px 20px;
     overflow: hidden;
   }
 
@@ -537,7 +534,7 @@ form {
   }
 
   .content-caption {
-    top: 0;
+    top: 20px;
     width: 100vw;
     margin: 0 -12px;
     padding: 4px 12px 16px;
@@ -573,13 +570,13 @@ form {
       }
 
       .spots {
-        grid-column: 4;
+        grid-column: 3;
         grid-row: 1;
         text-align: end;
       }
 
       .followers {
-        grid-column: 3;
+        grid-column: 4;
         grid-row: 1;
         text-align: end;
       }
@@ -591,7 +588,7 @@ form {
   }
 
   .grid {
-    row-gap: 38px;
+    row-gap: 24px;
   }
 }
 </style>
