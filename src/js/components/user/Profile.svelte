@@ -54,10 +54,8 @@ import {
 
 let currentSpot;
 let showDeletePopup = false;
-let showInvitesPopup = false;
 let showSharePopup = false;
 let newBatch = [];
-let unusedInvitesCount = 0;
 let parentModal = null;
 let userBg = null;
 let uploadedBg = {
@@ -77,7 +75,6 @@ let aboutCharacterCount = 0;
 const token = loadFromLocalStorage("token") || null;
 
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
-const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 const toggleSharePopup = (toggle) => (showSharePopup = toggle);
 
 onMount(() => {
@@ -165,12 +162,6 @@ $: if (
 ) {
   window.location.reload();
 }
-
-$: unusedInvitesCount = $profileState.invites.reduce(
-  (accumulator, invite) =>
-    !invite.invitedUserId ? accumulator + 1 : accumulator,
-  0,
-);
 
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
   profileState.setIsLoading(isNewFetch);
@@ -324,17 +315,6 @@ const handleShowOnMapClick = (showAll) => {
   });
 };
 
-const handleHideAllClick = () => {
-  editUser(token, $userData.id, {
-    isSpotsHidden: Number(!$userData.isSpotsHidden),
-  }).then((response) => {
-    const { success, result } = response;
-    if (success && result) {
-      $userData.isSpotsHidden = result.isSpotsHidden === "1";
-    }
-  });
-};
-
 const handleSortingChange = (value) => () => {
   if ($profileState.sortBy === value) return;
 
@@ -469,27 +449,6 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
       };`}>
     </div>
     <div class="user-data">
-      {#if isCurrentUser}
-        <div class="profile-header">
-          {#if $profileState.invites.length}
-            <div class="invites">
-              <button
-                type="button"
-                class="button"
-                on:click={() => toggleInvitesPopup(true)}>🖖 Invites</button>
-              for your friends
-            </div>
-          {/if}
-          <div class="hide-all">
-            <button
-              type="button"
-              class="button hide-button"
-              on:click={handleHideAllClick}
-              >{$userData.isSpotsHidden ? "👀 Show" : "🚨 Hide"}</button>
-            all your photos
-          </div>
-        </div>
-      {/if}
       <div class="top">
         {#if name || username}
           <div class="user">
@@ -706,17 +665,6 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
   </Popup>
 {/if}
 
-{#if showInvitesPopup}
-  <Popup
-    title={`Invites ${unusedInvitesCount}/${$profileState.invites.length} 👽`}
-    on:close={() => toggleInvitesPopup(false)}>
-    <Invites
-      close={() => toggleInvitesPopup(false)}
-      invites={$profileState.invites}
-      {username} />
-  </Popup>
-{/if}
-
 {#if showSharePopup}
   <Popup on:close={() => toggleSharePopup(false)} title="Share Profile">
     <ShareProfile />
@@ -819,30 +767,9 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
     }
   }
 
-  .profile-header,
   .user .name-wrapper,
   .username {
     background-color: var(--color-light);
-  }
-}
-
-.profile-header {
-  padding: 2px 8px;
-  color: var(--color-dark);
-  font-size: 14px;
-  line-height: 17px;
-
-  button {
-    background: none;
-    color: var(--color-accent);
-    font-size: 14px;
-    font-weight: 900;
-    line-height: 22px;
-    text-transform: uppercase;
-
-    &:hover {
-      opacity: 0.7;
-    }
   }
 }
 
@@ -852,10 +779,6 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
   align-self: stretch;
   justify-content: space-between;
   margin-top: auto;
-}
-
-.invites {
-  margin-bottom: 5px;
 }
 
 .user {
@@ -1217,21 +1140,6 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
 
   .user-bg {
     height: 250px;
-  }
-
-  .invites {
-    margin-bottom: 20px;
-  }
-
-  .profile-header {
-    position: absolute;
-    top: 5px;
-    left: 50%;
-    z-index: 1;
-    width: fit-content;
-    max-width: 71vw;
-    transform: translateX(-50%);
-    text-align: center;
   }
 
   .top {

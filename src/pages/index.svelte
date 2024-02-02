@@ -28,6 +28,7 @@ import {
   profileState,
   areaCoords,
   withHunters,
+  isMenuOpen,
 } from "../js/store.js";
 import {
   clickOutside,
@@ -51,6 +52,7 @@ import AddSpot from "../js/components/addSpot/AddSpot.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
 
 import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
+import Menu from "../js/components/Menu.svelte";
 
 let isAddSpotSidebarVisible = false;
 let inviteData = getInviteData();
@@ -256,14 +258,12 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
           </form>
         </div>
         {#if $isLoggedIn}
-          <a
-            href={$url("/@:username", { username: $userData.username })}
+          <button
             class="button button-main_screen button-square button-burger"
             on:click={() => {
-              isShowOnMapMode.set(false);
-              profileState.reset();
+              isMenuOpen.set(true);
             }}
-            in:fade={{ duration: 200 }}>Profile</a>
+            in:fade={{ duration: 200 }}>Profile</button>
         {:else}
           <a
             href={$url("/login")}
@@ -338,6 +338,10 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
       {showAddSpot}
       {newMarker}
       onCancel={handleNewMarkerCancel} />
+  {/if}
+
+  {#if $isMenuOpen}
+    <Menu />
   {/if}
 {/if}
 
