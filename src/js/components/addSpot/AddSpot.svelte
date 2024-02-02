@@ -1,7 +1,7 @@
 <script>
 import { fade } from "svelte/transition";
 
-import { shouldShowAddSpot } from "../../store";
+import { isMenuOpen, shouldShowAddSpot } from "../../store";
 
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import AddSpotSidebar from "./AddSpotSidebar.svelte";
@@ -9,12 +9,17 @@ import AddSpotSidebar from "./AddSpotSidebar.svelte";
 export let isAddSpotSidebarVisible;
 export let newMarker;
 export let onCancel;
+
+const handleAddSpotClick = () => {
+  shouldShowAddSpot.set(true);
+  isMenuOpen.set(false);
+};
 </script>
 
 {#if !$shouldShowAddSpot}
   <button
     class="button button-add_spot"
-    on:click={() => shouldShowAddSpot.set(true)}
+    on:click={handleAddSpotClick}
     transition:fade={{ duration: 200 }}>Add Art</button>
 {:else}
   <div class="main-top_right_wrapper">

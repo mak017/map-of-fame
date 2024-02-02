@@ -86,6 +86,7 @@ onMount(() => {
 
 onDestroy(() => {
   $map.off("moveend", updatePermalink);
+  isMenuOpen.set(false);
 });
 
 const showAuth = (show) => (showAuthContainer = show);

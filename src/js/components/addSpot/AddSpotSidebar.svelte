@@ -48,8 +48,7 @@ h2 {
   width: 208px;
   height: 100px;
   padding: 0 20px;
-  background: var(--color-light);
-  filter: brightness(0.9843);
+  background: var(--color-lotion);
   color: var(--color-dark);
   font-size: 24px;
   font-weight: 900;

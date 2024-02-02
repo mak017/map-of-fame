@@ -4,10 +4,9 @@ import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
 import { goto, params, url } from "@roxi/routify";
 
-import { editUser, getInvites, getUserData } from "./../../api/auth.js";
+import { editUser, getUserData } from "./../../api/auth.js";
 import { getUserSpots } from "../../api/spot";
 import {
-  isLoggedIn,
   isShowOnMapMode,
   userData,
   markersStore,
@@ -27,12 +26,10 @@ import {
   clickOutside,
   isEmpty,
   loadFromLocalStorage,
-  removeFromLocalStorage,
 } from "../../utils/commonUtils";
 import { processImage } from "../../utils/imageUtils.js";
 
 import Popup from "../Popup.svelte";
-import Invites from "./Invites.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import ShareProfile from "./ShareProfile.svelte";
 import Spinner from "./../elements/Spinner.svelte";
@@ -143,14 +140,6 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
     });
   } else {
     fetchSpots({ isNewFetch: true });
-    if (isCurrentUser) {
-      getInvites(token).then((response) => {
-        const { success, result } = response;
-        if (success && result) {
-          profileState.setInvites(result);
-        }
-      });
-    }
   }
 }
 
@@ -194,13 +183,6 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
     profileState.setIsLoading(false);
     profileState.setIsShowSpinner(false);
   });
-};
-
-const handleLogout = () => {
-  removeFromLocalStorage("token");
-  isLoggedIn.set(false);
-  userData.set({});
-  $goto("/");
 };
 
 const handleAddSpot = () => {
@@ -461,10 +443,6 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
               <div class="username">{username}</div>
             {/if}
           </div>
-        {/if}
-        {#if isCurrentUser}
-          <button type="button" class="button logout" on:click={handleLogout}
-            ><span>Logout</span></button>
         {/if}
       </div>
       {#if name}
@@ -738,7 +716,7 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
     label {
       display: flex;
       position: absolute;
-      top: 185px;
+      top: 50px;
       left: 50%;
       align-items: center;
       justify-content: center;
@@ -806,26 +784,6 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
     font-size: 16px;
     font-weight: 600;
     line-height: 1.25;
-  }
-}
-
-.logout {
-  padding: 6px 10px;
-  border-radius: 0;
-  transition: opacity 0.3s;
-  background-color: var(--color-light);
-  color: var(--color-accent);
-  font-size: 18px;
-  font-weight: 900;
-  line-height: 1.22;
-  text-transform: uppercase;
-
-  > span {
-    opacity: 0.4;
-  }
-
-  &:hover > span {
-    opacity: 1;
   }
 }
 
@@ -1130,7 +1088,7 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
 
 @media (max-width: 767px) {
   .user-bg-wrapper {
-    height: 250px;
+    height: 220px;
     padding: 12px 0;
 
     .buttons-wrapper {
@@ -1139,7 +1097,7 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
   }
 
   .user-bg {
-    height: 250px;
+    height: 220px;
   }
 
   .top {
@@ -1149,23 +1107,6 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
 
   .user .name {
     font-size: 24px;
-  }
-
-  .user-bg-control {
-    label {
-      top: 110px;
-    }
-  }
-
-  .logout {
-    position: relative;
-    top: -68px;
-    width: 48px;
-    height: 48px;
-    margin: -20px 0 32px;
-    background: var(--color-light) url(../../../images/logout.svg) 50% 50%/27px
-      27px no-repeat;
-    font-size: 0;
   }
 
   .description {

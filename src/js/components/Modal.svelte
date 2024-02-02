@@ -91,7 +91,8 @@ const handleResize = () => {
   {/if}
   {#if withFooter}
     <div class="footer">
-      <a href="https://instagram.com/streeet.karta">@streeet.karta</a>
+      <a href="https://instagram.com/streeet.karta" target="_blank"
+        >@streeet.karta</a>
     </div>
   {/if}
 </div>

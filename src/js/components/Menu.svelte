@@ -2,15 +2,27 @@
 import { fly } from "svelte/transition";
 import { url } from "@roxi/routify";
 
-import { isMenuOpen, profileState, userData } from "../store";
-import { isMobile } from "../utils/commonUtils";
+import {
+  isLoggedIn,
+  isMenuOpen,
+  isUserVerifyProgress,
+  profileState,
+  userData,
+} from "../store";
+import {
+  isMobile,
+  loadFromLocalStorage,
+  removeFromLocalStorage,
+} from "../utils/commonUtils";
 
 import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
 import Popup from "./Popup.svelte";
 import Invites from "./user/Invites.svelte";
+import { editUser, getInvites } from "../api/auth";
 
 let showInvitesPopup = false;
 let unusedInvitesCount = 0;
+const token = loadFromLocalStorage("token") || null;
 
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 
@@ -25,6 +37,22 @@ const handleHideAllClick = () => {
   });
 };
 
+const handleLogout = () => {
+  removeFromLocalStorage("token");
+  isLoggedIn.set(false);
+  userData.set({});
+  isMenuOpen.set(false);
+};
+
+$: if (!$profileState.invites.length && !$isUserVerifyProgress) {
+  getInvites(token).then((response) => {
+    const { success, result } = response;
+    if (success && result) {
+      profileState.setInvites(result);
+    }
+  });
+}
+
 $: unusedInvitesCount = $profileState.invites.reduce(
   (accumulator, invite) =>
     !invite.invitedUserId ? accumulator + 1 : accumulator,
@@ -35,29 +63,38 @@ $: unusedInvitesCount = $profileState.invites.reduce(
 <div
   class="menu"
   transition:fly={{ x: !isMobile() ? 364 : window.innerWidth, duration: 300 }}>
+  <div class="logo" />
   <button class="close" on:click={() => isMenuOpen.set(false)}>
     <CloseCrossSvg />
   </button>
   <div class="links">
     <a href={$url("/@:username", { username: $userData.username })}>Profile</a>
-    {#if $profileState.invites.length}
-      <div class="invites">
-        <button
-          type="button"
-          class="button"
-          on:click={() => toggleInvitesPopup(true)}>🖖 Invites</button>
-        for your friends
-      </div>
-    {/if}
-    <div class="hide-all">
+  </div>
+  {#if $profileState.invites.length}
+    <div class="invites">
       <button
         type="button"
-        class="button hide-button"
-        on:click={handleHideAllClick}
-        >{$userData.isSpotsHidden ? "👀 Show" : "🚨 Hide"}</button>
-      all your photos
+        class="button"
+        on:click={() => toggleInvitesPopup(true)}>🖖 Invites</button>
+      <div class="text">for your friends</div>
     </div>
+  {/if}
+  <div class="hide-all">
+    <button
+      type="button"
+      class="button hide-button"
+      on:click={handleHideAllClick}
+      >{$userData.isSpotsHidden ? "👀 Show" : "🚨 Hide"}</button>
+    <div class="text">all your photos</div>
   </div>
+  <button type="button" class="button logout" on:click={handleLogout}
+    ><span>Logout</span></button>
+  {#if !isMobile()}
+    <div class="footer">
+      <a href="https://instagram.com/streeet.karta" target="_blank"
+        >@streeet.karta</a>
+    </div>
+  {/if}
 </div>
 
 {#if showInvitesPopup}
@@ -71,7 +108,7 @@ $: unusedInvitesCount = $profileState.invites.reduce(
   </Popup>
 {/if}
 
-<style>
+<style lang="scss">
 .menu {
   display: flex;
   position: absolute;
@@ -79,9 +116,33 @@ $: unusedInvitesCount = $profileState.invites.reduce(
   right: 0;
   bottom: 0;
   flex-direction: column;
+  align-items: flex-start;
   width: 364px;
-  padding: 36px 0 16px;
+  padding: 36px 28px 32px 33px;
   background-color: var(--color-light);
+  color: var(--color-dark);
+  font-size: 18px;
+
+  button {
+    background: none;
+    font-weight: 600;
+    line-height: 22px;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+.logo {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  width: 208px;
+  height: 100px;
+  padding: 0 20px;
+  background: var(--color-lotion) url(../../images/logo.png) 50% 50% / 151px
+    no-repeat;
 }
 
 .close {
@@ -97,10 +158,67 @@ $: unusedInvitesCount = $profileState.invites.reduce(
   cursor: pointer;
 }
 
+.links {
+  margin-bottom: 16px;
+  font-weight: 600;
+
+  a {
+    display: block;
+    margin-bottom: 16px;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+.invites {
+  margin-bottom: 16px;
+}
+
+.logout {
+  align-self: flex-end;
+  margin: auto 0 42px;
+}
+
+.footer {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+
+  a {
+    opacity: 0.4;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
 @media (max-width: 767px) {
   .menu {
     width: 100%;
-    padding-bottom: 0;
+    padding: 18px 24px 24px 22px;
+    font-size: 24px;
+  }
+
+  .logo {
+    position: static;
+    justify-content: flex-start;
+    width: 110px;
+    height: 40px;
+    margin-bottom: 24px;
+    background-color: transparent;
+    background-size: 120px;
+  }
+
+  .logout {
+    margin-bottom: 0;
+    font-size: 20px;
   }
 }
 </style>
