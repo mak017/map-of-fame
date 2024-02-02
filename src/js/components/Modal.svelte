@@ -239,6 +239,7 @@ h2 {
     right: 12px;
   }
   .logo {
+    top: 27px;
     left: 12px;
     width: 97px;
     height: 37px;

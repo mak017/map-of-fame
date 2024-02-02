@@ -120,8 +120,16 @@ const handleLoadMore = () => {
 };
 
 const handleSubmit = () => {
+  searchState.setCurrentView("list");
   fetchArtistsCrews();
   fetchPhotoWall(0, true);
+};
+
+const handleScrollElementClick = (identifier) => () => {
+  const element = document.querySelector(
+    `[data-scroll-element="${identifier}"]`,
+  );
+  searchState.setScrollOffset(element.offsetTop);
 };
 </script>
 
@@ -191,8 +199,10 @@ const handleSubmit = () => {
           {/if}
           {#each $searchState.list as item}
             <a
+              href={$url("/@:username", { username: item.username })}
               class="list-row"
-              href={$url("/@:username", { username: item.username })}>
+              data-scroll-element={item.username}
+              on:click={handleScrollElementClick(item.username)}>
               <div class="cell username">
                 {#if isMobile()}
                   <div class="head">Username</div>
@@ -248,7 +258,9 @@ const handleSubmit = () => {
                 username: item.user.name,
                 id: item.id,
               })}
-              class="item-wrapper">
+              on:click={handleScrollElementClick(item.id)}
+              class="item-wrapper"
+              data-scroll-element={item.id}>
               <img
                 src={item.thumbnail}
                 alt={`${item.artist?.name ?? ""} ${item.crew?.name ?? ""}`} />
@@ -501,7 +513,7 @@ form {
 @media (max-width: 767px) {
   .container {
     align-items: flex-start;
-    margin-top: 20px;
+    margin-top: 40px;
   }
 
   .logo {
@@ -511,14 +523,13 @@ form {
     top: -50px;
     align-items: flex-end;
     width: 100vw;
-    max-width: 530px;
     margin: 0 -12px;
     padding: 0 12px 20px;
     overflow: hidden;
   }
 
   .input-wrapper {
-    flex: 0 0 calc(100% - 56px);
+    flex: 0 0 min(calc(100% - 56px), 530px);
   }
 
   .button-wrapper {
@@ -559,25 +570,28 @@ form {
         font-size: 13px;
       }
 
-      .username,
+      .username {
+        grid-column: 3/5;
+        grid-row: 1;
+        text-align: end;
+      }
+
       .artist {
         grid-column: 1/3;
+        grid-row: 1;
       }
 
       .crew {
-        grid-column: 3/5;
-        text-align: end;
+        grid-row: 2;
       }
 
       .spots {
         grid-column: 3;
-        grid-row: 1;
         text-align: end;
       }
 
       .followers {
         grid-column: 4;
-        grid-row: 1;
         text-align: end;
       }
     }
