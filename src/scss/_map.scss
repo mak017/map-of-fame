@@ -259,34 +259,45 @@ body {
         visibility: hidden;
       }
     }
+
+    &:has(.hunters-switcher:hover) {
+      .geosearch {
+        visibility: hidden;
+        transition: visibility 0s;
+      }
+    }
   }
 
   .leaflet-container .leaflet-control-attribution {
     font-size: 5px;
   }
 
-  .geosearch.leaflet-bar.active {
-    right: 0;
-    width: calc(100vw - 36px);
-    margin-right: 18px;
-    margin-left: 18px;
+  .geosearch.leaflet-bar {
+    transition: visibility 0s 0.7s;
 
-    &::before {
-      content: "";
-      flex: 0 0 82px;
-      opacity: 0;
-      visibility: hidden;
-    }
+    &.active {
+      right: 0;
+      width: calc(100vw - 36px);
+      margin-right: 18px;
+      margin-left: 18px;
 
-    > form {
-      order: 1;
-      max-width: calc(100% - 122px);
-      margin-left: 0;
-    }
+      &::before {
+        content: "";
+        flex: 0 0 82px;
+        opacity: 0;
+        visibility: hidden;
+      }
 
-    .glass {
-      max-width: calc(100% - 40px);
-      padding: 6px;
+      > form {
+        order: 1;
+        max-width: calc(100% - 122px);
+        margin-left: 0;
+      }
+
+      .glass {
+        max-width: calc(100% - 40px);
+        padding: 6px;
+      }
     }
   }
 }
