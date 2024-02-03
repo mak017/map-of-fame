@@ -46,6 +46,7 @@ import CategoryFilter from "../js/components/CategoryFilter.svelte";
 import Spinner from "../js/components/elements/Spinner.svelte";
 import CloseCrossSvg from "../js/components/elements/icons/CloseCrossSvg.svelte";
 import HuntersSvg from "../js/components/elements/icons/HuntersSvg.svelte";
+import LoupeSvg from "../js/components/elements/icons/LoupeSvg.svelte";
 import SelectIndicatorSvg from "../js/components/elements/icons/SelectIndicatorSvg.svelte";
 import AddSpot from "../js/components/addSpot/AddSpot.svelte";
 import ResetPassword from "../js/components/auth/ResetPassword.svelte";
@@ -253,6 +254,9 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
               type="text"
               placeholder="Search"
               bind:value={searchArtistText} />
+            <button type="submit" class="button search-submit">
+              <LoupeSvg fill="var(--color-accent)" />
+            </button>
           </form>
         </div>
         {#if $isLoggedIn}
@@ -533,7 +537,7 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
   display: flex;
   position: absolute;
   right: 40px;
-  margin-right: 52px;
+  margin-right: 12px;
   opacity: 0;
   visibility: hidden;
 
@@ -586,8 +590,12 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
     }
   }
 
+  form {
+    display: flex;
+  }
+
   input {
-    width: 280px;
+    width: 316px;
     height: 40px;
     max-width: 100%;
     padding: 6px 12px;
@@ -608,8 +616,18 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
     }
   }
 
+  .search-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    background: var(--color-light);
+  }
+
   &.isAddressSearch {
-    margin-right: 332px;
+    margin-right: 368px;
     form {
       display: none;
     }
@@ -695,11 +713,11 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
   .search-artist {
     top: 0;
     right: 0;
-    width: calc(100vw - 76px);
+    width: calc(100vw - 36px);
     margin-right: 0;
 
     .search-select {
-      flex: 0 0 82px;
+      flex: 0 0 88px;
 
       .selected {
         padding: 0 4px;
@@ -712,7 +730,7 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
 
     form {
       flex: 1 0 auto;
-      max-width: calc(100% - 122px);
+      max-width: calc(100% - 88px);
     }
 
     input {
@@ -724,8 +742,8 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
       position: fixed;
       top: 16px;
       right: auto;
-      left: 58px;
-      width: 82px;
+      left: 18px;
+      width: 88px;
       margin-right: 0;
     }
   }

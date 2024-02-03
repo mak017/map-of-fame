@@ -213,30 +213,34 @@ const handleScrollElementClick = (identifier) => () => {
                   {/each}
                 </div>
               </div>
-              <div class="cell artist">
-                {#if isMobile()}
-                  <div class="head">Artist</div>
-                {/if}
-                <div class="value">
-                  {#if item.artist}
-                    {#each highlightWords( { text: item.artist, query: searchedText }, ) as chunk (chunk.key)}
-                      <span class:highlight={chunk.match}>{chunk.text}</span>
-                    {/each}
+              {#if !isMobile() || item.artist}
+                <div class="cell artist">
+                  {#if isMobile()}
+                    <div class="head">Artist</div>
                   {/if}
+                  <div class="value">
+                    {#if item.artist}
+                      {#each highlightWords( { text: item.artist, query: searchedText }, ) as chunk (chunk.key)}
+                        <span class:highlight={chunk.match}>{chunk.text}</span>
+                      {/each}
+                    {/if}
+                  </div>
                 </div>
-              </div>
-              <div class="cell crew">
-                {#if isMobile()}
-                  <div class="head">Crew</div>
-                {/if}
-                <div class="value">
-                  {#if item.crew}
-                    {#each highlightWords( { text: item.crew, query: searchedText }, ) as chunk (chunk.key)}
-                      <span class:highlight={chunk.match}>{chunk.text}</span>
-                    {/each}
+              {/if}
+              {#if !isMobile() || item.crew}
+                <div class="cell crew">
+                  {#if isMobile()}
+                    <div class="head">Crew</div>
                   {/if}
+                  <div class="value">
+                    {#if item.crew}
+                      {#each highlightWords( { text: item.crew, query: searchedText }, ) as chunk (chunk.key)}
+                        <span class:highlight={chunk.match}>{chunk.text}</span>
+                      {/each}
+                    {/if}
+                  </div>
                 </div>
-              </div>
+              {/if}
               <div class="cell spots">
                 {#if isMobile()}
                   <div class="head">Spots</div>
@@ -570,6 +574,11 @@ form {
         font-size: 13px;
       }
 
+      .value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
       .username {
         grid-column: 3/5;
         grid-row: 1;
@@ -582,7 +591,7 @@ form {
       }
 
       .crew {
-        grid-row: 2;
+        grid-column: 1/3;
       }
 
       .spots {

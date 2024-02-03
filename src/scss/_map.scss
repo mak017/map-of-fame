@@ -163,7 +163,7 @@ body {
   > form {
     display: flex;
     flex: 1 0 auto;
-    margin-left: 108px;
+    margin-left: -232px;
     transition: none;
     opacity: 0;
   }
@@ -182,11 +182,14 @@ body {
   }
 
   .reset {
+    position: absolute;
+    top: 100%;
+    right: 0;
     width: 40px;
     height: 40px;
     padding: 0;
     border: 0;
-    background-color: transparent;
+    background-color: var(--color-lotion);
     background-image: url(images/close-cross.svg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
@@ -222,7 +225,6 @@ body {
   }
 
   .leaflet-bar-part {
-    order: -1;
     flex: 0 0 40px;
     height: 40px;
     padding: 0;
@@ -242,8 +244,10 @@ body {
     border-radius: 0;
 
     > form {
+      margin-left: 112px;
       opacity: 1;
-      transition: opacity 0.1s 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+      transition: opacity 0.1s 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19),
+        margin 0.2s;
     }
   }
 }
@@ -283,19 +287,18 @@ body {
 
       &::before {
         content: "";
-        flex: 0 0 82px;
+        flex: 0 0 88px;
         opacity: 0;
         visibility: hidden;
       }
 
       > form {
-        order: 1;
-        max-width: calc(100% - 122px);
+        width: calc(100% - 128px);
         margin-left: 0;
       }
 
       .glass {
-        max-width: calc(100% - 40px);
+        max-width: 100%;
         padding: 6px;
       }
     }
