@@ -161,7 +161,7 @@ const handleScrollElementClick = (identifier) => () => {
     </div>
   </form>
   {#if $searchState.isFetched}
-    {#if $searchState.list.length}
+    {#if $searchState.list.length || $searchState.grid.length}
       <div class="content-caption">
         <div class="view-controls">
           <FormRadioButton
