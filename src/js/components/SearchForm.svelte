@@ -4,7 +4,7 @@ import InfiniteScroll from "svelte-infinite-scroll";
 import { goto, params, url } from "@roxi/routify";
 import highlightWords from "highlight-words";
 
-import { searchState } from "./../store.js";
+import { profileState, searchState } from "./../store.js";
 import { isMobile } from "./../utils/commonUtils.js";
 import {
   requestPhotoWall,
@@ -131,6 +131,11 @@ const handleScrollElementClick = (identifier) => () => {
   );
   searchState.setScrollOffset(element.offsetTop);
 };
+
+const handleUserClick = (identifier) => () => {
+  handleScrollElementClick(identifier)();
+  profileState.reset();
+};
 </script>
 
 <div class="container">
@@ -202,7 +207,7 @@ const handleScrollElementClick = (identifier) => () => {
               href={$url("/@:username", { username: item.username })}
               class="list-row"
               data-scroll-element={item.username}
-              on:click={handleScrollElementClick(item.username)}>
+              on:click={handleUserClick(item.username)}>
               <div class="cell username">
                 {#if isMobile()}
                   <div class="head">Username</div>
