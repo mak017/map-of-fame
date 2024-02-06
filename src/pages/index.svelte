@@ -255,7 +255,7 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
               placeholder="Search"
               bind:value={searchArtistText} />
             <button type="submit" class="button search-submit">
-              <LoupeSvg fill="var(--color-accent)" />
+              <LoupeSvg />
             </button>
           </form>
         </div>
@@ -623,7 +623,7 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
     flex: 0 0 40px;
     width: 40px;
     height: 40px;
-    background: var(--color-light);
+    background: var(--color-accent);
   }
 
   &.isAddressSearch {
@@ -717,20 +717,12 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
     margin-right: 0;
 
     .search-select {
-      flex: 0 0 88px;
-
-      .selected {
-        padding: 0 4px;
-      }
-
-      .options .item {
-        padding: 0 4px 8px;
-      }
+      flex: 0 0 100px;
     }
 
     form {
       flex: 1 0 auto;
-      max-width: calc(100% - 88px);
+      max-width: calc(100% - 100px);
     }
 
     input {
@@ -743,7 +735,7 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
       top: 16px;
       right: auto;
       left: 18px;
-      width: 88px;
+      width: 100px;
       margin-right: 0;
     }
   }
