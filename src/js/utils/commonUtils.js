@@ -58,36 +58,41 @@ export const removeFromLocalStorage = (key) => localStorage.removeItem(key);
 export const isYearLike = (year) => /^\d{0,4}$/.test(year);
 
 export const embedVideoCodeFromBasicUrl = async (url) => {
-  if (regexYoutube.test(url)) {
-    const embedResponse = await getYoutubeEmbed(url);
+  try {
+    if (regexYoutube.test(url)) {
+      const embedResponse = await getYoutubeEmbed(url);
 
-    return embedResponse?.html ?? "";
+      return embedResponse?.html ?? "";
+    }
+
+    if (url.includes("tiktok")) {
+      const embedResponse = await getTikTokEmbed(url);
+
+      return embedResponse?.html ?? "";
+    }
+
+    if (url.includes("instagr")) {
+      const [urlWithoutQuery] = url.split("?");
+
+      return urlWithoutQuery.replace(
+        new RegExp(regexInstagram, "g"),
+        '<iframe frameborder="0" type="text/html" src="//instagram.com/p/$1/embed" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
+      );
+    }
+
+    return url
+      .replace(
+        new RegExp(regexVimeo, "g"),
+        '<iframe src="//player.vimeo.com/video/$1?color=ffffff&portrait=0" frameborder="0" width="100%" height="100%" allow="autoplay; fullscreen" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
+      )
+      .replace(
+        new RegExp(regexDailymotion, "g"),
+        '<iframe frameborder="0" type="text/html" src="https://www.dailymotion.com/embed/video/$1?logo=0&foreground=ffffff&highlight=1bb4c6&background=000000" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
+      );
+  } catch (error) {
+    console.log(error);
+    return "";
   }
-
-  if (url.includes("tiktok")) {
-    const embedResponse = await getTikTokEmbed(url);
-
-    return embedResponse?.html ?? "";
-  }
-
-  if (url.includes("instagr")) {
-    const [urlWithoutQuery] = url.split("?");
-
-    return urlWithoutQuery.replace(
-      new RegExp(regexInstagram, "g"),
-      '<iframe frameborder="0" type="text/html" src="//instagram.com/p/$1/embed" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
-    );
-  }
-
-  return url
-    .replace(
-      new RegExp(regexVimeo, "g"),
-      '<iframe src="//player.vimeo.com/video/$1?color=ffffff&portrait=0" frameborder="0" width="100%" height="100%" allow="autoplay; fullscreen" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
-    )
-    .replace(
-      new RegExp(regexDailymotion, "g"),
-      '<iframe frameborder="0" type="text/html" src="https://www.dailymotion.com/embed/video/$1?logo=0&foreground=ffffff&highlight=1bb4c6&background=000000" width="100%" height="100%" allowfullscreen style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;"></iframe>'
-    );
 };
 
 export const isExternalMapsUrl = (url) =>

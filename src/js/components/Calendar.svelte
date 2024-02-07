@@ -2,22 +2,14 @@
 import { onMount } from "svelte";
 import { goto } from "@roxi/routify";
 
-import { requestSearchSpots } from "./../api/search.js";
 import {
-  isSearchResults,
   isShowOnMapMode,
   markersStore,
-  selectedArtist,
-  selectedCrew,
   selectedUserProfileData,
   selectedYear,
   settings,
 } from "./../store.js";
-import {
-  getCurrentYear,
-  isMobile,
-  loadFromLocalStorage,
-} from "../utils/commonUtils.js";
+import { getCurrentYear, loadFromLocalStorage } from "../utils/commonUtils.js";
 import { getDatesFilter, getProfileYears } from "../utils/datesUtils.js";
 import { requestSpots } from "../init.js";
 import { getUserSpots } from "../api/spot.js";
@@ -45,13 +37,13 @@ onMount(() => {
 });
 
 let searchYears = $markersStore.years?.map((year) =>
-  year !== null ? `${year}` : EMPTY_YEAR_STRING
+  year !== null ? `${year}` : EMPTY_YEAR_STRING,
 );
 
 const datesFilter = getDatesFilter(
   yearStart,
   yearEnd,
-  additionalYears && JSON.parse(additionalYears)
+  additionalYears && JSON.parse(additionalYears),
 );
 
 const dates = [...datesFilter.reverse(), ALL_YEARS_STRING];
@@ -62,19 +54,8 @@ const handleClick = (year) => {
   const yearForRequest = year !== EMPTY_YEAR_STRING ? `${year}` : "";
 
   selectedYear.set(`${year}`);
-  if (!$isSearchResults && !$selectedUserProfileData.id) {
+  if (!!$selectedUserProfileData.id) {
     requestSpots(year);
-  } else if ($isSearchResults) {
-    const requestParams = { artist: $selectedArtist, crew: $selectedCrew };
-    if (yearForRequest !== ALL_YEARS_STRING) {
-      requestParams.year = yearForRequest;
-    }
-    requestSearchSpots(requestParams).then((response) => {
-      const { success, result } = response;
-      if (success && result) {
-        markersStore.set(result);
-      }
-    });
   } else if ($selectedUserProfileData.id) {
     getUserSpots($selectedUserProfileData.id, token, {
       year: yearForRequest === ALL_YEARS_STRING ? undefined : yearForRequest,
@@ -110,7 +91,7 @@ const isDisabled = (date, activeYears) => {
   ) {
     return true;
   }
-  if (!$isSearchResults && !$isShowOnMapMode && date === ALL_YEARS_STRING) {
+  if (!$isShowOnMapMode && date === ALL_YEARS_STRING) {
     return true;
   }
 

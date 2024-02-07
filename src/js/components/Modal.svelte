@@ -47,7 +47,7 @@ const handleResize = () => {
   class:accentTitle
   class:autoMargin={autoMargin && withAd && banner.url}
   class:alwaysOnTop
-  class:stickyHeaderOnMobile={stickyHeaderOnMobile && scrollTop > 290}
+  class:stickyHeaderOnMobile={stickyHeaderOnMobile && scrollTop > 190}
   class:noPaddingTop
   {id}
   role="dialog"
@@ -62,7 +62,7 @@ const handleResize = () => {
   {#if !noLogo}<span class="logo" />{/if}
   {#if title}
     <h2 transition:fade={{ duration: 200 }}>{title}</h2>
-    {#if stickyHeaderOnMobile && scrollTop > 290}
+    {#if stickyHeaderOnMobile && scrollTop > 190}
       <div
         class="sticky-header"
         on:click={() => modalRef.scrollTo({ top: 0, behavior: "smooth" })}
@@ -239,6 +239,7 @@ h2 {
     right: 12px;
   }
   .logo {
+    top: 27px;
     left: 12px;
     width: 97px;
     height: 37px;

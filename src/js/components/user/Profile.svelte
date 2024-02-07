@@ -16,7 +16,6 @@ import {
   selectedCrew,
   selectedUserProfileData,
   selectedYear,
-  isSearchResults,
   editSpotData,
   shouldShowAddSpot,
   isFirstTimeVisit,
@@ -312,7 +311,6 @@ const handleShowOnMapClick = (showAll) => {
     if (success && result) {
       const { spots, years } = result;
       markersStore.set({ spots, years: getProfileYears(years) });
-      isSearchResults.set(false);
       isShowOnMapMode.set(true);
       selectedYear.set(
         $profileState.currentYear
@@ -603,7 +601,7 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
                 type="button"
                 class="button"
                 class:active={$profileState.sortBy === "created_at"}
-                on:click={handleSortingChange("created_at")}>Default</button>
+                on:click={handleSortingChange("created_at")}>Upload</button>
               {" / "}
               <button
                 type="button"

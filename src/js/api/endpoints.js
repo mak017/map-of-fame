@@ -45,17 +45,11 @@ export const USER_SERACH_BY_CREW = (crew) =>
 export const INVITES_GET_FOR_USER = () =>
   `${ENDPOINT_ORIGIN}/api/invites/getForUser`;
 
-export const CREW_ARTIST_SEARCH = (artist, crew) => {
-  let url = `${ENDPOINT_ORIGIN}/api/crewAndArtist/search`;
-  if (artist) {
-    url = url.concat(`?artist=${artist}`);
-  }
-  if (crew) {
-    url = artist ? url.concat("&") : url.concat("?");
-    url = url.concat(`crew=${crew}`);
-  }
-  return url;
-};
+export const CREW_ARTIST_SEARCH = (text) =>
+  `${ENDPOINT_ORIGIN}/api/crewAndArtist/search?search=${text}`;
+
+export const PHOTO_WALL = (text, limit, offset) =>
+  `${ENDPOINT_ORIGIN}/api/photoWall?search=${text}&limit=${limit}&offset=${offset}`;
 
 export const USER_CATEGORY = () => `${ENDPOINT_ORIGIN}/api/usercategory`;
 

@@ -1,13 +1,8 @@
 <script>
 import { fade, slide } from "svelte/transition";
 
-import { requestRecentSpots, requestSpots } from "../init";
-import {
-  categoriesList,
-  isLighthouseActive,
-  map,
-  selectedYear,
-} from "../store";
+import { requestSpots } from "../init";
+import { categoriesList, map, selectedYear } from "../store";
 import { loadFromLocalStorage, saveToLocalStorage } from "../utils/commonUtils";
 import { openRailwayMap } from "../utils/mapUtils/tileLayers";
 
@@ -25,7 +20,7 @@ const handleCategoryClick = (id) => {
     ? selectedCategories.filter((categoryId) => categoryId !== id)
     : [...selectedCategories, id];
   saveToLocalStorage("categories", selectedCategories);
-  !$isLighthouseActive ? requestSpots($selectedYear) : requestRecentSpots();
+  requestSpots($selectedYear);
 
   const isTrainsSelected = selectedCategories.includes(2);
   const hasRailwayLayer = $map.hasLayer(openRailwayMap);
@@ -76,7 +71,9 @@ const handleCategoryClick = (id) => {
   position: absolute;
   top: 68px;
   left: 18px;
-  transition: opacity 0.2s, visibility 0.2s;
+  transition:
+    opacity 0.2s,
+    visibility 0.2s;
 }
 
 li {

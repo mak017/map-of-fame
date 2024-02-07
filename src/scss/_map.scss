@@ -45,6 +45,11 @@ body {
       opacity: 1;
       visibility: visible;
     }
+
+    .main-top_right_wrapper .search.search-artist {
+      opacity: 1;
+      visibility: visible;
+    }
   }
 
   &.geo-search-overlay {
@@ -158,21 +163,34 @@ body {
   > form {
     display: flex;
     flex: 1 0 auto;
+    margin-left: -232px;
     transition: none;
     opacity: 0;
   }
 
   .glass {
     flex: 1 0 auto;
+    padding: 6px 12px;
     border: 0;
+    font-size: 16px;
+    font-weight: 600;
+
+    &::placeholder {
+      color: var(--color-dark);
+      font-weight: normal;
+    }
   }
 
   .reset {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
     width: 40px;
     height: 40px;
     padding: 0;
     border: 0;
-    background-color: transparent;
+    background-color: var(--color-lotion);
     background-image: url(images/close-cross.svg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
@@ -184,7 +202,7 @@ body {
     display: none;
     position: absolute;
     top: 100%;
-    right: 40px;
+    right: 0;
     left: 0;
     max-height: 60vh;
     padding: 10px 20px;
@@ -208,15 +226,24 @@ body {
   }
 
   .leaflet-bar-part {
-    order: -1;
+    position: relative;
     flex: 0 0 40px;
     height: 40px;
     padding: 0;
     border-radius: 2px;
-    background-image: url(images/loupe.svg);
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    background-size: 20px 20px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-image: url(images/loupe.svg);
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      background-size: 20px 20px;
+    }
 
     &:hover {
       background-color: var(--color-light);
@@ -228,8 +255,24 @@ body {
     border-radius: 0;
 
     > form {
+      margin-left: 112px;
       opacity: 1;
-      transition: opacity 0.1s 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+      transition: opacity 0.1s 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19),
+        margin 0.2s;
+    }
+
+    .leaflet-bar-part {
+      pointer-events: none;
+      background-color: var(--color-accent);
+
+      &::before {
+        background-image: none;
+        background-color: var(--color-light);
+        mask-image: url(images/loupe.svg);
+        mask-repeat: no-repeat;
+        mask-size: 20px 20px;
+        mask-position: 50% 50%;
+      }
     }
   }
 }
@@ -244,21 +287,52 @@ body {
         opacity: 0;
         visibility: hidden;
       }
+    }
 
-      .main-top_right_wrapper {
-        top: 56px;
+    &:has(.hunters-switcher:hover) {
+      .geosearch {
+        visibility: hidden;
+        transition: visibility 0s;
       }
     }
   }
 
-  .leaflet-container .leaflet-control-attribution {
-    font-size: 5px;
+  .leaflet-container {
+    .end-selection-area {
+      width: 50px;
+      height: 50px;
+    }
+
+    .leaflet-control-attribution {
+      font-size: 5px;
+    }
   }
 
-  .geosearch.leaflet-bar.active {
-    right: 0;
-    width: calc(100vw - 36px);
-    margin-right: 18px;
-    margin-left: 18px;
+  .geosearch.leaflet-bar {
+    transition: visibility 0s 0.7s;
+
+    &.active {
+      right: 0;
+      width: calc(100vw - 36px);
+      margin-right: 18px;
+      margin-left: 18px;
+
+      &::before {
+        content: "";
+        flex: 0 0 100px;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      > form {
+        width: calc(100% - 140px);
+        margin-left: 0;
+      }
+
+      .glass {
+        max-width: 100%;
+        padding: 6px;
+      }
+    }
   }
 }

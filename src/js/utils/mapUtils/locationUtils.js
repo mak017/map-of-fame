@@ -5,23 +5,14 @@ import { permalink } from "./permalink";
 import {
   isAreaSelectionActive,
   isInitialized,
-  isLighthouseActive,
   isPermalinkReady,
-  isSearchResults,
   isShowOnMapMode,
   mapBounds,
-  selectedArtist,
-  selectedCrew,
   selectedYear,
 } from "../../store";
-import { performSearch, requestRecentSpots, requestSpots } from "../../init";
+import { requestSpots } from "../../init";
 
-import {
-  DEFAULT_ZOOM,
-  DEFAULT_VIEW,
-  EMPTY_YEAR_STRING,
-  ALL_YEARS_STRING,
-} from "../../constants";
+import { DEFAULT_ZOOM, DEFAULT_VIEW } from "../../constants";
 
 const getLocationByIp = () =>
   fetch("https://ipinfo.io/json?token=f7826cd7c9e44b")
@@ -66,12 +57,7 @@ export const handleMapViewChange = (map) => {
     return;
   }
 
-  if (get(isLighthouseActive)) {
-    requestRecentSpots();
-    return;
-  }
-
-  if (!get(isSearchResults) && !get(isShowOnMapMode)) {
+  if (!get(isShowOnMapMode)) {
     const yearFromStore = get(selectedYear);
     requestSpots(yearFromStore);
   }
@@ -89,28 +75,12 @@ export const setLocation = (map, force) => {
       map.setView(DEFAULT_VIEW.coordinates, DEFAULT_VIEW.zoom);
     })
     .finally(() => {
-      const artistFromStore = get(selectedArtist);
-      const crewFromStore = get(selectedCrew);
       permalink.setup(map);
       isPermalinkReady.set(true);
       const bounds = getBounds(map);
-      const shouldSearch = artistFromStore || crewFromStore;
       const yearFromStore = get(selectedYear);
       mapBounds.set(bounds);
-      if (shouldSearch) {
-        const params = {
-          artist: artistFromStore,
-          crew: crewFromStore,
-          isInitial: true,
-        };
-
-        if (yearFromStore !== ALL_YEARS_STRING) {
-          params.year =
-            yearFromStore !== EMPTY_YEAR_STRING ? yearFromStore : "";
-        }
-
-        performSearch(params);
-      } else if (!force) {
+      if (!force) {
         isInitialized.set(true);
         requestSpots(yearFromStore || getCurrentYear());
       }

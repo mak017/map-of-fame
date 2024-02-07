@@ -22,7 +22,6 @@ import {
   isAreaSelectionActive,
   mapBounds,
   markersStore,
-  isSearchResults,
   isShowOnMapMode,
   isInitialized,
   map,
@@ -68,7 +67,7 @@ searchControl.set(
     position: "topright",
     style: "button",
     showMarker: false,
-    searchLabel: "Address",
+    searchLabel: "Search",
     maxSuggestions: isMobile() ? 3 : 5,
     autoClose: true,
   }),
@@ -88,7 +87,7 @@ const initMap = (container) => {
     $map.fitBounds($mapBounds);
 
     if ($markersStore?.spots?.length) {
-      placeMarkers($map, $markersStore, $isSearchResults || $isShowOnMapMode);
+      placeMarkers($map, $markersStore, $isShowOnMapMode);
     }
   } else {
     setLocation($map);
@@ -101,8 +100,16 @@ const initMap = (container) => {
   document.addEventListener("click", (event) => {
     if ($isActiveSearchControl) {
       const geoSearchElement = document.querySelector(".geosearch");
-      if (!geoSearchElement.contains(event.target)) {
+      const artistSearchElement = document.querySelector(".search-artist");
+      if (
+        !geoSearchElement.contains(event.target) &&
+        !artistSearchElement?.contains(event.target)
+      ) {
         $searchControl.close();
+      }
+
+      if (event.target.classList.contains("item")) {
+        $searchControl.clearResults();
       }
     }
   });
@@ -119,7 +126,7 @@ const initMap = (container) => {
 };
 
 $: if ($map && $markersStore) {
-  placeMarkers($map, $markersStore, $isSearchResults || $isShowOnMapMode);
+  placeMarkers($map, $markersStore, $isShowOnMapMode);
 }
 </script>
 

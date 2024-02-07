@@ -4,7 +4,6 @@ import isEqual from "lodash.isequal";
 import cloneDeep from "lodash.clonedeep";
 
 import {
-  requestSearchSpots,
   requestSearchUserByArtist,
   requestSearchUserByCrew,
 } from "../api/search.js";
@@ -27,12 +26,8 @@ import { processImage } from "./../utils/imageUtils.js";
 import { requestSpots } from "../init.js";
 import {
   firms,
-  isSearchResults,
   map,
-  markersStore,
   profileState,
-  selectedArtist,
-  selectedCrew,
   selectedYear,
   settings,
   shouldShowAddSpot,
@@ -231,8 +226,14 @@ const saveDraft = async (field) => {
     requestObject.lng = lng;
   }
 
-  if (field == "image") requestObject.img = image.blob ?? "";
-  if (field == "image2") requestObject.additionalImg = image2.blob ?? "";
+  if (field == "image") {
+    requestObject.img = image.blob ?? "";
+    delete requestObject.artistsCrews;
+  }
+  if (field == "image2") {
+    requestObject.additionalImg = image2.blob ?? "";
+    delete requestObject.artistsCrews;
+  }
   if (field == "sketch") requestObject.sketch = sketch.blob ?? "";
   if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
 
@@ -437,11 +438,6 @@ const handleLinkChange = () => {
   }
 };
 
-const isSelectedArtistCrew = () =>
-  artistCrewPairs.some(
-    (pair) => pair.artist === $selectedArtist && pair.crew === $selectedCrew,
-  );
-
 const handleSubmit = () => {
   validate();
   if (
@@ -484,21 +480,8 @@ const handleSubmit = () => {
           const yearForRequest = year || EMPTY_YEAR_STRING;
 
           selectedYear.set(yearForRequest);
-          if (!$isSearchResults) {
-            requestSpots($selectedYear);
-            permalink.update({ mapContainer: $map });
-          } else if (isSelectedArtistCrew()) {
-            requestSearchSpots({
-              artist: $selectedArtist,
-              crew: $selectedCrew,
-              year: $selectedYear,
-            }).then((response) => {
-              const { success, result } = response;
-              if (success && result) {
-                markersStore.set(result);
-              }
-            });
-          }
+          requestSpots($selectedYear);
+          permalink.update({ mapContainer: $map });
         }
         onCancel();
       }

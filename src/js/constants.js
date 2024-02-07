@@ -64,7 +64,6 @@ export const ERROR_MESSAGES = {
   linkInvalid: "Link must start with http or https",
   fieldMinLength: (field, min) =>
     `The ${field} must be at least ${min} characters`,
-  artistEmpty: "The artist field is required when crew is not present",
-  crewEmpty: "The crew field is required when artist is not present",
+  searchTextEmpty: "Type something to search for",
   contactEmpty: "Please provide your contact information",
 };

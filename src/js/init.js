@@ -1,7 +1,6 @@
 import { get } from "svelte/store";
 
 import { verifyAuthRequest } from "./api/auth";
-import { requestSearchSpots } from "./api/search";
 import { getCategories, getSettingsRequest } from "./api/settings";
 import { getRecentSpots, getSpots, getSpotsInArea } from "./api/spot";
 import {
@@ -9,10 +8,7 @@ import {
   areaSpots,
   categoriesList,
   isFirstTimeVisit,
-  isInitialized,
-  isLighthouseActive,
   isLoggedIn,
-  isSearchResults,
   isSpotsFromAreaLoading,
   isUserVerifyProgress,
   mapBounds,
@@ -22,12 +18,10 @@ import {
   withHunters,
 } from "./store";
 import {
-  isEmpty,
   loadFromLocalStorage,
   removeFromLocalStorage,
   saveToLocalStorage,
 } from "./utils/commonUtils";
-import { permalink } from "./utils/mapUtils/permalink";
 import { transformSettings } from "./utils/transformers";
 
 import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "./constants";
@@ -110,28 +104,10 @@ export const requestSpots = (year) => {
     (response) => {
       const { success, result } = response;
       if (success && result) {
-        isSearchResults.set(false);
-        isLighthouseActive.set(false);
         markersStore.set(result);
       }
     }
   );
-};
-
-export const performSearch = ({ artist, crew, year, geoRect, isInitial }) => {
-  requestSearchSpots({ year, artist, crew, geoRect }).then((response) => {
-    const { success, result, errors } = response;
-    if (isInitial) {
-      isInitialized.set(true);
-    }
-    if (success && result) {
-      isSearchResults.set(true);
-      markersStore.set(result);
-    }
-    if (errors && !isEmpty(errors)) {
-      permalink.update({ clearParams: "all" });
-    }
-  });
 };
 
 export const requestRecentSpots = () => {
@@ -146,8 +122,6 @@ export const requestRecentSpots = () => {
   getRecentSpots(7, bounds, categories).then((response) => {
     const { success, result } = response;
     if (success && result) {
-      isSearchResults.set(false);
-      isLighthouseActive.set(true);
       markersStore.set(result);
     }
   });

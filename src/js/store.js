@@ -17,7 +17,6 @@ export const selectedCrew = writable("");
 export const openedMarkerData = writable(null);
 export const editSpotData = writable({});
 export const markersStore = writable({});
-export const isSearchResults = writable(false);
 export const userData = writable({});
 export const countriesList = writable([]);
 export const settings = writable({});
@@ -25,7 +24,6 @@ export const categoriesList = writable([]);
 export const firms = writable([]);
 export const userCategories = writable([]);
 export const isLoading = writable(false);
-export const isLighthouseActive = writable(false);
 export const mapBounds = writable([]);
 export const areaSelection = writable(null);
 export const areaSpots = writable(null);
@@ -84,4 +82,41 @@ const createProfileState = () => {
   };
 };
 
+const createSearchState = () => {
+  const initialState = {
+    offset: 0,
+    scrollOffset: 0,
+    list: [],
+    grid: [],
+    gridTotal: 0,
+    currentView: "list",
+    isFetched: false,
+    isLoading: true,
+    isShowSpinner: true,
+    hasMore: false,
+  };
+
+  const { subscribe, set, update } = writable(initialState);
+
+  return {
+    subscribe,
+    setOffset: (offset) => update((state) => ({ ...state, offset })),
+    setScrollOffset: (offset) =>
+      update((state) => ({ ...state, scrollOffset: offset })),
+    setList: (list) => update((state) => ({ ...state, list })),
+    setGrid: (grid) => update((state) => ({ ...state, grid })),
+    setGridTotal: (gridTotal) => update((state) => ({ ...state, gridTotal })),
+    setCurrentView: (currentView) =>
+      update((state) => ({ ...state, currentView })),
+    setIsFetched: (isFetched) => update((state) => ({ ...state, isFetched })),
+    setIsLoading: (value) =>
+      update((state) => ({ ...state, isLoading: value })),
+    setIsShowSpinner: (value) =>
+      update((state) => ({ ...state, isShowSpinner: value })),
+    setHasMore: (value) => update((state) => ({ ...state, hasMore: value })),
+    reset: () => set(initialState),
+  };
+};
+
 export const profileState = createProfileState();
+export const searchState = createSearchState();
