@@ -222,9 +222,6 @@ label:not(.with-label) {
       }
     }
   }
-
-  .floating-label {
-  }
 }
 
 .extra-margin {
@@ -260,7 +257,6 @@ label:not(.with-label) {
   }
 
   .search {
-    // margin-bottom: 20px;
     &:not(.with-label) {
       input {
         width: 100%;
