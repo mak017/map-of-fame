@@ -163,9 +163,10 @@ body {
   > form {
     display: flex;
     flex: 1 0 auto;
-    margin-left: -232px;
+    margin-left: -242px;
     transition: none;
     opacity: 0;
+    visibility: hidden;
   }
 
   .glass {
@@ -257,6 +258,7 @@ body {
     > form {
       margin-left: 112px;
       opacity: 1;
+      visibility: visible;
       transition: opacity 0.1s 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19),
         margin 0.2s;
     }
