@@ -162,6 +162,7 @@ const handleShowOnMapClick = () => {
     user,
   } = $openedMarkerData;
   const userId = $selectedUserProfileData.id ?? user.id;
+  isShowOnMapMode.set(false);
 
   getUserSpots(userId, token, {
     year: year ? `${year}` : "",
