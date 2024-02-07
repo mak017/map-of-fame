@@ -12,6 +12,10 @@ export const useObserver = () => {
         if (classes.contains("active")) {
           isActiveSearchControl.set(true);
           body.classList.add("geo-search-active");
+          const artistSearchInput = document.getElementById(
+            "artist-search-input"
+          );
+          artistSearchInput?.focus();
         } else {
           isActiveSearchControl.set(false);
           body.classList.remove("geo-search-active");

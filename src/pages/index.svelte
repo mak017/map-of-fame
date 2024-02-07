@@ -177,8 +177,6 @@ const handleSearchInput = () => {
     $goto("/search", { text: searchArtistText });
   }
 };
-
-const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
 </script>
 
 <svelte:window on:keydown={handleKeyDown} />
@@ -251,6 +249,7 @@ const debouncedSearchChange = () => debounce(handleSearchInput, 1000);
           </div>
           <form on:submit|preventDefault={handleSearchInput}>
             <input
+              id="artist-search-input"
               type="text"
               placeholder="Search"
               bind:value={searchArtistText} />
