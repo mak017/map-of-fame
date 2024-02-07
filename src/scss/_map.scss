@@ -226,14 +226,24 @@ body {
   }
 
   .leaflet-bar-part {
+    position: relative;
     flex: 0 0 40px;
     height: 40px;
     padding: 0;
     border-radius: 2px;
-    background-image: url(images/loupe.svg);
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    background-size: 20px 20px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-image: url(images/loupe.svg);
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      background-size: 20px 20px;
+    }
 
     &:hover {
       background-color: var(--color-light);
@@ -249,6 +259,20 @@ body {
       opacity: 1;
       transition: opacity 0.1s 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19),
         margin 0.2s;
+    }
+
+    .leaflet-bar-part {
+      pointer-events: none;
+      background-color: var(--color-accent);
+
+      &::before {
+        background-image: none;
+        background-color: var(--color-light);
+        mask-image: url(images/loupe.svg);
+        mask-repeat: no-repeat;
+        mask-size: 20px 20px;
+        mask-position: 50% 50%;
+      }
     }
   }
 }
