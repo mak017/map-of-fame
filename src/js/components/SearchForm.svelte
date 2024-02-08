@@ -143,7 +143,7 @@ const handleUserClick = (identifier) => () => {
   <form on:submit|preventDefault={handleSubmit}>
     <div class="input-wrapper">
       <FormTextInput
-        placeholder="Artist/Crew"
+        placeholder="Username or Artist or Crew"
         bind:value={text}
         on:input={handleInputChange}
         errorText={error}

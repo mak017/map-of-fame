@@ -218,7 +218,7 @@ label:not(.with-label) {
       font-weight: 900;
 
       &::placeholder {
-        opacity: 1;
+        opacity: 0.6;
       }
     }
   }
