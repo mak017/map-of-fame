@@ -24,8 +24,7 @@ import {
   userData,
   editSpotData,
 } from "../../store";
-import { getProfileYears } from "../../utils/datesUtils.js";
-import { getSpotById, getUserSpots } from "../../api/spot.js";
+import { getSpotById } from "../../api/spot.js";
 
 import Popup from "../Popup.svelte";
 import Spinner from "../elements/Spinner.svelte";
@@ -161,38 +160,24 @@ const handleShowOnMapClick = () => {
     coords: { lat, lng },
     user,
   } = $openedMarkerData;
-  const userId = $selectedUserProfileData.id ?? user.id;
-
-  getUserSpots(userId, token, {
-    year: year ? `${year}` : "",
-    offset: 0,
-    limit: 99999999999999,
-  }).then((response) => {
-    const { success, result } = response;
-    if (success && result) {
-      const { spots, years } = result;
-      markersStore.set({ spots, years: getProfileYears(years) });
-      isShowOnMapMode.set(true);
-      resetAreaSelectionMode();
-      document.getElementById("highlighted").innerHTML = `
-        .marker-id-${id} {
-          min-width: 64px;
-          min-height: 64px;
-          border-color: rgba(101, 13, 151, 0.43);
-          box-shadow: 0 8px 8px var(--color-accent);
-        }
-      `;
-      selectedYear.set(year ? `${year}` : EMPTY_YEAR_STRING);
-      selectedArtist.set("");
-      selectedCrew.set("");
-      selectedUserProfileData.set(user);
-      setTimeout(() => {
-        $map.setView([lat, lng], MAX_ZOOM);
-        $goto("/");
-      }, 300);
-      openedMarkerData.set(null);
+  markersStore.set({ spots: [$openedMarkerData], years: [year] });
+  isShowOnMapMode.set(true);
+  resetAreaSelectionMode();
+  document.getElementById("highlighted").innerHTML = `
+    .marker-id-${id} {
+      min-width: 64px;
+      min-height: 64px;
+      border-color: rgba(101, 13, 151, 0.43);
+      box-shadow: 0 8px 8px var(--color-accent);
     }
-  });
+  `;
+  selectedYear.set(year ? `${year}` : EMPTY_YEAR_STRING);
+  selectedArtist.set("");
+  selectedCrew.set("");
+  selectedUserProfileData.set(user);
+  $map.setView([lat, lng], MAX_ZOOM);
+  $goto("/");
+  openedMarkerData.set(null);
 };
 
 const handleGoToEdit = (data) => {
