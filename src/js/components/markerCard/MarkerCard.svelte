@@ -24,8 +24,7 @@ import {
   userData,
   editSpotData,
 } from "../../store";
-import { getProfileYears } from "../../utils/datesUtils.js";
-import { getSpotById, getUserSpots } from "../../api/spot.js";
+import { getSpotById } from "../../api/spot.js";
 
 import Popup from "../Popup.svelte";
 import Spinner from "../elements/Spinner.svelte";
