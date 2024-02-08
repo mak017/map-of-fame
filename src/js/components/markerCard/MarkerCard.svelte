@@ -74,7 +74,7 @@ $: if ($openedMarkerData?.video?.includes("tiktok")) {
     const video = document.getElementById("video-embedded");
     const newScript = document.createElement("script");
     newScript.src = "https://www.tiktok.com/embed.js";
-    video.appendChild(newScript);
+    video?.appendChild(newScript);
   }, 0);
 }
 
@@ -162,7 +162,6 @@ const handleShowOnMapClick = () => {
     user,
   } = $openedMarkerData;
   const userId = $selectedUserProfileData.id ?? user.id;
-  isShowOnMapMode.set(false);
 
   getUserSpots(userId, token, {
     year: year ? `${year}` : "",
@@ -190,7 +189,7 @@ const handleShowOnMapClick = () => {
       setTimeout(() => {
         $map.setView([lat, lng], MAX_ZOOM);
         $goto("/");
-      }, 0);
+      }, 300);
       openedMarkerData.set(null);
     }
   });
