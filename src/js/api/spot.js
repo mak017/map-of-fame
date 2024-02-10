@@ -16,10 +16,11 @@ export const getSpots = async (
   year,
   geoRect,
   categories,
-  withHunters = true
+  withHunters = true,
+  withNewbies
 ) => {
   const response = await fetch(
-    SPOT_YEAR(year, geoRect, categories, withHunters),
+    SPOT_YEAR(year, geoRect, categories, withHunters, withNewbies),
     {
       method: "GET",
     }
@@ -45,10 +46,17 @@ export const getSpotById = async (id) => {
   return result;
 };
 
-export const getSpotsInArea = async (polygon, withHunters = true) => {
-  const response = await fetch(SPOT_FROM_POLY(polygon, withHunters), {
-    method: "GET",
-  });
+export const getSpotsInArea = async (
+  polygon,
+  withHunters = true,
+  withNewbies
+) => {
+  const response = await fetch(
+    SPOT_FROM_POLY(polygon, withHunters, withNewbies),
+    {
+      method: "GET",
+    }
+  );
   const result = await response.json();
   return result;
 };

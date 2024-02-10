@@ -57,6 +57,8 @@ export const PRE_REG_EMAIL = () => `${ENDPOINT_ORIGIN}/api/prereg/email`;
 
 export const PRE_REG_CONTACT = () => `${ENDPOINT_ORIGIN}/api/prereg/contact`;
 
+export const NEWBIE = () => `${ENDPOINT_ORIGIN}/api/newbie`;
+
 export const FIRM = () => `${ENDPOINT_ORIGIN}/api/firm`;
 
 export const FIRM_ID = (id) => `${ENDPOINT_ORIGIN}/api/firm/${id}`;
@@ -81,10 +83,16 @@ export const SITE_YEARS = () => `${ENDPOINT_ORIGIN}/api/site/years`;
 
 export const SPOT = () => `${ENDPOINT_ORIGIN}/api/spot`;
 
-export const SPOT_YEAR = (year, geoRect, categories, withHunters) => {
+export const SPOT_YEAR = (
+  year,
+  geoRect,
+  categories,
+  withHunters,
+  withNubies
+) => {
   let url = `${ENDPOINT_ORIGIN}/api/spot?hunters=${
     withHunters ? 1 : 0
-  }${getGeoRect(geoRect)}`;
+  }&allow_newbie=${withNubies ? 1 : 0}${getGeoRect(geoRect)}`;
 
   if (typeof year !== "undefined") {
     url += `&year=${year}`;
@@ -113,7 +121,7 @@ export const SPOT_ID_FEEDBACK = (id) =>
 
 export const SPOT_SEARCH = () => `${ENDPOINT_ORIGIN}/api/spot/search`;
 
-export const SPOT_FROM_POLY = (polygon, withHunters) => {
+export const SPOT_FROM_POLY = (polygon, withHunters, withNubies) => {
   const query = polygon.reduce((acc, coords, index) => {
     const [lng, lat] = coords;
     const chunk = `poly[${index}][lat]=${lat}&poly[${index}][lng]=${lng}`;
@@ -122,7 +130,7 @@ export const SPOT_FROM_POLY = (polygon, withHunters) => {
 
   return `${ENDPOINT_ORIGIN}/api/spot/fromPoly?${query}&hunters=${
     withHunters ? 1 : 0
-  }`;
+  }&allowNubies=${withNubies ? 1 : 0}`;
 };
 
 export const DRAFT_GET_LAST = () => `${ENDPOINT_ORIGIN}/api/draft/getLast`;

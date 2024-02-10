@@ -146,6 +146,28 @@ export const preRegContact = async (contact) => {
   return result;
 };
 
+export const newbieRegistration = async ({
+  username,
+  email,
+  password,
+  country,
+  link,
+}) => {
+  const data = new URLSearchParams();
+  data.append("username", username);
+  data.append("email", email);
+  data.append("password", password);
+  data.append("country", country);
+  data.append("link", link);
+  const response = await fetch(USER(), {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: data,
+  });
+  const result = await response.json();
+  return result;
+};
+
 export const getUserData = async (username) => {
   const response = await fetch(USER_ID(username), { method: "GET" });
   const result = await response.json();
