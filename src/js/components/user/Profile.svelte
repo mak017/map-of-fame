@@ -918,7 +918,6 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
   .text {
     overflow: hidden;
     min-width: 225px;
-    max-width: calc(100% - 30px);
     max-height: 105px;
     font-weight: 600;
   }
@@ -928,7 +927,6 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
     .text {
       overflow: auto;
       width: 100%;
-      max-width: 100%;
       min-height: 45px;
       max-height: 330px;
       padding: 10px 8px 20px;
@@ -989,6 +987,20 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
 
     .button-expand > span {
       transform: rotate(180deg);
+    }
+  }
+}
+
+.isCurrentUser {
+  .description {
+    .text {
+      max-width: calc(100% - 30px);
+    }
+
+    &.isEditableAbout {
+      .text {
+        max-width: 100%;
+      }
     }
   }
 }
