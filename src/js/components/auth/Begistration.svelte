@@ -4,7 +4,7 @@ import { fade } from "svelte/transition";
 import { goto, url } from "@roxi/routify";
 
 import { getAllCountries } from "./../../api/geo.js";
-import { createUserRequest } from "./../../api/auth.js";
+import { newbieRegistration } from "./../../api/auth.js";
 import {
   saveToLocalStorage,
   validateEmail,
@@ -22,10 +22,6 @@ import FormPasswordInput from "../elements/FormPasswordInput.svelte";
 import FormTextInput from "../elements/FormTextInput.svelte";
 
 import { ERROR_MESSAGES, USER_TYPES } from "../../constants";
-
-export let inviteData;
-export let isInviteError = false;
-export let setInviteError;
 
 let step = 1;
 let email = "";
@@ -54,7 +50,6 @@ let isInProgress = false;
 const userTypeList = [
   { id: USER_TYPES.artist.toLowerCase(), name: USER_TYPES.artist },
   { id: USER_TYPES.crew.toLowerCase(), name: USER_TYPES.crew },
-  { id: USER_TYPES.hunter.toLowerCase(), name: USER_TYPES.hunter },
 ];
 
 onMount(() => {
@@ -149,7 +144,7 @@ const handleSubmit = () => {
     !errors.link
   ) {
     isInProgress = true;
-    createUserRequest({
+    newbieRegistration({
       name,
       username: stripUsername(username),
       password,
@@ -158,7 +153,6 @@ const handleSubmit = () => {
       type: userType.id,
       crew,
       link: portfolioLink,
-      invite: inviteData?.code,
     })
       .then((response) => {
         const { success, result, errors: error } = response;
@@ -179,9 +173,6 @@ const handleSubmit = () => {
           }
           if (Array.isArray(error)) {
             errors.link = error[0];
-          }
-          if (error?.message || error?.invite) {
-            setInviteError();
           }
           if (error?.username && Array.isArray(error.username)) {
             errors.username = error.username[0];
@@ -230,19 +221,6 @@ const handleBackClick = () => {
   on:submit|preventDefault={handleSubmit}
   novalidate
   transition:fade={{ duration: 200 }}>
-  {#if inviteData?.from}
-    {#if isInviteError}
-      <div class="invite-from error" in:fade|local={{ duration: 200 }}>
-        CHEATER or L👀SER? <br />
-        Anyway your invitation code = used or wrong
-      </div>
-    {:else}
-      <div class="invite-from" in:fade|local={{ duration: 200 }}>
-        По воле юзера {inviteData.from} <br />
-        ты получил доступ в святую святых, аминь друг мой, да прибудет с тобой силы.
-      </div>
-    {/if}
-  {/if}
   {#if step === 2}
     <ButtonModalBack on:click={handleBackClick} withTransition />
   {/if}
@@ -289,13 +267,11 @@ const handleBackClick = () => {
           errorText={errors.name}
           on:input={() => handleInputChange("name")} />
       {/if}
-      {#if userType.name !== USER_TYPES.hunter}
-        <FormTextInput
-          placeholder="Crew"
-          bind:value={crew}
-          errorText={errors.crew}
-          on:input={() => handleInputChange("crew")} />
-      {/if}
+      <FormTextInput
+        placeholder="Crew"
+        bind:value={crew}
+        errorText={errors.crew}
+        on:input={() => handleInputChange("crew")} />
       <AutoComplete
         bind:selectedValue={country}
         items={$countriesList}
@@ -332,18 +308,6 @@ form {
   width: 100%;
   max-width: 530px;
   margin-bottom: auto;
-}
-.invite-from {
-  margin-bottom: 36px;
-  color: var(--color-dark);
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 22px;
-  text-align: center;
-
-  &.error {
-    color: var(--color-error);
-  }
 }
 
 .step {

@@ -107,7 +107,7 @@ const handleInputChange = (input) => {
     <span>Don't have an account?</span>
     <a
       href={$url(
-        $settings.needInviteToRegister ? "/pre-registration" : "registration"
+        $settings.needInviteToRegister ? "/begistration" : "/registration",
       )}>Sign up</a>
   </div>
 </form>
