@@ -16,6 +16,7 @@ import {
   settings,
   userData,
   withHunters,
+  withNewbies,
 } from "./store";
 import {
   loadFromLocalStorage,
@@ -80,6 +81,7 @@ export const initApp = () => {
 export const requestSpots = (year) => {
   const bounds = get(mapBounds);
   const $withHunters = get(withHunters);
+  const $withNewbies = get(withNewbies);
   let categories = loadFromLocalStorage("categories");
   let yearForRequest = year;
 
@@ -100,14 +102,18 @@ export const requestSpots = (year) => {
     yearForRequest = undefined;
   }
 
-  return getSpots(yearForRequest, bounds, categories, $withHunters).then(
-    (response) => {
-      const { success, result } = response;
-      if (success && result) {
-        markersStore.set(result);
-      }
+  return getSpots(
+    yearForRequest,
+    bounds,
+    categories,
+    $withHunters,
+    $withNewbies
+  ).then((response) => {
+    const { success, result } = response;
+    if (success && result) {
+      markersStore.set(result);
     }
-  );
+  });
 };
 
 export const requestRecentSpots = () => {
@@ -129,21 +135,22 @@ export const requestRecentSpots = () => {
 
 export const requestSpotsInArea = (coords) => {
   const $withHunters = get(withHunters);
-  getSpotsInArea(coords, $withHunters).then(({ result }) => {
+  const $withNewbies = get(withNewbies);
+  getSpotsInArea(coords, $withHunters, $withNewbies).then(({ result }) => {
     areaCoords.set(coords);
     areaSpots.set(result);
     markersStore.set({ spots: result });
     const style = `
       .map-marker-with-photo, .map-marker-cluster
-          {
-            width: 34px !important;
-            height: 34px !important;
-            border-width: 2px;
-            opacity: 1 !important;
-            font-size: 14px;
-            pointer-events: auto !important;
-          }
-        `;
+        {
+          width: 34px !important;
+          height: 34px !important;
+          border-width: 2px;
+          opacity: 1 !important;
+          font-size: 14px;
+          pointer-events: auto !important;
+        }
+      `;
     document.getElementById("highlighted").innerHTML = style;
     isSpotsFromAreaLoading.set(false);
   });

@@ -8,6 +8,7 @@ import {
   PRE_REG_EMAIL,
   PRE_REG_CONTACT,
   USER_ID,
+  NEWBIE,
 } from "./endpoints";
 import { USER_TYPES } from "../constants";
 
@@ -148,18 +149,26 @@ export const preRegContact = async (contact) => {
 
 export const newbieRegistration = async ({
   username,
+  name,
   email,
   password,
   country,
+  type,
+  crew,
   link,
 }) => {
   const data = new URLSearchParams();
   data.append("username", username);
+  if (type !== USER_TYPES.crew.toLowerCase()) {
+    data.append("artist", name);
+  }
   data.append("email", email);
   data.append("password", password);
   data.append("country", country);
+  data.append("type", type);
+  data.append("crew", crew);
   data.append("link", link);
-  const response = await fetch(USER(), {
+  const response = await fetch(NEWBIE(), {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: data,
