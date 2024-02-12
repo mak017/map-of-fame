@@ -7,6 +7,7 @@ import {
   shouldShowResetPassword,
   resetPasswordToken,
   userData,
+  withNewbies,
 } from "../../store";
 import { saveToLocalStorage, validatePassword } from "../../utils/commonUtils";
 
@@ -45,10 +46,11 @@ const handleSubmit = () => {
           isLoggedIn.set(true);
           saveToLocalStorage("token", $resetPasswordToken.token);
           shouldShowResetPassword.set(false);
+          withNewbies.set($resetPasswordToken.isNewbie);
         } else {
           errorMessage = errors?.password?.[0] ?? "Something went wrong";
         }
-      }
+      },
     );
   }
 };
