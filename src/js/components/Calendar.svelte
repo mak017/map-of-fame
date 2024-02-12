@@ -54,7 +54,7 @@ const handleClick = (year) => {
   const yearForRequest = year !== EMPTY_YEAR_STRING ? `${year}` : "";
 
   selectedYear.set(`${year}`);
-  if (!!$selectedUserProfileData.id) {
+  if (!$selectedUserProfileData.id) {
     requestSpots(year);
   } else if ($selectedUserProfileData.id) {
     getUserSpots($selectedUserProfileData.id, token, {
