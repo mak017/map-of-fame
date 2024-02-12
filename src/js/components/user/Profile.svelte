@@ -417,7 +417,12 @@ const handleImageChange = () => {
 };
 
 const getBgStyleUrl = (uploadedBg, userBg) => {
-  if (!uploadedBg.filePreview && !userBg) return;
+  if (
+    (!uploadedBg.filePreview && !userBg) ||
+    (!isCurrentUser && $profileState.user.isSpotsHidden)
+  ) {
+    return;
+  }
 
   return `url(${uploadedBg.filePreview || userBg}) 50%/cover no-repeat`;
 };
@@ -454,13 +459,20 @@ const handleDescrBlur = (isEditable) => (event) => {
   isExpandableAbout = userDescrElement.scrollHeight > 120;
 };
 
-const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
+const prepareAboutText = (text) => {
+  if (!isCurrentUser && $profileState.user.isSpotsHidden) return "";
+
+  return isEditableAbout || !isCurrentUser
+    ? text ?? ""
+    : text?.replaceAll("\n", "<br />") ?? "Write something about you.";
+};
 </script>
 
 <div
   class="container"
   class:isCurrentUser
-  class:hasBg={uploadedBg.filePreview || userBg}>
+  class:hasBg={!(!isCurrentUser && $profileState.user.isSpotsHidden) &&
+    (uploadedBg.filePreview || userBg)}>
   <div class="user-bg-wrapper">
     <div
       class="user-bg"
@@ -546,9 +558,7 @@ const prepareAboutText = (text) => text?.replaceAll("\n", "<br />");
           isEditableAbout = false;
         }
       }}>
-      {@html isEditableAbout || !isCurrentUser
-        ? about ?? ""
-        : prepareAboutText(about) ?? "Write something about you."}
+      {@html prepareAboutText(about)}
     </div>
     {#if isEditableAbout}
       <div
