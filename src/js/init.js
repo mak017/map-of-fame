@@ -50,6 +50,7 @@ export const verifyAuth = (token) =>
       if (success && result) {
         userData.set(result);
         isLoggedIn.set(true);
+        withNewbies.set(result.isNewbie);
         if (result.token) saveToLocalStorage("token", result.token);
       } else if (
         Array.isArray(errors) &&

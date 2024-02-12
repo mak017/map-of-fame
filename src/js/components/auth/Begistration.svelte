@@ -50,6 +50,7 @@ let isInProgress = false;
 const userTypeList = [
   { id: USER_TYPES.artist.toLowerCase(), name: USER_TYPES.artist },
   { id: USER_TYPES.crew.toLowerCase(), name: USER_TYPES.crew },
+  { id: USER_TYPES.hunter.toLowerCase(), name: USER_TYPES.hunter },
 ];
 
 onMount(() => {
@@ -267,11 +268,13 @@ const handleBackClick = () => {
           errorText={errors.name}
           on:input={() => handleInputChange("name")} />
       {/if}
-      <FormTextInput
-        placeholder="Crew"
-        bind:value={crew}
-        errorText={errors.crew}
-        on:input={() => handleInputChange("crew")} />
+      {#if userType.name !== USER_TYPES.hunter}
+        <FormTextInput
+          placeholder="Crew"
+          bind:value={crew}
+          errorText={errors.crew}
+          on:input={() => handleInputChange("crew")} />
+      {/if}
       <AutoComplete
         bind:selectedValue={country}
         items={$countriesList}
