@@ -33,7 +33,7 @@ onDestroy(() => {
 
 if (!$areaSpots?.length && !$clusterSpots?.length) {
   const { poly } = $params;
-  const coords = poly.split(",").reduce((acc, coord) => {
+  const coords = poly?.split(",").reduce((acc, coord) => {
     const lastItem = acc[acc?.length - 1];
 
     if (lastItem?.length === 1) {
@@ -44,7 +44,7 @@ if (!$areaSpots?.length && !$clusterSpots?.length) {
 
     return acc;
   }, []);
-  if (coords.length < 4 || !coords.every((coord) => coord.length === 2)) {
+  if (coords?.length < 4 || !coords?.every((coord) => coord.length === 2)) {
     $goto("/");
   } else {
     requestSpotsInArea(coords);
