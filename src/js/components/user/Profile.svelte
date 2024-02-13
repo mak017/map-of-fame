@@ -1296,6 +1296,11 @@ const prepareAboutText = (text) => {
 
   .sorting {
     margin-left: auto;
+    padding-left: 10px;
+  }
+
+  .show-on-map {
+    padding-left: 10px;
   }
 
   .go-to-map {
