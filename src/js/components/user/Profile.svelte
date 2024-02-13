@@ -462,9 +462,11 @@ const handleDescrBlur = (isEditable) => (event) => {
 const prepareAboutText = (text) => {
   if (!isCurrentUser && $profileState.user.isSpotsHidden) return "";
 
+  const textWithNewline = text?.replaceAll("\n", "<br />");
+
   return isEditableAbout || !isCurrentUser
-    ? text ?? ""
-    : text?.replaceAll("\n", "<br />") ?? "Write something about you.";
+    ? textWithNewline ?? ""
+    : textWithNewline ?? "Write something about you.";
 };
 </script>
 
