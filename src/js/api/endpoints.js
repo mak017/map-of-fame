@@ -130,7 +130,7 @@ export const SPOT_FROM_POLY = (polygon, withHunters, withNubies) => {
 
   return `${ENDPOINT_ORIGIN}/api/spot/fromPoly?${query}&hunters=${
     withHunters ? 1 : 0
-  }&allowNubies=${withNubies ? 1 : 0}`;
+  }&allow_newbie=${withNubies ? 1 : 0}`;
 };
 
 export const DRAFT_GET_LAST = () => `${ENDPOINT_ORIGIN}/api/draft/getLast`;
