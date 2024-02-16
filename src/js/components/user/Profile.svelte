@@ -3,6 +3,7 @@ import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
 import { goto, params, url } from "@roxi/routify";
+import linkifyHtml from "linkify-html";
 
 import { editUser, getInvites, getUserData } from "./../../api/auth.js";
 import { getUserSpots } from "../../api/spot";
@@ -462,11 +463,17 @@ const handleDescrBlur = (isEditable) => (event) => {
 const prepareAboutText = (text) => {
   if (!isCurrentUser && $profileState.user.isSpotsHidden) return "";
 
-  const textWithNewline = text?.replaceAll("\n", "<br />");
+  const formattedText =
+    text &&
+    linkifyHtml(text, {
+      defaultProtocol: "https",
+      nl2br: true,
+      target: "_blank",
+    });
 
   return isEditableAbout || !isCurrentUser
-    ? textWithNewline ?? ""
-    : textWithNewline ?? "Write something about you.";
+    ? formattedText ?? ""
+    : formattedText ?? "Write something about you.";
 };
 </script>
 
