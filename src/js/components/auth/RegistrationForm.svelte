@@ -229,15 +229,15 @@ const handleBackClick = () => {
 <form
   on:submit|preventDefault={handleSubmit}
   novalidate
-  transition:fade={{ duration: 200 }}>
+  transition:fade|global={{ duration: 200 }}>
   {#if inviteData?.from}
     {#if isInviteError}
-      <div class="invite-from error" in:fade|local={{ duration: 200 }}>
+      <div class="invite-from error" in:fade={{ duration: 200 }}>
         CHEATER or L👀SER? <br />
         Anyway your invitation code = used or wrong
       </div>
     {:else}
-      <div class="invite-from" in:fade|local={{ duration: 200 }}>
+      <div class="invite-from" in:fade={{ duration: 200 }}>
         По воле юзера {inviteData.from} <br />
         ты получил доступ в святую святых, аминь друг мой, да прибудет с тобой силы.
       </div>
@@ -248,7 +248,7 @@ const handleBackClick = () => {
   {/if}
   <div class="step">step {step} of 2</div>
   {#if step === 1}
-    <div in:fade|local={{ duration: 200 }}>
+    <div in:fade={{ duration: 200 }}>
       <FormEmailInput
         placeholder="Email"
         bind:value={email}
@@ -274,7 +274,7 @@ const handleBackClick = () => {
     </div>
   {/if}
   {#if step === 2}
-    <div in:fade|local={{ duration: 200 }}>
+    <div in:fade={{ duration: 200 }}>
       <FormTextInput
         placeholder="Username"
         errorText={errors.username}
@@ -319,7 +319,7 @@ const handleBackClick = () => {
       isDisabled={isSubmitDisabled} />
   </div>
   {#if step === 1}
-    <div class="switch-to-sign-in" in:fade|local={{ duration: 200 }}>
+    <div class="switch-to-sign-in" in:fade={{ duration: 200 }}>
       <span>Have an account?</span>
       <a href={$url("/login")}>Log in</a>
     </div>

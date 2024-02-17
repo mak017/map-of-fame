@@ -311,9 +311,9 @@ const getArtistsString = (artistCrew) => {
     </div>
     <div class="artist-area">
       <div class="subtitle">Artist/Crew</div>
-      <div class="title artist" on:click={profileState.reset}>
+      <button class="button title artist" on:click={profileState.reset}>
         {@html getArtistsString(data.artistCrew)}
-      </div>
+      </button>
     </div>
     {#if data.description}
       <div class="description">{data.description}</div>
@@ -520,6 +520,8 @@ const getArtistsString = (artistCrew) => {
 .artist {
   font-size: 18px;
   text-align: center;
+  background: none;
+  cursor: text;
 }
 
 .description {

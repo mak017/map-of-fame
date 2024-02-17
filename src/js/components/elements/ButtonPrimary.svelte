@@ -21,7 +21,7 @@ const dispatch = createEventDispatcher();
   class:hideText
   disabled={isDisabled}
   on:click={() => dispatch("click")}
-  in:fade={{ duration: 200 }}
+  in:fade|global={{ duration: 200 }}
   data-text={text}
   ><span class="text">{text}</span>
   {#if withLoader}

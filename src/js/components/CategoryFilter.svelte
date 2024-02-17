@@ -40,7 +40,7 @@ const handleCategoryClick = (id) => {
     class="button button-filter"
     class:isOpened
     on:click={() => (isOpened = !isOpened)}
-    transition:fade={{ duration: 200 }}>
+    transition:fade|global={{ duration: 200 }}>
     {#if isOpened}
       <span>
         <ArrowLeftSvg isDarkColor isArrowUp />
@@ -48,7 +48,7 @@ const handleCategoryClick = (id) => {
     {/if}
   </button>
   {#if isOpened}
-    <ul class="options" transition:slide={{ duration: 200 }}>
+    <ul class="options" transition:slide|global={{ duration: 200 }}>
       {#each categories as category}
         <li>
           <button

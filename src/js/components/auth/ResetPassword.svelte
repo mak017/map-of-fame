@@ -65,7 +65,7 @@ const handleInputChange = () => {
 <form
   on:submit|preventDefault={handleSubmit}
   novalidate
-  transition:fade={{ duration: 200 }}>
+  transition:fade|global={{ duration: 200 }}>
   <FormPasswordInput
     placeholder="New Password"
     bind:value={password}

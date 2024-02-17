@@ -13,7 +13,7 @@ export let onCancel;
 
 <div
   class="add-spot"
-  transition:fly={{ x: !isMobile() ? 364 : window.innerWidth, duration: 300 }}>
+  transition:fly|global={{ x: !isMobile() ? 364 : window.innerWidth, duration: 300 }}>
   <h2>Add Art</h2>
   {#if isMobile()}
     <button class="close-mob" on:click={() => shouldShowAddSpot.set(false)}>

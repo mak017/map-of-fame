@@ -151,7 +151,7 @@ const handleShowOnMapClick = () => {
               loading="lazy"
               src={spot.thumbnail}
               alt={spot.title ?? `Spot ${spot.id} from area`}
-              in:fade={{ duration: 200 }} />
+              in:fade|global={{ duration: 200 }} />
           </div>
         {/each}
       {/if}

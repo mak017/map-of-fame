@@ -659,7 +659,7 @@ const prepareAboutText = (text) => {
                 loading="lazy"
                 src={spot.thumbnail}
                 alt={spot.title || `${username}'s art`}
-                in:fade={{ duration: 200 }} />
+                in:fade|global={{ duration: 200 }} />
               {#if isCurrentUser}
                 <div class="overlay">
                   <a

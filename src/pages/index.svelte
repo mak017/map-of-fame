@@ -194,7 +194,7 @@ const handleSearchInput = () => {
         href={$url("/calendar")}
         class="button button-main_screen button-open_calendar"
         class:inactive={$isAreaSelectionActive}
-        transition:fade={{ duration: 200 }}>{$selectedYear}</a>
+        transition:fade|global={{ duration: 200 }}>{$selectedYear}</a>
     {/if}
     {#if !$shouldShowAddSpot && !$isShowOnMapMode && !$isAreaSelectionActive}
       <div class="switchers">
@@ -241,22 +241,22 @@ const handleSearchInput = () => {
             class:isSearchSelectorOpened
             use:clickOutside
             on:click_outside={() => (isSearchSelectorOpened = false)}>
-            <div
-              class="selected"
+            <button
+              class="button selected"
               on:click={() =>
                 (isSearchSelectorOpened = !isSearchSelectorOpened)}>
               {selectedSearch} <span><SelectIndicatorSvg /></span>
-            </div>
+            </button>
             <div class="options">
-              <div
-                class="item"
+              <button
+                class="button item"
                 on:click={() => {
                   selectedSearch =
                     selectedSearch === "Artist" ? "Address" : "Artist";
                   isSearchSelectorOpened = false;
                 }}>
                 {selectedSearch === "Artist" ? "Address" : "Artist"}
-              </div>
+              </button>
             </div>
           </div>
           <form on:submit|preventDefault={handleSearchInput}>
@@ -278,7 +278,7 @@ const handleSearchInput = () => {
               isShowOnMapMode.set(false);
               profileState.reset();
             }}
-            in:fade={{ duration: 200 }}>Profile</a>
+            in:fade|global={{ duration: 200 }}>Profile</a>
         {:else}
           <a
             href={$url("/login")}
@@ -314,7 +314,7 @@ const handleSearchInput = () => {
         })}
         class="selection selected-area-spots"
         class:active={!$isSpotsFromAreaLoading && $areaSpots.length > 0}
-        transition:fade={{ duration: 200 }}>
+        transition:fade|global={{ duration: 200 }}>
         {#if $isSpotsFromAreaLoading}
           <Spinner height={20} margin="10px" isWhite />
         {:else if $areaSpots}
@@ -328,7 +328,7 @@ const handleSearchInput = () => {
     <button
       class="button button-main_screen button-square button-location"
       on:click={() => setLocation($map, true)}
-      transition:fade={{ duration: 200 }}
+      transition:fade|global={{ duration: 200 }}
       title="Go to your location" />
   {/if}
 
@@ -337,7 +337,7 @@ const handleSearchInput = () => {
       class="button button-main_screen button-square button-select_area"
       class:active={$isAreaSelectionActive}
       on:click={() => toggleAreaSelectionMode(!$isAreaSelectionActive)}
-      transition:fade={{ duration: 200 }}
+      transition:fade|global={{ duration: 200 }}
       title={$isAreaSelectionActive
         ? "Cancel area selection mode"
         : "Activate area selection mode"}>
@@ -567,9 +567,10 @@ const handleSearchInput = () => {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      width: 100%;
       height: 40px;
       padding: 0 12px;
-      cursor: pointer;
+      background: none;
 
       > span {
         transition: transform 0.3s;
@@ -587,7 +588,7 @@ const handleSearchInput = () => {
 
       .item {
         padding: 0 12px 8px;
-        cursor: pointer;
+        background: none;
       }
     }
 

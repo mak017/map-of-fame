@@ -86,7 +86,7 @@ const handleInputChange = (input) => {
 <form
   on:submit|preventDefault={handleSubmit}
   novalidate
-  transition:fade={{ duration: 200 }}>
+  transition:fade|global={{ duration: 200 }}>
   <FormEmailInput
     placeholder="Email"
     bind:value={email}

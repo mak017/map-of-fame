@@ -15,7 +15,7 @@ export let onCancel;
   <button
     class="button button-add_spot"
     on:click={() => shouldShowAddSpot.set(true)}
-    transition:fade={{ duration: 200 }}>Add Art</button>
+    transition:fade|global={{ duration: 200 }}>Add Art</button>
 {:else}
   <div class="main-top_right_wrapper">
     <ButtonPrimary
@@ -25,7 +25,7 @@ export let onCancel;
   </div>
 {/if}
 {#if !isAddSpotSidebarVisible && $shouldShowAddSpot}
-  <div class="drag-to-map" transition:fade={{ duration: 200 }}>
+  <div class="drag-to-map" transition:fade|global={{ duration: 200 }}>
     Drag pin to map
   </div>
 {/if}
