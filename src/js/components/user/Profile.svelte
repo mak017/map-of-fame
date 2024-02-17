@@ -4,6 +4,7 @@ import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
 import { goto, params, url } from "@roxi/routify";
 import linkifyHtml from "linkify-html";
+import "linkify-plugin-mention";
 
 import { editUser, getInvites, getUserData } from "./../../api/auth.js";
 import { getUserSpots } from "../../api/spot";
@@ -440,8 +441,8 @@ const initDescrEditing = () => {
 const handleDescrBlur = (isEditable) => (event) => {
   if (!isEditable) return;
 
-  const { textContent } = event.target;
-  const trimmedText = textContent.trim();
+  const { innerText } = event.target;
+  const trimmedText = innerText.trim();
 
   if (trimmedText === about || trimmedText.length > USER_ABOUT_TEXT_LIMIT)
     return;
@@ -469,6 +470,9 @@ const prepareAboutText = (text) => {
       defaultProtocol: "https",
       nl2br: true,
       target: "_blank",
+      formatHref: {
+        mention: (href) => `@${href.substring(1)}`,
+      },
     });
 
   return isEditableAbout || !isCurrentUser
