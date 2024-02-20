@@ -14,9 +14,11 @@ export let active = false;
   class="tooltip-wrapper"
   use:clickOutside
   on:click_outside={() => (active = false)}>
-  <span class="tooltip-slot" on:click|preventDefault={() => (active = true)}>
+  <button
+    class="button tooltip-slot"
+    on:click|preventDefault={() => (active = true)}>
     <slot />
-  </span>
+  </button>
   <div
     class="tooltip"
     class:active
@@ -45,12 +47,14 @@ export let active = false;
   position: absolute;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 150ms, visibility 150ms;
+  transition:
+    opacity 150ms,
+    visibility 150ms;
   color: inherit;
   font-family: inherit;
 
   &-slot {
-    cursor: pointer;
+    background: none;
   }
 }
 

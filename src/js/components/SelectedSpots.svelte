@@ -146,13 +146,13 @@ const handleShowOnMapClick = () => {
     <div class="spots">
       {#if spotsToShow}
         {#each spotsToShow as spot}
-          <div class="spot-card" on:click={() => onSpotClick(spot)}>
+          <button class="button spot-card" on:click={() => onSpotClick(spot)}>
             <img
               loading="lazy"
               src={spot.thumbnail}
               alt={spot.title ?? `Spot ${spot.id} from area`}
               in:fade|global={{ duration: 200 }} />
-          </div>
+          </button>
         {/each}
       {/if}
     </div>

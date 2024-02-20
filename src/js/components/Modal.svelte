@@ -50,8 +50,7 @@ const handleResize = () => {
   class:stickyHeaderOnMobile={stickyHeaderOnMobile && scrollTop > 190}
   class:noPaddingTop
   {id}
-  role="dialog"
-  aria-modal="true"
+  role="presentation"
   on:keydown|stopPropagation={handleKeyDown}
   on:scroll={() => (scrollTop = modalRef.scrollTop)}
   bind:this={modalRef}
@@ -66,7 +65,11 @@ const handleResize = () => {
       <div
         class="sticky-header"
         on:click={() => modalRef.scrollTo({ top: 0, behavior: "smooth" })}
-        transition:slide|global={{ duration: 200 }}>
+        on:keydown={(e) =>
+          e.key === "Enter" && modalRef.scroll({ top: 0, behavior: "smooth" })}
+        transition:slide|global={{ duration: 200 }}
+        role="button"
+        tabindex={-1}>
         <div class="back">
           <ArrowLeftSvg />
         </div>
@@ -79,15 +82,15 @@ const handleResize = () => {
   {/if}
   <slot />
   {#if withAd && banner.url}
-    <div
+    <button
       style={!isMobileWidth ? "width: 938px" : "width: 100%"}
-      class="bottom-container"
+      class="button bottom-container"
       on:click={window.open(banner.url, "_blank")}>
       <img
         src={banner.img}
         alt=""
         style="object-fit: cover;width: 100%;height: 100%;" />
-    </div>
+    </button>
   {/if}
   {#if withFooter}
     <div class="footer">
@@ -162,7 +165,7 @@ h2 {
   max-width: 100%;
   margin: auto 0 0;
   overflow: hidden;
-  cursor: pointer;
+  background: none;
 }
 
 .accentTitle {

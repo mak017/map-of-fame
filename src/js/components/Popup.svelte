@@ -23,11 +23,11 @@ const handleKeyDown = (e) => {
   on:click={close}
   transition:fade|global={{ duration: 200 }}
   on:keydown|stopPropagation={handleKeyDown}
-  tabindex="-1" />
+  tabindex="-1"
+  role="button" />
 <div
   class="popup"
-  role="dialog"
-  aria-modal="true"
+  role="presentation"
   transition:scale|global={{ duration: 200 }}
   on:keydown|stopPropagation={handleKeyDown}
   tabindex="-1">

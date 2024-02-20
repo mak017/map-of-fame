@@ -40,6 +40,11 @@ module.exports = {
                 dev: !prod, // Default: false
               },
 
+              onwarn: (warning, handler) => {
+                if (warning.code.startsWith("a11y-")) return;
+                handler(warning);
+              },
+
               // NOTE emitCss: true is currently not supported with HMR
               // Enable it for production to output separate css file
               emitCss: prod, // Default: false
@@ -80,6 +85,13 @@ module.exports = {
       {
         // required to prevent errors from Svelte on Webpack 5+, omit on Webpack 4
         test: /node_modules\/svelte\/.*\.mjs$/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      {
+        test: /\.m?js$/,
+        include: /node_modules/,
         resolve: {
           fullySpecified: false,
         },
