@@ -8,7 +8,7 @@ import {
 } from "./endpoints";
 
 export const requestSearchArtistsCrews = async (text) => {
-  const response = await fetch(CREW_ARTIST_SEARCH(text), {
+  const response = await fetch(CREW_ARTIST_SEARCH(encodeURIComponent(text)), {
     method: "GET",
   });
   const result = await response.json();
@@ -20,9 +20,12 @@ export const requestPhotoWall = async (
   limit = MAX_SPOTS_PER_PAGE,
   offset = 0
 ) => {
-  const response = await fetch(PHOTO_WALL(text, limit, offset), {
-    method: "GET",
-  });
+  const response = await fetch(
+    PHOTO_WALL(encodeURIComponent(text), limit, offset),
+    {
+      method: "GET",
+    }
+  );
   const result = await response.json();
   return result;
 };
