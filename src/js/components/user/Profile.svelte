@@ -4,7 +4,7 @@ import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
 import { goto, params, url } from "@roxi/routify";
 import linkifyHtml from "linkify-html";
-import "linkify-plugin-mention";
+import "../../utils/customMentionPlugin.js";
 
 import { editUser, getInvites, getUserData } from "./../../api/auth.js";
 import { getUserSpots } from "../../api/spot";
