@@ -308,6 +308,16 @@ textarea {
   }
 }
 
+.description {
+  .text a {
+    color: var(--color-accent);
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
 @media (max-width: 767px) {
   .autocomplete {
     &-container &.select {
