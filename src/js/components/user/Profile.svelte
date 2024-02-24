@@ -159,14 +159,14 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   }
 }
 
-$: if (
-  $profileState.isInitialized &&
-  !$isUserVerifyProgress &&
-  typeof $profileState.user.username === "string" &&
-  strippedUsername !== $profileState.user.username
-) {
-  window.location.reload();
-}
+// $: if (
+//   $profileState.isInitialized &&
+//   !$isUserVerifyProgress &&
+//   typeof $profileState.user.username === "string" &&
+//   strippedUsername !== $profileState.user.username
+// ) {
+//   window.location.reload();
+// }
 
 $: unusedInvitesCount = $profileState.invites.reduce(
   (accumulator, invite) =>
@@ -614,8 +614,7 @@ const prepareAboutText = (text) => {
                 label: $profileState.currentYear || EMPTY_YEAR_STRING,
               }}
               isYear
-              on:select={handleYearSelect}
-              listPlacement="bottom" />
+              on:select={handleYearSelect} />
           </div>
           {#if $profileState.currentYear === ALL_YEARS_STRING}
             <div class="sorting">

@@ -61,6 +61,7 @@ const createProfileState = () => {
 
   return {
     subscribe,
+    set,
     setOffset: (offset) => update((state) => ({ ...state, offset })),
     setScrollOffset: (offset) =>
       update((state) => ({ ...state, scrollOffset: offset })),
@@ -101,6 +102,7 @@ const createSearchState = () => {
 
   return {
     subscribe,
+    set,
     setOffset: (offset) => update((state) => ({ ...state, offset })),
     setScrollOffset: (offset) =>
       update((state) => ({ ...state, scrollOffset: offset })),
@@ -119,5 +121,36 @@ const createSearchState = () => {
   };
 };
 
+const createBrowserHistory = () => {
+  const initialState = {
+    currentIndex: -1,
+    history: [],
+    eventType: "",
+  };
+
+  const { subscribe, set, update } = writable(initialState);
+
+  return {
+    subscribe,
+    setCurrentIndex: (currentIndex) =>
+      update((state) => ({ ...state, currentIndex })),
+    incrementCurrentIndex: () =>
+      update((state) => ({ ...state, currentIndex: state.currentIndex + 1 })),
+    setEventType: (eventType) => update((state) => ({ ...state, eventType })),
+    pushToHistory: (data, index) =>
+      update((state) => {
+        const { history } = state;
+        if (typeof index === "number") {
+          state.history[index] = data;
+          return { ...state, history: state.history.slice(0, index + 1) };
+        }
+
+        state.history.push(data);
+        return state;
+      }),
+  };
+};
+
 export const profileState = createProfileState();
 export const searchState = createSearchState();
+export const browserHistory = createBrowserHistory();

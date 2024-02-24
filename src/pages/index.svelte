@@ -350,7 +350,6 @@ const handleSearchInput = () => {
   {#if $isLoggedIn && !$isAreaSelectionActive && !$isShowOnMapMode}
     <AddSpot
       {isAddSpotSidebarVisible}
-      {showAddSpot}
       {newMarker}
       onCancel={handleNewMarkerCancel} />
   {/if}

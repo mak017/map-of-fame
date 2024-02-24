@@ -10,7 +10,7 @@ export let items;
 export let isYear = false;
 export let placeholder = "Select...";
 export let label = "label";
-export let optionIdentifier;
+export let optionIdentifier = undefined;
 export let addSpot = false;
 
 const dispatch = createEventDispatcher();

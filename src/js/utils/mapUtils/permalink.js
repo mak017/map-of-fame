@@ -167,7 +167,7 @@ const setup = (map) => {
     if (center && zoom) map.setView(center, zoom);
   };
   mapInstance = map;
-  window.addEventListener("popstate", popStateHandler);
+  // window.addEventListener("popstate", popStateHandler);
 };
 
 export const permalink = {
