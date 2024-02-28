@@ -82,7 +82,7 @@ body {
 }
 
 .leaflet-container {
-  background: url(images/pattern.jpg);
+  background: url(/images/pattern.jpg);
   font: inherit;
 
   .area-select-marker,
@@ -128,12 +128,12 @@ body {
     }
 
     &-in {
-      background: var(--color-light) url(images/plus.svg) 50% 50%/18px 18px
+      background: var(--color-light) url(/images/plus.svg) 50% 50%/18px 18px
         no-repeat;
     }
 
     &-out {
-      background: var(--color-light) url(images/minus.svg) 50% 50%/18px 3.5px
+      background: var(--color-light) url(/images/minus.svg) 50% 50%/18px 3.5px
         no-repeat;
     }
   }
@@ -192,7 +192,7 @@ body {
     padding: 0;
     border: 0;
     background-color: var(--color-lotion);
-    background-image: url(images/close-cross.svg);
+    background-image: url(/images/close-cross.svg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: 24px 24px;
@@ -240,7 +240,7 @@ body {
       right: 0;
       bottom: 0;
       left: 0;
-      background-image: url(images/loupe.svg);
+      background-image: url(/images/loupe.svg);
       background-repeat: no-repeat;
       background-position: 50% 50%;
       background-size: 20px 20px;
@@ -270,7 +270,7 @@ body {
       &::before {
         background-image: none;
         background-color: var(--color-light);
-        mask-image: url(images/loupe.svg);
+        mask-image: url(/images/loupe.svg);
         mask-repeat: no-repeat;
         mask-size: 20px 20px;
         mask-position: 50% 50%;

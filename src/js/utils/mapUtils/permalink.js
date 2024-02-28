@@ -72,7 +72,7 @@ const update = ({ mapContainer, params, clearParams }) => {
     return;
   }
 
-  window.history.replaceState(state, "map", search);
+  window.history.replaceStateNative(state, "map", search);
 };
 
 const getDataFromParams = (params) => {

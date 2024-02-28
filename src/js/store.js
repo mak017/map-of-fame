@@ -41,6 +41,7 @@ export const withNewbies = writable(false);
 export const shouldShowAddSpot = writable(null);
 export const shouldShowResetPassword = writable(false);
 export const resetPasswordToken = writable(null);
+export const hasBrowseHistory = writable(false);
 
 const createProfileState = () => {
   const initialState = {
