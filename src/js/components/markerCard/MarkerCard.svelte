@@ -310,7 +310,7 @@ const getArtistsString = (artistCrew) => {
       </div>
     </div>
     <div class="artist-area">
-      <div class="subtitle">Artist/Crew</div>
+      <div class="subtitle">ARTIST [CREW]</div>
       <div class="title artist" on:click={profileState.reset}>
         {@html getArtistsString(data.artistCrew)}
       </div>
