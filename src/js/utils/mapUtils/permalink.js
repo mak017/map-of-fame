@@ -1,4 +1,7 @@
+import { get } from "svelte/store";
+
 import {
+  globalGoto,
   selectedArtist,
   selectedCrew,
   selectedYear,
@@ -33,6 +36,7 @@ selectedCrew.subscribe((value) => {
 });
 
 const update = ({ mapContainer, params, clearParams }) => {
+  const $goto = get(globalGoto);
   const map = mapContainer || mapInstance;
   const year = yearFromStore;
   let paramsToSet = prevParams || "";
@@ -72,7 +76,12 @@ const update = ({ mapContainer, params, clearParams }) => {
     return;
   }
 
-  window.history.replaceStateNative(state, "map", search);
+  $goto(
+    "/",
+    { lat: latitude, lng: longitude, zoom, year },
+    { mode: "replace" }
+  );
+  // window.history.replaceStateNative(state, "map", search);
 };
 
 const getDataFromParams = (params) => {
@@ -140,7 +149,7 @@ const getSearchUrlFromParams = (coords, zoom, year, params) => {
 };
 const set = (coords, zoom, year, params) => {
   const state = { zoom, center: coords, year, params };
-  window.history.pushState(
+  window.history.replaceStateNative(
     state,
     "map",
     getSearchUrlFromParams(coords, zoom, year, params)
