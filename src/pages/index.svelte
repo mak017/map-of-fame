@@ -198,7 +198,7 @@ const handleSearchInput = () => {
     {/if}
     {#if !$shouldShowAddSpot && !$isShowOnMapMode && !$isAreaSelectionActive}
       <div class="switchers">
-        <HuntersSvg isActive={$withHunters} />
+        <HuntersSvg isActive={$withHunters || $withNewbies} />
         <div class="switcher-buttons">
           <button
             type="button"
