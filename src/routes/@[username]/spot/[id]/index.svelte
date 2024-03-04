@@ -1,4 +1,3 @@
-<!-- routify:meta history -->
 <script>
 import { goto, node } from "@roxi/routify";
 

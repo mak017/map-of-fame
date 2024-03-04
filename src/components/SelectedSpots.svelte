@@ -1,7 +1,7 @@
 <script>
-import { onDestroy } from "svelte";
+import { onDestroy, onMount } from "svelte";
 import { fade } from "svelte/transition";
-import { goto, params } from "@roxi/routify";
+import { context, goto, params } from "@roxi/routify";
 
 import {
   areaSpots,
@@ -13,6 +13,7 @@ import {
   selectedArtist,
   selectedCrew,
   selectedYear,
+  specialBrowseHistoryState,
 } from "./../js/store.js";
 import { requestSpotsInArea } from "../js/init.js";
 
@@ -22,6 +23,17 @@ import ShowOnMapButton from "./elements/ShowOnMapButton.svelte";
 import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../js/constants";
 
 let isLoadedFromMap = true;
+let id = $context.route.state.id;
+
+onMount(() => {
+  specialBrowseHistoryState.set({
+    ...$specialBrowseHistoryState,
+    [id]: {
+      areaSpots: $areaSpots,
+      clusterSpots: $clusterSpots,
+    },
+  });
+});
 
 onDestroy(() => {
   clusterSpots.set([]);
@@ -33,27 +45,33 @@ onDestroy(() => {
 
 if (!$areaSpots?.length && !$clusterSpots?.length) {
   const { poly } = $params;
-  console.log("poly", poly);
   const coords = poly?.split("/").reduce((acc, coord) => {
     const item = coord.split(",");
     acc.push(item);
 
     return acc;
   }, []);
-  if (coords?.length < 4 || !coords?.every((coord) => coord.length === 2)) {
+  if (coords?.length < 2 || !coords?.every((coord) => coord.length === 2)) {
     $goto("/");
   } else {
-    requestSpotsInArea(coords);
+    requestSpotsInArea(coords, id);
     isLoadedFromMap = false;
   }
 }
 
-const getSpots = () => ($clusterSpots?.length ? $clusterSpots : $areaSpots);
+const getSpots = () => {
+  if ($specialBrowseHistoryState[id]) {
+    const { areaSpots, clusterSpots } = $specialBrowseHistoryState[id];
+    return clusterSpots?.length ? clusterSpots : areaSpots ?? [];
+  }
+
+  return $clusterSpots?.length ? $clusterSpots : $areaSpots;
+};
 
 const getYears = () => [
   ALL_YEARS_STRING,
   ...new Set(
-    $areaSpots
+    ($specialBrowseHistoryState[id]?.areaSpots || $areaSpots)
       ?.map(({ year }) => (year === null ? EMPTY_YEAR_STRING : year))
       .filter((y) => y)
       .sort(

@@ -173,7 +173,6 @@ const handleShowOnMapClick = () => {
   selectedArtist.set("");
   selectedCrew.set("");
   selectedUserProfileData.set(user);
-  $map.setView([lat, lng], MAX_ZOOM);
   $goto("/", { lat, lng, zoom: MAX_ZOOM, year });
   openedMarkerData.set(null);
 };

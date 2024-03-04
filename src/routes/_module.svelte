@@ -55,55 +55,60 @@ import "@/scss/init.scss";
 globalGoto.set($goto);
 
 $beforeUrlChange((event) => {
-  console.log("event", event);
+  console.log("");
+  console.log(">>> $beforeUrlChange");
+  console.log("event.route", event.route);
+  console.log("event.route.mode", event.route.mode);
   // console.log("route", route);
-  console.log("window.history", window.history);
+  console.log("window.history.state", window.history.state);
   const { type, state, target } = event;
   const { currentIndex, history } = $browserHistory;
-  console.log("$browserHistory", $browserHistory);
+  // console.log("$browserHistory", $browserHistory);
 
-  if (type === "pushstate") {
-    const { pathname } = window.location.pathname;
-    const data = { ...state, pathname };
-    browserHistory.setCurrentIndex(currentIndex);
-    browserHistory.setEventType(type);
+  // if (type === "pushstate") {
+  //   const { pathname } = window.location.pathname;
+  //   const data = { ...state, pathname };
+  //   browserHistory.setCurrentIndex(currentIndex);
+  //   browserHistory.setEventType(type);
 
-    switch (state.id) {
-      case "___username_index":
-        data.profileState = $profileState;
-        break;
-      case "_search":
-        data.searchState = $searchState;
-        break;
+  //   switch (state.id) {
+  //     case "___username_index":
+  //       data.profileState = $profileState;
+  //       break;
+  //     case "_search":
+  //       data.searchState = $searchState;
+  //       break;
 
-      default:
-        break;
-    }
+  //     default:
+  //       break;
+  //   }
 
-    browserHistory.pushToHistory(data, currentIndex + 1);
-  }
+  //   browserHistory.pushToHistory(data, currentIndex + 1);
+  // }
 
-  if (type === "popstate") {
-    // const { title } = route;
-    // console.log("title", title);
-    console.log("target.location", target.location);
-    browserHistory.setEventType(type);
+  // if (type === "popstate") {
+  //   // const { title } = route;
+  //   // console.log("title", title);
+  //   console.log("target.location", target.location);
+  //   browserHistory.setEventType(type);
 
-    // switch (title) {
-    //   case '@:username':
-    //     profileState.set($browserHistory.history)
-    //     break;
+  //   // switch (title) {
+  //   //   case '@:username':
+  //   //     profileState.set($browserHistory.history)
+  //   //     break;
 
-    //   default:
-    //     break;
-    // }
-  }
+  //   //   default:
+  //   //     break;
+  //   // }
+  // }
 
   return true;
 });
 
 $afterUrlChange((data) => {
+  console.log("");
   console.log("data", data);
+  console.log("window.history.state", window.history.state);
   hasBrowseHistory.set(true);
 });
 

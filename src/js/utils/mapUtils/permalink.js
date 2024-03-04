@@ -69,7 +69,7 @@ const update = ({ mapContainer, params, clearParams }) => {
     paramsToSet = paramsToSet.toString() ? `&${paramsToSet}` : "";
     prevParams = paramsToSet;
   }
-  const search = `/?coords=${latitude},${longitude}&zoom=${zoom}&year=${year}${paramsToSet}`;
+  const search = `/?lat=${latitude}&lng=${longitude}&zoom=${zoom}&year=${year}${paramsToSet}`;
   const state = { zoom, center, year, params };
 
   if (decodeURIComponent(window.location.href).endsWith(search)) {
@@ -79,7 +79,7 @@ const update = ({ mapContainer, params, clearParams }) => {
   $goto(
     "/",
     { lat: latitude, lng: longitude, zoom, year },
-    { mode: "replace" }
+    { mode: window.location.pathname === "/" ? "replace" : "push" }
   );
   // window.history.replaceStateNative(state, "map", search);
 };
@@ -128,33 +128,15 @@ const getMapLocation = () => {
   const search = window.location.search;
   if (search) {
     const params = new URLSearchParams(search);
-    const coords = params.get("coords").split(",");
-    newCenter = coords.map((coordinate) => parseFloat(coordinate, 10));
+    const lat = params.get("lat");
+    const lng = params.get("lng");
+    newCenter = [lat, lng].map((coordinate) => parseFloat(coordinate, 10));
     newZoom = +params.get("zoom");
     setStateFromUrl(params);
   }
   return newZoom || newCenter ? { zoom: newZoom, center: newCenter } : null;
 };
 
-const getSearchUrlFromParams = (coords, zoom, year, params) => {
-  let paramsToSet = "";
-  if (params) {
-    Object.keys(params).forEach((param) => {
-      paramsToSet = paramsToSet.concat(`&${param}=${params[param]}`);
-    });
-  }
-  const lat = normalizeCoords(coords.lat);
-  const lng = normalizeCoords(coords.lng);
-  return `?coords=${lat},${lng}&zoom=${zoom}&year=${year}${paramsToSet}`;
-};
-const set = (coords, zoom, year, params) => {
-  const state = { zoom, center: coords, year, params };
-  window.history.replaceStateNative(
-    state,
-    "map",
-    getSearchUrlFromParams(coords, zoom, year, params)
-  );
-};
 const getCustomUrl = (coords, zoom, year, params) => {
   const { origin, pathname } = window.location;
   const search = getSearchUrlFromParams(coords, zoom, year, params);
@@ -165,18 +147,7 @@ const getInviteUrl = (code, username) => {
   return `${origin}/registration?invite_code=${code}&from_user=${username}`;
 };
 const setup = (map) => {
-  // restore the view state when navigating through the history, see
-  // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
-  const popStateHandler = (event) => {
-    if (event.state === null) {
-      return;
-    }
-    const { center, zoom, year, params } = event.state;
-    if (year && params) setParamsFromState(year, params);
-    if (center && zoom) map.setView(center, zoom);
-  };
   mapInstance = map;
-  // window.addEventListener("popstate", popStateHandler);
 };
 
 export const permalink = {
@@ -184,7 +155,6 @@ export const permalink = {
   getMapLocation,
   setup,
   update,
-  set,
   getCustomUrl,
   getInviteUrl,
   getDataFromParams,

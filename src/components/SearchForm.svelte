@@ -104,7 +104,7 @@ const handleInputChange = () => {
     error = "";
   }
 
-  $goto("/search", { text });
+  $goto("/search", { text }, { mode: "replace" });
 };
 
 const handleLoadMore = () => {

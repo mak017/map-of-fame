@@ -1,4 +1,3 @@
-<!-- routify:meta history -->
 <script>
 import { onDestroy, onMount } from "svelte";
 import { fade } from "svelte/transition";
