@@ -12,7 +12,8 @@ const regexInstagram =
   /(?:https?:\/\/)?(?:www\.)?(?:instagram\.com|instagr\.am)\/(?:p|reel|tv)?\/([^/?#&]+)/;
 const regexTikTok =
   /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:tiktok\.com)\/(?:@(.*?)\/)?(?:video|v)|(?:https?:\/\/)?:\/\/(?:www\.)?(?:vt)(?:\.tiktok\.com)\/\S*/;
-const regexVk = /(?:https?:\/\/)?(?:www\.)?(?:vk\.com)\/video(\d+)_(\d+)/;
+const regexVk =
+  /(?:https?:\/\/)?(?:www\.)?(?:vk\.com)\/(?:video|clip)-?(\d+)_(\d+)/;
 
 const regexGoogleMaps =
   /(?:https?:\/\/)?(?:www\.)?(?:google\.[a-z]+|goo\.gl)(?:\/maps)?\/([^<.,!():"'\s]+)?/;
