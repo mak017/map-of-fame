@@ -13,7 +13,7 @@ const regexInstagram =
 const regexTikTok =
   /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:tiktok\.com)\/(?:@(.*?)\/)?(?:video|v)|(?:https?:\/\/)?:\/\/(?:www\.)?(?:vt)(?:\.tiktok\.com)\/\S*/;
 const regexVk =
-  /(?:https?:\/\/)?(?:www\.)?(?:vk\.com)\/(?:video|clip)-?(\d+)_(\d+)/;
+  /(?:https?:\/\/)?(?:www\.)?(?:vk\.com)\/(?:video|clip)(-?\d+)_(\d+)/;
 
 const regexGoogleMaps =
   /(?:https?:\/\/)?(?:www\.)?(?:google\.[a-z]+|goo\.gl)(?:\/maps)?\/([^<.,!():"'\s]+)?/;
@@ -95,7 +95,7 @@ export const embedVideoCodeFromBasicUrl = async (url) => {
       )
       .replace(
         new RegExp(regexVk, "g"),
-        '<iframe src="https://vk.com/video_ext.php?oid=$1&id=$2" width="640" height="360" allow="autoplay; encrypted-media; fullscreen; picture-in-picture;" frameborder="0" allowfullscreen></iframe>'
+        '<iframe src="https://vk.com/video_ext.php?oid=$1&id=$2&hd=2" width="100%" height="100%" allow="autoplay; encrypted-media; fullscreen; picture-in-picture;" frameborder="0" allowfullscreen></iframe>'
       );
   } catch (error) {
     console.log(error);
