@@ -14,6 +14,7 @@ import {
   mapBounds,
   markersStore,
   settings,
+  specialBrowseHistoryState,
   userData,
   withHunters,
   withNewbies,
@@ -134,13 +135,22 @@ export const requestRecentSpots = () => {
   });
 };
 
-export const requestSpotsInArea = (coords) => {
+export const requestSpotsInArea = (coords, id) => {
   const $withHunters = get(withHunters);
   const $withNewbies = get(withNewbies);
   getSpotsInArea(coords, $withHunters, $withNewbies).then(({ result }) => {
     areaCoords.set(coords);
     areaSpots.set(result);
     markersStore.set({ spots: result });
+
+    if (id) {
+      const $specialBrowseHistory = get(specialBrowseHistoryState);
+      specialBrowseHistoryState.set({
+        ...$specialBrowseHistory,
+        [id]: { areaSpots: result },
+      });
+    }
+
     const style = `
       .map-marker-with-photo, .map-marker-cluster
         {
