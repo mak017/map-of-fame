@@ -3,7 +3,7 @@ import { fade } from "svelte/transition";
 import { goto, url } from "@roxi/routify";
 
 import { loginRequest } from "../../api/auth.js";
-import { isLoggedIn, settings, userData } from "../../store.js";
+import { isLoggedIn, settings, userData, withNewbies } from "../../store.js";
 import { saveToLocalStorage, validateEmail } from "../../utils/commonUtils.js";
 
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
@@ -44,6 +44,8 @@ const handleSubmit = () => {
           userData.set(result);
           isLoggedIn.set(true);
           saveToLocalStorage("token", result.token);
+          withNewbies.set(result.isNewbie);
+
           $goto("/");
         } else {
           isInProgress = false;
@@ -107,7 +109,7 @@ const handleInputChange = (input) => {
     <span>Don't have an account?</span>
     <a
       href={$url(
-        $settings.needInviteToRegister ? "/pre-registration" : "registration"
+        $settings.needInviteToRegister ? "/begistration" : "/registration",
       )}>Sign up</a>
   </div>
 </form>

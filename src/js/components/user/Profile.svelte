@@ -148,7 +148,7 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
     });
   } else {
     fetchSpots({ isNewFetch: true });
-    if (isCurrentUser) {
+    if (isCurrentUser && !$userData.isNewbie) {
       getInvites(token).then((response) => {
         const { success, result } = response;
         if (success && result) {
