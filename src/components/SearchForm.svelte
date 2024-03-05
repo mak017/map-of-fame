@@ -77,14 +77,6 @@ const fetchPhotoWall = async (offset = 0, isNewFetch) => {
 };
 
 onMount(() => {
-  if (textFromUrl) {
-    fetchArtistsCrews();
-    fetchPhotoWall(0, true);
-  } else {
-    searchState.setIsLoading(false);
-    searchState.setIsShowSpinner(false);
-  }
-
   parentModal = document.getElementById("search-modal");
 
   if ($searchState.scrollOffset) {
@@ -96,6 +88,16 @@ onMount(() => {
     }, 0);
   }
 });
+
+$: if (!$searchState.isFetched) {
+  if (textFromUrl) {
+    fetchArtistsCrews();
+    fetchPhotoWall(0, true);
+  } else {
+    searchState.setIsLoading(false);
+    searchState.setIsShowSpinner(false);
+  }
+}
 
 $: isSubmitDisabled = !!error;
 
