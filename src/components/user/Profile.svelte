@@ -2,7 +2,7 @@
 import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
-import { goto, params, url } from "@roxi/routify";
+import { afterUrlChange, goto, params, url } from "@roxi/routify";
 import linkifyHtml from "linkify-html";
 import "../../js/utils/customMentionPlugin.js";
 
@@ -104,7 +104,40 @@ onMount(() => {
   });
 });
 
-const { username } = $params;
+const fetchSpots = ({ year, offset, isNewFetch = false }) => {
+  profileState.setIsLoading(isNewFetch);
+  profileState.setIsShowSpinner(true);
+  getUserSpots(username, token, {
+    year,
+    offset,
+    sortBy: $profileState.sortBy,
+  }).then((response) => {
+    const { success, result, errors } = response;
+    if (success && result) {
+      const { spots, years } = result;
+      if (isNewFetch) {
+        profileState.setSpotsList([]);
+      }
+      newBatch = spots ? [...spots] : [];
+      profileState.setSpotsList([...$profileState.spotsList, ...newBatch]);
+      profileState.setHasMore(newBatch.length === MAX_SPOTS_PER_PAGE);
+      const yearsToApply = getProfileYears(years);
+      profileState.setYearsToApply(yearsToApply);
+      if ($profileState.currentYear === undefined || year === undefined) {
+        profileState.setCurrentYear(yearsToApply[0]);
+      }
+    }
+    if (errors && !isEmpty(errors)) {
+      if (errors.year) {
+        fetchSpots({});
+      }
+    }
+    profileState.setIsLoading(false);
+    profileState.setIsShowSpinner(false);
+  });
+};
+
+let { username } = $params;
 
 let isCurrentUser = $userData.username === username;
 let name = isCurrentUser
@@ -158,53 +191,19 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   }
 }
 
-// $: if (
-//   $profileState.isInitialized &&
-//   !$isUserVerifyProgress &&
-//   typeof $profileState.user.username === "string" &&
-//   username !== $profileState.user.username
-// ) {
-//   window.location.reload();
-// }
-
 $: unusedInvitesCount = $profileState.invites.reduce(
   (accumulator, invite) =>
     !invite.invitedUserId ? accumulator + 1 : accumulator,
   0,
 );
 
-const fetchSpots = ({ year, offset, isNewFetch = false }) => {
-  profileState.setIsLoading(isNewFetch);
-  profileState.setIsShowSpinner(true);
-  getUserSpots(username, token, {
-    year,
-    offset,
-    sortBy: $profileState.sortBy,
-  }).then((response) => {
-    const { success, result, errors } = response;
-    if (success && result) {
-      const { spots, years } = result;
-      if (isNewFetch) {
-        profileState.setSpotsList([]);
-      }
-      newBatch = spots ? [...spots] : [];
-      profileState.setSpotsList([...$profileState.spotsList, ...newBatch]);
-      profileState.setHasMore(newBatch.length === MAX_SPOTS_PER_PAGE);
-      const yearsToApply = getProfileYears(years);
-      profileState.setYearsToApply(yearsToApply);
-      if ($profileState.currentYear === undefined || year === undefined) {
-        profileState.setCurrentYear(yearsToApply[0]);
-      }
-    }
-    if (errors && !isEmpty(errors)) {
-      if (errors.year) {
-        fetchSpots({});
-      }
-    }
-    profileState.setIsLoading(false);
-    profileState.setIsShowSpinner(false);
-  });
-};
+$afterUrlChange(({ route }) => {
+  const { params } = route;
+  if (username !== params.username) {
+    username = params.username;
+    profileState.setIsInitialized(false);
+  }
+});
 
 const handleLogout = () => {
   removeFromLocalStorage("token");
@@ -468,7 +467,7 @@ const prepareAboutText = (text) => {
     linkifyHtml(text, {
       defaultProtocol: "https",
       nl2br: true,
-      target: "_blank",
+      target: { url: "_blank", email: "_blank", mention: null },
       formatHref: {
         mention: (href) => `@${href.substring(1)}`,
       },
