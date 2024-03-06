@@ -10,6 +10,7 @@ import {
   openedMarkerData,
 } from "../../store";
 import { markersReadyEvent } from "../commonUtils";
+import { normalizeCoords } from "./locationUtils";
 import { clusterIcon, markerClusterIcon, markerWithPhoto } from "./icons";
 
 import { MAX_ZOOM } from "../../constants";
@@ -118,7 +119,18 @@ const createMarkers = (map, markersData, isSearch) => {
         markers.some((marker) => marker.spotId === spot.id)
       );
       clusterSpots.set(spots);
-      $goto("/selected-spots");
+      const bounds = event.layer.getBounds().pad(20);
+      const boundsPoints = [
+        bounds.getNorthEast(),
+        bounds.getNorthWest(),
+        bounds.getSouthEast(),
+        bounds.getSouthWest(),
+      ];
+      const poly = boundsPoints.map((point) => [
+        normalizeCoords(point.lng),
+        normalizeCoords(point.lat),
+      ]);
+      $goto("/selected-spots", { poly });
     }
   });
   map.addLayer(markersLayer);

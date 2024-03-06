@@ -82,7 +82,7 @@ body {
 }
 
 .leaflet-container {
-  background: url(images/pattern.jpg);
+  background: url(/images/pattern.jpg);
   font: inherit;
 
   .area-select-marker,
@@ -128,12 +128,12 @@ body {
     }
 
     &-in {
-      background: var(--color-light) url(images/plus.svg) 50% 50%/18px 18px
+      background: var(--color-light) url(/images/plus.svg) 50% 50%/18px 18px
         no-repeat;
     }
 
     &-out {
-      background: var(--color-light) url(images/minus.svg) 50% 50%/18px 3.5px
+      background: var(--color-light) url(/images/minus.svg) 50% 50%/18px 3.5px
         no-repeat;
     }
   }
@@ -163,9 +163,10 @@ body {
   > form {
     display: flex;
     flex: 1 0 auto;
-    margin-left: 108px;
+    margin-left: -257px;
     transition: none;
     opacity: 0;
+    visibility: hidden;
   }
 
   .glass {
@@ -182,12 +183,16 @@ body {
   }
 
   .reset {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
     width: 40px;
     height: 40px;
     padding: 0;
     border: 0;
-    background-color: transparent;
-    background-image: url(images/close-cross.svg);
+    background-color: var(--color-lotion);
+    background-image: url(/images/close-cross.svg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: 24px 24px;
@@ -222,15 +227,24 @@ body {
   }
 
   .leaflet-bar-part {
-    order: -1;
+    position: relative;
     flex: 0 0 40px;
     height: 40px;
     padding: 0;
     border-radius: 2px;
-    background-image: url(images/loupe.svg);
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    background-size: 20px 20px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-image: url(/images/loupe.svg);
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      background-size: 20px 20px;
+    }
 
     &:hover {
       background-color: var(--color-light);
@@ -242,8 +256,25 @@ body {
     border-radius: 0;
 
     > form {
+      margin-left: 112px;
       opacity: 1;
-      transition: opacity 0.1s 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+      visibility: visible;
+      transition: opacity 0.1s 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19),
+        margin 0.2s;
+    }
+
+    .leaflet-bar-part {
+      pointer-events: none;
+      background-color: var(--color-accent);
+
+      &::before {
+        background-image: none;
+        background-color: var(--color-light);
+        mask-image: url(/images/loupe.svg);
+        mask-repeat: no-repeat;
+        mask-size: 20px 20px;
+        mask-position: 50% 50%;
+      }
     }
   }
 }
@@ -259,34 +290,51 @@ body {
         visibility: hidden;
       }
     }
+
+    &:has(.hunters-switcher:hover) {
+      .geosearch {
+        visibility: hidden;
+        transition: visibility 0s;
+      }
+    }
   }
 
-  .leaflet-container .leaflet-control-attribution {
-    font-size: 5px;
+  .leaflet-container {
+    .end-selection-area {
+      width: 50px;
+      height: 50px;
+    }
+
+    .leaflet-control-attribution {
+      font-size: 5px;
+    }
   }
 
-  .geosearch.leaflet-bar.active {
-    right: 0;
-    width: calc(100vw - 36px);
-    margin-right: 18px;
-    margin-left: 18px;
+  .geosearch.leaflet-bar {
+    transition: visibility 0s 0.7s;
 
-    &::before {
-      content: "";
-      flex: 0 0 82px;
-      opacity: 0;
-      visibility: hidden;
-    }
+    &.active {
+      right: 0;
+      width: calc(100vw - 36px);
+      margin-right: 18px;
+      margin-left: 18px;
 
-    > form {
-      order: 1;
-      max-width: calc(100% - 122px);
-      margin-left: 0;
-    }
+      &::before {
+        content: "";
+        flex: 0 0 100px;
+        opacity: 0;
+        visibility: hidden;
+      }
 
-    .glass {
-      max-width: calc(100% - 40px);
-      padding: 6px;
+      > form {
+        width: calc(100% - 140px);
+        margin-left: 0;
+      }
+
+      .glass {
+        max-width: 100%;
+        padding: 6px;
+      }
     }
   }
 }
