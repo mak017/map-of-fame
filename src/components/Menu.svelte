@@ -8,17 +8,17 @@ import {
   isUserVerifyProgress,
   profileState,
   userData,
-} from "../store";
+} from "../js/store";
+import { editUser, getInvites } from "../js/api/auth";
 import {
   isMobile,
   loadFromLocalStorage,
   removeFromLocalStorage,
-} from "../utils/commonUtils";
+} from "../js/utils/commonUtils";
 
 import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
 import Popup from "./Popup.svelte";
 import Invites from "./user/Invites.svelte";
-import { editUser, getInvites } from "../api/auth";
 
 let showInvitesPopup = false;
 let unusedInvitesCount = 0;

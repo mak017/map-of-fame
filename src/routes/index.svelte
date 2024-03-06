@@ -44,16 +44,16 @@ import { newMarkerIcon } from "../js/utils/mapUtils/icons";
 
 import Modal from "../components/Modal.svelte";
 import CategoryFilter from "../components/CategoryFilter.svelte";
+import Menu from "../components/Menu.svelte";
+import AddSpot from "../components/addSpot/AddSpot.svelte";
+import ResetPassword from "../components/auth/ResetPassword.svelte";
 import Spinner from "../components/elements/Spinner.svelte";
+import SelectIndicatorSvg from "../components/elements/icons/SelectIndicatorSvg.svelte";
 import CloseCrossSvg from "../components/elements/icons/CloseCrossSvg.svelte";
 import HuntersSvg from "../components/elements/icons/HuntersSvg.svelte";
 import LoupeSvg from "../components/elements/icons/LoupeSvg.svelte";
-import SelectIndicatorSvg from "../components/elements/icons/SelectIndicatorSvg.svelte";
-import AddSpot from "../components/addSpot/AddSpot.svelte";
-import ResetPassword from "../components/auth/ResetPassword.svelte";
 
 import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
-import Menu from "../js/components/Menu.svelte";
 
 let isAddSpotSidebarVisible = false;
 let inviteData = getInviteData();
