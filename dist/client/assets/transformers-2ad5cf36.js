@@ -1,1 +1,0 @@
-const t=s=>{const r={};return s.forEach(o=>{r[o.key]=o.type!=="boolean"?o.value:o.value==="1"}),r},e=s=>{const r=[];return Object.keys(s).forEach(o=>{r.push({id:o,name:s[o]})}),r};export{t as a,e as t};
