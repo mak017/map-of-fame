@@ -38,7 +38,6 @@ import {
   isLoading,
   searchControl,
   isActiveSearchControl,
-  browserHistory,
   profileState,
   searchState,
   hasBrowseHistory,
