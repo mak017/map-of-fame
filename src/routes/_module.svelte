@@ -1,14 +1,12 @@
 <script>
+import { onMount } from "svelte";
 import L from "leaflet";
 import { SearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import {
   afterUrlChange,
-  // afterPageLoad,
   beforeUrlChange,
   getDirection,
   goto,
-  // route,
-  // routes,
 } from "@roxi/routify";
 import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 
@@ -49,112 +47,14 @@ import { requestSpotsInArea } from "../js/init.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
 
 import Loader from "../components/elements/Loader.svelte";
-import { onMount } from "svelte";
+
 import "@/scss/init.scss";
 
 globalGoto.set($goto);
 
-$beforeUrlChange((event) => {
-  console.log("");
-  console.log(">>> $beforeUrlChange");
-  console.log("event.route", event.route);
-  console.log("event.route.mode", event.route.mode);
-  // console.log("route", route);
-  console.log("window.history.state", window.history.state);
-  const { type, state, target } = event;
-  const { currentIndex, history } = $browserHistory;
-  // console.log("$browserHistory", $browserHistory);
-
-  // if (type === "pushstate") {
-  //   const { pathname } = window.location.pathname;
-  //   const data = { ...state, pathname };
-  //   browserHistory.setCurrentIndex(currentIndex);
-  //   browserHistory.setEventType(type);
-
-  //   switch (state.id) {
-  //     case "___username_index":
-  //       data.profileState = $profileState;
-  //       break;
-  //     case "_search":
-  //       data.searchState = $searchState;
-  //       break;
-
-  //     default:
-  //       break;
-  //   }
-
-  //   browserHistory.pushToHistory(data, currentIndex + 1);
-  // }
-
-  // if (type === "popstate") {
-  //   // const { title } = route;
-  //   // console.log("title", title);
-  //   console.log("target.location", target.location);
-  //   browserHistory.setEventType(type);
-
-  //   // switch (title) {
-  //   //   case '@:username':
-  //   //     profileState.set($browserHistory.history)
-  //   //     break;
-
-  //   //   default:
-  //   //     break;
-  //   // }
-  // }
-
-  return true;
-});
-
 $afterUrlChange((data) => {
-  console.log("");
-  console.log("data", data);
-  console.log("window.history.state", window.history.state);
   hasBrowseHistory.set(true);
 });
-
-// $afterPageLoad((page) => {
-//   const { eventType } = $browserHistory;
-//   const { pathname } = window.location.pathname;
-//   if (eventType === "popstate") {
-//   }
-//   // const data = { ...state, pathname };
-//   // browserHistory.setCurrentIndex(currentIndex + 1);
-// });
-
-// $: lastRoute = $route.last;
-// $: console.log("$route", $route);
-// $: console.log("lastRoute", lastRoute);
-// $: direction = lastRoute && getDirection($routes, lastRoute);
-// $: console.log("direction", direction);
-
-// onMount(() => {
-//   function reorient() {
-//     // After travelling in the history stack
-//     const positionLastShown = Number(
-//       // If none, then zero
-//       sessionStorage.getItem("positionLastShown"),
-//     );
-//     let position = history.state; // Absolute position in stack
-//     if (position === null) {
-//       // Meaning a new entry on the stack
-//       position = positionLastShown + 1; // Top of stack
-
-//       // (1) Stamp the entry with its own position in the stack
-//       history.replaceState(position, /*no title*/ "");
-//     }
-
-//     // (2) Keep track of the last position shown
-//     sessionStorage.setItem("positionLastShown", String(position));
-
-//     // (3) Discover the direction of travel by comparing the two
-//     const direction = Math.sign(position - positionLastShown);
-//     console.log("Travel direction is " + direction);
-//     // One of backward (-1), reload (0) and forward (1)
-//   }
-
-//   addEventListener("pageshow", reorient);
-//   addEventListener("popstate", reorient); // Travel in same page
-// });
 
 let selectedCategories = loadFromLocalStorage("categories") || [1];
 
