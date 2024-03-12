@@ -1,13 +1,7 @@
 <script>
-import { onMount } from "svelte";
 import L from "leaflet";
 import { SearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
-import {
-  afterUrlChange,
-  beforeUrlChange,
-  getDirection,
-  goto,
-} from "@roxi/routify";
+import { afterUrlChange, goto } from "@roxi/routify";
 import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 
 import {
@@ -38,8 +32,6 @@ import {
   isLoading,
   searchControl,
   isActiveSearchControl,
-  profileState,
-  searchState,
   hasBrowseHistory,
 } from "./../js/store.js";
 import { requestSpotsInArea } from "../js/init.js";
@@ -51,7 +43,7 @@ import "@/scss/init.scss";
 
 globalGoto.set($goto);
 
-$afterUrlChange((data) => {
+$afterUrlChange(() => {
   hasBrowseHistory.set(true);
 });
 
