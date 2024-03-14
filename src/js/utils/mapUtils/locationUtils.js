@@ -82,7 +82,6 @@ export const setLocation = (map, force) => {
       mapBounds.set(bounds);
       if (!force) {
         isInitialized.set(true);
-        requestSpots(yearFromStore || getCurrentYear());
       }
     });
 };

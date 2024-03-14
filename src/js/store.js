@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { derived, writable } from "svelte/store";
 
 import { getCurrentYear } from "./utils/commonUtils";
 
@@ -36,13 +36,20 @@ export const isShowOnMapMode = writable(false);
 export const isAreaSelectionActive = writable(false);
 export const isSpotsFromAreaLoading = writable(false);
 export const isFirstTimeVisit = writable(false);
-export const withHunters = writable(true);
-export const withNewbies = writable(false);
 export const shouldShowAddSpot = writable(null);
 export const shouldShowResetPassword = writable(false);
 export const resetPasswordToken = writable(null);
 export const hasBrowseHistory = writable(false);
 export const specialBrowseHistoryState = writable({});
+
+export const defaultUserTypeFilters = derived(
+  userData,
+  ($userData) =>
+    console.log("$userData.isNewbie", $userData.isNewbie) || {
+      withHunters: true,
+      withNewbies: $userData.isNewbie,
+    }
+);
 
 const createProfileState = () => {
   const initialState = {

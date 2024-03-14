@@ -7,7 +7,6 @@ import {
   shouldShowResetPassword,
   resetPasswordToken,
   userData,
-  withNewbies,
 } from "../../js/store";
 import {
   saveToLocalStorage,
@@ -49,7 +48,6 @@ const handleSubmit = () => {
           isLoggedIn.set(true);
           saveToLocalStorage("token", $resetPasswordToken.token);
           shouldShowResetPassword.set(false);
-          withNewbies.set($resetPasswordToken.isNewbie);
         } else {
           errorMessage = errors?.password?.[0] ?? "Something went wrong";
         }

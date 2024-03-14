@@ -3,7 +3,7 @@ import { fade } from "svelte/transition";
 import { goto, url } from "@roxi/routify";
 
 import { loginRequest } from "../../js/api/auth.js";
-import { isLoggedIn, settings, userData, withNewbies } from "../../js/store.js";
+import { isLoggedIn, settings, userData } from "../../js/store.js";
 import {
   saveToLocalStorage,
   validateEmail,
@@ -47,7 +47,6 @@ const handleSubmit = () => {
           userData.set(result);
           isLoggedIn.set(true);
           saveToLocalStorage("token", result.token);
-          withNewbies.set(result.isNewbie);
 
           $goto("/");
         } else {

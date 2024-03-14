@@ -12,12 +12,7 @@ import {
   validateUsername,
 } from "../../js/utils/commonUtils.js";
 import { transformCountries } from "../../js/utils/transformers.js";
-import {
-  countriesList,
-  isLoggedIn,
-  userData,
-  withNewbies,
-} from "../../js/store.js";
+import { countriesList, isLoggedIn, userData } from "../../js/store.js";
 
 import AutoComplete from "./../elements/AutoComplete.svelte";
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
@@ -166,7 +161,6 @@ const handleSubmit = () => {
         if (success && result) {
           userData.set(result);
           isLoggedIn.set(true);
-          withNewbies.set(result.isNewbie);
           saveToLocalStorage("token", result.token);
           $goto("/");
         } else {

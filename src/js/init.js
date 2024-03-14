@@ -7,6 +7,7 @@ import {
   areaCoords,
   areaSpots,
   categoriesList,
+  defaultUserTypeFilters,
   isFirstTimeVisit,
   isLoggedIn,
   isSpotsFromAreaLoading,
@@ -16,8 +17,6 @@ import {
   settings,
   specialBrowseHistoryState,
   userData,
-  withHunters,
-  withNewbies,
 } from "./store";
 import {
   loadFromLocalStorage,
@@ -51,7 +50,6 @@ export const verifyAuth = (token) =>
       if (success && result) {
         userData.set(result);
         isLoggedIn.set(true);
-        withNewbies.set(result.isNewbie);
         if (result.token) saveToLocalStorage("token", result.token);
       } else if (
         Array.isArray(errors) &&
@@ -82,8 +80,9 @@ export const initApp = () => {
 
 export const requestSpots = (year) => {
   const bounds = get(mapBounds);
-  const $withHunters = get(withHunters);
-  const $withNewbies = get(withNewbies);
+  const $defaultUserTypeFilters = get(defaultUserTypeFilters);
+  const { withHunters, withNewbies } =
+    loadFromLocalStorage("userTypeFilters") || $defaultUserTypeFilters;
   let categories = loadFromLocalStorage("categories");
   let yearForRequest = year;
 
@@ -108,8 +107,8 @@ export const requestSpots = (year) => {
     yearForRequest,
     bounds,
     categories,
-    $withHunters,
-    $withNewbies
+    withHunters,
+    withNewbies
   ).then((response) => {
     const { success, result } = response;
     if (success && result) {
@@ -136,9 +135,11 @@ export const requestRecentSpots = () => {
 };
 
 export const requestSpotsInArea = (coords, id) => {
-  const $withHunters = get(withHunters);
-  const $withNewbies = get(withNewbies);
-  getSpotsInArea(coords, $withHunters, $withNewbies).then(({ result }) => {
+  const $defaultUserTypeFilters = get(defaultUserTypeFilters);
+  const { withHunters, withNewbies } =
+    loadFromLocalStorage("userTypeFilters") || $defaultUserTypeFilters;
+
+  getSpotsInArea(coords, withHunters, withNewbies).then(({ result }) => {
     areaCoords.set(coords);
     areaSpots.set(result);
     markersStore.set({ spots: result });
