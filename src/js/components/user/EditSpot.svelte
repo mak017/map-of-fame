@@ -3,7 +3,7 @@ import { goto, params } from "@roxi/routify";
 
 import { editSpotData } from "./../../store.js";
 import { getSpotById } from "../../api/spot.js";
-import { isEmpty } from "../../utils/commonUtils.js";
+import { isEmpty, loadFromLocalStorage } from "../../utils/commonUtils.js";
 
 import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import SpotForm from "../SpotForm.svelte";
@@ -11,13 +11,14 @@ import Spinner from "../elements/Spinner.svelte";
 
 const { id, username } = $params;
 const strippedUsername = username.substring(1);
+const token = loadFromLocalStorage("token") || null;
 
 const getSpotData = async () => {
   if ($editSpotData.id) {
     return $editSpotData;
   }
 
-  const { success, result, errors } = await getSpotById(id);
+  const { success, result, errors } = await getSpotById(token, id);
 
   if (success && result) {
     const { user } = result;
