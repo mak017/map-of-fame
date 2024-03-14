@@ -27,8 +27,6 @@ import {
   isPermalinkReady,
   profileState,
   areaCoords,
-  withHunters,
-  withNewbies,
 } from "../js/store.js";
 import {
   clickOutside,
@@ -43,9 +41,9 @@ import { newMarkerIcon } from "../js/utils/mapUtils/icons";
 
 import Modal from "../js/components/Modal.svelte";
 import CategoryFilter from "../js/components/CategoryFilter.svelte";
+import FilterByUserType from "../js/components/FilterByUserType.svelte";
 import Spinner from "../js/components/elements/Spinner.svelte";
 import CloseCrossSvg from "../js/components/elements/icons/CloseCrossSvg.svelte";
-import HuntersSvg from "../js/components/elements/icons/HuntersSvg.svelte";
 import LoupeSvg from "../js/components/elements/icons/LoupeSvg.svelte";
 import SelectIndicatorSvg from "../js/components/elements/icons/SelectIndicatorSvg.svelte";
 import AddSpot from "../js/components/addSpot/AddSpot.svelte";
@@ -197,31 +195,7 @@ const handleSearchInput = () => {
         transition:fade={{ duration: 200 }}>{$selectedYear}</a>
     {/if}
     {#if !$shouldShowAddSpot && !$isShowOnMapMode && !$isAreaSelectionActive}
-      <div class="switchers">
-        <HuntersSvg isActive={$withHunters || $withNewbies} />
-        <div class="switcher-buttons">
-          <button
-            type="button"
-            class="button button-main_screen"
-            class:isActive={$withHunters}
-            on:click={() => {
-              withHunters.set(!$withHunters);
-              requestSpots($selectedYear);
-            }}>
-            <span>Hunters</span>
-          </button>
-          <button
-            type="button"
-            class="button button-main_screen"
-            class:isActive={$withNewbies}
-            on:click={() => {
-              withNewbies.set(!$withNewbies);
-              requestSpots($selectedYear);
-            }}>
-            <span>Newbies</span>
-          </button>
-        </div>
-      </div>
+      <FilterByUserType />
     {/if}
   </div>
 
@@ -461,95 +435,6 @@ const handleSearchInput = () => {
   }
 }
 
-.switchers {
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-  margin-left: 12px;
-  width: 40px;
-  height: 40px;
-  border-radius: 2px;
-  background: var(--color-light);
-  color: var(--color-dark);
-
-  .switcher-buttons {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: scale(0.5);
-    transform-origin: top left;
-    transition:
-      visibility 0.3s 0.5s ease-in-out,
-      transform 0.3s 0.5s ease-in-out;
-    visibility: hidden;
-    background-color: inherit;
-  }
-
-  button {
-    position: relative;
-    height: 40px;
-    padding: 8px 12px;
-
-    > span {
-      display: flex;
-      align-items: center;
-      opacity: 0;
-      transition: opacity 0.3s 0.3s ease-in-out;
-
-      &::before {
-        content: "";
-        width: 24px;
-        height: 15px;
-        margin-right: 12px;
-        border-radius: 15px;
-        background-color: var(--color-dark);
-        transition: background-color 0.3s;
-      }
-
-      &::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 13px;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        transform: translateY(-50%);
-        background-color: var(--color-light);
-        transition: transform 0.3s;
-      }
-    }
-
-    &.isActive {
-      span {
-        &::before {
-          background-color: var(--color-accent);
-        }
-
-        &::after {
-          transform: translate(10px, -50%);
-        }
-      }
-    }
-  }
-
-  &:hover {
-    .switcher-buttons {
-      transform: scale(1);
-      transition:
-        visibility 0.3s ease-in-out,
-        transform 0.3s ease-in-out;
-      visibility: visible;
-
-      button > span {
-        opacity: 1;
-        transition: opacity 0.3s 0.3s ease-in-out;
-      }
-    }
-  }
-}
-
 .search-artist {
   display: flex;
   position: absolute;
@@ -719,7 +604,7 @@ const handleSearchInput = () => {
   }
 
   .main-top_left_wrapper {
-    &:has(.hunters-switcher:hover) {
+    &:has(.switchers:hover) {
       ~ .main-top_right_wrapper {
         visibility: hidden;
         transition: visibility 0s;

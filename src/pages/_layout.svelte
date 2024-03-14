@@ -32,8 +32,10 @@ import {
   isLoading,
   searchControl,
   isActiveSearchControl,
+  isUserVerifyProgress,
+  selectedYear,
 } from "./../js/store.js";
-import { requestSpotsInArea } from "../js/init.js";
+import { requestSpots, requestSpotsInArea } from "../js/init.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
 
 import Loader from "../js/components/elements/Loader.svelte";
@@ -127,6 +129,10 @@ const initMap = (container) => {
 
 $: if ($map && $markersStore) {
   placeMarkers($map, $markersStore, $isShowOnMapMode);
+}
+
+$: if ($isInitialized && !$isUserVerifyProgress) {
+  requestSpots($selectedYear || getCurrentYear());
 }
 </script>
 

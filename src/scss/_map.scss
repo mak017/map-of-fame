@@ -291,7 +291,7 @@ body {
       }
     }
 
-    &:has(.hunters-switcher:hover) {
+    &:has(.switchers:hover) {
       .geosearch {
         visibility: hidden;
         transition: visibility 0s;
