@@ -131,7 +131,7 @@ $: if ($map && $markersStore) {
   placeMarkers($map, $markersStore, $isShowOnMapMode);
 }
 
-$: if ($isInitialized && !$isUserVerifyProgress) {
+$: if ($isInitialized && !$isUserVerifyProgress && !$isShowOnMapMode) {
   requestSpots($selectedYear || getCurrentYear());
 }
 </script>
