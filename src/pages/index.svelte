@@ -27,6 +27,7 @@ import {
   isPermalinkReady,
   profileState,
   areaCoords,
+  searchState,
 } from "../js/store.js";
 import {
   clickOutside,
@@ -172,6 +173,7 @@ const handleKeyDown = (e) => {
 
 const handleSearchInput = () => {
   if (searchArtistText) {
+    searchState.reset();
     $goto("/search", { text: searchArtistText });
   }
 };
