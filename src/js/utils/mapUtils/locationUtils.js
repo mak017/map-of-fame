@@ -53,14 +53,12 @@ export const handleMapViewChange = (map) => {
   const bounds = getBounds(map);
   mapBounds.set(bounds);
 
-  if (get(isAreaSelectionActive)) {
+  if (get(isAreaSelectionActive) || get(isShowOnMapMode)) {
     return;
   }
 
-  if (!get(isShowOnMapMode)) {
-    const yearFromStore = get(selectedYear);
-    requestSpots(yearFromStore);
-  }
+  const yearFromStore = get(selectedYear);
+  requestSpots(yearFromStore);
 };
 
 export const setLocation = (map, force) => {
