@@ -55,6 +55,7 @@ const emojiList = [
 ];
 
 const { id, username } = $params;
+const token = loadFromLocalStorage("token") || null;
 
 let isShareOpened = false;
 let isComplainOpened = false;
@@ -81,7 +82,7 @@ const getSpotData = async () => {
     return $openedMarkerData;
   }
 
-  const { success, result, errors } = await getSpotById(id);
+  const { success, result, errors } = await getSpotById(token, id);
 
   if (success && result) {
     const {

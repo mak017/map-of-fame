@@ -40,8 +40,13 @@ export const getRecentSpots = async (limitDays, geoRect, categories) => {
   return result;
 };
 
-export const getSpotById = async (id) => {
-  const response = await fetch(SPOT_ID(id), { method: "GET" });
+export const getSpotById = async (token, id) => {
+  const bearer = `Bearer ${token}`;
+  const response = await fetch(SPOT_ID(id), {
+    method: "GET",
+    withCredentials: true,
+    headers: { Authorization: bearer },
+  });
   const result = await response.json();
   return result;
 };

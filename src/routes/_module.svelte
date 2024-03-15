@@ -1,13 +1,7 @@
 <script>
-import { onMount } from "svelte";
 import L from "leaflet";
 import { SearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
-import {
-  afterUrlChange,
-  beforeUrlChange,
-  getDirection,
-  goto,
-} from "@roxi/routify";
+import { afterUrlChange, goto } from "@roxi/routify";
 import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 
 import {
@@ -38,11 +32,11 @@ import {
   isLoading,
   searchControl,
   isActiveSearchControl,
-  profileState,
-  searchState,
   hasBrowseHistory,
+  isUserVerifyProgress,
+  selectedYear,
 } from "./../js/store.js";
-import { requestSpotsInArea } from "../js/init.js";
+import { requestSpots, requestSpotsInArea } from "../js/init.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
 
 import Loader from "../components/elements/Loader.svelte";
@@ -51,7 +45,7 @@ import "@/scss/init.scss";
 
 globalGoto.set($goto);
 
-$afterUrlChange((data) => {
+$afterUrlChange(() => {
   hasBrowseHistory.set(true);
 });
 
@@ -142,6 +136,10 @@ const initMap = (container) => {
 
 $: if ($map && $markersStore) {
   placeMarkers($map, $markersStore, $isShowOnMapMode);
+}
+
+$: if ($isInitialized && !$isUserVerifyProgress && !$isShowOnMapMode) {
+  requestSpots($selectedYear || getCurrentYear());
 }
 </script>
 

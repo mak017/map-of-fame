@@ -16,6 +16,7 @@ import {
   specialBrowseHistoryState,
 } from "./../js/store.js";
 import { requestSpotsInArea } from "../js/init.js";
+import { requestSpotsById } from "../js/api/search.js";
 
 import CustomSelect from "./elements/CustomSelect.svelte";
 import ShowOnMapButton from "./elements/ShowOnMapButton.svelte";
@@ -36,26 +37,46 @@ onMount(() => {
 });
 
 onDestroy(() => {
-  clusterSpots.set([]);
-
   if (!isLoadedFromMap) {
     document.getElementById("highlighted").innerHTML = "";
   }
 });
 
 if (!$areaSpots?.length && !$clusterSpots?.length) {
-  const { poly } = $params;
-  const coords = poly?.split("/").reduce((acc, coord) => {
-    const item = coord.split(",");
-    acc.push(item);
+  const { poly, spots } = $params;
+  if (spots) {
+    const ids = spots.split("/");
 
-    return acc;
-  }, []);
-  if (coords?.length < 2 || !coords?.every((coord) => coord.length === 2)) {
-    $goto("/");
+    requestSpotsById(ids).then((response) => {
+      if (!response?.success) {
+        $goto("/");
+        return;
+      }
+
+      clusterSpots.set(response?.result);
+
+      if (id) {
+        specialBrowseHistoryState.set({
+          ...$specialBrowseHistoryState,
+          [id]: {
+            clusterSpots: response?.result,
+          },
+        });
+      }
+    });
   } else {
-    requestSpotsInArea(coords, id);
-    isLoadedFromMap = false;
+    const coords = poly?.split("/").reduce((acc, coord) => {
+      const item = coord.split(",");
+      acc.push(item);
+
+      return acc;
+    }, []);
+    if (coords?.length < 2 || !coords?.every((coord) => coord.length === 2)) {
+      $goto("/");
+    } else {
+      requestSpotsInArea(coords, id);
+      isLoadedFromMap = false;
+    }
   }
 }
 

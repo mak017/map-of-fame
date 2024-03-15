@@ -282,8 +282,8 @@ body {
 @media (max-width: 767px) {
   body {
     &.geo-search-active {
-      > .main-top_left_wrapper,
-      > .wrapper,
+      .main-top_left_wrapper,
+      > div > .wrapper,
       .button-burger,
       .button-open_login {
         opacity: 0;
@@ -291,7 +291,7 @@ body {
       }
     }
 
-    &:has(.hunters-switcher:hover) {
+    &:has(.switchers:hover) {
       .geosearch {
         visibility: hidden;
         transition: visibility 0s;
