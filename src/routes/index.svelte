@@ -458,6 +458,7 @@ const handleSearchInput = () => {
       height: 40px;
       padding: 0 12px;
       background: none;
+      color: var(--color-dark);
 
       > span {
         transition: transform 0.3s;
@@ -476,6 +477,7 @@ const handleSearchInput = () => {
       .item {
         padding: 0 12px 8px;
         background: none;
+        color: var(--color-dark);
       }
     }
 
