@@ -42,14 +42,10 @@ export const resetPasswordToken = writable(null);
 export const hasBrowseHistory = writable(false);
 export const specialBrowseHistoryState = writable({});
 
-export const defaultUserTypeFilters = derived(
-  userData,
-  ($userData) =>
-    console.log("$userData.isNewbie", $userData.isNewbie) || {
-      withHunters: true,
-      withNewbies: $userData.isNewbie,
-    }
-);
+export const defaultUserTypeFilters = derived(userData, ($userData) => ({
+  withHunters: true,
+  withNewbies: $userData.isNewbie,
+}));
 
 const createProfileState = () => {
   const initialState = {

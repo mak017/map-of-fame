@@ -121,6 +121,16 @@ export const SPOT_ID_FEEDBACK = (id) =>
 
 export const SPOT_SEARCH = () => `${ENDPOINT_ORIGIN}/api/spot/search`;
 
+export const SPOT_SEARCH_BY_IDS = (ids) => {
+  const query = ids.reduce((acc, id, index) => {
+    const chunk = `ids[${index}]=${id}`;
+
+    return index === 0 ? chunk : `${acc}&${chunk}`;
+  }, "");
+
+  return `${ENDPOINT_ORIGIN}/api/spot/search/byIds?${query}`;
+};
+
 export const SPOT_FROM_POLY = (polygon, withHunters, withNubies) => {
   const query = polygon.reduce((acc, coords, index) => {
     const [lng, lat] = coords;

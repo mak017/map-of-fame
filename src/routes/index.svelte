@@ -27,6 +27,7 @@ import {
   isPermalinkReady,
   profileState,
   areaCoords,
+  clusterSpots,
 } from "../js/store.js";
 import {
   clickOutside,
@@ -289,6 +290,7 @@ const handleSearchInput = () => {
         })}
         class="selection selected-area-spots"
         class:active={!$isSpotsFromAreaLoading && $areaSpots.length > 0}
+        on:click={() => clusterSpots.set(null)}
         transition:fade|global={{ duration: 200 }}>
         {#if $isSpotsFromAreaLoading}
           <Spinner height={20} margin="10px" isWhite />

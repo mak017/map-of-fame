@@ -5,6 +5,7 @@ import {
   USER_SERACH_BY_ARTIST,
   USER_SERACH_BY_CREW,
   PHOTO_WALL,
+  SPOT_SEARCH_BY_IDS,
 } from "./endpoints";
 
 export const requestSearchArtistsCrews = async (text) => {
@@ -62,6 +63,12 @@ export const requestSearchSpots = async ({ artist, crew, geoRect, year }) => {
     body: JSON.stringify(requestObject),
     headers: { "Content-Type": "application/json" },
   });
+  const result = await response.json();
+  return result;
+};
+
+export const requestSpotsById = async (ids) => {
+  const response = await fetch(SPOT_SEARCH_BY_IDS(ids), { method: "GET" });
   const result = await response.json();
   return result;
 };

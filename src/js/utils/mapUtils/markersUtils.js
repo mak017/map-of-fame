@@ -118,19 +118,9 @@ const createMarkers = (map, markersData, isSearch) => {
       const spots = markersData?.spots.filter((spot) =>
         markers.some((marker) => marker.spotId === spot.id)
       );
+      const spotIds = spots.map((spot) => spot.id);
       clusterSpots.set(spots);
-      const bounds = event.layer.getBounds().pad(20);
-      const boundsPoints = [
-        bounds.getNorthEast(),
-        bounds.getNorthWest(),
-        bounds.getSouthEast(),
-        bounds.getSouthWest(),
-      ];
-      const poly = boundsPoints.map((point) => [
-        normalizeCoords(point.lng),
-        normalizeCoords(point.lat),
-      ]);
-      $goto("/selected-spots", { poly });
+      $goto("/selected-spots", { spots: spotIds });
     }
   });
   map.addLayer(markersLayer);
