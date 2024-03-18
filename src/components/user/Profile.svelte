@@ -8,6 +8,7 @@ import "../../js/utils/customMentionPlugin.js";
 
 import { editUser, getUserData } from "./../../js/api/auth.js";
 import { getUserSpots } from "../../js/api/spot";
+import { followUser, unfollowUser } from "../../js/api/follow.js";
 import {
   isShowOnMapMode,
   userData,
@@ -22,6 +23,7 @@ import {
   isFirstTimeVisit,
   isUserVerifyProgress,
   profileState,
+  followingState,
 } from "../../js/store";
 import { getProfileYears } from "./../../js/utils/datesUtils.js";
 import {
@@ -70,6 +72,7 @@ let userDescrElement;
 let isExpandableAbout = false;
 let isExpandedAbout = false;
 let aboutCharacterCount = 0;
+let isFollowing = false;
 
 const token = loadFromLocalStorage("token") || null;
 
@@ -175,6 +178,16 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   } else {
     fetchSpots({ isNewFetch: true });
   }
+}
+
+$: if (!isCurrentUser && !$followingState.isFetched) {
+  followingState.request(token);
+}
+
+$: if (!isCurrentUser && $followingState.list.length && $profileState.user.id) {
+  isFollowing = $followingState.list.some(
+    (user) => user.id === $profileState.user.id,
+  );
 }
 
 $afterUrlChange(({ route }) => {
@@ -446,6 +459,24 @@ const prepareAboutText = (text) => {
     ? formattedText ?? ""
     : formattedText ?? "Write something about you.";
 };
+
+const handleFollowBtnClick = async () => {
+  const request = isFollowing ? unfollowUser : followUser;
+
+  await request(token, $profileState.user.id);
+
+  if (isFollowing) {
+    const updatedList = $followingState.list.filter(
+      (user) => user.id !== $profileState.user.id,
+    );
+    console.log("updatedList", updatedList);
+    followingState.setList(updatedList);
+    isFollowing = false;
+    return;
+  }
+
+  followingState.pushToList($profileState.user);
+};
 </script>
 
 <div
@@ -481,6 +512,14 @@ const prepareAboutText = (text) => {
             type="button"
             class="button name"
             on:click={() => toggleSharePopup(true)}><ShareSvg /></button>
+          {#if !isCurrentUser}
+            <button
+              type="button"
+              class="button follow"
+              class:active={!isFollowing}
+              on:click={handleFollowBtnClick}
+              >{isFollowing ? "Unfollow" : "Follow"}</button>
+          {/if}
         </div>
       {/if}
     </div>
@@ -714,6 +753,26 @@ const prepareAboutText = (text) => {
       height: 44px;
       border-radius: 0;
       background-color: var(--color-lotion);
+    }
+
+    .follow {
+      width: 110px;
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 0;
+      background-color: var(--color-lotion);
+      color: var(--color-dark);
+      font-size: 16px;
+      font-weight: 600;
+
+      &.active {
+        background-image: url(../../../images/follow.svg);
+        background-position: 80% 50%;
+        background-repeat: no-repeat;
+        background-size: 14px 18px;
+        color: var(--color-accent);
+        text-align: left;
+      }
     }
   }
 }

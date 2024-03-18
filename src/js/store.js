@@ -1,5 +1,6 @@
 import { derived, writable } from "svelte/store";
 
+import { getFollowing } from "./api/follow";
 import { getCurrentYear } from "./utils/commonUtils";
 
 import { DEFAULT_ZOOM } from "./constants";
@@ -127,5 +128,33 @@ const createSearchState = () => {
   };
 };
 
+const createFollowingState = () => {
+  const initialState = { isFetched: false, list: [], count: 0 };
+
+  const { subscribe, update } = writable(initialState);
+
+  return {
+    subscribe,
+    setIsFetched: (isFetched) => update((state) => ({ ...state, isFetched })),
+    setList: (list) => update((state) => ({ ...state, list })),
+    pushToList: (item) =>
+      update((state) => ({ ...state, list: [...state.list, item] })),
+    request: async (token) => {
+      const { success, result } = await getFollowing(token);
+
+      if (success && result) {
+        const { following, followingCount } = result;
+        update((state) => ({
+          ...state,
+          isFetched: true,
+          list: following,
+          count: followingCount,
+        }));
+      }
+    },
+  };
+};
+
 export const profileState = createProfileState();
 export const searchState = createSearchState();
+export const followingState = createFollowingState();

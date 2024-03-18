@@ -148,3 +148,13 @@ export const DRAFT_GET_LAST = () => `${ENDPOINT_ORIGIN}/api/draft/getLast`;
 export const DRAFT_UPDATE = () => `${ENDPOINT_ORIGIN}/api/draft/update`;
 
 export const DRAFT_PUBLISH = () => `${ENDPOINT_ORIGIN}/api/draft/publicate`;
+
+export const FOLLOW = () => `${ENDPOINT_ORIGIN}/api/follow`;
+
+export const UNFOLLOW = () => `${ENDPOINT_ORIGIN}/api/unfollow`;
+
+export const FOLLOWERS = () => `${ENDPOINT_ORIGIN}/api/followers`;
+
+export const FOLLOWING = () => `${ENDPOINT_ORIGIN}/api/following`;
+
+export const FOLLOWERS_FEED = () => `${ENDPOINT_ORIGIN}/api/followers/feed`;
