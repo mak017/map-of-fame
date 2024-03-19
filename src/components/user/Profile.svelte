@@ -23,7 +23,7 @@ import {
   isFirstTimeVisit,
   isUserVerifyProgress,
   profileState,
-  followingState,
+  followState,
 } from "../../js/store";
 import { getProfileYears } from "./../../js/utils/datesUtils.js";
 import {
@@ -180,12 +180,12 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   }
 }
 
-$: if (!isCurrentUser && !$followingState.isFetched) {
-  followingState.request(token);
+$: if (!isCurrentUser && !$followState.isFetched) {
+  followState.request(token);
 }
 
-$: if (!isCurrentUser && $followingState.list.length && $profileState.user.id) {
-  isFollowing = $followingState.list.some(
+$: if (!isCurrentUser && $followState.list.length && $profileState.user.id) {
+  isFollowing = $followState.list.some(
     (user) => user.id === $profileState.user.id,
   );
 }
@@ -466,16 +466,16 @@ const handleFollowBtnClick = async () => {
   await request(token, $profileState.user.id);
 
   if (isFollowing) {
-    const updatedList = $followingState.list.filter(
+    const updatedList = $followState.list.filter(
       (user) => user.id !== $profileState.user.id,
     );
     console.log("updatedList", updatedList);
-    followingState.setList(updatedList);
+    followState.setList(updatedList);
     isFollowing = false;
     return;
   }
 
-  followingState.pushToList($profileState.user);
+  followState.pushToList($profileState.user);
 };
 </script>
 

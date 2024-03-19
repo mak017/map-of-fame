@@ -153,8 +153,11 @@ export const FOLLOW = () => `${ENDPOINT_ORIGIN}/api/follow`;
 
 export const UNFOLLOW = () => `${ENDPOINT_ORIGIN}/api/unfollow`;
 
-export const FOLLOWERS = () => `${ENDPOINT_ORIGIN}/api/followers`;
+export const FOLLOWERS = (limit, offset) =>
+  `${ENDPOINT_ORIGIN}/api/followers?limit=${limit}&offset=${offset}`;
 
-export const FOLLOWING = () => `${ENDPOINT_ORIGIN}/api/following`;
+export const FOLLOWING = (limit, offset) =>
+  `${ENDPOINT_ORIGIN}/api/following?limit=${limit}&offset=${offset}`;
 
-export const FOLLOWERS_FEED = () => `${ENDPOINT_ORIGIN}/api/followers/feed`;
+export const FOLLOWERS_FEED = (limit, offset) =>
+  `${ENDPOINT_ORIGIN}/api/followers/feed?limit=${limit}&offset=${offset}`;

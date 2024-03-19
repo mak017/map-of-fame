@@ -18,6 +18,10 @@ body {
   outline: none;
 }
 
+:focus-visible {
+  outline: 3px dotted var(--color-accent);
+}
+
 input {
   margin: 0;
   border-radius: 0;
@@ -31,6 +35,14 @@ input {
 
 textarea {
   appearance: none;
+}
+
+summary {
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
 }
 
 .button {

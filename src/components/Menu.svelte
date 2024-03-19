@@ -3,6 +3,8 @@ import { fly } from "svelte/transition";
 import { url } from "@roxi/routify";
 
 import {
+  followFeedState,
+  followState,
   isLoggedIn,
   isMenuOpen,
   isUserVerifyProgress,
@@ -41,6 +43,7 @@ const handleLogout = () => {
   removeFromLocalStorage("token");
   isLoggedIn.set(false);
   userData.set({});
+  followState.reset();
   isMenuOpen.set(false);
 };
 
@@ -67,9 +70,26 @@ $: unusedInvitesCount = $profileState.invites.reduce(
   <button class="close" on:click={() => isMenuOpen.set(false)}>
     <CloseCrossSvg />
   </button>
-  <div class="links">
-    <a href={$url("/@:username", { username: $userData.username })}>Profile</a>
-  </div>
+  <ul class="links">
+    <li>
+      <a href={$url("/@:username", { username: $userData.username })}
+        >Profile</a>
+    </li>
+    <li>
+      <details>
+        <summary>Follow</summary>
+        <ul>
+          <li>
+            <a
+              href={$url("/follow-feed")}
+              on:click={() => followFeedState.reset()}>Feed</a>
+          </li>
+          <li><a href={$url("/following")}>Following</a></li>
+          <li><a href={$url("/followers")}>Followers</a></li>
+        </ul>
+      </details>
+    </li>
+  </ul>
   {#if $profileState.invites.length}
     <div class="invites">
       <button
@@ -170,6 +190,36 @@ $: unusedInvitesCount = $profileState.invites.reduce(
 
     &:hover {
       opacity: 0.7;
+    }
+  }
+
+  details {
+    margin-bottom: 16px;
+
+    a {
+      margin-left: 15px;
+      font-size: 16px;
+    }
+
+    &[open] {
+      > summary::after {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  summary {
+    display: flex;
+    margin-bottom: 16px;
+    cursor: pointer;
+
+    &::after {
+      content: "";
+      width: 8px;
+      margin-left: 12px;
+      background: url(../../images/triangle-down.svg) 50% 50% / 8px 5px
+        no-repeat;
+      transition: transform 0.3s;
     }
   }
 }

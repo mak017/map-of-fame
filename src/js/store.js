@@ -128,14 +128,13 @@ const createSearchState = () => {
   };
 };
 
-const createFollowingState = () => {
+const createFollowState = () => {
   const initialState = { isFetched: false, list: [], count: 0 };
 
-  const { subscribe, update } = writable(initialState);
+  const { subscribe, set, update } = writable(initialState);
 
   return {
     subscribe,
-    setIsFetched: (isFetched) => update((state) => ({ ...state, isFetched })),
     setList: (list) => update((state) => ({ ...state, list })),
     pushToList: (item) =>
       update((state) => ({ ...state, list: [...state.list, item] })),
@@ -152,9 +151,42 @@ const createFollowingState = () => {
         }));
       }
     },
+    reset: () => set(initialState),
+  };
+};
+
+const createFollowPageState = () => {
+  const initialState = {
+    list: [],
+    offset: 0,
+    scrollOffset: 0,
+    isFetched: false,
+    isLoading: true,
+    isShowSpinner: true,
+    hasMore: false,
+  };
+
+  const { subscribe, set, update } = writable(initialState);
+
+  return {
+    subscribe,
+    setOffset: (offset) => update((state) => ({ ...state, offset })),
+    setScrollOffset: (offset) =>
+      update((state) => ({ ...state, scrollOffset: offset })),
+    setList: (list) => update((state) => ({ ...state, list })),
+    setIsFetched: (isFetched) => update((state) => ({ ...state, isFetched })),
+    setIsLoading: (value) =>
+      update((state) => ({ ...state, isLoading: value })),
+    setIsShowSpinner: (value) =>
+      update((state) => ({ ...state, isShowSpinner: value })),
+    setHasMore: (value) => update((state) => ({ ...state, hasMore: value })),
+    reset: () => set(initialState),
   };
 };
 
 export const profileState = createProfileState();
 export const searchState = createSearchState();
-export const followingState = createFollowingState();
+export const followState = createFollowState();
+export const followFeedState = createFollowPageState();
+export const followingState = createFollowPageState();
+export const followersState = createFollowPageState();
