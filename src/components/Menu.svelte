@@ -78,7 +78,7 @@ $: unusedInvitesCount = $profileState.invites.reduce(
     <li>
       <details>
         <summary>Follow</summary>
-        <ul>
+        <ul class="sublinks">
           <li>
             <a
               href={$url("/follow-feed")}
