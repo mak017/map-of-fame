@@ -139,7 +139,7 @@ const createFollowState = () => {
     pushToList: (item) =>
       update((state) => ({ ...state, list: [...state.list, item] })),
     request: async (token) => {
-      const { success, result } = await getFollowing(token);
+      const { success, result } = await getFollowing(token, { limit: 100 });
 
       if (success && result) {
         const { following, followingCount } = result;

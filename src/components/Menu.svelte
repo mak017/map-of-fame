@@ -7,6 +7,7 @@ import {
   followState,
   isLoggedIn,
   isMenuOpen,
+  isShowOnMapMode,
   isUserVerifyProgress,
   profileState,
   userData,
@@ -72,8 +73,12 @@ $: unusedInvitesCount = $profileState.invites.reduce(
   </button>
   <ul class="links">
     <li>
-      <a href={$url("/@:username", { username: $userData.username })}
-        >Profile</a>
+      <a
+        href={$url("/@:username", { username: $userData.username })}
+        on:click={() => {
+          isShowOnMapMode.set(false);
+          profileState.reset();
+        }}>Profile</a>
     </li>
     <li>
       <details>

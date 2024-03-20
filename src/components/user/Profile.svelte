@@ -22,6 +22,7 @@ import {
   shouldShowAddSpot,
   isFirstTimeVisit,
   isUserVerifyProgress,
+  isLoggedIn,
   profileState,
   followState,
 } from "../../js/store";
@@ -180,7 +181,7 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   }
 }
 
-$: if (!isCurrentUser && !$followState.isFetched) {
+$: if ($isLoggedIn && !isCurrentUser && !$followState.isFetched) {
   followState.request(token);
 }
 
@@ -197,13 +198,6 @@ $afterUrlChange(({ route }) => {
     profileState.setIsInitialized(false);
   }
 });
-
-const handleLogout = () => {
-  removeFromLocalStorage("token");
-  isLoggedIn.set(false);
-  userData.set({});
-  $goto("/");
-};
 
 const handleAddSpot = () => {
   shouldShowAddSpot.set(true);
@@ -512,7 +506,7 @@ const handleFollowBtnClick = async () => {
             type="button"
             class="button name"
             on:click={() => toggleSharePopup(true)}><ShareSvg /></button>
-          {#if !isCurrentUser}
+          {#if $isLoggedIn && !isCurrentUser && !$profileState.user.isSpotsHidden}
             <button
               type="button"
               class="button follow"
