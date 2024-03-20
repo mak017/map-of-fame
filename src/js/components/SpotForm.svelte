@@ -77,12 +77,23 @@ const getInitialYear = () => {
   return "";
 };
 
+const getInitialStatus = () => {
+  const difference = currentYear - +year;
+  if (difference < 2) {
+    return STATUSES.live;
+  }
+
+  if (difference < 6) {
+    return STATUSES.unknown;
+  }
+
+  return STATUSES.buffed;
+};
+
 const currentYear = getCurrentYear();
 let year = getInitialYear();
 let prevYearValue = "";
-let selectedStatus =
-  editSpotData.spotStatus ??
-  (currentYear - +year > 10 ? STATUSES.buffed : STATUSES.live);
+let selectedStatus = editSpotData.spotStatus ?? getInitialStatus();
 let image = {
   file: undefined,
   filePreview: editSpotData.img || "",
