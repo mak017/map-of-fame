@@ -159,8 +159,12 @@ let artistCrewPairs =
         {
           artist: isArtist() ? $userData.artist?.name ?? "" : "",
           crew: isArtist() || isCrew() ? $userData.crew?.name ?? "" : "",
-          userArtist: "",
-          userCrew: "",
+          userArtist: isArtist() ? $userData.id : "",
+          userCrew: isCrew() ? $userData.id : "",
+          artistData: isArtist()
+            ? { ...$userData, type: undefined }
+            : undefined,
+          crewData: isCrew() ? { ...$userData, type: undefined } : undefined,
         },
       ];
 
