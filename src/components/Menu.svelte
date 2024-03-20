@@ -10,8 +10,10 @@ import {
   isShowOnMapMode,
   isUserVerifyProgress,
   profileState,
+  selectedYear,
   userData,
 } from "../js/store";
+import { requestSpots } from "../js/init";
 import { editUser, getInvites } from "../js/api/auth";
 import {
   isMobile,
@@ -36,6 +38,7 @@ const handleHideAllClick = () => {
     const { success, result } = response;
     if (success && result) {
       $userData.isSpotsHidden = result.isSpotsHidden === "1";
+      requestSpots($selectedYear);
     }
   });
 };

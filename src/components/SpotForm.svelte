@@ -159,8 +159,12 @@ let artistCrewPairs =
         {
           artist: isArtist() ? $userData.artist?.name ?? "" : "",
           crew: isArtist() || isCrew() ? $userData.crew?.name ?? "" : "",
-          userArtist: "",
-          userCrew: "",
+          userArtist: isArtist() ? $userData.id : "",
+          userCrew: isCrew() ? $userData.id : "",
+          artistData: isArtist()
+            ? { ...$userData, type: undefined }
+            : undefined,
+          crewData: isCrew() ? { ...$userData, type: undefined } : undefined,
         },
       ];
 
@@ -943,7 +947,7 @@ form {
     width: 54px;
     height: 54px;
     background-color: var(--color-accent);
-    background-image: url(../../images/re-upload.svg);
+    background-image: url(/images/re-upload.svg);
     background-size: 24px 24px;
     background-repeat: no-repeat;
     background-position: 50% 50%;
@@ -956,7 +960,7 @@ form {
     background-color: var(--color-accent);
     background-repeat: no-repeat;
     background-position: 50% 50%;
-    background-image: url(../../images/trash.svg);
+    background-image: url(/images/trash.svg);
     background-size: 14px 18px;
   }
 
@@ -1117,7 +1121,7 @@ form {
       left: 4px;
       width: 14px;
       height: 9px;
-      background: url(../../images/checkbox.svg) 50% 50% / contain no-repeat;
+      background: url(/images/checkbox.svg) 50% 50% / contain no-repeat;
       transform: scale(0);
       transition: transform 0.3s;
     }

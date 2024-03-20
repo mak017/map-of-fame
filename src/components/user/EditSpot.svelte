@@ -10,7 +10,6 @@ import Spinner from "../elements/Spinner.svelte";
 import SpotForm from "../SpotForm.svelte";
 
 const { id, username } = $params;
-const strippedUsername = username.substring(1);
 const token = loadFromLocalStorage("token") || null;
 
 const getSpotData = async () => {
@@ -23,7 +22,7 @@ const getSpotData = async () => {
   if (success && result) {
     const { user } = result;
 
-    if (user.username !== strippedUsername) {
+    if (user.username !== username) {
       $goto("/404");
       throw new Error();
     }
