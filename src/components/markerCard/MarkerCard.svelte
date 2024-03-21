@@ -23,6 +23,7 @@ import {
   areaSpots,
   userData,
   editSpotData,
+  isLoggedIn,
 } from "../../js/store";
 import { getSpotById } from "../../js/api/spot.js";
 
@@ -33,6 +34,7 @@ import ShareSvg from "../elements/icons/ShareSvg.svelte";
 import PencilSvg from "../elements/icons/PencilSvg.svelte";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import ShareMarker from "./ShareMarker.svelte";
+import StatusUpdate from "./StatusUpdate.svelte";
 
 import { EMPTY_YEAR_STRING, MAX_ZOOM, MIN_ZOOM } from "../../js/constants.js";
 
@@ -59,7 +61,9 @@ const token = loadFromLocalStorage("token") || null;
 
 let isShareOpened = false;
 let isComplainOpened = false;
+let isStatusUpdateOpened = false;
 let videoEmbed = "";
+let isCurrentUser = username === $userData.username;
 
 onDestroy(() => {
   !$isShowOnMapMode && selectedUserProfileData.set({});
@@ -102,6 +106,8 @@ const getSpotData = async () => {
       throw new Error();
     }
 
+    isCurrentUser = username === $userData.username;
+
     if (video) {
       videoEmbed = await getVideoEmbed(video);
     }
@@ -126,9 +132,11 @@ const getSpotData = async () => {
 
 const EMPTY_ARTIST = "Unknown";
 
-const onShareToggle = (toggle) => (isShareOpened = toggle);
+const handleShareToggle = (toggle) => (isShareOpened = toggle);
 
-const onComplainToggle = (toggle) => (isComplainOpened = toggle);
+const handleComplainToggle = (toggle) => (isComplainOpened = toggle);
+
+const handleStatusUpdateToggle = (toggle) => (isStatusUpdateOpened = toggle);
 
 const resetAreaSelectionMode = () => {
   if (!$isAreaSelectionActive) return;
@@ -275,7 +283,13 @@ const getArtistsString = (artistCrew) => {
       </div>
       <div class="status">
         <div class="subtitle">Status</div>
-        <div class="title">{data.status}</div>
+        <button
+          type="button"
+          class="button title"
+          disabled={!$isLoggedIn || isCurrentUser}
+          on:click={() => {
+            handleStatusUpdateToggle(true);
+          }}>{data.status}</button>
       </div>
     </div>
     <div class="img">
@@ -297,13 +311,13 @@ const getArtistsString = (artistCrew) => {
           <button
             type="button"
             class="button"
-            on:click={() => onShareToggle(true)}><ShareSvg /></button>
+            on:click={() => handleShareToggle(true)}><ShareSvg /></button>
         </div>
         <div class="complain">
           <button
             type="button"
             class="button"
-            on:click={() => onComplainToggle(true)} />
+            on:click={() => handleComplainToggle(true)} />
         </div>
       </div>
     </div>
@@ -341,7 +355,7 @@ const getArtistsString = (artistCrew) => {
       </div>
     {/if}
   </div>
-  {#if username === $userData.username}
+  {#if isCurrentUser}
     <button
       type="button"
       class="button edit"
@@ -349,13 +363,20 @@ const getArtistsString = (artistCrew) => {
       on:click={() => handleGoToEdit(data)}><PencilSvg /></button>
   {/if}
   {#if isShareOpened}
-    <Popup on:close={() => onShareToggle(false)} title="Share Link">
+    <Popup on:close={() => handleShareToggle(false)} title="Share Link">
       <ShareMarker />
     </Popup>
   {/if}
   {#if isComplainOpened}
-    <Popup on:close={() => onComplainToggle(false)} title="Complaint!">
-      <MarkerCardComplaint {onComplainToggle} spotId={id} />
+    <Popup on:close={() => handleComplainToggle(false)} title="Complaint!">
+      <MarkerCardComplaint {handleComplainToggle} spotId={id} />
+    </Popup>
+  {/if}
+  {#if isStatusUpdateOpened}
+    <Popup
+      on:close={() => handleStatusUpdateToggle(false)}
+      title="Status update">
+      <StatusUpdate close={() => handleStatusUpdateToggle(false)} spotId={id} />
     </Popup>
   {/if}
 {/await}
@@ -412,6 +433,7 @@ const getArtistsString = (artistCrew) => {
 .title {
   max-width: 100%;
   overflow: hidden;
+  background: none;
   color: var(--color-dark);
   font-size: 24px;
   font-weight: 900;

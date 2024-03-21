@@ -62,4 +62,5 @@ export const ERROR_MESSAGES = {
     `The ${field} must be at least ${min} characters`,
   searchTextEmpty: "Type something to search for",
   contactEmpty: "Please provide your contact information",
+  statusEmpty: "Please select status",
 };
