@@ -258,7 +258,7 @@ const handleUserClick = (identifier) => () => {
                 {#if isMobile()}
                   <div class="head">Followers</div>
                 {/if}
-                <div class="value">{item.followers ?? ""}</div>
+                <div class="value">{item.followersCnt ?? ""}</div>
               </div>
             </a>
           {/each}

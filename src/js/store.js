@@ -128,33 +128,6 @@ const createSearchState = () => {
   };
 };
 
-const createFollowState = () => {
-  const initialState = { isFetched: false, list: [], count: 0 };
-
-  const { subscribe, set, update } = writable(initialState);
-
-  return {
-    subscribe,
-    setList: (list) => update((state) => ({ ...state, list })),
-    pushToList: (item) =>
-      update((state) => ({ ...state, list: [...state.list, item] })),
-    request: async (token) => {
-      const { success, result } = await getFollowing(token, { limit: 100 });
-
-      if (success && result) {
-        const { following, followingCount } = result;
-        update((state) => ({
-          ...state,
-          isFetched: true,
-          list: following,
-          count: followingCount,
-        }));
-      }
-    },
-    reset: () => set(initialState),
-  };
-};
-
 const createFollowPageState = () => {
   const initialState = {
     list: [],
@@ -186,7 +159,6 @@ const createFollowPageState = () => {
 
 export const profileState = createProfileState();
 export const searchState = createSearchState();
-export const followState = createFollowState();
 export const followFeedState = createFollowPageState();
 export const followingState = createFollowPageState();
 export const followersState = createFollowPageState();

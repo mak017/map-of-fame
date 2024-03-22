@@ -24,7 +24,6 @@ import {
   isUserVerifyProgress,
   isLoggedIn,
   profileState,
-  followState,
 } from "../../js/store";
 import { getProfileYears } from "./../../js/utils/datesUtils.js";
 import {
@@ -73,7 +72,6 @@ let userDescrElement;
 let isExpandableAbout = false;
 let isExpandedAbout = false;
 let aboutCharacterCount = 0;
-let isFollowing = false;
 
 const token = loadFromLocalStorage("token") || null;
 
@@ -163,7 +161,7 @@ $: if (about && userDescrElement) {
 $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   profileState.setIsInitialized(true);
   if (!isCurrentUser && !$profileState.user.id) {
-    getUserData(username).then((response) => {
+    getUserData(token, username).then((response) => {
       const { success, result, errors } = response;
 
       if (errors) {
@@ -179,16 +177,6 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
   } else {
     fetchSpots({ isNewFetch: true });
   }
-}
-
-$: if ($isLoggedIn && !isCurrentUser && !$followState.isFetched) {
-  followState.request(token);
-}
-
-$: if (!isCurrentUser && $followState.list.length && $profileState.user.id) {
-  isFollowing = $followState.list.some(
-    (user) => user.id === $profileState.user.id,
-  );
 }
 
 $afterUrlChange(({ route }) => {
@@ -455,21 +443,14 @@ const prepareAboutText = (text) => {
 };
 
 const handleFollowBtnClick = async () => {
+  const { isFollowing, user } = $profileState;
   const request = isFollowing ? unfollowUser : followUser;
+  const { success } = await request(token, user.id);
 
-  await request(token, $profileState.user.id);
-
-  if (isFollowing) {
-    const updatedList = $followState.list.filter(
-      (user) => user.id !== $profileState.user.id,
-    );
-    console.log("updatedList", updatedList);
-    followState.setList(updatedList);
-    isFollowing = false;
-    return;
+  if (success) {
+    const updatedUser = { ...user, isFollowing: !isFollowing };
+    profileState.setUser(updatedUser);
   }
-
-  followState.pushToList($profileState.user);
 };
 </script>
 
@@ -510,9 +491,9 @@ const handleFollowBtnClick = async () => {
             <button
               type="button"
               class="button follow"
-              class:active={!isFollowing}
+              class:active={!$profileState.user.isFollowing}
               on:click={handleFollowBtnClick}
-              >{isFollowing ? "Unfollow" : "Follow"}</button>
+              >{$profileState.user.isFollowing ? "Unfollow" : "Follow"}</button>
           {/if}
         </div>
       {/if}

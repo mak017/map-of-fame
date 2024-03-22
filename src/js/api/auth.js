@@ -177,8 +177,13 @@ export const newbieRegistration = async ({
   return result;
 };
 
-export const getUserData = async (username) => {
-  const response = await fetch(USER_ID(username), { method: "GET" });
+export const getUserData = async (token, username) => {
+  const bearer = `Bearer ${token}`;
+  const response = await fetch(USER_ID(username), {
+    method: "GET",
+    withCredentials: true,
+    headers: { Authorization: bearer },
+  });
   const result = await response.json();
   return result;
 };

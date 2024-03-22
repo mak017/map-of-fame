@@ -4,7 +4,6 @@ import { url } from "@roxi/routify";
 
 import {
   followFeedState,
-  followState,
   isLoggedIn,
   isMenuOpen,
   isShowOnMapMode,
@@ -47,7 +46,6 @@ const handleLogout = () => {
   removeFromLocalStorage("token");
   isLoggedIn.set(false);
   userData.set({});
-  followState.reset();
   isMenuOpen.set(false);
 };
 
