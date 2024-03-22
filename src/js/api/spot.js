@@ -205,7 +205,7 @@ export const requestChangeStatus = async (
   const bearer = `Bearer ${token}`;
   const formData = new FormData();
   formData.append("spot_status", spotStatus);
-  formData.append("description", description);
+  description && formData.append("description", description);
   const response = await fetch(SPOT_ID_INCORRECT_STATUS(spotId), {
     method: "POST",
     withCredentials: true,
