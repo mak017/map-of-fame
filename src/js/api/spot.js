@@ -6,6 +6,7 @@ import {
   SPOT_FROM_POLY,
   SPOT_ID,
   SPOT_ID_FEEDBACK,
+  SPOT_ID_INCORRECT_STATUS,
   SPOT_LIMIT_DAYS,
   SPOT_YEAR,
   USER_CATEGORY,
@@ -190,6 +191,25 @@ export const feedbackOnSpot = async (spotId, { userId, message, reason }) => {
   formData.append("reason", reason);
   const response = await fetch(SPOT_ID_FEEDBACK(spotId), {
     method: "POST",
+    body: formData,
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const requestChangeStatus = async (
+  token,
+  spotId,
+  { spotStatus, description }
+) => {
+  const bearer = `Bearer ${token}`;
+  const formData = new FormData();
+  formData.append("spot_status", spotStatus);
+  formData.append("description", description);
+  const response = await fetch(SPOT_ID_INCORRECT_STATUS(spotId), {
+    method: "POST",
+    withCredentials: true,
+    headers: { Authorization: bearer },
     body: formData,
   });
   const result = await response.json();
