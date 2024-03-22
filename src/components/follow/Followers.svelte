@@ -4,7 +4,7 @@ import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
 import { url } from "@roxi/routify";
 
-import { followersState } from "../../js/store";
+import { followersState, profileState } from "../../js/store";
 import { getFollowers } from "../../js/api/follow";
 import { loadFromLocalStorage } from "../../js/utils/commonUtils";
 
@@ -65,6 +65,7 @@ const handleLoadMore = () => {
 const handleUserClick = (user) => () => {
   const element = document.querySelector(`[data-scroll-element="${user.id}"]`);
   followersState.setScrollOffset(element.offsetTop);
+  profileState.reset();
 };
 </script>
 
