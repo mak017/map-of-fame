@@ -1,7 +1,7 @@
 <script>
 import { goto, params } from "@roxi/routify";
 
-import { editSpotData } from "./../../js/store.js";
+import { editSpotData, userData } from "./../../js/store.js";
 import { getSpotById } from "../../js/api/spot.js";
 import { isEmpty, loadFromLocalStorage } from "../../js/utils/commonUtils.js";
 
@@ -11,6 +11,10 @@ import SpotForm from "../SpotForm.svelte";
 
 const { id, username } = $params;
 const token = loadFromLocalStorage("token") || null;
+
+$: if ($userData.username && $userData.username !== username) {
+  $goto("/404");
+}
 
 const getSpotData = async () => {
   if ($editSpotData.id) {
