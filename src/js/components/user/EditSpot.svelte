@@ -1,7 +1,7 @@
 <script>
 import { goto, params } from "@roxi/routify";
 
-import { editSpotData } from "./../../store.js";
+import { editSpotData, userData } from "./../../store.js";
 import { getSpotById } from "../../api/spot.js";
 import { isEmpty, loadFromLocalStorage } from "../../utils/commonUtils.js";
 
@@ -12,6 +12,10 @@ import Spinner from "../elements/Spinner.svelte";
 const { id, username } = $params;
 const strippedUsername = username.substring(1);
 const token = loadFromLocalStorage("token") || null;
+
+$: if ($userData.username && $userData.username !== username) {
+  $goto("/404");
+}
 
 const getSpotData = async () => {
   if ($editSpotData.id) {
