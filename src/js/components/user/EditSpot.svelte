@@ -13,7 +13,7 @@ const { id, username } = $params;
 const strippedUsername = username.substring(1);
 const token = loadFromLocalStorage("token") || null;
 
-$: if ($userData.username && $userData.username !== username) {
+$: if ($userData.username && $userData.username !== strippedUsername) {
   $goto("/404");
 }
 
