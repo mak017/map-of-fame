@@ -54,6 +54,7 @@ const createProfileState = () => {
     offset: 0,
     scrollOffset: 0,
     spotsList: [],
+    markedSpots: [],
     currentYear: undefined,
     sortBy: "created_at",
     yearsToApply: [],
@@ -63,6 +64,7 @@ const createProfileState = () => {
     isLoading: true,
     isShowSpinner: true,
     hasMore: false,
+    showMarkedSpots: false,
   };
   const { subscribe, set, update } = writable(initialState);
 
@@ -73,6 +75,8 @@ const createProfileState = () => {
     setScrollOffset: (offset) =>
       update((state) => ({ ...state, scrollOffset: offset })),
     setSpotsList: (spotsList) => update((state) => ({ ...state, spotsList })),
+    setMarkedSpots: (markedSpots) =>
+      update((state) => ({ ...state, markedSpots })),
     setCurrentYear: (currentYear) =>
       update((state) => ({ ...state, currentYear })),
     setYearsToApply: (yearsToApply) =>
@@ -87,6 +91,8 @@ const createProfileState = () => {
     setIsShowSpinner: (value) =>
       update((state) => ({ ...state, isShowSpinner: value })),
     setHasMore: (value) => update((state) => ({ ...state, hasMore: value })),
+    setShowMarkedSpots: (value) =>
+      update((state) => ({ ...state, showMarkedSpots: value })),
     reset: () => set(initialState),
   };
 };
@@ -128,7 +134,7 @@ const createSearchState = () => {
   };
 };
 
-const createFollowPageState = () => {
+const createInfiniteScrollState = () => {
   const initialState = {
     list: [],
     offset: 0,
@@ -159,6 +165,7 @@ const createFollowPageState = () => {
 
 export const profileState = createProfileState();
 export const searchState = createSearchState();
-export const followFeedState = createFollowPageState();
-export const followingState = createFollowPageState();
-export const followersState = createFollowPageState();
+export const followFeedState = createInfiniteScrollState();
+export const followingState = createInfiniteScrollState();
+export const followersState = createInfiniteScrollState();
+export const notificationsState = createInfiniteScrollState();

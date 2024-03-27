@@ -1,4 +1,4 @@
-import { MAX_SPOTS_PER_PAGE } from "../constants";
+import { MAX_ITEMS_PER_PAGE } from "../constants";
 import {
   SPOT_SEARCH,
   CREW_ARTIST_SEARCH,
@@ -18,7 +18,7 @@ export const requestSearchArtistsCrews = async (text) => {
 
 export const requestPhotoWall = async (
   text,
-  limit = MAX_SPOTS_PER_PAGE,
+  limit = MAX_ITEMS_PER_PAGE,
   offset = 0
 ) => {
   const response = await fetch(

@@ -1,13 +1,12 @@
 <script>
 import { onMount } from "svelte";
-import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
-import { afterUrlChange, goto, params, url } from "@roxi/routify";
+import { afterUrlChange, goto, params } from "@roxi/routify";
 import linkifyHtml from "linkify-html";
 import "../../js/utils/customMentionPlugin.js";
 
 import { editUser, getUserData } from "./../../js/api/auth.js";
-import { getUserSpots } from "../../js/api/spot";
+import { getUserMarkedSpots, getUserSpots } from "../../js/api/spot";
 import { followUser, unfollowUser } from "../../js/api/follow.js";
 import {
   isShowOnMapMode,
@@ -33,9 +32,10 @@ import {
 } from "../../js/utils/commonUtils";
 import { processImage } from "../../js/utils/imageUtils.js";
 
-import Popup from "../Popup.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import ShareProfile from "./ShareProfile.svelte";
+import SpotCard from "./SpotCard.svelte";
+import Popup from "../Popup.svelte";
 import Spinner from "./../elements/Spinner.svelte";
 import CustomSelect from "../elements/CustomSelect.svelte";
 import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
@@ -49,7 +49,7 @@ import {
   EMPTY_YEAR_STRING,
   ERROR_MESSAGES,
   MAX_IMAGE_FILE_SIZE,
-  MAX_SPOTS_PER_PAGE,
+  MAX_ITEMS_PER_PAGE,
   USER_ABOUT_TEXT_LIMIT,
 } from "../../js/constants";
 
@@ -103,7 +103,12 @@ onMount(() => {
 const fetchSpots = ({ year, offset, isNewFetch = false }) => {
   profileState.setIsLoading(isNewFetch);
   profileState.setIsShowSpinner(true);
-  getUserSpots(username, token, {
+
+  const request = $profileState.showMarkedSpots
+    ? getUserMarkedSpots
+    : getUserSpots;
+
+  request(username, token, {
     year,
     offset,
     sortBy: $profileState.sortBy,
@@ -116,7 +121,7 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
       }
       newBatch = spots ? [...spots] : [];
       profileState.setSpotsList([...$profileState.spotsList, ...newBatch]);
-      profileState.setHasMore(newBatch.length === MAX_SPOTS_PER_PAGE);
+      profileState.setHasMore(newBatch.length === MAX_ITEMS_PER_PAGE);
       const yearsToApply = getProfileYears(years);
       profileState.setYearsToApply(yearsToApply);
       if ($profileState.currentYear === undefined || year === undefined) {
@@ -222,7 +227,7 @@ const onLoadMore = () => {
     return;
   }
 
-  const offset = $profileState.offset + MAX_SPOTS_PER_PAGE;
+  const offset = $profileState.offset + MAX_ITEMS_PER_PAGE;
   profileState.setOffset(offset);
   if ($profileState.currentYear === ALL_YEARS_STRING) {
     fetchSpots({ offset });
@@ -452,6 +457,11 @@ const handleFollowBtnClick = async () => {
     profileState.setUser(updatedUser);
   }
 };
+
+const handleMarkedSpotsSwitch = (showMarked) => () => {
+  profileState.setShowMarkedSpots(showMarked);
+  fetchSpots({ isNewFetch: true });
+};
 </script>
 
 <div
@@ -561,6 +571,20 @@ const handleFollowBtnClick = async () => {
   {#if !!$profileState.spotsList.length || $profileState.isShowSpinner}
     <div class="data">
       {#if !!$profileState.spotsList.length}
+        <div class="data-tabs_wrapper">
+          <div class="right_tabs">
+            <button
+              type="button"
+              class="button"
+              class:active={!$profileState.showMarkedSpots}
+              on:click={handleMarkedSpotsSwitch(false)}>My spots</button>
+            <button
+              type="button"
+              class="button"
+              class:active={$profileState.showMarkedSpots}
+              on:click={handleMarkedSpotsSwitch(true)}>Marked spots</button>
+          </div>
+        </div>
         <div class="data-top">
           <div class="year-select">
             <CustomSelect
@@ -596,45 +620,12 @@ const handleFollowBtnClick = async () => {
       {#if !$profileState.isLoading}
         <div class="spots">
           {#each $profileState.spotsList as spot}
-            <a
-              href={!isCurrentUser
-                ? $url("/@:username/spot/:id", {
-                    username: $profileState.user.username,
-                    id: spot.id,
-                  })
-                : undefined}
-              class="spot-card"
-              class:isHidden={!spot.showInProfile || spot.showInProfile === "0"}
-              class:isFullyHidden={isCurrentUser && $userData.isSpotsHidden}
-              role="button"
-              on:click|preventDefault={() =>
-                !isCurrentUser && onSpotClick(spot)}
-              data-spot-id={spot.id}>
-              <img
-                loading="lazy"
-                src={spot.thumbnail}
-                alt={spot.title || `${username}'s art`}
-                in:fade|global={{ duration: 200 }} />
-              {#if isCurrentUser}
-                <div class="overlay">
-                  <a
-                    href={$url("/@:username/spot/:id", {
-                      username,
-                      id: spot.id,
-                    })}
-                    class="button view"
-                    on:click|preventDefault={() => onSpotClick(spot)}>👁</a>
-                  <button
-                    type="button"
-                    class="button edit"
-                    on:click={() => handleEdit(spot)}><PencilSvg /></button>
-                  <button
-                    type="button"
-                    class="button delete"
-                    on:click={() => handleDelete(spot)} />
-                </div>
-              {/if}
-            </a>
+            <SpotCard
+              isEditable={isCurrentUser && !$profileState.showMarkedSpots}
+              {spot}
+              {onSpotClick}
+              onEdit={handleEdit}
+              onDelete={handleDelete} />
           {/each}
           {#if parentModal}
             <InfiniteScroll
@@ -981,10 +972,29 @@ const handleFollowBtnClick = async () => {
   flex: 1 0 auto;
   width: 100%;
 
+  &-tabs_wrapper {
+    display: flex;
+    margin-bottom: 32px;
+  }
+
   &-top {
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 16px;
+  }
+}
+
+.right_tabs {
+  margin-left: auto;
+
+  .button {
+    background: none;
+
+    &.active {
+      color: var(--color-accent);
+      font-weight: 600;
+      pointer-events: none;
+    }
   }
 }
 
@@ -1030,115 +1040,6 @@ const handleFollowBtnClick = async () => {
   grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
   justify-content: space-between;
   width: 100%;
-}
-
-.spot-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 2px;
-  background-color: #d3d3d3;
-  cursor: pointer;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    user-select: none;
-  }
-
-  .overlay {
-    display: flex;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.3s;
-    border-radius: inherit;
-    opacity: 0;
-    background: rgba($color: #000, $alpha: 0.45);
-  }
-
-  &.isHidden {
-    &::after {
-      content: "🙈";
-      display: flex;
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      align-items: center;
-      justify-content: center;
-      transition:
-        opacity 0.3s,
-        visibility 0.3s;
-      background: rgba($color: #432fd8, $alpha: 0.4);
-      font-size: 64px;
-    }
-  }
-
-  &.isFullyHidden {
-    &::after {
-      content: "👮‍♂️🙈👮‍♂️";
-      display: flex;
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      align-items: center;
-      justify-content: center;
-      transition:
-        opacity 0.3s,
-        visibility 0.3s;
-      background: rgba($color: #432fd8, $alpha: 0.4);
-      font-size: 48px;
-    }
-  }
-
-  &:hover {
-    &::after {
-      opacity: 0;
-      visibility: hidden;
-    }
-    .overlay {
-      opacity: 1;
-    }
-  }
-}
-
-.view,
-.edit,
-.delete {
-  width: 54px;
-  height: 54px;
-  margin: 12px;
-  background-color: var(--color-accent);
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-}
-
-.view {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-light);
-  text-decoration: none;
-  font-size: 32px;
-}
-
-.edit {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.delete {
-  background-image: url(../../../images/trash.svg);
-  background-size: 14px 18px;
 }
 
 .spinner-container {

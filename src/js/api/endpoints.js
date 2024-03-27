@@ -31,6 +31,20 @@ export const USER_ID_SPOTS = (id, limit, offset, sortBy, year) => {
   return url;
 };
 
+export const USER_ID_MARKED = (id, limit, offset, sortBy, year) => {
+  let url = `${ENDPOINT_ORIGIN}/api/user/${id}/marked?limit=${limit}&offset=${offset}`;
+
+  if (typeof sortBy === "string") {
+    url = url.concat(`&sortBy=${sortBy}`);
+  }
+
+  if (typeof year === "string") {
+    url = url.concat(`&year=${year}`);
+  }
+
+  return url;
+};
+
 export const USER_PASSWORD = () => `${ENDPOINT_ORIGIN}/api/user/password`;
 
 export const USER_PASSWORD_TOKEN = () =>
@@ -164,3 +178,12 @@ export const FOLLOWING = (limit, offset) =>
 
 export const FOLLOWERS_FEED = (limit, offset) =>
   `${ENDPOINT_ORIGIN}/api/followers/feed?limit=${limit}&offset=${offset}`;
+
+export const NOTIFICATIONS = (limit, offset) =>
+  `${ENDPOINT_ORIGIN}/api/notifications?limit=${limit}&offset=${offset}`;
+
+export const INVITATION_APPROVE = () =>
+  `${ENDPOINT_ORIGIN}/api/invitation/approve`;
+
+export const INVITATION_DECLINE = () =>
+  `${ENDPOINT_ORIGIN}/api/invitation/decline`;

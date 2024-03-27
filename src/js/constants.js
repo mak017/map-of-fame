@@ -10,7 +10,7 @@ export const MIN_ZOOM = 2;
 
 export const MAX_ZOOM = 19;
 
-export const MAX_SPOTS_PER_PAGE = 36;
+export const MAX_ITEMS_PER_PAGE = 36;
 
 export const MAX_IMAGE_FILE_SIZE = 5120000;
 

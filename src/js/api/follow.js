@@ -6,7 +6,7 @@ import {
   UNFOLLOW,
 } from "./endpoints";
 
-import { MAX_SPOTS_PER_PAGE } from "../constants";
+import { MAX_ITEMS_PER_PAGE } from "../constants";
 
 export const followUser = async (token, userId) => {
   const bearer = `Bearer ${token}`;
@@ -42,7 +42,7 @@ export const unfollowUser = async (token, userId) => {
 
 export const getFollowers = async (
   token,
-  { limit = MAX_SPOTS_PER_PAGE, offset = 0 }
+  { limit = MAX_ITEMS_PER_PAGE, offset = 0 }
 ) => {
   const bearer = `Bearer ${token}`;
 
@@ -57,7 +57,7 @@ export const getFollowers = async (
 
 export const getFollowing = async (
   token,
-  { limit = MAX_SPOTS_PER_PAGE, offset = 0 }
+  { limit = MAX_ITEMS_PER_PAGE, offset = 0 }
 ) => {
   const bearer = `Bearer ${token}`;
 
@@ -72,7 +72,7 @@ export const getFollowing = async (
 
 export const getFollowingFeed = async (
   token,
-  { limit = MAX_SPOTS_PER_PAGE, offset = 0 }
+  { limit = MAX_ITEMS_PER_PAGE, offset = 0 }
 ) => {
   const bearer = `Bearer ${token}`;
 

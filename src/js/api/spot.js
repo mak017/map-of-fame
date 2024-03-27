@@ -1,4 +1,4 @@
-import { MAX_SPOTS_PER_PAGE } from "../constants";
+import { MAX_ITEMS_PER_PAGE } from "../constants";
 import {
   DRAFT_GET_LAST,
   DRAFT_PUBLISH,
@@ -10,6 +10,7 @@ import {
   SPOT_LIMIT_DAYS,
   SPOT_YEAR,
   USER_CATEGORY,
+  USER_ID_MARKED,
   USER_ID_SPOTS,
 } from "./endpoints";
 
@@ -219,11 +220,29 @@ export const requestChangeStatus = async (
 export const getUserSpots = async (
   userId,
   token,
-  { limit = MAX_SPOTS_PER_PAGE, offset = 0, year = null, sortBy }
+  { limit = MAX_ITEMS_PER_PAGE, offset = 0, year = null, sortBy }
 ) => {
   const bearer = `Bearer ${token}`;
   const response = await fetch(
     USER_ID_SPOTS(userId, limit, offset, sortBy, year),
+    {
+      method: "GET",
+      withCredentials: true,
+      headers: { Authorization: bearer },
+    }
+  );
+  const result = await response.json();
+  return result;
+};
+
+export const getUserMarkedSpots = async (
+  userId,
+  token,
+  { limit = MAX_ITEMS_PER_PAGE, offset = 0, year = null, sortBy }
+) => {
+  const bearer = `Bearer ${token}`;
+  const response = await fetch(
+    USER_ID_MARKED(userId, limit, offset, sortBy, year),
     {
       method: "GET",
       withCredentials: true,

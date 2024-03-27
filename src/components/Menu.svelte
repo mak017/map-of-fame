@@ -95,6 +95,9 @@ $: unusedInvitesCount = $profileState.invites.reduce(
         </ul>
       </details>
     </li>
+    <li>
+      <a href={$url("/notifications")}>Notifications</a>
+    </li>
   </ul>
   {#if $profileState.invites.length}
     <div class="invites">
@@ -200,14 +203,14 @@ $: unusedInvitesCount = $profileState.invites.reduce(
   }
 
   details {
-    margin-bottom: 16px;
-
     a {
       margin-left: 15px;
       font-size: 16px;
     }
 
     &[open] {
+      margin-bottom: 16px;
+
       > summary::after {
         transform: rotate(180deg);
       }

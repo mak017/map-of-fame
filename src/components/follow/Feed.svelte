@@ -10,7 +10,7 @@ import { loadFromLocalStorage } from "../../js/utils/commonUtils";
 
 import Spinner from "../elements/Spinner.svelte";
 
-import { MAX_SPOTS_PER_PAGE } from "../../js/constants";
+import { MAX_ITEMS_PER_PAGE } from "../../js/constants";
 
 const token = loadFromLocalStorage("token") || null;
 let newBatch = [];
@@ -19,7 +19,7 @@ let parentModal = null;
 const fetchFeed = async (offset = 0, isNewFetch) => {
   followFeedState.setIsLoading(isNewFetch);
   followFeedState.setIsShowSpinner(true);
-  const response = await getFollowingFeed(token, MAX_SPOTS_PER_PAGE, offset);
+  const response = await getFollowingFeed(token, MAX_ITEMS_PER_PAGE, offset);
   const { success, result } = response;
   if (success && result) {
     if (isNewFetch) {
@@ -27,8 +27,7 @@ const fetchFeed = async (offset = 0, isNewFetch) => {
     }
     newBatch = result.spots ? [...result.spots] : [];
     followFeedState.setList([...$followFeedState.list, ...newBatch]);
-    // followFeedState.setGridTotal(result.total);
-    followFeedState.setHasMore(newBatch.length === MAX_SPOTS_PER_PAGE);
+    followFeedState.setHasMore(newBatch.length === MAX_ITEMS_PER_PAGE);
     followFeedState.setIsFetched(true);
   }
   followFeedState.setIsLoading(false);
@@ -57,7 +56,7 @@ const handleLoadMore = () => {
     return;
   }
 
-  const offset = $followFeedState.offset + MAX_SPOTS_PER_PAGE;
+  const offset = $followFeedState.offset + MAX_ITEMS_PER_PAGE;
   followFeedState.setOffset(offset);
   fetchFeed(offset);
 };

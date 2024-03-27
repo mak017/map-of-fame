@@ -17,7 +17,7 @@ import FormRadioButton from "./elements/FormRadioButton.svelte";
 import Spinner from "./elements/Spinner.svelte";
 import LoupeSvg from "./elements/icons/LoupeSvg.svelte";
 
-import { ERROR_MESSAGES, MAX_SPOTS_PER_PAGE } from "../js/constants";
+import { ERROR_MESSAGES, MAX_ITEMS_PER_PAGE } from "../js/constants";
 
 let { text: textFromUrl } = $params;
 
@@ -57,7 +57,7 @@ const fetchPhotoWall = async (offset = 0, isNewFetch) => {
     searchState.setIsShowSpinner(true);
     const response = await requestPhotoWall(
       text.toLowerCase(),
-      MAX_SPOTS_PER_PAGE,
+      MAX_ITEMS_PER_PAGE,
       offset,
     );
     const { success, result } = response;
@@ -68,7 +68,7 @@ const fetchPhotoWall = async (offset = 0, isNewFetch) => {
       newBatch = result.items ? [...result.items] : [];
       searchState.setGrid([...$searchState.grid, ...newBatch]);
       searchState.setGridTotal(result.total);
-      searchState.setHasMore(newBatch.length === MAX_SPOTS_PER_PAGE);
+      searchState.setHasMore(newBatch.length === MAX_ITEMS_PER_PAGE);
       searchState.setIsFetched(true);
     }
     searchState.setIsLoading(false);
@@ -114,7 +114,7 @@ const handleLoadMore = () => {
     return;
   }
 
-  const offset = $searchState.offset + MAX_SPOTS_PER_PAGE;
+  const offset = $searchState.offset + MAX_ITEMS_PER_PAGE;
   searchState.setOffset(offset);
   if ($searchState.currentView === "grid") {
     fetchPhotoWall(offset);
