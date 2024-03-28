@@ -3,11 +3,14 @@ import { fly } from "svelte/transition";
 import { url } from "@roxi/routify";
 
 import {
+  followersState,
   followFeedState,
+  followingState,
   isLoggedIn,
   isMenuOpen,
   isShowOnMapMode,
   isUserVerifyProgress,
+  notificationsState,
   profileState,
   selectedYear,
   userData,
@@ -86,17 +89,23 @@ $: unusedInvitesCount = $profileState.invites.reduce(
         <summary>Follow</summary>
         <ul class="sublinks">
           <li>
-            <a
-              href={$url("/follow-feed")}
-              on:click={() => followFeedState.reset()}>Feed</a>
+            <a href={$url("/follow-feed")} on:click={followFeedState.reset}
+              >Feed</a>
           </li>
-          <li><a href={$url("/following")}>Following</a></li>
-          <li><a href={$url("/followers")}>Followers</a></li>
+          <li>
+            <a href={$url("/following")} on:click={followingState.reset}
+              >Following</a>
+          </li>
+          <li>
+            <a href={$url("/followers")} on:click={followersState.reset}
+              >Followers</a>
+          </li>
         </ul>
       </details>
     </li>
     <li>
-      <a href={$url("/notifications")}>Notifications</a>
+      <a href={$url("/notifications")} on:click={notificationsState.reset}
+        >Notifications</a>
     </li>
   </ul>
   {#if $profileState.invites.length}

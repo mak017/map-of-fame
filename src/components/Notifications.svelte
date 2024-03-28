@@ -30,7 +30,7 @@ const fetchNotificationss = async (offset = 0, isNewFetch) => {
     if (isNewFetch) {
       notificationsState.setList([]);
     }
-    newBatch = result ? [...result] : [];
+    newBatch = result.notifications ? [...result.notifications] : [];
     notificationsState.setList([...$notificationsState.list, ...newBatch]);
     notificationsState.setHasMore(newBatch.length === MAX_ITEMS_PER_PAGE);
     notificationsState.setIsFetched(true);
@@ -86,6 +86,11 @@ const handleNoClick = (spotArtistCrewId) => () => {
           {#each $notificationsState.list as notification}
             <div class="notification">
               <div class="text">{@html notification.message}</div>
+              {#if notification.description}
+                <blockquote class="description">
+                  {notification.description}
+                </blockquote>
+              {/if}
               {#if notification.notificationTypeId === 1}
                 <div class="buttons">
                   <button
@@ -158,6 +163,12 @@ const handleNoClick = (spotArtistCrewId) => () => {
   padding: 16px;
   border: 2px solid var(--color-dark);
   border-radius: 4px;
+}
+
+.description {
+  margin-top: 8px;
+  border-left: 2px solid var(--color-accent);
+  padding-left: 8px;
 }
 
 .buttons {

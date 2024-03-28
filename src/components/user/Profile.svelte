@@ -448,12 +448,12 @@ const prepareAboutText = (text) => {
 };
 
 const handleFollowBtnClick = async () => {
-  const { isFollowing, user } = $profileState;
-  const request = isFollowing ? unfollowUser : followUser;
+  const { user } = $profileState;
+  const request = user.isFollowing ? unfollowUser : followUser;
   const { success } = await request(token, user.id);
 
   if (success) {
-    const updatedUser = { ...user, isFollowing: !isFollowing };
+    const updatedUser = { ...user, isFollowing: !user.isFollowing };
     profileState.setUser(updatedUser);
   }
 };
