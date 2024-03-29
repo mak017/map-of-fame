@@ -26,12 +26,30 @@ import {
 import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
 import Popup from "./Popup.svelte";
 import Invites from "./user/Invites.svelte";
+import { requestNotifications } from "../js/api/notifications";
+import { onMount } from "svelte";
 
 let showInvitesPopup = false;
 let unusedInvitesCount = 0;
+let unseenNotificationsCount;
 const token = loadFromLocalStorage("token") || null;
 
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
+
+const getNotificationsCount = async () => {
+  const { success, result } = await requestNotifications(token, {
+    limit: 1,
+    offset: 0,
+  });
+
+  if (success && result) {
+    unseenNotificationsCount = result.totalUnseen;
+  }
+};
+
+onMount(() => {
+  getNotificationsCount();
+});
 
 const handleHideAllClick = () => {
   editUser(token, $userData.id, {
@@ -105,7 +123,9 @@ $: unusedInvitesCount = $profileState.invites.reduce(
     </li>
     <li>
       <a href={$url("/notifications")} on:click={notificationsState.reset}
-        >Notifications</a>
+        >Notifications {typeof unseenNotificationsCount === "number"
+          ? `(${unseenNotificationsCount})`
+          : ""}</a>
     </li>
   </ul>
   {#if $profileState.invites.length}

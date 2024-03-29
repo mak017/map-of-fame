@@ -182,6 +182,12 @@ export const FOLLOWERS_FEED = (limit, offset) =>
 export const NOTIFICATIONS = (limit, offset) =>
   `${ENDPOINT_ORIGIN}/api/notifications?limit=${limit}&offset=${offset}`;
 
+export const NOTIFICATION_ID_SET_IS_SEEN = (id) =>
+  `${ENDPOINT_ORIGIN}/api/notification/${id}/setIsSeen`;
+
+export const NOTIFICATION_ID_ANSWER = (id) =>
+  `${ENDPOINT_ORIGIN}/api/notification/${id}/answer`;
+
 export const INVITATION_APPROVE = () =>
   `${ENDPOINT_ORIGIN}/api/invitation/approve`;
 

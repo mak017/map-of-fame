@@ -4,6 +4,7 @@ import InfiniteScroll from "svelte-infinite-scroll";
 
 import { notificationsState } from "../js/store";
 import {
+  answerNotification,
   approveInvitation,
   declineInvitation,
   requestNotifications,
@@ -18,7 +19,7 @@ const token = loadFromLocalStorage("token") || null;
 let newBatch = [];
 let parentModal = null;
 
-const fetchNotificationss = async (offset = 0, isNewFetch) => {
+const fetchNotifications = async (offset = 0, isNewFetch) => {
   notificationsState.setIsLoading(isNewFetch);
   notificationsState.setIsShowSpinner(true);
   const response = await requestNotifications(token, {
@@ -53,7 +54,7 @@ onMount(() => {
 });
 
 $: if (!$notificationsState.isFetched) {
-  fetchNotificationss(0, true);
+  fetchNotifications(0, true);
 }
 
 const handleLoadMore = () => {
@@ -63,7 +64,7 @@ const handleLoadMore = () => {
 
   const offset = $notificationsState.offset + MAX_ITEMS_PER_PAGE;
   notificationsState.setOffset(offset);
-  fetchNotificationss(offset);
+  fetchNotifications(offset);
 };
 
 const handleYesClick = (spotArtistCrewId) => () => {
@@ -72,6 +73,11 @@ const handleYesClick = (spotArtistCrewId) => () => {
 
 const handleNoClick = (spotArtistCrewId) => () => {
   declineInvitation(token, spotArtistCrewId);
+};
+
+const handleButtonClick = (notification, confirm) => () => {
+  const { id, spotArtistCrewId } = notification;
+  answerNotification(token, id, { spotArtistCrewId, confirm: confirm ? 1 : 0 });
 };
 </script>
 
@@ -91,17 +97,17 @@ const handleNoClick = (spotArtistCrewId) => () => {
                   {notification.description}
                 </blockquote>
               {/if}
-              {#if notification.notificationTypeId === 1}
+              {#if notification.notificationTypeId === 1 && !notification.isAnswered}
                 <div class="buttons">
                   <button
                     type="button"
                     class="button"
-                    on:click={handleYesClick(notification.spotArtistCrewId)}
+                    on:click={handleButtonClick(notification, true)}
                     >Yes</button>
                   <button
                     type="button"
                     class="button"
-                    on:click={handleNoClick(notification.spotArtistCrewId)}
+                    on:click={handleButtonClick(notification, false)}
                     >No</button>
                 </div>
               {/if}
