@@ -5,9 +5,8 @@ import InfiniteScroll from "svelte-infinite-scroll";
 import { notificationsState } from "../js/store";
 import {
   answerNotification,
-  approveInvitation,
-  declineInvitation,
   requestNotifications,
+  setNotificationSeen,
 } from "../js/api/notifications";
 import { loadFromLocalStorage } from "../js/utils/commonUtils";
 
@@ -67,17 +66,21 @@ const handleLoadMore = () => {
   fetchNotifications(offset);
 };
 
-const handleYesClick = (spotArtistCrewId) => () => {
-  approveInvitation(token, spotArtistCrewId);
-};
-
-const handleNoClick = (spotArtistCrewId) => () => {
-  declineInvitation(token, spotArtistCrewId);
-};
-
 const handleButtonClick = (notification, confirm) => () => {
   const { id, spotArtistCrewId } = notification;
   answerNotification(token, id, { spotArtistCrewId, confirm: confirm ? 1 : 0 });
+};
+
+const actionWhenInViewport = (element) => {
+  const options = { root: parentModal, rootMargin: "0px", threshold: 1 };
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      setNotificationSeen(token, element.dataset.notificationId);
+      observer.disconnect();
+    }
+  }, options);
+
+  observer.observe(element);
 };
 </script>
 
@@ -90,7 +93,11 @@ const handleButtonClick = (notification, confirm) => () => {
       {#if !!$notificationsState.list.length || $notificationsState.isShowSpinner}
         {#if !$notificationsState.isLoading}
           {#each $notificationsState.list as notification}
-            <div class="notification">
+            <div
+              use:actionWhenInViewport
+              class="notification"
+              class:unseen={!notification.isSeen}
+              data-notification-id={notification.id}>
               <div class="text">{@html notification.message}</div>
               {#if notification.description}
                 <blockquote class="description">
@@ -165,10 +172,26 @@ const handleButtonClick = (notification, confirm) => () => {
 }
 
 .notification {
+  position: relative;
   margin-bottom: 16px;
   padding: 16px;
-  border: 2px solid var(--color-dark);
+  border: 1px solid var(--color-dark);
   border-radius: 4px;
+
+  &.unseen {
+    border-width: 2px;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--color-error);
+    }
+  }
 }
 
 .description {
