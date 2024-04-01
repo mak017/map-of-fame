@@ -69,13 +69,20 @@ const handleLoadMore = () => {
 const handleButtonClick = (notification, confirm) => () => {
   const { id, spotArtistCrewId } = notification;
   answerNotification(token, id, { spotArtistCrewId, confirm: confirm ? 1 : 0 });
+  const updatedList = $notificationsState.list.map((item) =>
+    item.id === id ? { ...item, isAnswered: true } : item,
+  );
+  notificationsState.setList(updatedList);
 };
 
 const actionWhenInViewport = (element) => {
   const options = { root: parentModal, rootMargin: "0px", threshold: 1 };
   const observer = new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting) {
-      setNotificationSeen(token, element.dataset.notificationId);
+      if (element.classList.contains("unseen")) {
+        setNotificationSeen(token, element.dataset.notificationId);
+      }
+
       observer.disconnect();
     }
   }, options);

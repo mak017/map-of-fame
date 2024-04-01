@@ -70,7 +70,11 @@ const handleLogout = () => {
   isMenuOpen.set(false);
 };
 
-$: if (!$profileState.invites.length && !$isUserVerifyProgress) {
+$: if (
+  !$profileState.invites.length &&
+  !$isUserVerifyProgress &&
+  !$userData.isNewbie
+) {
   getInvites(token).then((response) => {
     const { success, result } = response;
     if (success && result) {
