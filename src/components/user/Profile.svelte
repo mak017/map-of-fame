@@ -266,7 +266,7 @@ const onSpotClick = (spot) => {
   const element = document.querySelector(`[data-spot-id="${spot.id}"]`);
   profileState.setScrollOffset(element.offsetTop);
   $goto("/@:username/spot/:id", {
-    username: isCurrentUser ? username : $profileState.user.username,
+    username: spot.user.username,
     id,
   });
 };
@@ -568,9 +568,9 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
       </div>
     {/if}
   </div>
-  {#if !!$profileState.spotsList.length || $profileState.isShowSpinner}
+  {#if !!$profileState.spotsList.length || $profileState.isShowSpinner || $profileState.showMarkedSpots}
     <div class="data">
-      {#if !!$profileState.spotsList.length}
+      {#if !!$profileState.spotsList.length || $profileState.showMarkedSpots}
         <div class="data-tabs_wrapper">
           <div class="right_tabs">
             <button
@@ -640,6 +640,8 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
         <div class="spinner-container">
           <Spinner margin="20px auto" />
         </div>
+      {:else if !$profileState.spotsList.length}
+        <div class="empty-state marked">No marked spots found</div>
       {/if}
     </div>
   {:else if !$profileState.isShowSpinner}
@@ -965,6 +967,10 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
     &:hover {
       opacity: 0.7;
     }
+  }
+
+  &.marked {
+    padding: 24px;
   }
 }
 
