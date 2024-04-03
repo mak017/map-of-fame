@@ -55,6 +55,7 @@ import FilterByUserType from "../components/FilterByUserType.svelte";
 
 let isAddSpotSidebarVisible = false;
 let inviteData = getInviteData();
+let showAuthContainer = false;
 
 let newMarker;
 
