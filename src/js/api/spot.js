@@ -7,6 +7,7 @@ import {
   SPOT_ID,
   SPOT_ID_FEEDBACK,
   SPOT_ID_INCORRECT_STATUS,
+  SPOT_ID_VOTE,
   SPOT_LIMIT_DAYS,
   SPOT_YEAR,
   USER_CATEGORY,
@@ -208,6 +209,20 @@ export const requestChangeStatus = async (
   formData.append("spot_status", spotStatus);
   description && formData.append("description", description);
   const response = await fetch(SPOT_ID_INCORRECT_STATUS(spotId), {
+    method: "POST",
+    withCredentials: true,
+    headers: { Authorization: bearer },
+    body: formData,
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const voteSpot = async (token, spotId, value) => {
+  const bearer = `Bearer ${token}`;
+  const formData = new FormData();
+  formData.append("value", value);
+  const response = await fetch(SPOT_ID_VOTE(spotId), {
     method: "POST",
     withCredentials: true,
     headers: { Authorization: bearer },

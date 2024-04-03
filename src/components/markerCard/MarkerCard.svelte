@@ -25,7 +25,7 @@ import {
   editSpotData,
   isLoggedIn,
 } from "../../js/store";
-import { getSpotById } from "../../js/api/spot.js";
+import { getSpotById, voteSpot } from "../../js/api/spot.js";
 
 import Popup from "../Popup.svelte";
 import Spinner from "../elements/Spinner.svelte";
@@ -196,6 +196,39 @@ const handleGoToEdit = (data) => {
   $goto("/@:username/spot/:id/edit", { username: username, id });
 };
 
+const getUpdatedVoteCount = (value) => {
+  const { likesCnt, dislikesCnt, userVote } = $openedMarkerData;
+
+  switch (userVote) {
+    case 1:
+      return {
+        likesCnt: likesCnt - 1,
+        dislikesCnt: value === -1 ? dislikesCnt + 1 : dislikesCnt,
+      };
+    case -1:
+      return {
+        likesCnt: value === 1 ? likesCnt + 1 : likesCnt,
+        dislikesCnt: dislikesCnt - 1,
+      };
+    default:
+      return {
+        likesCnt: value === 1 ? likesCnt + 1 : likesCnt,
+        dislikesCnt: value === -1 ? dislikesCnt + 1 : dislikesCnt,
+      };
+  }
+};
+
+const handleSpotVote = (isLike) => async () => {
+  const value = isLike ? 1 : -1;
+  await voteSpot(token, id, value);
+  const updatedData = {
+    ...$openedMarkerData,
+    ...getUpdatedVoteCount(value),
+    userVote: $openedMarkerData.userVote === value ? null : value,
+  };
+  openedMarkerData.set(updatedData);
+};
+
 const getRandomEmojis = (count = 1) => {
   let resultString = "";
   for (let index = 0; index < count; index++) {
@@ -301,6 +334,20 @@ const getArtistsString = (artistCrew) => {
         <ShowOnMapButton onClick={handleShowOnMapClick} />
       </div>
       <div class="buttons">
+        <div class="likes">
+          <button
+            type="button"
+            class="button"
+            class:active={$openedMarkerData.userVote === 1}
+            on:click={handleSpotVote(true)}
+            disabled={!$isLoggedIn}>👍 {$openedMarkerData.likesCnt}</button>
+          <button
+            type="button"
+            class="button"
+            class:active={$openedMarkerData.userVote === -1}
+            on:click={handleSpotVote(false)}
+            disabled={!$isLoggedIn}>👎 {$openedMarkerData.dislikesCnt}</button>
+        </div>
         {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}
           <div class="link" class:externalMap={isExternalMapsUrl(data.link)}>
             <a href={data.link} target="_blank" rel="noreferrer"
@@ -340,11 +387,6 @@ const getArtistsString = (artistCrew) => {
           alt={`Additional image: ${data.img.title}`} />
       </div>
     {/if}
-    <!-- {#if data.sketchImg}
-      <div class="img">
-        <img src={data.sketchImg} alt={`Sketch image: ${data.img.title}`} />
-      </div>
-    {/if} -->
     {#if data.video}
       <div
         id="video-embedded"
@@ -509,6 +551,21 @@ const getArtistsString = (artistCrew) => {
 
   button {
     border: 0;
+  }
+}
+
+.likes {
+  display: flex;
+
+  .button {
+    margin: 0 5px;
+    background: none;
+    color: var(--color-dark);
+
+    &.active {
+      color: var(--color-accent);
+      font-weight: 600;
+    }
   }
 }
 
