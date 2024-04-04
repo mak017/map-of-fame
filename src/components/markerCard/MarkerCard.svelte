@@ -338,15 +338,15 @@ const getArtistsString = (artistCrew) => {
           <button
             type="button"
             class="button"
-            class:active={$openedMarkerData.userVote === 1}
+            class:active={$openedMarkerData?.userVote === 1}
             on:click={handleSpotVote(true)}
-            disabled={!$isLoggedIn}>👍 {$openedMarkerData.likesCnt}</button>
+            disabled={!$isLoggedIn}>👍 {$openedMarkerData?.likesCnt}</button>
           <button
             type="button"
             class="button"
-            class:active={$openedMarkerData.userVote === -1}
+            class:active={$openedMarkerData?.userVote === -1}
             on:click={handleSpotVote(false)}
-            disabled={!$isLoggedIn}>👎 {$openedMarkerData.dislikesCnt}</button>
+            disabled={!$isLoggedIn}>👎 {$openedMarkerData?.dislikesCnt}</button>
         </div>
         {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}
           <div class="link" class:externalMap={isExternalMapsUrl(data.link)}>
