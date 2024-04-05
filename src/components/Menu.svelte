@@ -67,6 +67,9 @@ const handleLogout = () => {
   removeFromLocalStorage("token");
   isLoggedIn.set(false);
   userData.set({});
+  setTimeout(() => {
+    profileState.setInvites([]);
+  }, 500);
   isMenuOpen.set(false);
 };
 
