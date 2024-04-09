@@ -103,13 +103,15 @@ export const requestSpots = (year) => {
     yearForRequest = undefined;
   }
 
-  return getSpots(
-    yearForRequest,
-    bounds,
+  const token = loadFromLocalStorage("token") || null;
+
+  return getSpots(token, {
+    year: yearForRequest,
+    geoRect: bounds,
     categories,
     withHunters,
-    withNewbies
-  ).then((response) => {
+    withNewbies,
+  }).then((response) => {
     const { success, result } = response;
     if (success && result) {
       markersStore.set(result);
@@ -138,21 +140,23 @@ export const requestSpotsInArea = (coords, id) => {
   const $defaultUserTypeFilters = get(defaultUserTypeFilters);
   const { withHunters, withNewbies } =
     loadFromLocalStorage("userTypeFilters") || $defaultUserTypeFilters;
+  const token = loadFromLocalStorage("token") || null;
 
-  getSpotsInArea(coords, withHunters, withNewbies).then(({ result }) => {
-    areaCoords.set(coords);
-    areaSpots.set(result);
-    markersStore.set({ spots: result });
+  getSpotsInArea(token, { polygon: coords, withHunters, withNewbies }).then(
+    ({ result }) => {
+      areaCoords.set(coords);
+      areaSpots.set(result);
+      markersStore.set({ spots: result });
 
-    if (id) {
-      const $specialBrowseHistory = get(specialBrowseHistoryState);
-      specialBrowseHistoryState.set({
-        ...$specialBrowseHistory,
-        [id]: { areaSpots: result },
-      });
-    }
+      if (id) {
+        const $specialBrowseHistory = get(specialBrowseHistoryState);
+        specialBrowseHistoryState.set({
+          ...$specialBrowseHistory,
+          [id]: { areaSpots: result },
+        });
+      }
 
-    const style = `
+      const style = `
       .map-marker-with-photo, .map-marker-cluster
         {
           width: 34px !important;
@@ -163,7 +167,8 @@ export const requestSpotsInArea = (coords, id) => {
           pointer-events: auto !important;
         }
       `;
-    document.getElementById("highlighted").innerHTML = style;
-    isSpotsFromAreaLoading.set(false);
-  });
+      document.getElementById("highlighted").innerHTML = style;
+      isSpotsFromAreaLoading.set(false);
+    }
+  );
 };

@@ -16,16 +16,16 @@ import {
 } from "./endpoints";
 
 export const getSpots = async (
-  year,
-  geoRect,
-  categories,
-  withHunters = true,
-  withNewbies
+  token,
+  { year, geoRect, categories, withHunters = true, withNewbies }
 ) => {
+  const bearer = `Bearer ${token}`;
   const response = await fetch(
     SPOT_YEAR(year, geoRect, categories, withHunters, withNewbies),
     {
       method: "GET",
+      withCredentials: true,
+      headers: { Authorization: bearer },
     }
   );
   const result = await response.json();
@@ -55,14 +55,16 @@ export const getSpotById = async (token, id) => {
 };
 
 export const getSpotsInArea = async (
-  polygon,
-  withHunters = true,
-  withNewbies
+  token,
+  { polygon, withHunters = true, withNewbies }
 ) => {
+  const bearer = `Bearer ${token}`;
   const response = await fetch(
     SPOT_FROM_POLY(polygon, withHunters, withNewbies),
     {
       method: "GET",
+      withCredentials: true,
+      headers: { Authorization: bearer },
     }
   );
   const result = await response.json();
