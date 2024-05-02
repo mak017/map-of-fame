@@ -141,7 +141,6 @@ const handleUserClick = (identifier) => () => {
 </script>
 
 <div class="container">
-  <div class="logo" />
   <form on:submit|preventDefault={handleSubmit}>
     <div class="input-wrapper">
       <FormTextInput
@@ -328,18 +327,6 @@ const handleUserClick = (identifier) => () => {
   align-items: flex-end;
   width: 100%;
   max-width: 940px;
-}
-
-.logo {
-  display: block;
-  position: fixed;
-  top: 15px;
-  left: max(calc((100vw - 940px) / 2), 32px);
-  z-index: 2;
-  width: 132px;
-  height: 51px;
-  background: url(../../images/logo.png) 50% 50% / contain no-repeat;
-  border-radius: 0 0 2px 2px;
 }
 
 form {

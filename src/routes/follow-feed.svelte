@@ -7,7 +7,9 @@ import Feed from "../components/follow/Feed.svelte";
 
 <Modal
   id="follow-feed-modal"
+  title="Feed"
   noLogo
+  autoMargin
   on:close={() => {
     $goto("/");
   }}>

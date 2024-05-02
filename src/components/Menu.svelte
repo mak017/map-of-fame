@@ -1,6 +1,6 @@
 <script>
-import { fly } from "svelte/transition";
-import { url } from "@roxi/routify";
+import { fade, fly } from "svelte/transition";
+import { goto, url } from "@roxi/routify";
 
 import {
   followersState,
@@ -71,6 +71,7 @@ const handleLogout = () => {
     profileState.setInvites([]);
   }, 500);
   isMenuOpen.set(false);
+  $goto("/");
 };
 
 $: if (
@@ -93,6 +94,13 @@ $: unusedInvitesCount = $profileState.invites.reduce(
 );
 </script>
 
+<div
+  class="overlay"
+  transition:fade={{ duration: 200 }}
+  on:click={() => isMenuOpen.set(false)}
+  role="presentation"
+  tabIndex="-1">
+</div>
 <div
   class="menu"
   transition:fly={{ x: !isMobile() ? 364 : window.innerWidth, duration: 300 }}>
@@ -174,12 +182,23 @@ $: unusedInvitesCount = $profileState.invites.reduce(
 {/if}
 
 <style lang="scss">
+.overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  background: var(--color-dark);
+  opacity: 0.6;
+}
 .menu {
   display: flex;
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
+  z-index: 2;
   flex-direction: column;
   align-items: flex-start;
   width: 364px;
@@ -215,8 +234,8 @@ $: unusedInvitesCount = $profileState.invites.reduce(
   position: absolute;
   top: 28px;
   right: 14px;
-  width: 34px;
-  height: 34px;
+  width: 20px;
+  height: 20px;
   padding: 0;
   border: 0;
   background: none;

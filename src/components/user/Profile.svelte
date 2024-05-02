@@ -748,7 +748,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 .user-bg {
   display: flex;
   position: absolute;
-  top: 0;
+  top: 40px;
   right: 0;
   left: 0;
   z-index: -1;

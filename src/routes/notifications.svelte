@@ -7,7 +7,9 @@ import Notifications from "../components/Notifications.svelte";
 
 <Modal
   id="notifications-modal"
+  title="Notifications"
   noLogo
+  alwaysOnTop
   on:close={() => {
     $goto("/");
   }}>

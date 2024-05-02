@@ -24,6 +24,7 @@ import Modal from "../../../../components/Modal.svelte";
   }}
   withAd
   noLogo
+  autoMargin
   banner={{
     img: $openedMarkerData?.firm?.banner,
     url: $openedMarkerData?.firm?.bannerUrl,

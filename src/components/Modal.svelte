@@ -1,11 +1,13 @@
 <script>
 import { createEventDispatcher } from "svelte";
 import { fade, slide } from "svelte/transition";
+import { url } from "@roxi/routify";
 
+import { isLoggedIn, isMenuOpen } from "../js/store.js";
 import { isMobile } from "../js/utils/commonUtils.js";
 
+import Menu from "./Menu.svelte";
 import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
-import ArrowLeftSvg from "./elements/icons/ArrowLeftSvg.svelte";
 
 export let id;
 export let title = "";
@@ -17,7 +19,6 @@ export let noClose = false;
 export let noPaddingTop = false;
 export let autoMargin = false;
 export let alwaysOnTop = false;
-export let stickyHeaderOnMobile = false;
 export let banner = {};
 
 const dispatch = createEventDispatcher();
@@ -45,9 +46,8 @@ const handleResize = () => {
   class:withAd
   class:withFooter
   class:accentTitle
-  class:autoMargin={autoMargin && withAd && banner.url}
+  class:autoMargin
   class:alwaysOnTop
-  class:stickyHeaderOnMobile={stickyHeaderOnMobile && scrollTop > 190}
   class:noPaddingTop
   {id}
   role="presentation"
@@ -55,32 +55,33 @@ const handleResize = () => {
   on:scroll={() => (scrollTop = modalRef.scrollTop)}
   bind:this={modalRef}
   tabindex="-1">
-  {#if !noClose}
-    <button class="close" on:click={close}><CloseCrossSvg /></button>
-  {/if}
-  {#if !noLogo}<span class="logo" />{/if}
-  {#if title}
-    <h2 transition:fade|global={{ duration: 200 }}>{title}</h2>
-    {#if stickyHeaderOnMobile && scrollTop > 190}
-      <div
-        class="sticky-header"
-        on:click={() => modalRef.scrollTo({ top: 0, behavior: "smooth" })}
-        on:keydown={(e) =>
-          e.key === "Enter" && modalRef.scroll({ top: 0, behavior: "smooth" })}
-        transition:slide|global={{ duration: 200 }}
-        role="button"
-        tabindex={-1}>
-        <div class="back">
-          <ArrowLeftSvg />
-        </div>
-        {title}
-        {#if !noClose}
-          <button class="close" on:click={close}><CloseCrossSvg /></button>
-        {/if}
-      </div>
+  <div
+    class="sticky-header"
+    on:click={() => modalRef.scrollTo({ top: 0, behavior: "smooth" })}
+    on:keydown={(e) =>
+      e.key === "Enter" && modalRef.scroll({ top: 0, behavior: "smooth" })}
+    transition:slide={{ duration: 200 }}
+    role="button"
+    tabindex={-1}>
+    {#if !noClose}
+      <button class="close" on:click={close}><CloseCrossSvg /></button>
     {/if}
-  {/if}
-  <slot />
+    {#if title}
+      <h2 transition:fade|global={{ duration: 200 }}>{title}</h2>
+    {/if}
+    {#if !noLogo}<a href={$url("/")} class="logo">Open map</a>{/if}
+    {#if $isLoggedIn}
+      <button
+        class="button button-burger"
+        on:click={() => {
+          isMenuOpen.set(true);
+        }}
+        in:fade|global={{ duration: 200 }}>Profile</button>
+    {/if}
+  </div>
+  <div class="content">
+    <slot />
+  </div>
   {#if withAd && banner.url}
     <button
       style={!isMobileWidth ? "width: 938px" : "width: 100%"}
@@ -100,6 +101,10 @@ const handleResize = () => {
   {/if}
 </div>
 
+{#if $isMenuOpen}
+  <Menu />
+{/if}
+
 <style lang="scss">
 .modal {
   display: flex;
@@ -112,7 +117,7 @@ const handleResize = () => {
   width: 100%;
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
-  padding: max(5vh, 54px) 32px 5vh;
+  padding: calc(40px + max(5vh, 54px)) 32px 5vh;
   overflow: auto;
   background: var(--color-light);
 
@@ -121,43 +126,64 @@ const handleResize = () => {
   }
 
   &.noPaddingTop {
-    padding-top: 0;
+    padding-top: 40px;
   }
 }
 
 .close {
   display: block;
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 0;
+  left: 10px;
   z-index: 1;
-  width: 48px;
-  height: 48px;
-  padding: 0;
+  width: 40px;
+  height: 40px;
+  padding: 12px;
   border: 0;
   background: inherit;
   cursor: pointer;
 }
 
 .logo {
-  display: block;
-  position: absolute;
-  top: 15px;
-  left: 18vw;
-  width: 132px;
-  height: 51px;
-  background: url(../../images/logo.png) 50% 50% / contain no-repeat;
+  display: inline-block;
+  width: 100px;
+  height: 33px;
   border-radius: 0 0 2px 2px;
+  background: url(../../images/logo.png) 50% 50% / contain no-repeat;
+  filter: grayscale(1);
+  color: transparent;
+  font-size: 0;
 }
 
 h2 {
-  margin: 20vh 0 6vh;
   color: var(--color-dark);
   font-weight: 900;
   font-size: 24px;
   line-height: 29px;
   text-align: center;
   text-transform: uppercase;
+}
+
+.button-burger {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-light);
+  background-image: url(../images/burger2.svg);
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: 20px 14px;
+  color: transparent;
+  font-size: 0;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20vh;
 }
 
 .bottom-container {
@@ -176,35 +202,33 @@ h2 {
 }
 
 .autoMargin {
-  h2 {
+  .content {
     margin-top: auto;
   }
 }
 
 .alwaysOnTop {
-  h2 {
+  .content {
     margin-top: 40px;
   }
 }
 
 .sticky-header {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: fixed;
   top: 0;
   right: 0;
   left: 0;
   z-index: 1;
-  padding: 26px 10px 10px;
+  height: 40px;
+  padding: 0 10px;
   background-color: var(--color-light);
   color: var(--color-accent);
   font-size: 18px;
   font-weight: 600;
   line-height: 22px;
-}
-
-.back {
-  width: 16px;
-  height: 16px;
 }
 
 .footer {
@@ -248,24 +272,13 @@ h2 {
     width: 97px;
     height: 37px;
   }
-  h2 {
+  .content {
     margin-top: 64px;
   }
   .bottom-container {
     height: 106px;
     min-height: 106px;
     margin-top: 15px;
-  }
-  .autoMargin {
-    h2 {
-      margin-top: 64px;
-    }
-  }
-  .stickyHeaderOnMobile {
-    .sticky-header {
-      display: flex;
-      align-items: center;
-    }
   }
 }
 </style>

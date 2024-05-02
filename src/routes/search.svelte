@@ -17,9 +17,10 @@ const handleResize = () => {
 <svelte:window on:resize={handleResize} />
 <Modal
   id="search-modal"
+  title="Search"
   on:close={() => $goto("/")}
   withAd
   alwaysOnTop
-  noLogo={!isMobileWidth}>
+  noLogo>
   <SearchForm />
 </Modal>

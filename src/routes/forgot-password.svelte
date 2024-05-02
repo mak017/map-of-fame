@@ -25,7 +25,8 @@ const handleResize = () => {
     ? "Letter was sent to the email"
     : "Forgot"}
   accentTitle={forgotPasswordEmailSent && isMobileWidth}
-  withFooter>
+  withFooter
+  noLogo>
   <ForgotPassword
     {setForgotPasswordEmailSent}
     {forgotPasswordEmailSent}

@@ -301,149 +301,154 @@ const getArtistsString = (artistCrew) => {
 {#await getSpotData()}
   <Spinner height={40} margin="auto" />
 {:then data}
-  <div class="card">
-    <div class={`top ${data.status.toLowerCase()}`}>
-      <div class="posted-by">
-        <div class="subtitle">Posted by</div>
-        <button
-          type="button"
-          class="button"
-          on:click={onUserClick(data.user?.username)}>
-          <div class="title">
-            {data.user?.artist?.name ||
-              data.user?.crew?.name ||
-              $selectedUserProfileData?.artist?.name ||
-              ""}
-          </div>
-        </button>
-        {#if data.approvedOwners?.length > 0}
-          {#each data.approvedOwners as owner (owner.id)}
-            <div class="co-owner">
-              <button
-                type="button"
-                class="button"
-                on:click={onUserClick(owner.user?.username)}>
-                <div class="title">
-                  {owner.user?.artist?.name || owner.user?.crew?.name || ""}
-                </div>
-              </button>
+  {#if data}
+    <div class="card">
+      <div class={`top ${data.status.toLowerCase()}`}>
+        <div class="posted-by">
+          <div class="subtitle">Posted by</div>
+          <button
+            type="button"
+            class="button"
+            on:click={onUserClick(data.user?.username)}>
+            <div class="title">
+              {data.user?.artist?.name ||
+                data.user?.crew?.name ||
+                $selectedUserProfileData?.artist?.name ||
+                ""}
             </div>
-          {/each}
-        {/if}
-      </div>
-      <div class="status">
-        <div class="subtitle">Status</div>
-        <button
-          type="button"
-          class="button title"
-          disabled={!$isLoggedIn || isCurrentUser}
-          on:click={() => {
-            handleStatusUpdateToggle(true);
-          }}>{data.status}</button>
-      </div>
-    </div>
-    <div class="img">
-      <img src={data.img.src} alt={`Main image: ${data.img.title}`} />
-    </div>
-    <div class="bottom">
-      <div class="year">{data.year ?? EMPTY_YEAR_STRING}</div>
-      <div class="show-on-map-wrapper">
-        <ShowOnMapButton onClick={handleShowOnMapClick} />
-      </div>
-      <div class="buttons">
-        <div class="likes">
-          <button
-            type="button"
-            class="button"
-            class:active={$openedMarkerData?.userVote === 1}
-            on:click={handleSpotVote(true)}
-            disabled={!$isLoggedIn}>👍 {$openedMarkerData?.likesCnt}</button>
-          <button
-            type="button"
-            class="button"
-            class:active={$openedMarkerData?.userVote === -1}
-            on:click={handleSpotVote(false)}
-            disabled={!$isLoggedIn}>👎 {$openedMarkerData?.dislikesCnt}</button>
+          </button>
+          {#if data.approvedOwners?.length > 0}
+            {#each data.approvedOwners as owner (owner.id)}
+              <div class="co-owner">
+                <button
+                  type="button"
+                  class="button"
+                  on:click={onUserClick(owner.user?.username)}>
+                  <div class="title">
+                    {owner.user?.artist?.name || owner.user?.crew?.name || ""}
+                  </div>
+                </button>
+              </div>
+            {/each}
+          {/if}
         </div>
-        {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}
-          <div class="link" class:externalMap={isExternalMapsUrl(data.link)}>
-            <a href={data.link} target="_blank" rel="noreferrer"
-              >External link to art</a>
-          </div>
-        {/if}
-        <div class="share">
+        <div class="status">
+          <div class="subtitle">Status</div>
           <button
             type="button"
-            class="button"
-            on:click={() => handleShareToggle(true)}><ShareSvg /></button>
-        </div>
-        <div class="complain">
-          <button
-            type="button"
-            class="button"
-            on:click={() => handleComplainToggle(true)} />
+            class="button title"
+            disabled={!$isLoggedIn || isCurrentUser}
+            on:click={() => {
+              handleStatusUpdateToggle(true);
+            }}>{data.status}</button>
         </div>
       </div>
-    </div>
-    <div class="artist-area">
-      <div class="subtitle">ARTIST [CREW]</div>
-      <button class="button title artist" on:click={profileState.reset}>
-        {@html getArtistsString(data.artistCrew)}
-      </button>
-    </div>
-    {#if data.description}
-      <div class="description">{data.description}</div>
-    {/if}
-    {#if data.embedLink}
-      <div class="embed-link">{@html data.embedLink}</div>
-    {/if}
-    {#if data.additionalImg}
       <div class="img">
-        <img
-          src={data.additionalImg}
-          alt={`Additional image: ${data.img.title}`} />
+        <img src={data.img.src} alt={`Main image: ${data.img.title}`} />
       </div>
-    {/if}
-    {#if Array.isArray(data.images) && data.images.length}
-      {#each data.images as image}
-        <div class="img">
-          <img src={image} alt="Additional" />
+      <div class="bottom">
+        <div class="year">{data.year ?? EMPTY_YEAR_STRING}</div>
+        <div class="show-on-map-wrapper">
+          <ShowOnMapButton onClick={handleShowOnMapClick} />
         </div>
-      {/each}
-    {/if}
-    {#if data.video}
-      <div
-        id="video-embedded"
-        class="video"
-        class:instagram={data.video.includes("instagr")}
-        class:tiktok={data.video.includes("tiktok")}>
-        {@html videoEmbed}
+        <div class="buttons">
+          <div class="likes">
+            <button
+              type="button"
+              class="button"
+              class:active={$openedMarkerData?.userVote === 1}
+              on:click={handleSpotVote(true)}
+              disabled={!$isLoggedIn}>👍 {$openedMarkerData?.likesCnt}</button>
+            <button
+              type="button"
+              class="button"
+              class:active={$openedMarkerData?.userVote === -1}
+              on:click={handleSpotVote(false)}
+              disabled={!$isLoggedIn}
+              >👎 {$openedMarkerData?.dislikesCnt}</button>
+          </div>
+          {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}
+            <div class="link" class:externalMap={isExternalMapsUrl(data.link)}>
+              <a href={data.link} target="_blank" rel="noreferrer"
+                >External link to art</a>
+            </div>
+          {/if}
+          <div class="share">
+            <button
+              type="button"
+              class="button"
+              on:click={() => handleShareToggle(true)}><ShareSvg /></button>
+          </div>
+          <div class="complain">
+            <button
+              type="button"
+              class="button"
+              on:click={() => handleComplainToggle(true)} />
+          </div>
+        </div>
       </div>
+      <div class="artist-area">
+        <div class="subtitle">ARTIST [CREW]</div>
+        <button class="button title artist" on:click={profileState.reset}>
+          {@html getArtistsString(data.artistCrew)}
+        </button>
+      </div>
+      {#if data.description}
+        <div class="description">{data.description}</div>
+      {/if}
+      {#if data.embedLink}
+        <div class="embed-link">{@html data.embedLink}</div>
+      {/if}
+      {#if data.additionalImg}
+        <div class="img">
+          <img
+            src={data.additionalImg}
+            alt={`Additional image: ${data.img.title}`} />
+        </div>
+      {/if}
+      {#if Array.isArray(data.images) && data.images.length}
+        {#each data.images as image}
+          <div class="img">
+            <img src={image} alt="Additional" />
+          </div>
+        {/each}
+      {/if}
+      {#if data.video}
+        <div
+          id="video-embedded"
+          class="video"
+          class:instagram={data.video.includes("instagr")}
+          class:tiktok={data.video.includes("tiktok")}>
+          {@html videoEmbed}
+        </div>
+      {/if}
+    </div>
+    {#if isCurrentUser}
+      <button
+        type="button"
+        class="button edit"
+        title="Edit spot"
+        on:click={() => handleGoToEdit(data)}><PencilSvg /></button>
     {/if}
-  </div>
-  {#if isCurrentUser}
-    <button
-      type="button"
-      class="button edit"
-      title="Edit spot"
-      on:click={() => handleGoToEdit(data)}><PencilSvg /></button>
-  {/if}
-  {#if isShareOpened}
-    <Popup on:close={() => handleShareToggle(false)} title="Share Link">
-      <ShareMarker />
-    </Popup>
-  {/if}
-  {#if isComplainOpened}
-    <Popup on:close={() => handleComplainToggle(false)} title="Complaint!">
-      <MarkerCardComplaint {handleComplainToggle} spotId={id} />
-    </Popup>
-  {/if}
-  {#if isStatusUpdateOpened}
-    <Popup
-      on:close={() => handleStatusUpdateToggle(false)}
-      title="Status update">
-      <StatusUpdate close={() => handleStatusUpdateToggle(false)} spotId={id} />
-    </Popup>
+    {#if isShareOpened}
+      <Popup on:close={() => handleShareToggle(false)} title="Share Link">
+        <ShareMarker />
+      </Popup>
+    {/if}
+    {#if isComplainOpened}
+      <Popup on:close={() => handleComplainToggle(false)} title="Complaint!">
+        <MarkerCardComplaint {handleComplainToggle} spotId={id} />
+      </Popup>
+    {/if}
+    {#if isStatusUpdateOpened}
+      <Popup
+        on:close={() => handleStatusUpdateToggle(false)}
+        title="Status update">
+        <StatusUpdate
+          close={() => handleStatusUpdateToggle(false)}
+          spotId={id} />
+      </Popup>
+    {/if}
   {/if}
 {/await}
 
@@ -704,7 +709,7 @@ const getArtistsString = (artistCrew) => {
   }
 
   .edit {
-    top: 16px;
+    top: 40px;
   }
 }
 </style>

@@ -162,9 +162,6 @@ const handleShowOnMapClick = () => {
 </script>
 
 <div class="container">
-  <div class="top">
-    <div class="title">Selected spots</div>
-  </div>
   <div class="data">
     <div class="data-top">
       <div class="year-select">
@@ -204,21 +201,6 @@ const handleShowOnMapClick = () => {
   max-width: 938px;
 }
 
-.top {
-  display: flex;
-  align-self: stretch;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.title {
-  color: var(--color-dark);
-  font-size: 24px;
-  font-weight: 900;
-  line-height: 1.22;
-  text-transform: uppercase;
-}
-
 .year-select {
   width: 114px;
   height: 40px;
@@ -256,14 +238,6 @@ const handleShowOnMapClick = () => {
     height: 100%;
     object-fit: cover;
     user-select: none;
-  }
-}
-
-@media (max-width: 767px) {
-  .top {
-    position: relative;
-    flex-direction: column-reverse;
-    margin-bottom: 18px;
   }
 }
 </style>

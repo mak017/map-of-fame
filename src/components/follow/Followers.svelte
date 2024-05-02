@@ -69,9 +69,6 @@ const handleUserClick = (user) => () => {
 </script>
 
 <div class="container">
-  <div class="top">
-    <h2 class="title">Followers</h2>
-  </div>
   <div class="data">
     <div class="users">
       {#if !!$followersState.list.length || $followersState.isShowSpinner}
@@ -124,18 +121,6 @@ const handleUserClick = (user) => () => {
   max-width: 938px;
 }
 
-.top {
-  margin-bottom: 32px;
-}
-
-.title {
-  color: var(--color-dark);
-  font-size: 24px;
-  font-weight: 900;
-  line-height: 1.22;
-  text-transform: uppercase;
-}
-
 .data {
   flex: 1 0 auto;
   width: 100%;
@@ -181,13 +166,5 @@ const handleUserClick = (user) => () => {
 
 .spinner-container {
   position: relative;
-}
-
-@media (max-width: 767px) {
-  .top {
-    position: relative;
-    flex-direction: column-reverse;
-    margin-bottom: 18px;
-  }
 }
 </style>

@@ -15,7 +15,8 @@ let isInviteError = false;
   id="registration-modal"
   on:close={() => $goto("/")}
   title={isInviteError ? "Registr💩tion" : "Registration"}
-  withFooter>
+  withFooter
+  noLogo>
   <RegistrationForm
     {inviteData}
     {isInviteError}

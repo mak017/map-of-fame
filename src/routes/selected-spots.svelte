@@ -7,7 +7,9 @@ import Modal from "../components/Modal.svelte";
 
 <Modal
   id="selected-spots-modal"
+  title="Selected Spots"
   noLogo
+  alwaysOnTop
   on:close={() => {
     $goto("/");
   }}>

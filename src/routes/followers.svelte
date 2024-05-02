@@ -7,7 +7,9 @@ import Followers from "../components/follow/Followers.svelte";
 
 <Modal
   id="followers-modal"
+  title="Followers"
   noLogo
+  alwaysOnTop
   on:close={() => {
     $goto("/");
   }}>

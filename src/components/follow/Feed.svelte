@@ -69,9 +69,6 @@ const handleSpotClick = (spot) => () => {
 </script>
 
 <div class="container">
-  <div class="top">
-    <h2 class="title">Feed</h2>
-  </div>
   <div class="data">
     <div class="spots">
       {#if !!$followFeedState.list.length || $followFeedState.isShowSpinner}
@@ -122,18 +119,6 @@ const handleSpotClick = (spot) => () => {
   max-width: 938px;
 }
 
-.top {
-  margin-bottom: 32px;
-}
-
-.title {
-  color: var(--color-dark);
-  font-size: 24px;
-  font-weight: 900;
-  line-height: 1.22;
-  text-transform: uppercase;
-}
-
 .data {
   flex: 1 0 auto;
   width: 100%;
@@ -165,13 +150,5 @@ const handleSpotClick = (spot) => () => {
 
 .spinner-container {
   position: relative;
-}
-
-@media (max-width: 767px) {
-  .top {
-    position: relative;
-    flex-direction: column-reverse;
-    margin-bottom: 18px;
-  }
 }
 </style>

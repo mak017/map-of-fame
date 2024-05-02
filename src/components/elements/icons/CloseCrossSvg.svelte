@@ -3,25 +3,13 @@ export let isLight = false;
 </script>
 
 <svg
-  width="34"
-  height="34"
-  viewBox="0 0 34 34"
-  xmlns="http://www.w3.org/2000/svg"
-  class:isLight>
-  <rect
-    x="24.4707"
-    y="7.4707"
-    width="3"
-    height="24"
-    rx="1.5"
-    transform="rotate(45 24.4707 7.4707)" />
-  <rect
-    x="26.4707"
-    y="24.4707"
-    width="3"
-    height="24"
-    rx="1.5"
-    transform="rotate(135 26.4707 24.4707)" />
+  width="16"
+  height="16"
+  viewBox="0 0 16 16"
+  class:isLight
+  xmlns="http://www.w3.org/2000/svg">
+  <path
+    d="M1.0877 0.512451L0.512695 1.08745L7.4252 7.99995L0.512695 14.9125L1.0877 15.4875L8.0002 8.57495L14.9127 15.4875L15.4877 14.9125L8.5752 7.99995L15.4877 1.08745L14.9127 0.512451L8.0002 7.42495L1.0877 0.512451Z" />
 </svg>
 
 <style lang="scss">
@@ -29,11 +17,11 @@ svg {
   width: 100%;
   height: 100%;
 }
-rect {
+path {
   fill: var(--color-dark);
 }
 .isLight {
-  rect {
+  path {
     fill: var(--color-light);
   }
 }

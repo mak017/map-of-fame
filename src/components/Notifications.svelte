@@ -92,9 +92,6 @@ const actionWhenInViewport = (element) => {
 </script>
 
 <div class="container">
-  <div class="top">
-    <h2 class="title">Notifications</h2>
-  </div>
   <div class="data">
     <div class="notifications">
       {#if !!$notificationsState.list.length || $notificationsState.isShowSpinner}
@@ -150,18 +147,6 @@ const actionWhenInViewport = (element) => {
   align-items: center;
   width: 100%;
   max-width: 938px;
-}
-
-.top {
-  margin-bottom: 32px;
-}
-
-.title {
-  color: var(--color-dark);
-  font-size: 24px;
-  font-weight: 900;
-  line-height: 1.22;
-  text-transform: uppercase;
 }
 
 .data {

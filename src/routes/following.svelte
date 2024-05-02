@@ -7,7 +7,9 @@ import Following from "../components/follow/Following.svelte";
 
 <Modal
   id="following-modal"
+  title="Following"
   noLogo
+  alwaysOnTop
   on:close={() => {
     $goto("/");
   }}>

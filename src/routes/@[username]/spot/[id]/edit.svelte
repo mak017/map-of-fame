@@ -6,6 +6,12 @@ import Modal from "../../../../components/Modal.svelte";
 import EditSpot from "../../../../components/user/EditSpot.svelte";
 </script>
 
-<Modal id="edit-spot-modal" on:close={() => $goto("/")} noLogo noClose>
+<Modal
+  id="edit-spot-modal"
+  on:close={() => $goto("/")}
+  title="Edit Art"
+  noLogo
+  noClose
+  alwaysOnTop>
   <EditSpot />
 </Modal>
