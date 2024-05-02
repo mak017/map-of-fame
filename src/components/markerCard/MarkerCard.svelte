@@ -149,7 +149,7 @@ const resetAreaSelectionMode = () => {
   document.getElementById("highlighted").innerHTML = "";
 };
 
-const onUserClick = () => {
+const onUserClick = (username) => () => {
   const { user } = $openedMarkerData;
 
   if (!$selectedUserProfileData.id) {
@@ -158,7 +158,7 @@ const onUserClick = () => {
   resetAreaSelectionMode();
   openedMarkerData.set(null);
   profileState.reset();
-  $goto("/@:username", { username: user.username });
+  $goto("/@:username", { username });
 };
 
 const handleShowOnMapClick = () => {
@@ -305,7 +305,10 @@ const getArtistsString = (artistCrew) => {
     <div class={`top ${data.status.toLowerCase()}`}>
       <div class="posted-by">
         <div class="subtitle">Posted by</div>
-        <button type="button" class="button" on:click={onUserClick}>
+        <button
+          type="button"
+          class="button"
+          on:click={onUserClick(data.user?.username)}>
           <div class="title">
             {data.user?.artist?.name ||
               data.user?.crew?.name ||
@@ -313,6 +316,20 @@ const getArtistsString = (artistCrew) => {
               ""}
           </div>
         </button>
+        {#if data.approvedOwners?.length > 0}
+          {#each data.approvedOwners as owner (owner.id)}
+            <div class="co-owner">
+              <button
+                type="button"
+                class="button"
+                on:click={onUserClick(owner.user?.username)}>
+                <div class="title">
+                  {owner.user?.artist?.name || owner.user?.crew?.name || ""}
+                </div>
+              </button>
+            </div>
+          {/each}
+        {/if}
       </div>
       <div class="status">
         <div class="subtitle">Status</div>
@@ -386,6 +403,13 @@ const getArtistsString = (artistCrew) => {
           src={data.additionalImg}
           alt={`Additional image: ${data.img.title}`} />
       </div>
+    {/if}
+    {#if Array.isArray(data.images) && data.images.length}
+      {#each data.images as image}
+        <div class="img">
+          <img src={image} alt="Additional" />
+        </div>
+      {/each}
     {/if}
     {#if data.video}
       <div

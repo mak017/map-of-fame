@@ -35,7 +35,7 @@ export let onDelete;
     <div class="overlay">
       <a
         href={$url("/@:username/spot/:id", {
-          username: spot.username,
+          username: spot.user.username,
           id: spot.id,
         })}
         class="button view"

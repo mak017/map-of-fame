@@ -36,6 +36,7 @@ import {
   userData,
 } from "../js/store";
 
+import Popup from "./Popup.svelte";
 import FormTelInput from "./elements/FormTelInput.svelte";
 import ButtonPrimary from "./elements/ButtonPrimary.svelte";
 import FormRadioButton from "./elements/FormRadioButton.svelte";
@@ -64,6 +65,11 @@ const isEditSpot = !!editSpotData.img;
 const isArtist = () => $userData.type === USER_TYPES.artist.toLowerCase();
 const isCrew = () => $userData.type === USER_TYPES.crew.toLowerCase();
 const isHunter = () => $userData.type === USER_TYPES.hunter.toLowerCase();
+const isCoOwner = () =>
+  isEditSpot &&
+  editSpotData.approvedOwners.some(
+    (owner) => owner.user.username === $userData.username,
+  );
 
 const getInitialYear = () => {
   if (typeof editSpotData.year !== "undefined") {
@@ -94,6 +100,9 @@ const currentYear = getCurrentYear();
 let year = getInitialYear();
 let prevYearValue = "";
 let selectedStatus = editSpotData.spotStatus ?? getInitialStatus();
+let images = isEditSpot
+  ? editSpotData.images?.map?.((image) => ({ filePreview: image }))
+  : [];
 let image = {
   file: undefined,
   filePreview: editSpotData.img || "",
@@ -102,6 +111,11 @@ let image = {
 let image2 = {
   file: undefined,
   filePreview: editSpotData.additionalImg || "",
+  blob: undefined,
+};
+let image3 = {
+  file: undefined,
+  filePreview: editSpotData.images?.[0] || "",
   blob: undefined,
 };
 let sketch = {
@@ -121,6 +135,7 @@ let isInProgress = false;
 let isSubmitting = false;
 let isSelectingAutocomplete = false;
 let isAutocompleteEmpty = true;
+let errorPopupText = "";
 let errors = {
   year: "",
   imageFile: "",
@@ -143,8 +158,11 @@ let progressState = {
   crew5: false,
   year: false,
   selectedStatus: false,
-  image: false,
+  image1: false,
   image2: false,
+  image3: false,
+  image4: false,
+  image5: false,
   sketch: false,
   description: false,
   selectedCategory: false,
@@ -176,6 +194,8 @@ let artistCrewPairs =
             ? { ...$userData, type: undefined }
             : undefined,
           crewData: isCrew() ? { ...$userData, type: undefined } : undefined,
+          artistCollabType: "tagged",
+          crewCollabType: "tagged",
         },
       ];
 
@@ -241,12 +261,20 @@ const saveDraft = async (field) => {
     requestObject.lng = lng;
   }
 
+  // if (field.startsWith("image")) {
+  //   requestObject.addImages = [images.at(-1)];
+  //   delete requestObject.artistsCrews;
+  // }
   if (field == "image") {
     requestObject.img = image.blob ?? "";
     delete requestObject.artistsCrews;
   }
   if (field == "image2") {
     requestObject.additionalImg = image2.blob ?? "";
+    delete requestObject.artistsCrews;
+  }
+  if (field == "image3") {
+    requestObject.addImages = [image3.blob ?? ""];
     delete requestObject.artistsCrews;
   }
   if (field == "sketch") requestObject.sketch = sketch.blob ?? "";
@@ -270,7 +298,7 @@ onDestroy(() => {
   marker?.off("moveend", saveDraftCoords);
 });
 
-const handleProcessedImage = (imageType, imageObject) => {
+const handleProcessedImage = (imageType, imageObject, isAdd) => {
   if (imageType === "image") {
     image = { ...imageObject };
   }
@@ -279,9 +307,14 @@ const handleProcessedImage = (imageType, imageObject) => {
     image2 = { ...imageObject };
   }
 
-  if (imageType === "sketch") {
-    sketch = { ...imageObject };
+  if (imageType === "image3") {
+    image3 = { ...imageObject };
   }
+
+  // if (imageType === "sketch") {
+  //   sketch = { ...imageObject };
+  // }
+  images.push(imageObject);
 
   saveDraft(imageType);
 };
@@ -295,6 +328,11 @@ const onChangeImage = (imageType) => {
   if (imageType === "sketch") {
     imageObject = { ...sketch };
   }
+
+  if (imageType === "image3") {
+    imageObject = { ...image3 };
+  }
+  const isAdd = !imageObject.filePreview;
 
   const file = imageObject.file[0];
   if (file) {
@@ -504,9 +542,12 @@ const handleSubmit = () => {
         if (error?.img) {
           errors.imageFile = error.img[0] || "";
           image.filePreview = "";
-        }
-        if (error?.additionalImg) {
+        } else if (error?.additionalImg) {
           image2.filePreview = "";
+        } else if (error?.message) {
+          errorPopupText = error.message[0] || "Oops, something went wrong";
+        } else {
+          errorPopupText = "Oops, something went wrong";
         }
         !isEditSpot && marker.dragging.enable();
         isInProgress = false;
@@ -522,7 +563,14 @@ $: if (isSubmitting && !isInProgress) {
 const handleAddMoreClick = () => {
   artistCrewPairs = [
     ...artistCrewPairs,
-    { artist: "", crew: "", isTouchedArtist: true, isTouchedCrew: true },
+    {
+      artist: "",
+      crew: "",
+      isTouchedArtist: true,
+      isTouchedCrew: true,
+      artistCollabType: "tagged",
+      crewCollabType: "tagged",
+    },
   ];
 };
 
@@ -573,7 +621,10 @@ const fetchUsersByCrew = async (filterText, index) => {
 };
 </script>
 
-<form class:edit={isEditSpot} on:submit|preventDefault={handleSubmit}>
+<form
+  class:edit={isEditSpot}
+  class:isCoOwner={isCoOwner()}
+  on:submit|preventDefault={handleSubmit}>
   {#if isEditSpot}
     <div class="save">
       <ButtonPrimary
@@ -585,6 +636,31 @@ const fetchUsersByCrew = async (filterText, index) => {
     </div>
   {/if}
   <div class="upload-area">
+    <!-- {#each images as image, index (image.filePreview)}
+      <div class={`upload-image upload-image${index + 1}`}>
+        {#if image.filePreview}
+          <img src={image.filePreview} alt="Preview" class="preview_image" />
+          <div class="overlay">
+            <label for="upload-image2" class="re-upload" />
+            <button
+              type="button"
+              class="button delete"
+              on:click={() => onRemoveImage("image2")} />
+          </div>
+        {:else}
+          <label for="upload-image2" class="first_upload">
+            <span>Add Image (2 of 2)</span>
+            <span>Max 10 Mb</span>
+          </label>
+        {/if}
+        <input
+          accept="image/png, image/jpeg"
+          bind:files={image2.file}
+          on:change={() => onChangeImage("image2")}
+          id="upload-image2"
+          type="file" />
+      </div>
+    {/each} -->
     <div class="upload-image" class:error={errors.imageFile}>
       {#if image.filePreview}
         <img src={image.filePreview} alt="Preview" class="preview_image" />
@@ -605,7 +681,7 @@ const fetchUsersByCrew = async (filterText, index) => {
         id="upload-image"
         type="file" />
     </div>
-    {#if image.filePreview}
+    {#if (image.filePreview && !isCoOwner()) || (isCoOwner() && image2.filePreview)}
       <div class="upload-image upload-image2">
         {#if image2.filePreview}
           <img src={image2.filePreview} alt="Preview" class="preview_image" />
@@ -630,28 +706,31 @@ const fetchUsersByCrew = async (filterText, index) => {
           type="file" />
       </div>
     {/if}
-    <!-- <div class="upload-image upload-sketch">
-      {#if sketch.filePreview}
-        <img src={sketch.filePreview} alt="Preview" class="preview_image" />
-        <label for="upload-sketch" class="re-upload" />
-        <button
-          type="button"
-          class="button delete"
-          on:click={() => onRemoveImage("sketch")} />
-      {:else}
-        <label for="upload-sketch" class="first_upload">
-          <span>Add Sketch</span>
-          <span>Max 10 Mb</span>
-        </label>
-      {/if}
-      {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
-      <input
-        accept="image/png, image/jpeg"
-        bind:files={sketch.file}
-        on:change={() => onChangeImage("sketch")}
-        id="upload-sketch"
-        type="file" />
-    </div> -->
+    {#if isCoOwner()}
+      <div class="upload-image upload-image3">
+        {#if image3.filePreview}
+          <img src={image3.filePreview} alt="Preview" class="preview_image" />
+          <div class="overlay">
+            <label for="upload-image3" class="re-upload" />
+            <button
+              type="button"
+              class="button delete"
+              on:click={() => onRemoveImage("image3")} />
+          </div>
+        {:else}
+          <label for="upload-image3" class="first_upload">
+            <span>Add Image</span>
+            <span>Max 10 Mb</span>
+          </label>
+        {/if}
+        <input
+          accept="image/png, image/jpeg"
+          bind:files={image3.file}
+          on:change={() => onChangeImage("image3")}
+          id="upload-image3"
+          type="file" />
+      </div>
+    {/if}
   </div>
   <div class="artists-area">
     {#each artistCrewPairs as pair, index}
@@ -664,6 +743,8 @@ const fetchUsersByCrew = async (filterText, index) => {
           showList={!isAutocompleteEmpty}
           label="Artist Name"
           inputId={`artist-input-${index}`}
+          type={artistCrewPairs[index].artistCollabType}
+          {index}
           onInputBlur={(event) => {
             if (event.target.value !== pair.artist) {
               artistCrewPairs[index].artist = event.target.value;
@@ -690,6 +771,10 @@ const fetchUsersByCrew = async (filterText, index) => {
               !isSelectingAutocomplete && saveDraft(`artist${index + 1}`);
               isSelectingAutocomplete = false;
             }, 200);
+          }}
+          on:changetype={(event) => {
+            artistCrewPairs[index].artistCollabType =
+              event.detail?.detail?.target?.value;
           }} />
         <CustomAutoComplete
           getItems={(text) => fetchUsersByCrew(text, index)}
@@ -699,6 +784,8 @@ const fetchUsersByCrew = async (filterText, index) => {
           showList={!isAutocompleteEmpty}
           label="Crew Name"
           inputId={`crew-input-${index}`}
+          type={artistCrewPairs[index].crewCollabType}
+          {index}
           onInputBlur={(event) => {
             if (event.target.value !== pair.crew) {
               artistCrewPairs[index].crew = event.target.value;
@@ -725,6 +812,10 @@ const fetchUsersByCrew = async (filterText, index) => {
               !isSelectingAutocomplete && saveDraft(`crew${index + 1}`);
               isSelectingAutocomplete = false;
             }, 200);
+          }}
+          on:changetype={(event) => {
+            artistCrewPairs[index].crewCollabType =
+              event.detail?.detail?.target?.value;
           }} />
       </div>
     {/each}
@@ -736,16 +827,18 @@ const fetchUsersByCrew = async (filterText, index) => {
         ><PlusSvg /> <span>Artist/Crew</span></button>
     {/if}
   </div>
-  <FormTelInput
-    placeholder="Year"
-    bind:value={year}
-    hint={`${$settings.yearStart} - ${currentYear}`}
-    on:input={handleYearChange}
-    on:blur={() => saveDraft("year")}
-    errorText={errors.year}
-    wideOnMobile
-    editSpot={isEditSpot}
-    addSpot={!isEditSpot} />
+  <div class="year">
+    <FormTelInput
+      placeholder="Year"
+      bind:value={year}
+      hint={`${$settings.yearStart} - ${currentYear}`}
+      on:input={handleYearChange}
+      on:blur={() => saveDraft("year")}
+      errorText={errors.year}
+      wideOnMobile
+      editSpot={isEditSpot}
+      addSpot={!isEditSpot} />
+  </div>
   <div class="status">
     {#each statusesOrdered as status}
       <FormRadioButton
@@ -783,17 +876,6 @@ const fetchUsersByCrew = async (filterText, index) => {
       <Spinner height={30} margin="5px 0 5.5px" />
     {/if}
   </div>
-  <!-- {#if !isHunter() && !isEditSpot}
-    <div class="spray">
-      <CustomSelect
-        items={$firms}
-        bind:selectedValue={sprayPaintUsed}
-        placeholder="Spray Paint Used"
-        optionIdentifier="name"
-        addSpot={!isEditSpot}
-        label="name" />
-    </div>
-  {/if} -->
   <div class="link-to-video">
     <FormTextInput
       label="Link To Video"
@@ -848,6 +930,11 @@ const fetchUsersByCrew = async (filterText, index) => {
       disabled={isSubmitting}>Cancel</button>
   {/if}
 </form>
+{#if errorPopupText}
+  <Popup title="Error" on:close={() => (errorPopupText = "")}>
+    <div class="error-popup-text">{errorPopupText}</div>
+  </Popup>
+{/if}
 
 <style lang="scss">
 form {
@@ -894,10 +981,6 @@ form {
   position: relative;
   max-height: 136px;
   margin: 0 0 8px;
-
-  /* &.upload-sketch {
-    margin: 0 0 15px;
-  } */
 
   &.error {
     margin-bottom: 23px;
@@ -989,16 +1072,15 @@ form {
 .error {
   color: var(--color-error);
   font-size: 13px;
+
+  &-popup-text {
+    color: var(--color-error);
+  }
 }
 
 .category {
   margin-bottom: 15px;
 }
-
-/* .spray {
-  position: relative;
-  margin-bottom: 15px;
-} */
 
 .button_wrap {
   display: flex;
@@ -1093,6 +1175,21 @@ form {
   .link-to-video {
     grid-column: 3;
     grid-row: 4;
+  }
+}
+
+.isCoOwner {
+  .upload-image:not(:last-child),
+  .year,
+  .artists-area,
+  .status,
+  .description,
+  .category,
+  .link-to-video,
+  .link-to-work,
+  .checkbox {
+    opacity: 0.5;
+    pointer-events: none;
   }
 }
 
@@ -1213,10 +1310,6 @@ form {
       .error {
         font-size: 11px;
       }
-
-      /* .spray {
-        margin-bottom: 12px;
-      } */
     }
   }
 }

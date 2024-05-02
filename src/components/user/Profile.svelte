@@ -214,7 +214,7 @@ const handleEdit = (spot) => {
   editSpotData.set(spot);
   const element = document.querySelector(`[data-spot-id="${spot.id}"]`);
   profileState.setScrollOffset(element.offsetTop);
-  $goto("/@:username/spot/:id/edit", { username: username, id });
+  $goto("/@:username/spot/:id/edit", { username: spot.user.username, id });
 };
 
 const handleDelete = (spot) => {
@@ -236,7 +236,7 @@ const onLoadMore = () => {
   fetchSpots({ year: `${$profileState.currentYear}`, offset });
 };
 
-const onSubmitChanges = () => {
+const handleSubmitChanges = () => {
   if ($profileState.currentYear === ALL_YEARS_STRING) {
     fetchSpots({ isNewFetch: true });
     return;
@@ -244,7 +244,7 @@ const onSubmitChanges = () => {
   fetchSpots({ year: `${$profileState.currentYear}`, isNewFetch: true });
 };
 
-const onSpotClick = (spot) => {
+const handleSpotClick = (spot) => {
   selectedUserProfileData.set($profileState.user);
   const {
     id,
@@ -623,7 +623,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
             <SpotCard
               isEditable={isCurrentUser && !$profileState.showMarkedSpots}
               {spot}
-              {onSpotClick}
+              onSpotClick={handleSpotClick}
               onEdit={handleEdit}
               onDelete={handleDelete} />
           {/each}
@@ -673,7 +673,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
     <DeleteSpot
       close={() => toggleDeletePopup(false)}
       {currentSpot}
-      onSubmit={onSubmitChanges} />
+      onSubmit={handleSubmitChanges} />
   </Popup>
 {/if}
 

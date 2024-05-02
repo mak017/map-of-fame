@@ -67,8 +67,8 @@ const handleLoadMore = () => {
 };
 
 const handleButtonClick = (notification, confirm) => () => {
-  const { id, spotArtistCrewId } = notification;
-  answerNotification(token, id, { spotArtistCrewId, confirm: confirm ? 1 : 0 });
+  const { id } = notification;
+  answerNotification(token, id, confirm ? 1 : 0);
   const updatedList = $notificationsState.list.map((item) =>
     item.id === id ? { ...item, isAnswered: true } : item,
   );
@@ -106,12 +106,7 @@ const actionWhenInViewport = (element) => {
               class:unseen={!notification.isSeen}
               data-notification-id={notification.id}>
               <div class="text">{@html notification.message}</div>
-              {#if notification.description}
-                <blockquote class="description">
-                  {notification.description}
-                </blockquote>
-              {/if}
-              {#if notification.notificationTypeId === 1 && !notification.isAnswered}
+              {#if [1, 4].includes(notification.notificationTypeId) && !notification.isAnswered}
                 <div class="buttons">
                   <button
                     type="button"
@@ -199,12 +194,6 @@ const actionWhenInViewport = (element) => {
       background-color: var(--color-error);
     }
   }
-}
-
-.description {
-  margin-top: 8px;
-  border-left: 2px solid var(--color-accent);
-  padding-left: 8px;
 }
 
 .buttons {

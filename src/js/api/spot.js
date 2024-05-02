@@ -7,6 +7,7 @@ import {
   SPOT_ID,
   SPOT_ID_FEEDBACK,
   SPOT_ID_INCORRECT_STATUS,
+  SPOT_ID_OWNER_UNLINK,
   SPOT_ID_VOTE,
   SPOT_LIMIT_DAYS,
   SPOT_YEAR,
@@ -92,6 +93,7 @@ export const updateSpotDraft = async (
     img,
     additionalImg,
     sketch,
+    addImages,
     videoLink,
     description,
     categoryId,
@@ -102,6 +104,7 @@ export const updateSpotDraft = async (
   }
 ) => {
   const bearer = `Bearer ${token}`;
+  const coOwners = [];
   const formData = new FormData();
   formData.append("spot_status", spotStatus);
   if (lat) formData.append("lat", lat);
@@ -110,7 +113,15 @@ export const updateSpotDraft = async (
   if (categoryId) formData.append("category_id", categoryId);
   if (artistsCrews?.length) {
     artistsCrews.forEach((item, index) => {
-      const { artist, crew, userArtist, userCrew } = item;
+      const {
+        artist,
+        crew,
+        userArtist,
+        userCrew,
+        artistCollabType,
+        crewCollabType,
+      } = item;
+
       if (
         artist ||
         crew ||
@@ -123,30 +134,43 @@ export const updateSpotDraft = async (
             typeof userArtist !== "undefined"))
       ) {
         if (!userArtist && !artist) {
-          formData.append(`artist_crew[${index}][user_by_artist_id]`, "");
-          formData.append(`artist_crew[${index}][artist]`, "");
-        } else {
-          userArtist
+          if (crewCollabType !== "collab") {
+            formData.append(`artist_crew[${index}][user_by_artist_id]`, "");
+            formData.append(`artist_crew[${index}][artist]`, "");
+          }
+        } else if (userArtist) {
+          artistCollabType === "tagged"
             ? formData.append(
                 `artist_crew[${index}][user_by_artist_id]`,
                 userArtist
               )
-            : formData.append(`artist_crew[${index}][artist]`, artist);
+            : coOwners.push(userArtist);
+        } else {
+          formData.append(`artist_crew[${index}][artist]`, artist);
         }
 
         if (!userCrew && !crew) {
-          formData.append(`artist_crew[${index}][user_by_crew_id]`, "");
-          formData.append(`artist_crew[${index}][crew]`, "");
-        } else {
-          userCrew
+          if (artistCollabType !== "collab") {
+            formData.append(`artist_crew[${index}][user_by_crew_id]`, "");
+            formData.append(`artist_crew[${index}][crew]`, "");
+          }
+        } else if (userCrew) {
+          crewCollabType === "tagged"
             ? formData.append(
                 `artist_crew[${index}][user_by_crew_id]`,
                 userCrew
               )
-            : formData.append(`artist_crew[${index}][crew]`, crew);
+            : coOwners.push(userCrew);
+        } else {
+          formData.append(`artist_crew[${index}][crew]`, crew);
         }
       }
     });
+  }
+  if (coOwners.length) {
+    coOwners.forEach((item, index) =>
+      formData.append(`co_owners[${index}]`, item)
+    );
   }
   if (typeof year !== "undefined") formData.append("year", year);
   if (typeof videoLink !== "undefined") {
@@ -161,6 +185,11 @@ export const updateSpotDraft = async (
     formData.append("additionalImg", additionalImg);
   }
   if (typeof sketch !== "undefined") formData.append("sketch", sketch);
+  if (addImages?.length) {
+    addImages.forEach((item, index) => {
+      formData.append(`addImages[${index}]`, item);
+    });
+  }
   if (spotId) formData.append("spot_id", spotId);
   if (typeof showInProfile !== "undefined") {
     formData.append("showInProfile", showInProfile);
@@ -229,6 +258,17 @@ export const voteSpot = async (token, spotId, value) => {
     withCredentials: true,
     headers: { Authorization: bearer },
     body: formData,
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const unlinkSpotOwner = async (token, spotId) => {
+  const bearer = `Bearer ${token}`;
+  const response = await fetch(SPOT_ID_OWNER_UNLINK(spotId), {
+    method: "POST",
+    withCredentials: true,
+    headers: { Authorization: bearer },
   });
   const result = await response.json();
   return result;

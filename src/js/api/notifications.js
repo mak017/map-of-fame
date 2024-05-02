@@ -27,14 +27,9 @@ export const setNotificationSeen = async (token, id, status = 1) => {
   return result;
 };
 
-export const answerNotification = async (
-  token,
-  id,
-  { confirm, spotArtistCrewId }
-) => {
+export const answerNotification = async (token, id, confirm) => {
   const bearer = `Bearer ${token}`;
   const formData = new FormData();
-  formData.append("spot_artist_crew_id", spotArtistCrewId);
   formData.append("confirm", confirm);
   const response = await fetch(NOTIFICATION_ID_ANSWER(id), {
     method: "POST",

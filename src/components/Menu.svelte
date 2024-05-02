@@ -76,7 +76,7 @@ const handleLogout = () => {
 $: if (
   !$profileState.invites.length &&
   !$isUserVerifyProgress &&
-  !$userData.isNewbie
+  $userData.level > 3
 ) {
   getInvites(token).then((response) => {
     const { success, result } = response;

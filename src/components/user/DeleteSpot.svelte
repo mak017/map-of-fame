@@ -1,5 +1,7 @@
 <script>
-import { deleteSpot } from "../../js/api/spot";
+import { params } from "@roxi/routify";
+
+import { deleteSpot, unlinkSpotOwner } from "../../js/api/spot";
 import { loadFromLocalStorage } from "../../js/utils/commonUtils";
 
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
@@ -9,18 +11,30 @@ export let currentSpot;
 export let onSubmit;
 
 let isInProgress = false;
+let { username } = $params;
 
-const handleDelete = () => {
+const handleDelete = async () => {
   const token = loadFromLocalStorage("token") || null;
+  let success = false;
+  let result;
   isInProgress = true;
-  deleteSpot(token, currentSpot.id).then((response) => {
-    const { success, result } = response;
-    if (success && result) {
-      onSubmit();
-      close();
-    }
-    isInProgress = false;
-  });
+
+  if (currentSpot.user.username === username) {
+    const response = await deleteSpot(token, currentSpot.id);
+    success = response.success;
+    result = response.result;
+  } else {
+    const response = await unlinkSpotOwner(token, currentSpot.id);
+    success = response.success;
+    result = response.result;
+  }
+
+  if (success && result) {
+    onSubmit();
+    close();
+  }
+
+  isInProgress = false;
 };
 </script>
 

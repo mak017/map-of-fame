@@ -12,7 +12,12 @@ import SpotForm from "../SpotForm.svelte";
 const { id, username } = $params;
 const token = loadFromLocalStorage("token") || null;
 
-$: if ($userData.username && $userData.username !== username) {
+$: if (
+  $userData.username &&
+  $userData.username !== username &&
+  $editSpotData.approvedOwners &&
+  !$editSpotData.approvedOwners?.some((owner) => owner?.username !== username)
+) {
   $goto("/404");
 }
 

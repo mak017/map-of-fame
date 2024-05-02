@@ -8,7 +8,7 @@ export let label;
 export let className = "";
 
 const dispatch = createEventDispatcher();
-const change = () => dispatch("change");
+const change = (event) => dispatch("change", event);
 </script>
 
 <div class={`radio${className ? ` ${className}` : ""}`}>
@@ -33,12 +33,14 @@ const change = () => dispatch("change");
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
   }
+
   input {
     position: absolute;
     left: -9999px;
     clip: rect(0 0 0 0);
     opacity: 0;
   }
+
   label {
     flex: 1 0 auto;
     margin: -0.5px;
@@ -55,14 +57,22 @@ const change = () => dispatch("change");
     cursor: pointer;
     user-select: none;
   }
+
   input:checked + label {
     background-color: var(--color-dark);
     color: var(--color-light);
   }
+
   &.accent {
     input:checked + label {
       background-color: var(--color-accent);
       color: var(--color-light);
+    }
+  }
+
+  &.small {
+    label {
+      padding: 3px 4px;
     }
   }
 }
