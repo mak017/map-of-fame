@@ -332,7 +332,7 @@ const handleUserClick = (identifier) => () => {
 form {
   display: flex;
   position: sticky;
-  top: -70px;
+  top: -66px;
   z-index: 1;
   width: 100%;
   padding-top: 75px;
@@ -517,8 +517,9 @@ form {
   .logo {
     display: none;
   }
+
   form {
-    top: -50px;
+    top: -10px;
     align-items: flex-end;
     width: 100vw;
     margin: 0 -12px;
@@ -543,7 +544,7 @@ form {
   }
 
   .content-caption {
-    top: 20px;
+    top: 60px;
     width: 100vw;
     margin: 0 -12px;
     padding: 4px 12px 16px;

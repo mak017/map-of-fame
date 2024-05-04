@@ -23,7 +23,6 @@ import Modal from "../../../../components/Modal.svelte";
     $hasBrowseHistory ? window.history.back() : $goto("/");
   }}
   withAd
-  noLogo
   autoMargin
   banner={{
     img: $openedMarkerData?.firm?.banner,

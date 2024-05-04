@@ -17,6 +17,8 @@ export let noLogo = false;
 export let accentTitle = false;
 export let noClose = false;
 export let noPaddingTop = false;
+export let noMarginTop = false;
+export let isOpaqueBg = false;
 export let autoMargin = false;
 export let alwaysOnTop = false;
 export let banner = {};
@@ -49,6 +51,8 @@ const handleResize = () => {
   class:autoMargin
   class:alwaysOnTop
   class:noPaddingTop
+  class:noMarginTop
+  class:isOpaqueBg
   {id}
   role="presentation"
   on:keydown|stopPropagation={handleKeyDown}
@@ -156,6 +160,7 @@ const handleResize = () => {
 }
 
 h2 {
+  position: relative;
   color: var(--color-dark);
   font-weight: 900;
   font-size: 24px;
@@ -213,6 +218,12 @@ h2 {
   }
 }
 
+.noMarginTop {
+  .content {
+    margin-top: 0;
+  }
+}
+
 .sticky-header {
   display: flex;
   align-items: center;
@@ -224,11 +235,21 @@ h2 {
   z-index: 1;
   height: 40px;
   padding: 0 10px;
-  background-color: var(--color-light);
   color: var(--color-accent);
   font-size: 18px;
   font-weight: 600;
   line-height: 22px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--color-light);
+    opacity: 0.75;
+  }
 }
 
 .footer {
@@ -255,6 +276,12 @@ h2 {
   }
 }
 
+.isOpaqueBg {
+  .sticky-header::before {
+    opacity: 1;
+  }
+}
+
 @media (max-width: 767px) {
   .modal {
     padding: 50px 12px 50px;
@@ -273,7 +300,7 @@ h2 {
     height: 37px;
   }
   .content {
-    margin-top: 64px;
+    margin-top: 30px;
   }
   .bottom-container {
     height: 106px;
