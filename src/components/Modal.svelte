@@ -6,8 +6,9 @@ import { url } from "@roxi/routify";
 import { isLoggedIn, isMenuOpen } from "../js/store.js";
 import { isMobile } from "../js/utils/commonUtils.js";
 
-import Menu from "./Menu.svelte";
+import LoggedIn from "./menu/LoggedIn.svelte";
 import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
+import Guest from "./menu/Guest.svelte";
 
 export let id;
 export let title = "";
@@ -18,7 +19,6 @@ export let accentTitle = false;
 export let noClose = false;
 export let noPaddingTop = false;
 export let noMarginTop = false;
-export let isOpaqueBg = false;
 export let autoMargin = false;
 export let alwaysOnTop = false;
 export let banner = {};
@@ -52,7 +52,6 @@ const handleResize = () => {
   class:alwaysOnTop
   class:noPaddingTop
   class:noMarginTop
-  class:isOpaqueBg
   {id}
   role="presentation"
   on:keydown|stopPropagation={handleKeyDown}
@@ -74,14 +73,12 @@ const handleResize = () => {
       <h2 transition:fade|global={{ duration: 200 }}>{title}</h2>
     {/if}
     {#if !noLogo}<a href={$url("/")} class="logo">Open map</a>{/if}
-    {#if $isLoggedIn}
-      <button
-        class="button button-burger"
-        on:click={() => {
-          isMenuOpen.set(true);
-        }}
-        in:fade|global={{ duration: 200 }}>Profile</button>
-    {/if}
+    <button
+      class="button button-burger"
+      on:click={() => {
+        isMenuOpen.set(true);
+      }}
+      in:fade|global={{ duration: 200 }}>Profile</button>
   </div>
   <div class="content">
     <slot />
@@ -106,7 +103,11 @@ const handleResize = () => {
 </div>
 
 {#if $isMenuOpen}
-  <Menu />
+  {#if $isLoggedIn}
+    <LoggedIn />
+  {:else}
+    <Guest />
+  {/if}
 {/if}
 
 <style lang="scss">
@@ -235,21 +236,11 @@ h2 {
   z-index: 1;
   height: 40px;
   padding: 0 10px;
+  background-color: var(--color-light);
   color: var(--color-accent);
   font-size: 18px;
   font-weight: 600;
   line-height: 22px;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    height: 100%;
-    background-color: var(--color-light);
-    opacity: 0.75;
-  }
 }
 
 .footer {
@@ -273,12 +264,6 @@ h2 {
     &:hover {
       opacity: 0.7;
     }
-  }
-}
-
-.isOpaqueBg {
-  .sticky-header::before {
-    opacity: 1;
   }
 }
 

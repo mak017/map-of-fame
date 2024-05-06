@@ -193,12 +193,4 @@ const actionWhenInViewport = (element) => {
 .spinner-container {
   position: relative;
 }
-
-@media (max-width: 767px) {
-  .top {
-    position: relative;
-    flex-direction: column-reverse;
-    margin-bottom: 18px;
-  }
-}
 </style>

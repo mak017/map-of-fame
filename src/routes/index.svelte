@@ -42,7 +42,6 @@ import { newMarkerIcon } from "../js/utils/mapUtils/icons";
 
 import Modal from "../components/Modal.svelte";
 import CategoryFilter from "../components/CategoryFilter.svelte";
-import Menu from "../components/Menu.svelte";
 import AddSpot from "../components/addSpot/AddSpot.svelte";
 import ResetPassword from "../components/auth/ResetPassword.svelte";
 import Spinner from "../components/elements/Spinner.svelte";
@@ -52,6 +51,8 @@ import LoupeSvg from "../components/elements/icons/LoupeSvg.svelte";
 
 import { ALL_YEARS_STRING, MIN_ZOOM } from "../js/constants";
 import FilterByUserType from "../components/FilterByUserType.svelte";
+import LoggedIn from "../components/menu/LoggedIn.svelte";
+import Guest from "../components/menu/Guest.svelte";
 
 let isAddSpotSidebarVisible = false;
 let inviteData = getInviteData();
@@ -333,7 +334,11 @@ const handleSearchInput = () => {
   {/if}
 
   {#if $isMenuOpen}
-    <Menu />
+    {#if $isLoggedIn}
+      <LoggedIn />
+    {:else}
+      <Guest />
+    {/if}
   {/if}
 {/if}
 

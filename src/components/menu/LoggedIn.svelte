@@ -1,6 +1,7 @@
 <script>
+import { onMount } from "svelte";
 import { fade, fly } from "svelte/transition";
-import { goto, url } from "@roxi/routify";
+import { afterUrlChange, goto, url } from "@roxi/routify";
 
 import {
   followersState,
@@ -14,25 +15,28 @@ import {
   profileState,
   selectedYear,
   userData,
-} from "../js/store";
-import { requestSpots } from "../js/init";
-import { editUser, getInvites } from "../js/api/auth";
+} from "../../js/store";
+import { requestSpots } from "../../js/init";
+import { editUser, getInvites } from "../../js/api/auth";
+import { requestNotifications } from "../../js/api/notifications";
 import {
   isMobile,
   loadFromLocalStorage,
   removeFromLocalStorage,
-} from "../js/utils/commonUtils";
+} from "../../js/utils/commonUtils";
 
-import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
-import Popup from "./Popup.svelte";
-import Invites from "./user/Invites.svelte";
-import { requestNotifications } from "../js/api/notifications";
-import { onMount } from "svelte";
+import CloseCrossSvg from "../elements/icons/CloseCrossSvg.svelte";
+import Invites from "../user/Invites.svelte";
+import Popup from "../Popup.svelte";
 
 let showInvitesPopup = false;
 let unusedInvitesCount = 0;
 let unseenNotificationsCount;
 const token = loadFromLocalStorage("token") || null;
+
+$afterUrlChange(() => {
+  isMenuOpen.set(false);
+});
 
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 
@@ -96,14 +100,17 @@ $: unusedInvitesCount = $profileState.invites.reduce(
 
 <div
   class="overlay"
-  transition:fade={{ duration: 200 }}
+  transition:fade|global={{ duration: 200 }}
   on:click={() => isMenuOpen.set(false)}
   role="presentation"
   tabIndex="-1">
 </div>
 <div
   class="menu"
-  transition:fly={{ x: !isMobile() ? 364 : window.innerWidth, duration: 300 }}>
+  transition:fly|global={{
+    x: !isMobile() ? 364 : window.innerWidth,
+    duration: 300,
+  }}>
   <div class="logo" />
   <button class="close" on:click={() => isMenuOpen.set(false)}>
     <CloseCrossSvg />

@@ -21,7 +21,6 @@ const handleResize = () => {
   on:close={() => $goto("/")}
   withAd
   alwaysOnTop
-  noLogo
-  isOpaqueBg>
+  noLogo>
   <SearchForm />
 </Modal>
