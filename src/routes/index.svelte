@@ -250,19 +250,12 @@ const handleSearchInput = () => {
             </button>
           </form>
         </div>
-        {#if $isLoggedIn}
-          <button
-            class="button button-main_screen button-square button-burger"
-            on:click={() => {
-              isMenuOpen.set(true);
-            }}
-            in:fade|global={{ duration: 200 }}>Profile</button>
-        {:else}
-          <a
-            href={$url("/login")}
-            class="button button-main_screen button-square button-open_login"
-            >Login</a>
-        {/if}
+        <button
+          class="button button-main_screen button-square button-burger"
+          on:click={() => {
+            isMenuOpen.set(true);
+          }}
+          in:fade|global={{ duration: 200 }}>Menu</button>
       {:else}
         <div class="selection selected-artist">
           <span
@@ -395,15 +388,6 @@ const handleSearchInput = () => {
         opacity: 0.5;
       }
     }
-  }
-
-  &-open_login {
-    background-image: url(../images/lock.svg);
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    background-size: 9px 17px;
-    color: transparent;
-    font-size: 0;
   }
 
   &-select_area {
