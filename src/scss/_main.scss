@@ -80,6 +80,14 @@ summary {
   bottom: 60px;
 }
 
+.modal {
+  h2 {
+    span {
+      font-weight: 400;
+    }
+  }
+}
+
 .svelte-select {
   touch-action: none !important;
 

@@ -139,6 +139,7 @@ const createInfiniteScrollState = () => {
     list: [],
     offset: 0,
     scrollOffset: 0,
+    total: 0,
     isFetched: false,
     isLoading: true,
     isShowSpinner: true,
@@ -159,6 +160,7 @@ const createInfiniteScrollState = () => {
     setIsShowSpinner: (value) =>
       update((state) => ({ ...state, isShowSpinner: value })),
     setHasMore: (value) => update((state) => ({ ...state, hasMore: value })),
+    setTotal: (value) => update((state) => ({ ...state, total: value })),
     reset: () => set(initialState),
   };
 };

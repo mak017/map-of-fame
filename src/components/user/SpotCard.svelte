@@ -74,7 +74,7 @@ export let onDelete;
     left: 0;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.3s;
+    transform: translateY(-100%);
     border-radius: inherit;
     opacity: 0;
     background: rgba($color: #000, $alpha: 0.45);
@@ -125,6 +125,10 @@ export let onDelete;
     }
     .overlay {
       opacity: 1;
+      transform: translateY(0);
+      transition:
+        transform 0.05s,
+        opacity 0.25s 0.05s;
     }
   }
 }

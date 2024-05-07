@@ -70,7 +70,7 @@ const handleResize = () => {
       <button class="close" on:click={close}><CloseCrossSvg /></button>
     {/if}
     {#if title}
-      <h2 transition:fade|global={{ duration: 200 }}>{title}</h2>
+      <h2 transition:fade|global={{ duration: 200 }}>{@html title}</h2>
     {/if}
     {#if !noLogo}<a href={$url("/")} class="logo">Open map</a>{/if}
     <button

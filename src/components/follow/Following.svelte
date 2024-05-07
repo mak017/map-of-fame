@@ -1,12 +1,11 @@
 <script>
 import { onMount } from "svelte";
-import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
-import { url } from "@roxi/routify";
+import { goto, url } from "@roxi/routify";
 
 import { followingState, profileState } from "../../js/store";
-import { getFollowing } from "../../js/api/follow";
-import { loadFromLocalStorage } from "../../js/utils/commonUtils";
+import { getFollowing, unfollowUser } from "../../js/api/follow";
+import { isMobile, loadFromLocalStorage } from "../../js/utils/commonUtils";
 
 import Spinner from "../elements/Spinner.svelte";
 
@@ -28,6 +27,7 @@ const fetchUsers = async (offset = 0, isNewFetch) => {
     newBatch = result.following ? [...result.following] : [];
     followingState.setList([...$followingState.list, ...newBatch]);
     followingState.setHasMore(newBatch.length === MAX_ITEMS_PER_PAGE);
+    followingState.setTotal(result.followingCount);
     followingState.setIsFetched(true);
   }
   followingState.setIsLoading(false);
@@ -51,6 +51,13 @@ $: if (!$followingState.isFetched) {
   fetchUsers(0, true);
 }
 
+const navigateToUserProfile = (user) => {
+  const element = document.querySelector(`[data-scroll-element="${user.id}"]`);
+  followingState.setScrollOffset(element.offsetTop);
+  profileState.reset();
+  $goto("/@:username", { username: user.username });
+};
+
 const handleLoadMore = () => {
   if ($followingState.isShowSpinner) {
     return;
@@ -61,10 +68,21 @@ const handleLoadMore = () => {
   fetchUsers(offset);
 };
 
-const handleUserClick = (user) => () => {
-  const element = document.querySelector(`[data-scroll-element="${user.id}"]`);
-  followingState.setScrollOffset(element.offsetTop);
-  profileState.reset();
+const handleUserClick = (user) => (event) => {
+  if (event.target.nodeName === "BUTTON" || isMobile()) return;
+
+  navigateToUserProfile(user);
+};
+
+const handleUnfollowBtnClick = (user) => async () => {
+  const { success } = await unfollowUser(token, user.id);
+
+  if (success) {
+    const updatedList = $followingState.list.filter(
+      (item) => item.id !== user.id,
+    );
+    followingState.setList(updatedList);
+  }
 };
 </script>
 
@@ -73,22 +91,80 @@ const handleUserClick = (user) => () => {
     <div class="users">
       {#if !!$followingState.list.length || $followingState.isShowSpinner}
         {#if !$followingState.isLoading}
-          {#each $followingState.list as user}
+          {#if !isMobile()}
+            <div class="list-head">
+              <div class="cell">Username</div>
+              <div class="cell">Artist</div>
+              <div class="cell">Crew</div>
+              <div class="cell spots">Spots</div>
+              <div class="cell followers">Followers</div>
+            </div>
+          {/if}
+          {#each $followingState.list as user (user.id)}
             <a
               href={$url("/@:username", { username: user.username })}
-              class="button user-card"
-              on:click={handleUserClick(user)}
-              data-scroll-element={user.id}>
-              <div class="avatar">
-                {#if user.background}
-                  <img
-                    loading="lazy"
-                    src={user.background}
-                    alt={user.username}
-                    in:fade|global={{ duration: 200 }} />
+              class="list-row"
+              data-scroll-element={user.id}
+              on:click|preventDefault={handleUserClick(user)}>
+              <div class="cell username">
+                {#if isMobile()}
+                  <div class="head">Username</div>
                 {/if}
+                <div class="value">
+                  {`@${user.username}`}
+                </div>
               </div>
-              <div>{`@${user.username}`}</div>
+              {#if !isMobile() || user.artist}
+                <div class="cell artist">
+                  {#if isMobile()}
+                    <div class="head">Artist</div>
+                  {/if}
+                  <div class="value">
+                    {user.artist ?? ""}
+                  </div>
+                </div>
+              {/if}
+              {#if !isMobile() || user.crew}
+                <div class="cell crew">
+                  {#if isMobile()}
+                    <div class="head">Crew</div>
+                  {/if}
+                  <div class="value">
+                    {user.crew ?? ""}
+                  </div>
+                </div>
+              {/if}
+              <div class="cell spots">
+                {#if isMobile()}
+                  <div class="head">Spots</div>
+                {/if}
+                <div class="value">{user.spotsCount ?? ""}</div>
+              </div>
+              <div class="cell followers">
+                {#if isMobile()}
+                  <div class="head">Followers</div>
+                {/if}
+                <div class="value">
+                  <span>{user.followersCnt ?? ""}</span>
+                  <button
+                    type="button"
+                    class="button unfollow"
+                    on:click={handleUnfollowBtnClick(user)}>Unfollow</button>
+                </div>
+              </div>
+              {#if isMobile()}
+                <div class="overlay">
+                  <a
+                    href={$url("/@:username", { username: user.username })}
+                    class="button view"
+                    on:click|preventDefault={() => navigateToUserProfile(user)}
+                    >👁</a>
+                  <button
+                    type="button"
+                    class="button unfollow-mobile"
+                    on:click={handleUnfollowBtnClick(user)}>Unfollow</button>
+                </div>
+              {/if}
             </a>
           {/each}
           {#if parentModal}
@@ -126,45 +202,181 @@ const handleUserClick = (user) => () => {
   width: 100%;
 }
 
-.users {
-  display: grid;
-  grid-auto-rows: 160px;
-  grid-gap: 4vmin;
-  grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
-  justify-content: space-between;
-  width: 100%;
+.list {
+  &-head,
+  &-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr) 0.5fr 0.5fr;
+  }
+
+  &-head {
+    margin-bottom: 16px;
+    background-color: var(--color-light);
+    color: color-mix(in srgb, var(--color-dark) 60%, transparent);
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  &-row {
+    margin-bottom: 24px;
+    transition: color 0.3s;
+    color: var(--color-dark);
+    font-size: 16px;
+    font-weight: 400;
+    text-decoration: none;
+    cursor: pointer;
+  }
 }
 
-.user-card {
-  position: relative;
-  border-radius: 2px;
-  overflow: hidden;
-  color: var(--color-dark);
+.spots,
+.followers {
   text-align: center;
-  cursor: pointer;
+}
 
-  .avatar {
-    width: 140px;
-    height: 140px;
-    margin: auto;
-    border-radius: 50%;
-    overflow: hidden;
-    background-color: #d3d3d3;
-  }
+.followers {
+  .value {
+    position: relative;
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    user-select: none;
+    span {
+      transition: 0.15s;
+    }
   }
+}
 
-  &:hover {
-    text-decoration: none;
-  }
+.unfollow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 110px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  background: var(--color-accent-light);
+  transition: 0.15s;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.overlay {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-100%);
+  border-radius: inherit;
+  opacity: 0;
+  background: rgba($color: #000, $alpha: 0.45);
+}
+
+.view,
+.unfollow-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  margin: 8px;
+  background-color: var(--color-accent);
+  color: var(--color-light);
+  text-decoration: none;
+}
+
+.view {
+  width: 40px;
+  font-size: 24px;
+}
+
+.unfollow-mobile {
+  width: 110px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .spinner-container {
   position: relative;
+}
+
+@media (min-width: 768px) {
+  .list-row:hover {
+    color: var(--color-accent);
+
+    .followers .value {
+      span {
+        opacity: 0;
+      }
+
+      .unfollow {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .list {
+    &-row {
+      position: relative;
+      grid-template-columns: repeat(4, 1fr);
+      row-gap: 8px;
+      margin: 0 -12px;
+      padding: 12px;
+      border-top: 1px solid var(--color-light-grey);
+      overflow: hidden;
+
+      &:last-of-type {
+        border-bottom: 1px solid var(--color-light-grey);
+      }
+
+      .head {
+        color: color-mix(in srgb, var(--color-dark) 60%, transparent);
+        font-size: 13px;
+      }
+
+      .value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .username {
+        grid-column: 3/5;
+        grid-row: 1;
+        text-align: end;
+      }
+
+      .artist {
+        grid-column: 1/3;
+        grid-row: 1;
+      }
+
+      .crew {
+        grid-column: 1/3;
+      }
+
+      &:hover {
+        .overlay {
+          opacity: 1;
+          transform: translateY(0);
+          transition:
+            transform 0.05s,
+            opacity 0.25s 0.05s;
+        }
+      }
+    }
+  }
+
+  .spots {
+    grid-column: 3;
+    text-align: end;
+  }
+
+  .followers {
+    grid-column: 4;
+    text-align: end;
+  }
 }
 </style>
