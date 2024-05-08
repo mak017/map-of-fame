@@ -184,7 +184,7 @@ h2 {
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: 20vh;
+  margin-top: 90px;
 }
 
 .bottom-container {
@@ -280,7 +280,7 @@ h2 {
     height: 37px;
   }
   .content {
-    margin-top: 30px;
+    margin-top: 150px;
   }
   .bottom-container {
     height: 106px;
