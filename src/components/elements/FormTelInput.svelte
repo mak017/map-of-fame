@@ -53,7 +53,6 @@ input {
   border-bottom: 1px solid var(--color-dark);
   color: var(--color-dark);
   font-size: 16px;
-  font-weight: 600;
   line-height: 20px;
   &::placeholder {
     padding-left: 2px;

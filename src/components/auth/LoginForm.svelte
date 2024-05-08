@@ -122,19 +122,20 @@ form {
   max-width: 530px;
   margin-bottom: auto;
 }
+
 .forgot-password {
   margin-bottom: 36px;
   text-align: right;
+
   a {
     padding: 0;
     border: 0;
     background: none;
     color: var(--color-accent);
     font-size: 14px;
-    font-weight: 900;
+    font-weight: 400;
     line-height: 1.22;
     text-decoration: none;
-    text-transform: uppercase;
     cursor: pointer;
 
     &:hover {

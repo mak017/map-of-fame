@@ -53,18 +53,20 @@ textarea {
   border: 1px solid var(--color-dark);
   border-radius: 2px;
   resize: none;
-  font-weight: 600;
   font-size: 16px;
+
   &:focus {
     border-color: var(--color-accent);
     outline: none;
   }
+
   &::placeholder {
     opacity: 0;
     color: var(--color-dark);
     font-size: 17px;
     font-weight: normal;
   }
+
   &:placeholder-shown + .floating-label {
     overflow: hidden;
     background: transparent;
@@ -73,6 +75,7 @@ textarea {
     white-space: nowrap;
     cursor: text;
   }
+
   &:not(:placeholder-shown) + .floating-label {
     transform: translateY(-20px);
     background: var(--color-light);

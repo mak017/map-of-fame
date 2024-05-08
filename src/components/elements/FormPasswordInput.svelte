@@ -43,7 +43,6 @@ input {
   border: 0;
   border-bottom: 1px solid var(--color-dark);
   color: var(--color-dark);
-  font-weight: 600;
   font-size: 16px;
   line-height: 20px;
   &::placeholder {
