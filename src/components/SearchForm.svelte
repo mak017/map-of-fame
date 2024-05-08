@@ -558,10 +558,12 @@ form {
       row-gap: 8px;
       margin: 0 -12px;
       padding: 12px;
-      border-top: 1px solid var(--color-light-grey);
+      border-top: 1px solid
+        color-mix(in srgb, var(--color-light-grey) 30%, transparent);
 
       &:last-of-type {
-        border-bottom: 1px solid var(--color-light-grey);
+        border-bottom: 1px solid
+          color-mix(in srgb, var(--color-light-grey) 30%, transparent);
       }
 
       .head {

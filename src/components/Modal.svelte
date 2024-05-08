@@ -3,12 +3,11 @@ import { createEventDispatcher } from "svelte";
 import { fade, slide } from "svelte/transition";
 import { url } from "@roxi/routify";
 
-import { isLoggedIn, isMenuOpen } from "../js/store.js";
+import { isMenuOpen } from "../js/store.js";
 import { isMobile } from "../js/utils/commonUtils.js";
 
-import LoggedIn from "./menu/LoggedIn.svelte";
 import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
-import Guest from "./menu/Guest.svelte";
+import Menu from "./menu/Menu.svelte";
 
 export let id;
 export let title = "";
@@ -103,11 +102,7 @@ const handleResize = () => {
 </div>
 
 {#if $isMenuOpen}
-  {#if $isLoggedIn}
-    <LoggedIn />
-  {:else}
-    <Guest />
-  {/if}
+  <Menu />
 {/if}
 
 <style lang="scss">
