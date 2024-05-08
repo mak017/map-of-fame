@@ -107,14 +107,14 @@ const actionWhenInViewport = (element) => {
                 <div class="buttons">
                   <button
                     type="button"
-                    class="button"
+                    class="button yes"
                     on:click={handleButtonClick(notification, true)}
-                    >Yes</button>
+                    >Confirm</button>
                   <button
                     type="button"
-                    class="button"
+                    class="button no"
                     on:click={handleButtonClick(notification, false)}
-                    >No</button>
+                    >Decline</button>
                 </div>
               {/if}
             </div>
@@ -161,32 +161,48 @@ const actionWhenInViewport = (element) => {
 .notification {
   position: relative;
   margin-bottom: 16px;
-  padding: 16px;
-  border: 1px solid var(--color-dark);
-  border-radius: 4px;
+  padding: 16px 24px;
+  border-radius: 2px;
+  background-color: var(--color-lotion);
+  font-size: 16px;
 
   &.unseen {
-    border-width: 2px;
+    font-weight: 600;
 
-    &::after {
+    .text::before {
       content: "";
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 10px;
-      height: 10px;
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 10px;
       border-radius: 50%;
-      background-color: var(--color-error);
+      vertical-align: 1px;
+      background-color: var(--color-accent);
     }
   }
 }
 
 .buttons {
-  margin-top: 8px;
+  display: flex;
+  margin-top: 16px;
 
   .button {
-    min-width: 120px;
-    padding: 2px 8px;
+    min-width: 140px;
+    padding: 8px;
+    font-size: 16px;
+    text-transform: uppercase;
+  }
+
+  .yes {
+    margin-right: 16px;
+    background-color: var(--color-dark);
+    color: var(--color-light);
+  }
+
+  .no {
+    border: 1px solid;
+    background-color: var(--color-light);
+    color: var(--color-dark);
   }
 }
 
