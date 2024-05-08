@@ -98,18 +98,6 @@ $afterUrlChange(() => {
 @media (max-width: 767px) {
   .menu {
     width: 100%;
-    padding: 18px 24px 24px 22px;
-    font-size: 24px;
-  }
-
-  .logo {
-    position: static;
-    justify-content: flex-start;
-    width: 110px;
-    height: 40px;
-    margin-bottom: 24px;
-    background-color: transparent;
-    background-size: 120px;
   }
 }
 </style>

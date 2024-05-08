@@ -252,11 +252,4 @@ $: unusedInvitesCount = $profileState.invites.reduce(
   color: transparent;
   font-size: 0;
 }
-
-@media (max-width: 767px) {
-  .logout {
-    margin-bottom: 0;
-    font-size: 20px;
-  }
-}
 </style>
