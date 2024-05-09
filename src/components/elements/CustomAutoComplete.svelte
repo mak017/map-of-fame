@@ -83,7 +83,7 @@ onDestroy(() => {
     <div class="selected-type">
       <span class:hidden={data.name}
         >{data.name || data.artist?.name || data.crew?.name}</span>
-      ({data.type || `@${data.username}`})
+      <span class="username">({data.type || `@${data.username}`})</span>
     </div>
     {#if index > 0}
       <div class="collab-wrapper" class:isExpandedCollab>
@@ -149,8 +149,11 @@ onDestroy(() => {
 
   span {
     font-size: 16px;
-    font-weight: 600;
     line-height: 20px;
+
+    &.username {
+      font-weight: 500;
+    }
   }
 
   .hidden {

@@ -146,7 +146,7 @@ li {
   &.active {
     background-color: var(--color-accent);
     color: var(--color-light);
-    font-weight: 900;
+    font-weight: 800;
     pointer-events: none;
   }
 

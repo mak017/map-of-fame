@@ -44,7 +44,7 @@ button {
   background-color: var(--color-accent);
   color: var(--color-light);
   font-size: 14px;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 22px;
   text-transform: uppercase;
 

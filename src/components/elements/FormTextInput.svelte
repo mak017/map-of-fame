@@ -113,8 +113,6 @@ input {
 
 label:not(.with-label) {
   input {
-    padding: 4px 0 8px;
-
     &:placeholder-shown + .floating-label {
       overflow: hidden;
       background: transparent;
@@ -125,7 +123,7 @@ label:not(.with-label) {
     }
 
     &:not(:placeholder-shown) + .floating-label {
-      transform: translateY(-16px);
+      transform: translateY(-18px);
       background: var(--color-light);
       color: rgba(#393940, 0.6);
       font-size: 13px;
@@ -195,15 +193,7 @@ label:not(.with-label) {
 }
 
 .edit-spot {
-  input {
-    line-height: 27px;
-  }
-
-  &:not(.with-label) {
-    input {
-      padding: 1px 0 11px;
-    }
-  }
+  margin-bottom: 0;
 }
 
 .search {
@@ -214,7 +204,7 @@ label:not(.with-label) {
       padding: 2px 0 10px;
       line-height: 25px;
       font-size: 24px;
-      font-weight: 900;
+      font-weight: 800;
 
       &::placeholder {
         opacity: 0.6;

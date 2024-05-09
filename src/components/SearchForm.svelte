@@ -332,7 +332,7 @@ const handleUserClick = (identifier) => () => {
 form {
   display: flex;
   position: sticky;
-  top: -66px;
+  top: -1px;
   z-index: 1;
   width: 100%;
   padding-top: 75px;
@@ -347,7 +347,7 @@ form {
 .content-caption {
   display: flex;
   position: sticky;
-  top: 51px;
+  top: 120px;
   justify-content: space-between;
   width: 100%;
   margin-bottom: 8px;
@@ -503,7 +503,7 @@ form {
 
   .text2 {
     font-size: 24px;
-    font-weight: 900;
+    font-weight: 800;
     line-height: 29px;
   }
 }

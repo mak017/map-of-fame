@@ -54,7 +54,7 @@ h2 {
   background: var(--color-lotion);
   color: var(--color-dark);
   font-size: 24px;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 1.22;
   text-transform: uppercase;
 }
@@ -68,26 +68,28 @@ h2 {
 @media (max-width: 767px) {
   h2 {
     position: static;
-    justify-content: flex-start;
+    flex: 0 0 40px;
     width: 100%;
     height: auto;
     margin-bottom: 12px;
     background: none;
+    font-size: 24px;
   }
 
   .add-spot {
     width: 100%;
+    padding-top: 0;
     padding-bottom: 0;
   }
 
   .close-mob {
     display: block;
     position: absolute;
-    top: 30px;
-    right: 14px;
-    width: 34px;
-    height: 34px;
-    padding: 0;
+    top: 0;
+    left: 10px;
+    width: 40px;
+    height: 40px;
+    padding: 12px;
     border: 0;
     background: none;
     cursor: pointer;

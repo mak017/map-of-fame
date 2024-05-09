@@ -50,7 +50,7 @@ const handleAddSpotClick = () => {
   background-color: var(--color-dark);
   color: var(--color-light);
   font-size: 14px;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 1.2222222;
   text-transform: uppercase;
 }
@@ -64,7 +64,7 @@ const handleAddSpotClick = () => {
   background-color: var(--color-light);
   color: var(--color-accent);
   font-size: 24px;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 29px;
   text-transform: uppercase;
   white-space: nowrap;

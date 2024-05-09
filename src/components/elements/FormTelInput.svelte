@@ -45,20 +45,23 @@ label {
   margin-bottom: 20px;
   padding-top: 8px;
 }
+
 input {
   width: 530px;
   max-width: 100%;
-  padding: 4px 0 8px;
+  padding: 6px 0;
   border: 0;
   border-bottom: 1px solid var(--color-dark);
   color: var(--color-dark);
   font-size: 16px;
   line-height: 20px;
+
   &::placeholder {
     padding-left: 2px;
     color: var(--color-dark);
     font-weight: normal;
   }
+
   &:focus {
     border-bottom-color: var(--color-accent);
     outline: 0;
@@ -96,6 +99,7 @@ label {
   color: var(--color-dark);
   line-height: 1.25;
 }
+
 .hint {
   margin-top: 8px;
   opacity: 0.6;
@@ -103,14 +107,17 @@ label {
   font-size: 13px;
   line-height: 16px;
 }
+
 .error {
   input {
     border-color: var(--color-error);
   }
+
   .hint {
     opacity: 1;
     color: var(--color-error);
   }
+
   &:not(.with-hint) {
     .hint {
       margin: 4px 0 -20px;
@@ -120,16 +127,14 @@ label {
 
 .add-spot {
   margin-bottom: 10px;
+
   .hint {
     margin-top: 4px;
   }
 }
 
 .edit-spot {
-  input {
-    padding: 1px 0 11px;
-    line-height: 27px;
-  }
+  margin-bottom: 0;
 }
 
 .year {
@@ -144,6 +149,7 @@ label {
     width: 100%;
     max-width: 530px;
   }
+
   .wide-on-mobile {
     input {
       max-width: none;
@@ -154,15 +160,18 @@ label {
 @media (orientation: landscape) and (max-height: 960px) {
   .add-spot {
     margin-bottom: 6px;
+
     input {
       padding: 5px 0;
       font-size: 14px;
       line-height: 17px;
     }
+
     .hint {
       font-size: 11px;
       line-height: 14px;
     }
+
     &.error:not(.with-hint) .hint {
       margin: 0 0 -14px;
     }

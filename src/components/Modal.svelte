@@ -171,7 +171,7 @@ const handleResize = () => {
 h2 {
   position: relative;
   color: var(--color-dark);
-  font-weight: 900;
+  font-weight: 800;
   font-size: 24px;
   line-height: 29px;
   text-align: center;
@@ -263,7 +263,7 @@ h2 {
     background: none;
     color: var(--color-accent);
     font-size: 14px;
-    font-weight: 900;
+    font-weight: 800;
     line-height: 1.22;
     text-decoration: none;
     text-transform: uppercase;
@@ -282,10 +282,6 @@ h2 {
     &.withFooter {
       padding-bottom: 25px;
     }
-  }
-
-  .close {
-    right: 12px;
   }
 
   .logo {

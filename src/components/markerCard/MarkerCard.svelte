@@ -507,7 +507,7 @@ const getArtistsString = (artistCrew) => {
   background: none;
   color: var(--color-dark);
   font-size: 24px;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 1.22;
   text-align: left;
   text-transform: uppercase;

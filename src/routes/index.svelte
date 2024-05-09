@@ -499,7 +499,6 @@ const handleSearchInput = () => {
     background-color: var(--color-light);
     color: var(--color-dark);
     font-size: 16px;
-    font-weight: 600;
     line-height: 20px;
 
     &::placeholder {

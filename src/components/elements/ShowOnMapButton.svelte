@@ -14,7 +14,7 @@ export let onClick = () => {};
   background: none;
   color: var(--color-accent);
   font-size: 14px;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 22px;
   text-transform: uppercase;
 

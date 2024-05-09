@@ -639,7 +639,7 @@ const fetchUsersByCrew = async (filterText, index) => {
           </div>
         {:else}
           <label for="upload-image2" class="first_upload">
-            <span>Add Image (2 of 2)</span>
+            <span>Add image (2 of 2)</span>
             <span>Max 10 Mb</span>
           </label>
         {/if}
@@ -659,7 +659,7 @@ const fetchUsersByCrew = async (filterText, index) => {
         </div>
       {:else}
         <label for="upload-image" class="first_upload">
-          <span>Add Image (1 of 2)</span>
+          <span>Add image (1 of 2)</span>
           <span>Max 10 Mb</span>
         </label>
       {/if}
@@ -684,7 +684,7 @@ const fetchUsersByCrew = async (filterText, index) => {
           </div>
         {:else}
           <label for="upload-image2" class="first_upload">
-            <span>Add Image (2 of 2)</span>
+            <span>Add image (2 of 2)</span>
             <span>Max 10 Mb</span>
           </label>
         {/if}
@@ -709,7 +709,7 @@ const fetchUsersByCrew = async (filterText, index) => {
           </div>
         {:else}
           <label for="upload-image3" class="first_upload">
-            <span>Add Image</span>
+            <span>Add image</span>
             <span>Max 10 Mb</span>
           </label>
         {/if}
@@ -731,7 +731,7 @@ const fetchUsersByCrew = async (filterText, index) => {
           data={artistCrewPairs[index].artistData}
           text={artistCrewPairs[index].artist}
           showList={!isAutocompleteEmpty}
-          label="Artist Name"
+          label="Artist name"
           inputId={`artist-input-${index}`}
           type={artistCrewPairs[index].artistCollabType}
           {index}
@@ -772,7 +772,7 @@ const fetchUsersByCrew = async (filterText, index) => {
           data={artistCrewPairs[index].crewData}
           text={artistCrewPairs[index].crew}
           showList={!isAutocompleteEmpty}
-          label="Crew Name"
+          label="Crew name"
           inputId={`crew-input-${index}`}
           type={artistCrewPairs[index].crewCollabType}
           {index}
@@ -868,19 +868,18 @@ const fetchUsersByCrew = async (filterText, index) => {
   </div>
   <div class="link-to-video">
     <FormTextInput
-      label="Link To Video"
+      placeholder="Link To Video"
       bind:value={linkToVideo}
       on:input={handleVideoLinkChange}
       on:blur={() => saveDraft("linkToVideo")}
       errorText={errors.linkToVideo}
       wideOnMobile
       editSpot={isEditSpot}
-      addSpot={!isEditSpot}
-      tooltip="Add link to your video hosted on Youtube / Vimeo / Dailymotion / Instagram / TikTok" />
+      addSpot={!isEditSpot} />
   </div>
   <div class="link-to-work">
     <FormTextInput
-      label="Link To Work"
+      placeholder="Link To Work"
       bind:value={link}
       on:input={handleLinkChange}
       on:blur={() => saveDraft("link")}
@@ -941,6 +940,7 @@ form {
 .artist-crew-pair + .artist-crew-pair {
   margin-top: 18px;
 }
+
 .btn-add-more {
   display: flex;
   align-items: center;
@@ -951,7 +951,7 @@ form {
   background-color: var(--color-dark);
   color: var(--color-light);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
 
   span {
     margin-left: 8px;
@@ -991,7 +991,7 @@ form {
 
       &:first-child {
         font-size: 18px;
-        font-weight: 600;
+        font-weight: 500;
       }
 
       &:last-child {
@@ -1074,7 +1074,7 @@ form {
 
 .button_wrap {
   display: flex;
-  margin-bottom: 12px;
+  margin: 12px 0;
 }
 
 .cancel {
@@ -1085,7 +1085,7 @@ form {
   background-color: var(--color-light);
   color: var(--color-accent);
   font-size: 14px;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 1.22;
   text-transform: uppercase;
   cursor: pointer;
@@ -1104,7 +1104,6 @@ form {
 
   .artists-area {
     grid-column: 3;
-    grid-row: 6;
     margin-bottom: 0;
   }
 
@@ -1122,7 +1121,7 @@ form {
 
   .upload-area {
     grid-column: 1/3;
-    grid-row: 1/9;
+    grid-row: 1/10;
   }
 
   .upload-image {
@@ -1138,25 +1137,20 @@ form {
 
   .description {
     grid-column: 3;
-    grid-row: auto;
-    margin-top: 24px;
+    margin-top: 18px;
   }
 
   .category {
     grid-column: 3;
-    grid-row: 5;
     height: 40px;
-    margin-bottom: 10px;
   }
 
   .link-to-work {
     grid-column: 3;
-    grid-row: 3;
   }
 
   .link-to-video {
     grid-column: 3;
-    grid-row: 4;
   }
 
   .button_wrap {
@@ -1205,7 +1199,7 @@ form {
       left: 0;
       width: 22px;
       height: 22px;
-      border: 1px solid var(--color-accent);
+      border: 1px solid var(--color-dark);
       border-radius: 2px;
     }
 

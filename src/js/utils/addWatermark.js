@@ -50,9 +50,9 @@ export const addWatermark = (img, user) => {
   const ctx = img.getContext("2d");
   const siteName = window.location.hostname.replace("www.", "").toUpperCase();
   const username = user.toUpperCase();
-  ctx.font = `900 ${getScaledSize(30)}px Montserrat`;
+  ctx.font = `800 ${getScaledSize(30)}px Montserrat`;
   const metrics1 = ctx.measureText(siteName);
-  ctx.font = `900 ${getScaledSize(18)}px Montserrat`;
+  ctx.font = `800 ${getScaledSize(18)}px Montserrat`;
   const metrics2 = ctx.measureText(username);
   const textHeight =
     (metrics1.actualBoundingBoxAscent + metrics2.actualBoundingBoxAscent) *
@@ -77,7 +77,7 @@ export const addWatermark = (img, user) => {
     false
   );
   ctx.translate(getScaledSize(16), -textHeight + textHeight * 0.2);
-  ctx.font = `900 ${getScaledSize(14)}px Montserrat`;
+  ctx.font = `800 ${getScaledSize(14)}px Montserrat`;
   ctx.fillStyle = "#fff";
   ctx.globalAlpha = 0.5;
   ctx.fillText(siteName, 4, 0);

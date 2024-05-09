@@ -50,7 +50,7 @@ h1,
 h2 {
   color: var(--color-accent);
   font-size: 24px;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 29px;
   text-transform: uppercase;
 }
