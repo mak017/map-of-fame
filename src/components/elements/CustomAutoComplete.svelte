@@ -144,11 +144,11 @@ onDestroy(() => {
   top: 12px;
   max-width: calc(100% - 30px);
   overflow: hidden;
+  font-size: 16px;
   text-overflow: ellipsis;
   white-space: nowrap;
 
   span {
-    font-size: 16px;
     line-height: 20px;
 
     &.username {
@@ -210,6 +210,12 @@ onDestroy(() => {
       transition: 0.3s;
       visibility: visible;
     }
+  }
+}
+
+@media (orientation: landscape) and (max-height: 960px) {
+  .selected-type {
+    font-size: 14px;
   }
 }
 </style>

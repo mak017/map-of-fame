@@ -79,7 +79,7 @@ label {
       cursor: text;
     }
     &:not(:placeholder-shown) + .floating-label {
-      transform: translateY(-16px);
+      transform: translateY(-18px);
       background: var(--color-light);
       color: rgba(#393940, 0.6);
       font-size: 13px;

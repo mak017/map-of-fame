@@ -855,7 +855,7 @@ const fetchUsersByCrew = async (filterText, index) => {
         items={$userCategories}
         bind:selectedValue={selectedCategory}
         on:select={handleCategorySelect}
-        placeholder="Art Category"
+        placeholder="Art category"
         optionIdentifier="name"
         addSpot={!isEditSpot}
         label="name" />
@@ -868,7 +868,7 @@ const fetchUsersByCrew = async (filterText, index) => {
   </div>
   <div class="link-to-video">
     <FormTextInput
-      placeholder="Link To Video"
+      placeholder="Link to video"
       bind:value={linkToVideo}
       on:input={handleVideoLinkChange}
       on:blur={() => saveDraft("linkToVideo")}
@@ -879,7 +879,7 @@ const fetchUsersByCrew = async (filterText, index) => {
   </div>
   <div class="link-to-work">
     <FormTextInput
-      placeholder="Link To Work"
+      placeholder="Link to work"
       bind:value={link}
       on:input={handleLinkChange}
       on:blur={() => saveDraft("link")}
