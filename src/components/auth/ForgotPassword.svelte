@@ -11,7 +11,6 @@ import { ERROR_MESSAGES } from "../../js/constants";
 
 export let setForgotPasswordEmailSent;
 export let forgotPasswordEmailSent;
-export let isMobileWidth;
 
 let email = "";
 let errorMessage = "";
@@ -65,9 +64,6 @@ const handleInputChange = () => {
   on:submit|preventDefault={handleSubmit}
   novalidate
   transition:fade|global={{ duration: 200 }}>
-  {#if forgotPasswordEmailSent && !isMobileWidth}
-    <p>Letter was sent to the email</p>
-  {/if}
   <FormEmailInput
     placeholder="Email"
     bind:value={email}
@@ -89,26 +85,8 @@ form {
   max-width: 530px;
   margin-bottom: auto;
 }
-p {
-  position: absolute;
-  top: -20vh;
-  left: 50%;
-  width: 100%;
-  transform: translateX(-50%);
-  color: var(--color-accent);
-  font-size: 24px;
-  font-weight: 900;
-  line-height: 1.22;
-  text-align: center;
-  text-transform: uppercase;
-}
+
 .submit-wrapper {
   margin-top: 36px;
-}
-
-@media (max-height: 400px) {
-  p {
-    top: calc(-6vh - 70px);
-  }
 }
 </style>
