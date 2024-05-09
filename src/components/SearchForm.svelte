@@ -503,7 +503,7 @@ form {
 
   .text2 {
     font-size: 24px;
-    font-weight: 800;
+    font-weight: 600;
     line-height: 29px;
   }
 }

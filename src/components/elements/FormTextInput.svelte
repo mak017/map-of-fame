@@ -204,7 +204,7 @@ label:not(.with-label) {
       padding: 2px 0 10px;
       line-height: 25px;
       font-size: 24px;
-      font-weight: 800;
+      font-weight: 600;
 
       &::placeholder {
         opacity: 0.6;
