@@ -337,7 +337,7 @@ form {
   margin-bottom: 36px;
   color: var(--color-dark);
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 22px;
   text-align: center;
 
@@ -350,7 +350,7 @@ form {
   margin-bottom: 24px;
   color: var(--color-dark);
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
   text-align: center;
 }
 
@@ -361,7 +361,7 @@ form {
 .switch-to-sign-in {
   margin-top: 36px;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.22;
   text-align: center;
 

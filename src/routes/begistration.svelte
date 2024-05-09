@@ -11,6 +11,7 @@ import Begistration from "../components/auth/Begistration.svelte";
   on:close={() => $goto("/")}
   title="Begistration"
   noLogo
-  withFooter>
+  withFooter
+  extraMarginTopMobile>
   <Begistration />
 </Modal>

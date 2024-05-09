@@ -146,7 +146,7 @@ form {
 .switch-to-sign-up {
   margin-top: 36px;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.22;
   text-align: center;
   a {

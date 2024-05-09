@@ -16,7 +16,8 @@ let isInviteError = false;
   on:close={() => $goto("/")}
   title={isInviteError ? "Registr💩tion" : "Registration"}
   withFooter
-  noLogo>
+  noLogo
+  extraMarginTopMobile>
   <RegistrationForm
     {inviteData}
     {isInviteError}

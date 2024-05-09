@@ -1,29 +1,32 @@
 <script>
-import { afterUrlChange, url } from "@roxi/routify";
+import { url } from "@roxi/routify";
 
 import { isMenuOpen, settings } from "../../js/store";
 
-$afterUrlChange(() => {
-  isMenuOpen.set(false);
-});
+const closeMenu = () => isMenuOpen.set(false);
+
+const closeMenuOnEnter = (e) => e.key === "Enter" && closeMenu();
 </script>
 
 <ul class="links">
   <li>
-    <a href={$url("/login")}>Login</a>
+    <a href={$url("/login")} on:click={closeMenu} on:keydown={closeMenuOnEnter}
+      >Login</a>
   </li>
   <li>
     <a
       href={$url(
         $settings.needInviteToRegister ? "/begistration" : "/registration",
-      )}>Register</a>
+      )}
+      on:click={closeMenu}
+      on:keydown={closeMenuOnEnter}>Register</a>
   </li>
 </ul>
 
 <style lang="scss">
 .links {
   margin-bottom: 16px;
-  font-weight: 600;
+  font-weight: 500;
 
   a {
     display: block;

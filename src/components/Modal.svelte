@@ -20,6 +20,7 @@ export let noPaddingTop = false;
 export let noMarginTop = false;
 export let autoMargin = false;
 export let alwaysOnTop = false;
+export let extraMarginTopMobile = false;
 export let banner = {};
 
 const dispatch = createEventDispatcher();
@@ -51,6 +52,7 @@ const handleResize = () => {
   class:alwaysOnTop
   class:noPaddingTop
   class:noMarginTop
+  class:extraMarginTopMobile
   {id}
   role="presentation"
   on:keydown|stopPropagation={handleKeyDown}
@@ -59,9 +61,6 @@ const handleResize = () => {
   tabindex="-1">
   <div
     class="sticky-header"
-    on:click={() => modalRef.scrollTo({ top: 0, behavior: "smooth" })}
-    on:keydown={(e) =>
-      e.key === "Enter" && modalRef.scroll({ top: 0, behavior: "smooth" })}
     transition:slide={{ duration: 200 }}
     role="button"
     tabindex={-1}>
@@ -270,22 +269,32 @@ h2 {
       padding-bottom: 25px;
     }
   }
+
   .close {
     right: 12px;
   }
+
   .logo {
     top: 27px;
     left: 12px;
     width: 97px;
     height: 37px;
   }
+
   .content {
-    margin-top: 150px;
+    margin-top: 30px;
   }
+
   .bottom-container {
     height: 106px;
     min-height: 106px;
     margin-top: 15px;
+  }
+
+  .extraMarginTopMobile {
+    .content {
+      margin-top: 150px;
+    }
   }
 }
 </style>

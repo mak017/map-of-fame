@@ -1,7 +1,6 @@
 <script>
 import { onMount } from "svelte";
-import { fade, fly } from "svelte/transition";
-import { afterUrlChange, goto, url } from "@roxi/routify";
+import { goto, isActive, url } from "@roxi/routify";
 
 import {
   followersState,
@@ -13,19 +12,15 @@ import {
   isUserVerifyProgress,
   notificationsState,
   profileState,
-  selectedYear,
   userData,
 } from "../../js/store";
-import { requestSpots } from "../../js/init";
 import { editUser, getInvites } from "../../js/api/auth";
 import { requestNotifications } from "../../js/api/notifications";
 import {
-  isMobile,
   loadFromLocalStorage,
   removeFromLocalStorage,
 } from "../../js/utils/commonUtils";
 
-import CloseCrossSvg from "../elements/icons/CloseCrossSvg.svelte";
 import Invites from "../user/Invites.svelte";
 import Popup from "../Popup.svelte";
 
@@ -33,10 +28,6 @@ let showInvitesPopup = false;
 let unusedInvitesCount = 0;
 let unseenNotificationsCount;
 const token = loadFromLocalStorage("token") || null;
-
-$afterUrlChange(() => {
-  isMenuOpen.set(false);
-});
 
 const toggleInvitesPopup = (toggle) => (showInvitesPopup = toggle);
 
@@ -62,7 +53,7 @@ const handleHideAllClick = () => {
     const { success, result } = response;
     if (success && result) {
       $userData.isSpotsHidden = result.isSpotsHidden === "1";
-      requestSpots($selectedYear);
+      $goto("/@:username", { username: $userData.username });
     }
   });
 };
@@ -76,6 +67,33 @@ const handleLogout = () => {
   }, 500);
   isMenuOpen.set(false);
   $goto("/");
+};
+
+const handleLinkInteraction = (path, callback) => (event) => {
+  if ("key" in event && event.key !== "Enter") {
+    return;
+  }
+
+  if (!$isActive(path)) {
+    callback();
+  }
+
+  isMenuOpen.set(false);
+};
+
+const handleProfileInteraction = (event) => {
+  if ("key" in event && event.key !== "Enter") {
+    return;
+  }
+
+  const isActiveRoute = $isActive("/@[username]", {
+    username: $userData.username,
+  });
+  if (!isActiveRoute) {
+    isShowOnMapMode.set(false);
+    profileState.reset();
+  }
+  isMenuOpen.set(false);
 };
 
 $: if (
@@ -102,26 +120,42 @@ $: unusedInvitesCount = $profileState.invites.reduce(
   <li>
     <a
       href={$url("/@:username", { username: $userData.username })}
-      on:click={() => {
-        isShowOnMapMode.set(false);
-        profileState.reset();
-      }}>Profile</a>
+      on:click={handleProfileInteraction}
+      on:keydown={handleProfileInteraction}>Profile</a>
   </li>
   <li>
     <details>
       <summary>Follow</summary>
       <ul class="sublinks">
         <li>
-          <a href={$url("/follow-feed")} on:click={followFeedState.reset}
-            >Feed</a>
+          <a
+            href={$url("/follow-feed")}
+            on:click={handleLinkInteraction(
+              "/follow-feed",
+              followFeedState.reset,
+            )}
+            on:keydown={handleLinkInteraction(
+              "/follow-feed",
+              followFeedState.reset,
+            )}>Feed</a>
         </li>
         <li>
-          <a href={$url("/following")} on:click={followingState.reset}
-            >Following</a>
+          <a
+            href={$url("/following")}
+            on:click={handleLinkInteraction("/following", followingState.reset)}
+            on:keydown={handleLinkInteraction(
+              "/following",
+              followingState.reset,
+            )}>Following</a>
         </li>
         <li>
-          <a href={$url("/followers")} on:click={followersState.reset}
-            >Followers</a>
+          <a
+            href={$url("/followers")}
+            on:click={handleLinkInteraction("/followers", followersState.reset)}
+            on:keydown={handleLinkInteraction(
+              "/followers",
+              followersState.reset,
+            )}>Followers</a>
         </li>
       </ul>
     </details>
@@ -130,9 +164,17 @@ $: unusedInvitesCount = $profileState.invites.reduce(
     <a
       href={$url("/notifications")}
       class:hasUnread={unseenNotificationsCount > 0}
-      on:click={notificationsState.reset}>Notifications</a>
+      on:click={handleLinkInteraction(
+        "/notifications",
+        notificationsState.reset,
+      )}
+      on:keydown={handleLinkInteraction(
+        "/notifications",
+        notificationsState.reset,
+      )}>Notifications</a>
   </li>
 </ul>
+
 <div class="hide-all">
   <button type="button" class="button hide-button" on:click={handleHideAllClick}
     >{$userData.isSpotsHidden ? "👀 Show" : "🚨 Hide"}</button>
@@ -164,7 +206,7 @@ $: unusedInvitesCount = $profileState.invites.reduce(
 <style lang="scss">
 .links {
   margin-bottom: 16px;
-  font-weight: 600;
+  font-weight: 500;
 
   a {
     display: block;
@@ -235,7 +277,7 @@ $: unusedInvitesCount = $profileState.invites.reduce(
 
 .button {
   background: none;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 22px;
 
   &:hover {
