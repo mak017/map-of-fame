@@ -6,8 +6,9 @@ import { url } from "@roxi/routify";
 import { isMenuOpen } from "../js/store.js";
 import { isMobile } from "../js/utils/commonUtils.js";
 
-import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
 import Menu from "./menu/Menu.svelte";
+import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
+import ArrowLeftSvg from "./elements/icons/ArrowLeftSvg.svelte";
 
 export let id;
 export let title = "";
@@ -21,13 +22,13 @@ export let noMarginTop = false;
 export let autoMargin = false;
 export let alwaysOnTop = false;
 export let extraMarginTopMobile = false;
+export let closeIconAsBack = false;
 export let banner = {};
 
 const dispatch = createEventDispatcher();
 const close = () => dispatch("close");
 let isMobileWidth = isMobile();
 let modalRef;
-let scrollTop = 0;
 
 const handleKeyDown = (e) => {
   if (e.key === "Escape" && !noClose) {
@@ -56,7 +57,6 @@ const handleResize = () => {
   {id}
   role="presentation"
   on:keydown|stopPropagation={handleKeyDown}
-  on:scroll={() => (scrollTop = modalRef.scrollTop)}
   bind:this={modalRef}
   tabindex="-1">
   <div
@@ -65,14 +65,22 @@ const handleResize = () => {
     role="button"
     tabindex={-1}>
     {#if !noClose}
-      <button class="close" on:click={close}><CloseCrossSvg /></button>
+      <button class="close" on:click={close}>
+        {#if closeIconAsBack}
+          <span>
+            <ArrowLeftSvg isDarkColor />
+          </span>
+        {:else}
+          <CloseCrossSvg />
+        {/if}
+      </button>
     {/if}
     {#if title}
       <h2 transition:fade|global={{ duration: 200 }}>{@html title}</h2>
     {/if}
     {#if !noLogo}<a href={$url("/")} class="logo">Open map</a>{/if}
     <button
-      class="button button-burger"
+      class="button button-menu"
       on:click={() => {
         isMenuOpen.set(true);
       }}
@@ -141,6 +149,12 @@ const handleResize = () => {
   border: 0;
   background: inherit;
   cursor: pointer;
+
+  > span {
+    display: block;
+    width: 15px;
+    height: 15px;
+  }
 }
 
 .logo {
@@ -164,7 +178,7 @@ h2 {
   text-transform: uppercase;
 }
 
-.button-burger {
+.button-menu {
   position: absolute;
   top: 0;
   right: 10px;

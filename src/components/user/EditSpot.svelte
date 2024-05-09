@@ -5,7 +5,6 @@ import { editSpotData, userData } from "./../../js/store.js";
 import { getSpotById } from "../../js/api/spot.js";
 import { isEmpty, loadFromLocalStorage } from "../../js/utils/commonUtils.js";
 
-import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import Spinner from "../elements/Spinner.svelte";
 import SpotForm from "../SpotForm.svelte";
 
@@ -55,7 +54,6 @@ const goBack = () => {
   <Spinner height={40} margin="auto" />
 {:then}
   <div class="edit-spot">
-    <ButtonModalBack on:click={goBack} editSpot />
     <SpotForm editSpotData={$editSpotData} onCancel={goBack} />
   </div>
 {/await}
@@ -65,15 +63,5 @@ const goBack = () => {
   position: relative;
   width: 100%;
   max-width: 938px;
-  margin-top: 80px;
-}
-
-@media (max-width: 767px) {
-  .edit-spot {
-    margin-top: 50px;
-  }
-  h2 {
-    margin-bottom: 24px;
-  }
 }
 </style>

@@ -625,16 +625,6 @@ const fetchUsersByCrew = async (filterText, index) => {
   class:edit={isEditSpot}
   class:isCoOwner={isCoOwner()}
   on:submit|preventDefault={handleSubmit}>
-  {#if isEditSpot}
-    <div class="save">
-      <ButtonPrimary
-        text="Save"
-        type="submit"
-        withLoader={isSubmitting}
-        isDisabled={isSubmitDisabled}
-        className="add-spot" />
-    </div>
-  {/if}
   <div class="upload-area">
     <!-- {#each images as image, index (image.filePreview)}
       <div class={`upload-image upload-image${index + 1}`}>
@@ -914,15 +904,15 @@ const fetchUsersByCrew = async (filterText, index) => {
       <label for="hide-in-profile">Hide in profile</label>
     </div>
   {/if}
-  {#if !editSpotData.img}
-    <div class="button_wrap">
-      <ButtonPrimary
-        text="Post Art"
-        type="submit"
-        isDisabled={isSubmitDisabled}
-        withLoader={isSubmitting}
-        className={!isEditSpot ? "addSpot" : ""} />
-    </div>
+  <div class="button_wrap">
+    <ButtonPrimary
+      text={isEditSpot ? "Save" : "Post Art"}
+      type="submit"
+      isDisabled={isSubmitDisabled}
+      withLoader={isSubmitting}
+      className={!isEditSpot ? "addSpot" : ""} />
+  </div>
+  {#if !isEditSpot}
     <button
       type="button"
       class="cancel"
@@ -1112,14 +1102,6 @@ form {
   grid-gap: 12px 4%;
   grid-template-columns: 28% 28% 36%;
 
-  .save {
-    display: flex;
-    position: absolute;
-    top: -150px;
-    right: 0;
-    min-width: 122px;
-  }
-
   .artists-area {
     grid-column: 3;
     grid-row: 6;
@@ -1175,6 +1157,11 @@ form {
   .link-to-video {
     grid-column: 3;
     grid-row: 4;
+  }
+
+  .button_wrap {
+    grid-column: 3;
+    margin: 18px 0 0;
   }
 }
 
@@ -1251,11 +1238,6 @@ form {
     display: flex;
     flex-direction: column;
 
-    .save {
-      position: static;
-      order: 20;
-    }
-
     .upload-image {
       max-height: 140px;
       margin-top: 18px;
@@ -1267,10 +1249,6 @@ form {
 
     .description {
       margin-top: 0;
-    }
-
-    .checkbox {
-      margin-bottom: 20px;
     }
   }
 }

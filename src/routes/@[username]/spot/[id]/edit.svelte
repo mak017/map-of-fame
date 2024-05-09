@@ -11,7 +11,7 @@ import EditSpot from "../../../../components/user/EditSpot.svelte";
   on:close={() => $goto("/")}
   title="Edit Art"
   noLogo
-  noClose
-  alwaysOnTop>
+  closeIconAsBack
+  noMarginTop>
   <EditSpot />
 </Modal>
