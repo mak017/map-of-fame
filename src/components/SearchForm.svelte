@@ -429,17 +429,17 @@ form {
   justify-content: space-between;
   width: 100%;
 
-  img {
-    width: 100%;
-    height: calc(100% - 57px);
-    border-radius: 2px;
-    object-fit: cover;
-  }
-
   .item-wrapper {
     transition: color 0.3s;
     color: var(--color-dark);
     text-decoration: none;
+
+    img {
+      width: 100%;
+      height: calc(100% - 57px);
+      border-radius: 2px;
+      object-fit: cover;
+    }
 
     &:hover {
       color: var(--color-accent);
@@ -472,7 +472,11 @@ form {
 .artist,
 .crew {
   overflow: hidden;
-  text-overflow: ellipsis;
+
+  .value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .search-result.isEmpty {

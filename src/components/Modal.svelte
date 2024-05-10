@@ -23,12 +23,14 @@ export let autoMargin = false;
 export let alwaysOnTop = false;
 export let extraMarginTopMobile = false;
 export let closeIconAsBack = false;
+export let hideTitleOnScroll = false;
 export let banner = {};
 
 const dispatch = createEventDispatcher();
 const close = () => dispatch("close");
 let isMobileWidth = isMobile();
 let modalRef;
+let scrollTop = 0;
 
 const handleKeyDown = (e) => {
   if (e.key === "Escape" && !noClose) {
@@ -57,6 +59,7 @@ const handleResize = () => {
   {id}
   role="presentation"
   on:keydown|stopPropagation={handleKeyDown}
+  on:scroll={() => (scrollTop = modalRef.scrollTop)}
   bind:this={modalRef}
   tabindex="-1">
   <div
@@ -75,7 +78,7 @@ const handleResize = () => {
         {/if}
       </button>
     {/if}
-    {#if title}
+    {#if title && (!hideTitleOnScroll || (hideTitleOnScroll && scrollTop < 190))}
       <h2 transition:fade|global={{ duration: 200 }}>{@html title}</h2>
     {/if}
     {#if !noLogo}<a href={$url("/")} class="logo">Open map</a>{/if}

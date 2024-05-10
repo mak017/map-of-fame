@@ -198,11 +198,13 @@ label:not(.with-label) {
 
 .search {
   margin-bottom: 0;
+  padding-top: 5px;
+
   &:not(.with-label) {
     input {
       width: 100%;
       padding: 2px 0 10px;
-      line-height: 25px;
+      line-height: 28px;
       font-size: 24px;
       font-weight: 600;
 

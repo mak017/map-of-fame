@@ -1,8 +1,10 @@
 <script>
 import { onDestroy } from "svelte";
+import { slide } from "svelte/transition";
 import { goto, params, url } from "@roxi/routify";
 
 import {
+  clickOutside,
   embedVideoCodeFromBasicUrl,
   isEmpty,
   isExternalMapsUrl,
@@ -30,8 +32,10 @@ import { getSpotById, voteSpot } from "../../js/api/spot.js";
 import Popup from "../Popup.svelte";
 import Spinner from "../elements/Spinner.svelte";
 import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
+import ButtonDots from "../elements/ButtonDots.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
 import PencilSvg from "../elements/icons/PencilSvg.svelte";
+import LikeSvg from "../elements/icons/LikeSvg.svelte";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import ShareMarker from "./ShareMarker.svelte";
 import StatusUpdate from "./StatusUpdate.svelte";
@@ -62,6 +66,7 @@ const token = loadFromLocalStorage("token") || null;
 let isShareOpened = false;
 let isComplainOpened = false;
 let isStatusUpdateOpened = false;
+let isExpandedButtons = false;
 let videoEmbed = "";
 let isCurrentUser = username === $userData.username;
 
@@ -304,33 +309,11 @@ const getArtistsString = (artistCrew) => {
   {#if data}
     <div class="card">
       <div class={`top ${data.status.toLowerCase()}`}>
-        <div class="posted-by">
-          <div class="subtitle">Posted by</div>
-          <button
-            type="button"
-            class="button"
-            on:click={onUserClick(data.user?.username)}>
-            <div class="title">
-              {data.user?.artist?.name ||
-                data.user?.crew?.name ||
-                $selectedUserProfileData?.artist?.name ||
-                ""}
-            </div>
-          </button>
-          {#if data.approvedOwners?.length > 0}
-            {#each data.approvedOwners as owner (owner.id)}
-              <div class="co-owner">
-                <button
-                  type="button"
-                  class="button"
-                  on:click={onUserClick(owner.user?.username)}>
-                  <div class="title">
-                    {owner.user?.artist?.name || owner.user?.crew?.name || ""}
-                  </div>
-                </button>
-              </div>
-            {/each}
-          {/if}
+        <div class="year">
+          <div class="subtitle">Year</div>
+          <div class="title">
+            {data.year ?? EMPTY_YEAR_STRING}
+          </div>
         </div>
         <div class="status">
           <div class="subtitle">Status</div>
@@ -347,43 +330,63 @@ const getArtistsString = (artistCrew) => {
         <img src={data.img.src} alt={`Main image: ${data.img.title}`} />
       </div>
       <div class="bottom">
-        <div class="year">{data.year ?? EMPTY_YEAR_STRING}</div>
-        <div class="show-on-map-wrapper">
-          <ShowOnMapButton onClick={handleShowOnMapClick} />
+        <div class="likes">
+          <button
+            type="button"
+            class="button"
+            on:click={handleSpotVote(true)}
+            disabled={!$isLoggedIn}
+            ><LikeSvg isActive={$openedMarkerData?.userVote === 1} />
+            <div>{$openedMarkerData?.likesCnt}</div></button>
+          <button
+            type="button"
+            class="button"
+            on:click={handleSpotVote(false)}
+            disabled={!$isLoggedIn}
+            ><LikeSvg isDislike isActive={$openedMarkerData?.userVote === -1} />
+            <div>{$openedMarkerData?.dislikesCnt}</div></button>
         </div>
-        <div class="buttons">
-          <div class="likes">
-            <button
-              type="button"
-              class="button"
-              class:active={$openedMarkerData?.userVote === 1}
-              on:click={handleSpotVote(true)}
-              disabled={!$isLoggedIn}>👍 {$openedMarkerData?.likesCnt}</button>
-            <button
-              type="button"
-              class="button"
-              class:active={$openedMarkerData?.userVote === -1}
-              on:click={handleSpotVote(false)}
-              disabled={!$isLoggedIn}
-              >👎 {$openedMarkerData?.dislikesCnt}</button>
+        <div class="buttons-wrapper">
+          <div
+            class="buttons"
+            class:isExpandedButtons
+            use:clickOutside
+            on:click_outside={() => (isExpandedButtons = false)}>
+            <ButtonDots
+              isStaticPosition
+              noTransition
+              isVisuallyHidden={isExpandedButtons}
+              onClick={() => (isExpandedButtons = true)} />
+            {#if isExpandedButtons}
+              <div
+                class="additional"
+                transition:slide={{ duration: 300, axis: "x" }}>
+                {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}
+                  <div
+                    class="link"
+                    class:externalMap={isExternalMapsUrl(data.link)}>
+                    <a href={data.link} target="_blank" rel="noreferrer"
+                      >External link to art</a>
+                  </div>
+                {/if}
+                <div class="share">
+                  <button
+                    type="button"
+                    class="button"
+                    on:click={() => handleShareToggle(true)}
+                    ><ShareSvg color="dark" /></button>
+                </div>
+                <div class="complain">
+                  <button
+                    type="button"
+                    class="button"
+                    on:click={() => handleComplainToggle(true)} />
+                </div>
+              </div>
+            {/if}
           </div>
-          {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}
-            <div class="link" class:externalMap={isExternalMapsUrl(data.link)}>
-              <a href={data.link} target="_blank" rel="noreferrer"
-                >External link to art</a>
-            </div>
-          {/if}
-          <div class="share">
-            <button
-              type="button"
-              class="button"
-              on:click={() => handleShareToggle(true)}><ShareSvg /></button>
-          </div>
-          <div class="complain">
-            <button
-              type="button"
-              class="button"
-              on:click={() => handleComplainToggle(true)} />
+          <div class="show-on-map-wrapper">
+            <ShowOnMapButton onClick={handleShowOnMapClick} />
           </div>
         </div>
       </div>
@@ -464,7 +467,7 @@ const getArtistsString = (artistCrew) => {
   justify-content: space-between;
   margin-bottom: 24px;
 
-  .posted-by {
+  .year {
     max-width: 60%;
   }
 
@@ -473,7 +476,7 @@ const getArtistsString = (artistCrew) => {
   }
 
   &.buffed {
-    .posted-by {
+    .year {
       max-width: 72%;
     }
 
@@ -484,7 +487,7 @@ const getArtistsString = (artistCrew) => {
   }
 
   &.live {
-    .posted-by {
+    .year {
       max-width: 85%;
     }
 
@@ -495,10 +498,11 @@ const getArtistsString = (artistCrew) => {
 }
 
 .subtitle {
-  margin-bottom: 10px;
+  margin-bottom: 2px;
   color: var(--color-dark);
-  font-size: 13px;
+  font-size: 10px;
   line-height: 1.22;
+  text-transform: uppercase;
 }
 
 .title {
@@ -514,20 +518,9 @@ const getArtistsString = (artistCrew) => {
   text-overflow: ellipsis;
 }
 
-.posted-by {
-  .button {
-    max-width: 100%;
-    background: none;
-  }
-
-  .title {
-    color: var(--color-accent);
-  }
-}
-
 .img {
   position: relative;
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 
   > img {
     margin: auto;
@@ -547,22 +540,16 @@ const getArtistsString = (artistCrew) => {
 
 .bottom {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   align-items: center;
   margin-bottom: 45px;
-}
-
-.year {
-  font-size: 13px;
-  font-weight: bold;
-  line-height: 16px;
 }
 
 .show-on-map-wrapper {
   text-align: center;
 }
 
-.buttons {
+.buttons-wrapper {
   display: flex;
   justify-content: flex-end;
 
@@ -581,30 +568,53 @@ const getArtistsString = (artistCrew) => {
   button {
     border: 0;
   }
+
+  .buttons {
+    display: flex;
+    align-items: center;
+    min-width: 16px;
+    min-height: 40px;
+  }
+
+  .additional {
+    display: flex;
+  }
 }
 
 .likes {
   display: flex;
+  position: relative;
+  top: 10px;
+  margin-left: -6px;
 
   .button {
-    margin: 0 5px;
+    width: 40px;
+    height: 40px;
+    margin: 0 6px;
     background: none;
     color: var(--color-dark);
+    font-size: 13px;
 
-    &.active {
-      color: var(--color-accent);
-      font-weight: 600;
+    > div {
+      opacity: 0;
+      transition: 0.3s;
+    }
+
+    &:hover {
+      > div {
+        opacity: 1;
+      }
     }
   }
 }
 
 .link a {
-  background: url(../../../images/web.svg) 50% 50% / auto no-repeat;
+  background: url(../../images/web.svg) 50% 50% / auto no-repeat;
   font-size: 0;
 }
 
 .externalMap a {
-  background: url(../../../images/panorama.svg) 50% 50% / auto no-repeat;
+  background: url(../../images/panorama.svg) 50% 50% / auto no-repeat;
 }
 
 .share button {
@@ -615,7 +625,7 @@ const getArtistsString = (artistCrew) => {
 }
 
 .complain button {
-  background: url(../../../images/warning.svg) 50% 50% / auto no-repeat;
+  background: url(../../images/warning.svg) 50% 50% / auto no-repeat;
 }
 
 .artist-area {
@@ -683,7 +693,7 @@ const getArtistsString = (artistCrew) => {
 }
 
 @media (max-width: 767px) {
-  .posted-by {
+  .year {
     button {
       &::before {
         top: -300%;
@@ -704,7 +714,7 @@ const getArtistsString = (artistCrew) => {
     grid-row: 2;
   }
 
-  .buttons {
+  .buttons-wrapper {
     grid-column: 3;
   }
 

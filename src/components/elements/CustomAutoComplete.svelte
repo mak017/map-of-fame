@@ -1,8 +1,11 @@
 <script>
 import { createEventDispatcher, onDestroy, onMount } from "svelte";
 import AutoComplete from "simple-svelte-autocomplete";
-import FormRadioButton from "./FormRadioButton.svelte";
+
 import { clickOutside } from "../../js/utils/commonUtils";
+
+import FormRadioButton from "./FormRadioButton.svelte";
+import ButtonDots from "./ButtonDots.svelte";
 
 export let getItems = undefined;
 export let selectedValue = undefined;
@@ -87,8 +90,9 @@ onDestroy(() => {
     </div>
     {#if index > 0}
       <div class="collab-wrapper" class:isExpandedCollab>
-        <button type="button" class="button dots" on:click={handleDotsClick}
-          ><span></span><span></span><span></span></button>
+        <ButtonDots
+          onClick={handleDotsClick}
+          isVisuallyHidden={isExpandedCollab} />
         <div class="switcher-tabs">
           <FormRadioButton
             id={`tagged-${inputId}`}
@@ -166,26 +170,6 @@ onDestroy(() => {
   top: -7px;
   right: 0;
 
-  .dots {
-    display: flex;
-    position: absolute;
-    top: 0;
-    right: 0;
-    align-items: center;
-    justify-content: space-between;
-    width: 16px;
-    height: 16px;
-    transition: 0.3s;
-    background: none;
-
-    span {
-      width: 4px;
-      height: 4px;
-      border: 1px solid var(--color-dark);
-      border-radius: 50%;
-    }
-  }
-
   .switcher-tabs {
     display: flex;
     position: absolute;
@@ -199,11 +183,6 @@ onDestroy(() => {
 
   &.isExpandedCollab {
     width: 100%;
-
-    .dots {
-      opacity: 0;
-      visibility: hidden;
-    }
 
     .switcher-tabs {
       opacity: 1;

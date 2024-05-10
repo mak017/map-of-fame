@@ -1,5 +1,5 @@
 <script>
-import { goto, node } from "@roxi/routify";
+import { goto } from "@roxi/routify";
 
 import {
   isShowOnMapMode,
@@ -10,6 +10,15 @@ import {
 
 import MarkerCard from "../../../../components/markerCard/MarkerCard.svelte";
 import Modal from "../../../../components/Modal.svelte";
+
+const getTitle = () => {
+  if (!$openedMarkerData) return "";
+
+  return `<div class="posted-by">Posted by:</div>
+  <div>${
+    $openedMarkerData.user?.artist?.name || $openedMarkerData.user?.crew?.name
+  }</div>`;
+};
 </script>
 
 <Modal
@@ -23,7 +32,10 @@ import Modal from "../../../../components/Modal.svelte";
     $hasBrowseHistory ? window.history.back() : $goto("/");
   }}
   withAd
-  autoMargin
+  alwaysOnTop
+  title={getTitle()}
+  noLogo
+  hideTitleOnScroll
   banner={{
     img: $openedMarkerData?.firm?.banner,
     url: $openedMarkerData?.firm?.bannerUrl,
