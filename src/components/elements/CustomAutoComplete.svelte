@@ -12,6 +12,7 @@ export let selectedValue = undefined;
 export let data = undefined;
 export let text = "";
 export let showList = false;
+export let isAddSpot = false;
 export let label = "";
 export let inputId = "";
 export let index = 0;
@@ -49,6 +50,7 @@ onDestroy(() => {
   class="autocomplete-container"
   class:not-empty={selectedValue || text}
   class:empty={!selectedValue && !text}
+  class:add-spot={isAddSpot}
   use:clickOutside
   on:click_outside={() => (isExpandedCollab = false)}>
   <AutoComplete
@@ -193,8 +195,10 @@ onDestroy(() => {
 }
 
 @media (orientation: landscape) and (max-height: 960px) {
-  .selected-type {
-    font-size: 14px;
+  .add-spot {
+    .selected-type {
+      font-size: 14px;
+    }
   }
 }
 </style>

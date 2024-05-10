@@ -354,7 +354,9 @@ summary {
 }
 
 @media (orientation: landscape) and (max-height: 960px) {
-  .autocomplete-container .autocomplete.select .autocomplete-input.input {
+  .autocomplete-container.add-spot
+    .autocomplete.select
+    .autocomplete-input.input {
     padding: 5px 0;
     font-size: 14px;
     line-height: 17px;

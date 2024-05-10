@@ -46,6 +46,7 @@ if (
   position: relative;
   margin-bottom: 18px;
 }
+
 textarea {
   display: block;
   width: 100%;
@@ -83,6 +84,7 @@ textarea {
     font-size: 13px;
   }
 }
+
 .floating-label {
   position: absolute;
   top: 13px;
@@ -94,10 +96,12 @@ textarea {
   line-height: 1.25;
   pointer-events: none;
 }
+
 .error {
   textarea {
     border-color: var(--color-error);
   }
+
   &-text {
     margin: 1px 0 -17px;
     color: var(--color-error);
@@ -105,6 +109,7 @@ textarea {
     line-height: 1.22;
   }
 }
+
 .resizable {
   resize: both;
 }
@@ -119,6 +124,10 @@ textarea {
   .container {
     &.add-spot {
       margin-bottom: 13px;
+
+      textarea {
+        font-size: 14px;
+      }
     }
   }
 }

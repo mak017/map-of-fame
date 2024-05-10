@@ -731,6 +731,7 @@ const fetchUsersByCrew = async (filterText, index) => {
           data={artistCrewPairs[index].artistData}
           text={artistCrewPairs[index].artist}
           showList={!isAutocompleteEmpty}
+          isAddSpot={!isEditSpot}
           label="Artist name"
           inputId={`artist-input-${index}`}
           type={artistCrewPairs[index].artistCollabType}
@@ -772,6 +773,7 @@ const fetchUsersByCrew = async (filterText, index) => {
           data={artistCrewPairs[index].crewData}
           text={artistCrewPairs[index].crew}
           showList={!isAutocompleteEmpty}
+          isAddSpot={!isEditSpot}
           label="Crew name"
           inputId={`crew-input-${index}`}
           type={artistCrewPairs[index].crewCollabType}

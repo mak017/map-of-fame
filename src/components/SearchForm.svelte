@@ -138,6 +138,11 @@ const handleUserClick = (identifier) => () => {
   handleScrollElementClick(identifier)();
   profileState.reset();
 };
+
+const handleViewChange = (value) => () => {
+  searchState.setCurrentView(value);
+  parentModal.scrollTo(0, 0);
+};
 </script>
 
 <div class="container">
@@ -173,7 +178,7 @@ const handleUserClick = (identifier) => () => {
           <FormRadioButton
             id="view-as-list"
             group={$searchState.currentView}
-            on:change={() => searchState.setCurrentView("list")}
+            on:change={handleViewChange("list")}
             value="list"
             label={$searchState.list.length
               ? `Artist (${$searchState.list.length})`
@@ -181,7 +186,7 @@ const handleUserClick = (identifier) => () => {
           <FormRadioButton
             id="view-as-grid"
             group={$searchState.currentView}
-            on:change={() => searchState.setCurrentView("grid")}
+            on:change={handleViewChange("grid")}
             value="grid"
             label={$searchState.gridTotal
               ? `Art (${$searchState.gridTotal})`
@@ -548,7 +553,7 @@ form {
   }
 
   .content-caption {
-    top: 60px;
+    top: 57px;
     width: 100vw;
     margin: 0 -12px;
     padding: 4px 12px 16px;
