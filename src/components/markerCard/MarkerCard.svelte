@@ -585,12 +585,10 @@ const getArtistsString = (artistCrew) => {
   display: flex;
   position: relative;
   top: 10px;
-  margin-left: -6px;
 
   .button {
     width: 40px;
     height: 40px;
-    margin: 0 6px;
     background: none;
     color: var(--color-dark);
     font-size: 13px;

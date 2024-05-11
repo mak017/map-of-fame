@@ -24,6 +24,7 @@ export let alwaysOnTop = false;
 export let extraMarginTopMobile = false;
 export let closeIconAsBack = false;
 export let hideTitleOnScroll = false;
+export let twoLineTitle = false;
 export let banner = {};
 
 const dispatch = createEventDispatcher();
@@ -56,6 +57,7 @@ const handleResize = () => {
   class:noPaddingTop
   class:noMarginTop
   class:extraMarginTopMobile
+  class:twoLineTitle
   {id}
   role="presentation"
   on:keydown|stopPropagation={handleKeyDown}
@@ -233,6 +235,12 @@ h2 {
 .noMarginTop {
   .content {
     margin-top: 0;
+  }
+}
+
+.twoLineTitle {
+  h2 {
+    line-height: unset;
   }
 }
 

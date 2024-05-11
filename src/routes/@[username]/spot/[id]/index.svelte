@@ -39,7 +39,9 @@ $: if ($openedMarkerData) title = getTitle();
   alwaysOnTop
   {title}
   noLogo
+  noPaddingTop
   hideTitleOnScroll
+  twoLineTitle
   banner={{
     img: $openedMarkerData?.firm?.banner,
     url: $openedMarkerData?.firm?.bannerUrl,
