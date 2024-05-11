@@ -1,5 +1,5 @@
 <script>
-import { goto } from "@roxi/routify";
+import { goto, url } from "@roxi/routify";
 
 import {
   isShowOnMapMode,
@@ -15,10 +15,14 @@ const getTitle = () => {
   if (!$openedMarkerData) return "";
 
   return `<div class="posted-by">Posted by:</div>
-  <div>${
+  <a href=${$url("/@:username", { username: $openedMarkerData.user.username })}>${
     $openedMarkerData.user?.artist?.name || $openedMarkerData.user?.crew?.name
-  }</div>`;
+  }</a>`;
 };
+
+let title = getTitle();
+
+$: title = getTitle();
 </script>
 
 <Modal
@@ -33,7 +37,7 @@ const getTitle = () => {
   }}
   withAd
   alwaysOnTop
-  title={getTitle()}
+  {title}
   noLogo
   hideTitleOnScroll
   banner={{

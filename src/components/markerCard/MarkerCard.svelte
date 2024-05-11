@@ -465,7 +465,7 @@ const getArtistsString = (artistCrew) => {
 .top {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 
   .year {
     max-width: 60%;
@@ -634,16 +634,17 @@ const getArtistsString = (artistCrew) => {
 }
 
 .artist {
-  font-size: 18px;
-  text-align: center;
   background: none;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
   cursor: text;
 }
 
 .description {
   margin-bottom: 32px;
   color: var(--color-dark);
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.22;
   white-space: pre-line;
   word-break: break-word;

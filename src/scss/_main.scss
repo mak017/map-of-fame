@@ -92,6 +92,12 @@ summary {
       font-weight: 400;
       line-height: 1.2;
     }
+
+    a {
+      color: var(--color-accent);
+      font-size: 18px;
+      text-decoration: none;
+    }
   }
 }
 
