@@ -22,7 +22,7 @@ const getTitle = () => {
 
 let title = getTitle();
 
-$: title = getTitle();
+$: if ($openedMarkerData) title = getTitle();
 </script>
 
 <Modal
