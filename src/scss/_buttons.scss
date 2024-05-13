@@ -34,7 +34,7 @@
       left: 13px;
       width: 14px;
       height: 14px;
-      background: url(../images/calendar.svg);
+      background: url(/images/calendar.svg);
     }
 
     &::after {
@@ -44,7 +44,7 @@
       right: 18px;
       width: 8px;
       height: 5px;
-      background: url(../images//triangle-down.svg);
+      background: url(/images//triangle-down.svg);
     }
   }
 
@@ -94,7 +94,8 @@
       }
     }
 
-    &.active, &:active {
+    &.active,
+    &:active {
       &::before {
         transform: translate(-50%, -50%) scale(3);
       }
@@ -107,14 +108,14 @@
 
   &-open_search {
     margin-right: 12px;
-    background-image: url(../images/loupe.svg);
+    background-image: url(/images/loupe.svg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: 20px 20px;
   }
 
   &-open_login {
-    background-image: url(../images/lock.svg);
+    background-image: url(/images/lock.svg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: 9px 17px;
@@ -124,7 +125,7 @@
     position: absolute;
     bottom: 18px;
     left: 70px;
-    background-image: url(../images/railroad.svg);
+    background-image: url(/images/railroad.svg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: 19px 22px;
@@ -135,7 +136,7 @@
   }
 
   &-burger {
-    background-image: url(../images/burger.svg);
+    background-image: url(/images/burger.svg);
     background-repeat: no-repeat;
     background-position: 50% 50%;
     background-size: 18px 13px;
