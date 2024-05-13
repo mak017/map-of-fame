@@ -32,17 +32,19 @@ import {
 } from "../../js/utils/commonUtils";
 import { processImage } from "../../js/utils/imageUtils.js";
 
-import DeleteSpot from "./DeleteSpot.svelte";
-import ShareProfile from "./ShareProfile.svelte";
-import SpotCard from "./SpotCard.svelte";
-import Popup from "../Popup.svelte";
-import Spinner from "./../elements/Spinner.svelte";
-import CustomSelect from "../elements/CustomSelect.svelte";
 import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
 import PlusSvg from "../elements/icons/PlusSvg.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
 import PencilSvg from "../elements/icons/PencilSvg.svelte";
 import SelectIndicatorSvg from "../elements/icons/SelectIndicatorSvg.svelte";
+import GridViewSvg from "../elements/icons/GridViewSvg.svelte";
+import MentionSvg from "../elements/icons/MentionSvg.svelte";
+import Spinner from "./../elements/Spinner.svelte";
+import CustomSelect from "../elements/CustomSelect.svelte";
+import Popup from "../Popup.svelte";
+import DeleteSpot from "./DeleteSpot.svelte";
+import ShareProfile from "./ShareProfile.svelte";
+import SpotCard from "./SpotCard.svelte";
 
 import {
   ALL_YEARS_STRING,
@@ -496,7 +498,8 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
           <button
             type="button"
             class="button name"
-            on:click={() => toggleSharePopup(true)}><ShareSvg /></button>
+            on:click={() => toggleSharePopup(true)}
+            ><ShareSvg color="dark" /></button>
           {#if $isLoggedIn && !isCurrentUser && !$profileState.user.isSpotsHidden}
             <button
               type="button"
@@ -577,12 +580,15 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
               type="button"
               class="button"
               class:active={!$profileState.showMarkedSpots}
-              on:click={handleMarkedSpotsSwitch(false)}>My spots</button>
+              on:click={handleMarkedSpotsSwitch(false)}
+              ><GridViewSvg
+                isActive={!$profileState.showMarkedSpots} /></button>
             <button
               type="button"
               class="button"
               class:active={$profileState.showMarkedSpots}
-              on:click={handleMarkedSpotsSwitch(true)}>Marked spots</button>
+              on:click={handleMarkedSpotsSwitch(true)}
+              ><MentionSvg isActive={$profileState.showMarkedSpots} /></button>
           </div>
         </div>
         <div class="data-top">
@@ -613,7 +619,9 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
             </div>
           {/if}
           <div class="show-on-map">
-            <ShowOnMapButton onClick={() => handleShowOnMapClick(false)} />
+            <ShowOnMapButton
+              onClick={() => handleShowOnMapClick(false)}
+              showTextOnHover />
           </div>
         </div>
       {/if}
@@ -712,11 +720,15 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
   }
 
   .buttons-wrapper {
+    display: flex;
     position: absolute;
     right: 0;
     bottom: -44px;
 
     .name {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 44px;
       height: 44px;
       border-radius: 0;
@@ -726,6 +738,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
     .follow {
       width: 110px;
       height: 44px;
+      margin-left: 12px;
       padding: 0 16px;
       border-radius: 0;
       background-color: var(--color-lotion);
@@ -854,7 +867,6 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
     overflow: hidden;
     min-width: 225px;
     max-height: 105px;
-    font-weight: 600;
   }
 
   &.isEditableAbout {
@@ -980,7 +992,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 
   &-tabs_wrapper {
     display: flex;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
   }
 
   &-top {
@@ -991,14 +1003,24 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 }
 
 .right_tabs {
-  margin-left: auto;
+  display: flex;
+  margin: 0 -6px 0 auto;
+  background-color: var(--color-lotion);
 
   .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin: 0 6px;
+    border-bottom: 1px solid transparent;
+    border-radius: 0;
     background: none;
+    transition: 0.2s;
 
     &.active {
-      color: var(--color-accent);
-      font-weight: 600;
+      border-bottom-color: var(--color-dark);
       pointer-events: none;
     }
   }
@@ -1013,11 +1035,17 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
   margin-left: 24px;
   line-height: 40px;
 
+  > span {
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+
   .button {
     background: none;
-    color: var(--color-accent);
+    color: var(--color-dark);
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 500;
+    text-transform: uppercase;
 
     &.active {
       font-weight: 600;
@@ -1090,6 +1118,8 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
   }
 
   .description {
+    margin-bottom: 24px;
+
     .text {
       max-height: 85px;
     }
@@ -1099,9 +1129,27 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
     }
   }
 
+  .right_tabs {
+    width: 100%;
+    margin: 0;
+
+    .button {
+      flex: 0 0 50%;
+      margin: 0;
+    }
+  }
+
   .sorting {
-    margin-left: auto;
-    padding-left: 10px;
+    align-self: center;
+    line-height: 1.2;
+
+    > span {
+      display: block;
+    }
+
+    .button {
+      font-size: 14px;
+    }
   }
 
   .show-on-map {

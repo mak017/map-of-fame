@@ -80,7 +80,7 @@ const handleResize = () => {
         {/if}
       </button>
     {/if}
-    {#if title && (!hideTitleOnScroll || (hideTitleOnScroll && scrollTop < 190))}
+    {#if title && (!hideTitleOnScroll || (hideTitleOnScroll && scrollTop < 100))}
       <h2 transition:fade|global={{ duration: 200 }}>{@html title}</h2>
     {/if}
     {#if !noLogo}<a href={$url("/")} class="logo">Open map</a>{/if}
