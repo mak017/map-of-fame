@@ -7,7 +7,7 @@ import Modal from "../components/Modal.svelte";
 
 <Modal
   id="selected-spots-modal"
-  title="Selected Spots"
+  title="Selected location"
   noLogo
   alwaysOnTop
   on:close={() => {

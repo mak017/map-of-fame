@@ -6,20 +6,13 @@ import { context, goto, params } from "@roxi/routify";
 import {
   areaSpots,
   clusterSpots,
-  isAreaSelectionActive,
-  isShowOnMapMode,
-  markersStore,
   openedMarkerData,
-  selectedArtist,
-  selectedCrew,
-  selectedYear,
   specialBrowseHistoryState,
 } from "./../js/store.js";
 import { requestSpotsInArea } from "../js/init.js";
 import { requestSpotsById } from "../js/api/search.js";
 
 import CustomSelect from "./elements/CustomSelect.svelte";
-import ShowOnMapButton from "./elements/ShowOnMapButton.svelte";
 
 import { ALL_YEARS_STRING, EMPTY_YEAR_STRING } from "../js/constants";
 
@@ -149,16 +142,6 @@ const onSpotClick = (spot) => {
     id,
   });
 };
-
-const handleShowOnMapClick = () => {
-  markersStore.set({ spots, years: yearsToApply });
-  isShowOnMapMode.set(true);
-  isAreaSelectionActive.set(true);
-  selectedYear.set(currentYear);
-  selectedArtist.set("");
-  selectedCrew.set("");
-  $goto("/");
-};
 </script>
 
 <div class="container">
@@ -171,9 +154,6 @@ const handleShowOnMapClick = () => {
           isYear
           on:select={handleYearSelect} />
       </div>
-      {#if currentYear === ALL_YEARS_STRING}
-        <ShowOnMapButton onClick={handleShowOnMapClick} />
-      {/if}
     </div>
     <div class="spots">
       {#if spotsToShow}
