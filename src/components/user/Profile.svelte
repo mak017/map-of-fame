@@ -740,20 +740,16 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
       width: 110px;
       height: 44px;
       margin-left: 12px;
-      padding: 0 16px;
+      padding: 0 5px;
       border-radius: 0;
       background-color: var(--color-lotion);
       color: var(--color-dark);
       font-size: 16px;
-      font-weight: 600;
+      text-transform: uppercase;
+      font-weight: 500;
 
       &.active {
-        background-image: url(../../../images/follow.svg);
-        background-position: 80% 50%;
-        background-repeat: no-repeat;
-        background-size: 14px 18px;
-        color: var(--color-accent);
-        text-align: left;
+        font-weight: 600;
       }
     }
   }
