@@ -462,6 +462,7 @@ const handleFollowBtnClick = async () => {
 
 const handleMarkedSpotsSwitch = (showMarked) => () => {
   profileState.setShowMarkedSpots(showMarked);
+  profileState.setSpotsList([{}]);
   fetchSpots({ isNewFetch: true });
 };
 </script>
