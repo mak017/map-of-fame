@@ -20,9 +20,9 @@ export let noTransition = false;
   top: 0;
   right: 0;
   align-items: center;
-  justify-content: space-between;
-  width: 16px;
-  height: 16px;
+  justify-content: space-evenly;
+  width: 20px;
+  height: 20px;
   transition: 0.3s;
   background: none;
 

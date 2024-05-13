@@ -22,6 +22,7 @@ const change = (event) => dispatch("change", event);
   flex: 1 0 0;
   border: 1px solid var(--color-dark);
   border-right: 0;
+  overflow: hidden;
 
   &:first-child {
     border-top-left-radius: 2px;
@@ -73,7 +74,7 @@ const change = (event) => dispatch("change", event);
 
   &.small {
     label {
-      padding: 3px 4px;
+      padding: 7px 4px;
     }
   }
 }

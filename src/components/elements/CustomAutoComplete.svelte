@@ -164,6 +164,7 @@ onDestroy(() => {
 
   .hidden {
     opacity: 0;
+    white-space: pre;
   }
 }
 
@@ -187,6 +188,7 @@ onDestroy(() => {
     width: 100%;
 
     .switcher-tabs {
+      transform: translateY(-4px);
       opacity: 1;
       transition: 0.3s;
       visibility: visible;
