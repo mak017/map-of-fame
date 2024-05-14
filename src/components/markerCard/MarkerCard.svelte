@@ -2,6 +2,8 @@
 import { onDestroy } from "svelte";
 import { slide } from "svelte/transition";
 import { goto, params, url } from "@roxi/routify";
+import linkifyHtml from "linkify-html";
+import "../../js/utils/customMentionPlugin.js";
 
 import {
   clickOutside,
@@ -301,6 +303,16 @@ const getArtistsString = (artistCrew) => {
     return accumulator;
   }, "");
 };
+
+const prepareDescription = (description) =>
+  linkifyHtml(description, {
+    defaultProtocol: "https",
+    nl2br: true,
+    target: { url: "_blank", email: "_blank", mention: null },
+    formatHref: {
+      mention: (href) => console.log("href", href) || `/@${href.substring(1)}`,
+    },
+  });
 </script>
 
 {#await getSpotData()}
@@ -397,7 +409,9 @@ const getArtistsString = (artistCrew) => {
         </button>
       </div>
       {#if data.description}
-        <div class="description">{data.description}</div>
+        <div class="spot-description">
+          {@html prepareDescription(data.description)}
+        </div>
       {/if}
       {#if data.embedLink}
         <div class="embed-link">{@html data.embedLink}</div>

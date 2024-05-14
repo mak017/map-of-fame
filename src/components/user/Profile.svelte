@@ -440,7 +440,7 @@ const prepareAboutText = (text) => {
       nl2br: true,
       target: { url: "_blank", email: "_blank", mention: null },
       formatHref: {
-        mention: (href) => `@${href.substring(1)}`,
+        mention: (href) => `/@${href.substring(1)}`,
       },
     });
 

@@ -361,8 +361,9 @@ summary {
   }
 }
 
-.description {
-  .text a {
+.description .text,
+.spot-description {
+  a {
     color: var(--color-accent);
 
     &:hover {
