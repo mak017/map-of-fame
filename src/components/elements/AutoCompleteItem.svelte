@@ -25,7 +25,7 @@ export let item = undefined;
 }
 .name {
   color: var(--color-dark);
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.22;
 }
 .type {
