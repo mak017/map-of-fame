@@ -15,7 +15,6 @@ import { transformCountries } from "../../js/utils/transformers.js";
 import { countriesList, isLoggedIn, userData } from "../../js/store.js";
 
 import AutoComplete from "./../elements/AutoComplete.svelte";
-import ButtonModalBack from "../elements/ButtonModalBack.svelte";
 import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
 import FormPasswordInput from "../elements/FormPasswordInput.svelte";
@@ -23,7 +22,9 @@ import FormTextInput from "../elements/FormTextInput.svelte";
 
 import { ERROR_MESSAGES, USER_TYPES } from "../../js/constants";
 
-let step = 1;
+export let step = 1;
+export let setStep;
+
 let email = "";
 let password = "";
 let userType;
@@ -125,7 +126,7 @@ const handleSubmit = () => {
   validate();
   if (step === 1) {
     if (!errors.email && !errors.password && !errors.userType) {
-      step = 2;
+      setStep(2);
       errors = {
         email: "",
         password: "",
@@ -166,11 +167,11 @@ const handleSubmit = () => {
         } else {
           if (error?.email) {
             errors.email = error.email;
-            step = 1;
+            setStep(1);
           }
           if (error?.password) {
             errors.password = error.password[0];
-            step = 1;
+            setStep(1);
           }
           if (Array.isArray(error)) {
             errors.link = error[0];
@@ -212,19 +213,12 @@ const handleUsernameChange = (event) => {
 
   username = event?.detail?.target?.value;
 };
-
-const handleBackClick = () => {
-  step = 1;
-};
 </script>
 
 <form
   on:submit|preventDefault={handleSubmit}
   novalidate
   transition:fade|global={{ duration: 200 }}>
-  {#if step === 2}
-    <ButtonModalBack on:click={handleBackClick} withTransition />
-  {/if}
   <div class="step">step {step} of 2</div>
   {#if step === 1}
     <div in:fade={{ duration: 200 }}>
@@ -292,7 +286,7 @@ const handleBackClick = () => {
   {/if}
   <div class="submit-wrapper">
     <ButtonPrimary
-      text={step == 1 ? "Next" : "Register"}
+      text={step === 1 ? "Next" : "Register"}
       type="submit"
       className="wide"
       isDisabled={isSubmitDisabled} />
