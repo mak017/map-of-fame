@@ -55,6 +55,30 @@ summary {
   &:disabled {
     pointer-events: none;
   }
+
+  &-open_calendar {
+    > svg {
+      position: absolute;
+      top: 9px;
+      left: 9px;
+      width: 20px;
+      height: 20px;
+    }
+
+    .hover-part {
+      opacity: 0;
+    }
+
+    &:hover {
+      .default-part {
+        opacity: 0;
+      }
+
+      .hover-part {
+        opacity: 1;
+      }
+    }
+  }
 }
 
 .main-top {
@@ -107,13 +131,17 @@ summary {
 
 .svelte-select {
   touch-action: none !important;
-
-  input {
-    touch-action: none !important;
-  }
+  cursor: pointer;
 
   input {
     cursor: pointer !important;
+    touch-action: none !important;
+  }
+
+  .prepend {
+    .hover-part {
+      opacity: 0;
+    }
   }
 
   .chevron + div,
@@ -144,6 +172,16 @@ summary {
 
     &.hover:not(.active) {
       opacity: 0.5;
+    }
+  }
+
+  &:hover {
+    .default-part {
+      opacity: 0;
+    }
+
+    .hover-part {
+      opacity: 1;
     }
   }
 }

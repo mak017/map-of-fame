@@ -40,11 +40,12 @@ import { setLocation } from "../js/utils/mapUtils/locationUtils.js";
 import { permalink } from "../js/utils/mapUtils/permalink";
 import { newMarkerIcon } from "../js/utils/mapUtils/icons";
 
-import Spinner from "../components/elements/Spinner.svelte";
 import SelectIndicatorSvg from "../components/elements/icons/SelectIndicatorSvg.svelte";
 import CloseCrossSvg from "../components/elements/icons/CloseCrossSvg.svelte";
 import LoupeSvg from "../components/elements/icons/LoupeSvg.svelte";
+import CalendarSvg from "../components/elements/icons/CalendarSvg.svelte";
 import AddSpot from "../components/addSpot/AddSpot.svelte";
+import Spinner from "../components/elements/Spinner.svelte";
 import ResetPassword from "../components/auth/ResetPassword.svelte";
 import Menu from "../components/menu/Menu.svelte";
 import Modal from "../components/Modal.svelte";
@@ -197,7 +198,8 @@ const handleSearchInput = () => {
         href={$url("/calendar")}
         class="button button-main_screen button-open_calendar"
         class:inactive={$isAreaSelectionActive}
-        transition:fade|global={{ duration: 200 }}>{$selectedYear}</a>
+        transition:fade|global={{ duration: 200 }}
+        ><CalendarSvg /> {$selectedYear}</a>
     {/if}
     {#if !$shouldShowAddSpot && !$isShowOnMapMode && !$isAreaSelectionActive}
       <FilterByUserType />
@@ -353,16 +355,6 @@ const handleSearchInput = () => {
     text-transform: uppercase;
     user-select: none;
 
-    &::before {
-      content: "";
-      position: absolute;
-      top: 13px;
-      left: 13px;
-      width: 14px;
-      height: 14px;
-      background: url(../images/calendar.svg);
-    }
-
     &::after {
       content: "";
       position: absolute;
@@ -370,7 +362,7 @@ const handleSearchInput = () => {
       right: 18px;
       width: 8px;
       height: 5px;
-      background: url(../images//triangle-down.svg);
+      background: url(../images/triangle-down.svg);
     }
 
     &.inactive {

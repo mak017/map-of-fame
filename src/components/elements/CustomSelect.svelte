@@ -2,8 +2,8 @@
 import { createEventDispatcher } from "svelte";
 import Select from "svelte-select";
 
-import SelectIconCalendar from "./icons/SelectIconCalendar.svelte";
 import SelectIndicatorSvg from "./icons/SelectIndicatorSvg.svelte";
+import CalendarSvg from "./icons/CalendarSvg.svelte";
 
 export let selectedValue = undefined;
 export let items;
@@ -29,7 +29,7 @@ const dispatch = createEventDispatcher();
     {label}>
     <div slot="prepend" class="prepend">
       {#if isYear}
-        <SelectIconCalendar />
+        <CalendarSvg />
       {/if}
     </div>
     <div slot="chevron-icon"><SelectIndicatorSvg /></div>
