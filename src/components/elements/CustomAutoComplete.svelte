@@ -179,6 +179,7 @@ onDestroy(() => {
     top: -8px;
     right: 0;
     left: 0;
+    transform: translateY(-100%);
     opacity: 0;
     visibility: hidden;
     background-color: var(--color-light);
@@ -190,7 +191,7 @@ onDestroy(() => {
     .switcher-tabs {
       transform: translateY(-4px);
       opacity: 1;
-      transition: 0.3s;
+      transition: 0.2s;
       visibility: visible;
     }
   }

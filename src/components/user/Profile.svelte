@@ -39,8 +39,8 @@ import PencilSvg from "../elements/icons/PencilSvg.svelte";
 import SelectIndicatorSvg from "../elements/icons/SelectIndicatorSvg.svelte";
 import GridViewSvg from "../elements/icons/GridViewSvg.svelte";
 import MentionSvg from "../elements/icons/MentionSvg.svelte";
-import Spinner from "./../elements/Spinner.svelte";
 import CustomSelect from "../elements/CustomSelect.svelte";
+import PlaceholdersGrid from "../elements/PlaceholdersGrid.svelte";
 import Popup from "../Popup.svelte";
 import DeleteSpot from "./DeleteSpot.svelte";
 import ShareProfile from "./ShareProfile.svelte";
@@ -646,9 +646,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
         </div>
       {/if}
       {#if $profileState.isShowSpinner}
-        <div class="spinner-container">
-          <Spinner margin="20px auto" />
-        </div>
+        <div class="spots"><PlaceholdersGrid /></div>
       {:else if !$profileState.spotsList.length}
         <div class="empty-state marked">No marked spots found</div>
       {/if}
@@ -780,7 +778,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
     label {
       display: flex;
       position: absolute;
-      top: 50px;
+      top: 226px;
       left: 50%;
       align-items: center;
       justify-content: center;
@@ -1073,10 +1071,6 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
   width: 100%;
 }
 
-.spinner-container {
-  position: relative;
-}
-
 .go-to-map {
   display: block;
   position: fixed;
@@ -1103,6 +1097,12 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 
   .user-bg {
     height: 220px;
+
+    &-control {
+      label {
+        top: 110px;
+      }
+    }
   }
 
   .top {

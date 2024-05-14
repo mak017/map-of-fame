@@ -296,8 +296,11 @@ summary {
     &.show-clear {
       .input-container {
         .autocomplete-clear-button {
+          top: auto;
+          bottom: 10px;
           width: 20px;
           height: 20px;
+          transform: none;
           background-image: url(/images/close-cross.svg);
           background-repeat: no-repeat;
           background-position: 50% 50%;

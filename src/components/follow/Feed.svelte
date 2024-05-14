@@ -8,7 +8,7 @@ import { followFeedState } from "../../js/store";
 import { getFollowingFeed } from "../../js/api/follow";
 import { loadFromLocalStorage } from "../../js/utils/commonUtils";
 
-import Spinner from "../elements/Spinner.svelte";
+import PlaceholdersGrid from "../elements/PlaceholdersGrid.svelte";
 
 import { MAX_ITEMS_PER_PAGE } from "../../js/constants";
 
@@ -98,9 +98,7 @@ const handleSpotClick = (spot) => () => {
           {/if}
         {/if}
         {#if $followFeedState.isShowSpinner}
-          <div class="spinner-container">
-            <Spinner margin="20px auto" />
-          </div>
+          <PlaceholdersGrid />
         {/if}
       {:else if !$followFeedState.isShowSpinner}
         <div class="empty-state">Nothing found</div>
@@ -146,9 +144,5 @@ const handleSpotClick = (spot) => () => {
     object-fit: cover;
     user-select: none;
   }
-}
-
-.spinner-container {
-  position: relative;
 }
 </style>

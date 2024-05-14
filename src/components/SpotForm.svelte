@@ -1,5 +1,6 @@
 <script>
 import { onDestroy, onMount } from "svelte";
+import { slide } from "svelte/transition";
 import isEqual from "lodash.isequal";
 import cloneDeep from "lodash.clonedeep";
 
@@ -724,7 +725,7 @@ const fetchUsersByCrew = async (filterText, index) => {
   </div>
   <div class="artists-area">
     {#each artistCrewPairs as pair, index}
-      <div class="artist-crew-pair">
+      <div class="artist-crew-pair" transition:slide={{ duration: 200 }}>
         <CustomAutoComplete
           getItems={(text) => fetchUsersByArtist(text, index)}
           selectedValue={artistCrewPairs[index].userArtist}
@@ -749,6 +750,7 @@ const fetchUsersByCrew = async (filterText, index) => {
             isSelectingAutocomplete = true;
             if (!event.detail) {
               artistCrewPairs[index].artist = "";
+              artistCrewPairs[index].artistCollabType = "tagged";
               setTimeout(() => {
                 document.getElementById(`artist-input-${index}`)?.blur();
               }, 0);
@@ -791,6 +793,7 @@ const fetchUsersByCrew = async (filterText, index) => {
             isSelectingAutocomplete = true;
             if (!event.detail) {
               artistCrewPairs[index].crew = "";
+              artistCrewPairs[index].crewCollabType = "tagged";
               setTimeout(() => {
                 document.getElementById(`crew-input-${index}`)?.blur();
               }, 0);
