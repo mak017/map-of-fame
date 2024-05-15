@@ -56,14 +56,16 @@ const dispatch = createEventDispatcher();
   --list-shadow: 0;
   --padding: 0 0 0 10px;
   --placeholder-color: var(--color-dark);
+
   &.year {
     --chevron-width: 20px;
     --chevron-height: 20px;
     --height: 40px;
     --indicators-right: -4px;
     --list-max-height: 310px;
-    --padding: 0 16px 0 13px;
+    --padding: 0 11px 0 13px;
     --selected-item-padding: 0 0 0 8px;
+    text-transform: uppercase;
   }
 
   .prepend {

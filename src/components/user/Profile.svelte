@@ -190,7 +190,7 @@ $afterUrlChange(({ route }) => {
   const { params } = route;
   if (params.username && username !== params.username) {
     username = params.username;
-    profileState.setIsInitialized(false);
+    profileState.reset();
   }
 });
 
