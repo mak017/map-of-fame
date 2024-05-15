@@ -387,6 +387,7 @@ const handleSearchInput = () => {
     background-size: 22px 24px;
 
     &.active {
+      padding: 12px;
       background-image: none;
     }
   }
@@ -413,7 +414,7 @@ const handleSearchInput = () => {
 
   &-clear_search {
     margin-left: 5px;
-    padding: 8px;
+    padding: 12px;
     background-color: transparent;
   }
 }
