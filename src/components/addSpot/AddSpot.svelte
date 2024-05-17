@@ -31,14 +31,14 @@ const handleAddSpotClick = () => {
 {/if}
 {#if !isAddSpotSidebarVisible && $shouldShowAddSpot}
   <div class="drag-to-map" transition:fade|global={{ duration: 200 }}>
-    Drag pin to map
+    <span>Drag & drop pin</span>
   </div>
 {/if}
 {#if isAddSpotSidebarVisible}
   <AddSpotSidebar {onCancel} marker={newMarker} />
 {/if}
 
-<style>
+<style lang="scss">
 .button-add_spot {
   position: absolute;
   bottom: 18px;
@@ -56,10 +56,12 @@ const handleAddSpotClick = () => {
 }
 
 .drag-to-map {
+  display: flex;
   position: absolute;
   top: 67px;
   left: 50%;
-  padding: 11px 26px;
+  align-items: center;
+  padding: 11px 5px;
   transform: translateX(-50%);
   background-color: var(--color-light);
   color: var(--color-accent);
@@ -68,7 +70,26 @@ const handleAddSpotClick = () => {
   line-height: 29px;
   text-transform: uppercase;
   white-space: nowrap;
+
+  &::before {
+    content: "";
+    width: 29px;
+    height: 29px;
+    background: url(../../images/drag.svg) 50% 50% / auto no-repeat;
+  }
+
+  span {
+    padding: 0 8px;
+  }
+
+  &::after {
+    content: "";
+    width: 19px;
+    height: 28px;
+    background: url(../../images/pin.svg) 50% 50% / auto no-repeat;
+  }
 }
+
 :global(.leaflet-dragging .drag-to-map) {
   display: none;
 }
