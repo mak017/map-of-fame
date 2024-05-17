@@ -51,6 +51,7 @@ onDestroy(() => {
   class:not-empty={selectedValue || text}
   class:empty={!selectedValue && !text}
   class:add-spot={isAddSpot}
+  class:has-selected-value={data}
   use:clickOutside
   on:click_outside={() => (isExpandedCollab = false)}>
   <AutoComplete
@@ -163,7 +164,6 @@ onDestroy(() => {
   }
 
   .hidden {
-    opacity: 0;
     white-space: pre;
   }
 }

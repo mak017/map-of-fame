@@ -362,6 +362,14 @@ summary {
       display: none;
     }
   }
+
+  &-container.has-selected-value {
+    .select {
+      .autocomplete-input.input {
+        color: transparent;
+      }
+    }
+  }
 }
 
 .artist.title {

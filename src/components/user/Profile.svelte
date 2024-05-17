@@ -1030,17 +1030,16 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 
 .sorting {
   margin-left: 24px;
+  font-size: 14px;
   line-height: 40px;
 
   > span {
-    font-size: 14px;
     text-transform: uppercase;
   }
 
   .button {
     background: none;
     color: var(--color-dark);
-    font-size: 16px;
     font-weight: 500;
     text-transform: uppercase;
 
@@ -1144,10 +1143,6 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 
     > span {
       display: block;
-    }
-
-    .button {
-      font-size: 14px;
     }
   }
 
