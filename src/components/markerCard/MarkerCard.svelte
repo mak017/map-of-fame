@@ -11,6 +11,7 @@ import {
   isEmpty,
   isExternalMapsUrl,
   loadFromLocalStorage,
+  upperFirst,
 } from "../../js/utils/commonUtils";
 import {
   openedMarkerData,
@@ -304,8 +305,8 @@ const getArtistsString = (artistCrew) => {
   }, "");
 };
 
-const prepareDescription = (description) =>
-  linkifyHtml(description, {
+const prepareDescription = (description) => {
+  const formatted = linkifyHtml(description, {
     defaultProtocol: "https",
     nl2br: true,
     target: { url: "_blank", email: "_blank", mention: null },
@@ -313,6 +314,9 @@ const prepareDescription = (description) =>
       mention: (href) => console.log("href", href) || `/@${href.substring(1)}`,
     },
   });
+
+  return upperFirst(formatted);
+};
 </script>
 
 {#await getSpotData()}

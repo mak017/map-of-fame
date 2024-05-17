@@ -29,6 +29,7 @@ import {
   clickOutside,
   isEmpty,
   loadFromLocalStorage,
+  upperFirst,
 } from "../../js/utils/commonUtils";
 import { processImage } from "../../js/utils/imageUtils.js";
 
@@ -443,10 +444,11 @@ const prepareAboutText = (text) => {
         mention: (href) => `/@${href.substring(1)}`,
       },
     });
+  const textWithUpperFirst = upperFirst(formattedText);
 
   return isEditableAbout || !isCurrentUser
-    ? formattedText ?? ""
-    : formattedText ?? "Write something about you.";
+    ? textWithUpperFirst ?? ""
+    : textWithUpperFirst ?? "Write something about you.";
 };
 
 const handleFollowBtnClick = async () => {

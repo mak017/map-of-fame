@@ -204,3 +204,6 @@ export const debounce = (callback, wait = 300) => {
     timeout = setTimeout(() => callback(...args), wait);
   };
 };
+
+export const upperFirst = (string) =>
+  string ? string.charAt(0).toUpperCase() + string.slice(1) : "";

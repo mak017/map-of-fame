@@ -370,7 +370,6 @@ const handleSearchInput = () => {
       color: var(--color-grey);
       pointer-events: none;
 
-      &::before,
       &::after {
         opacity: 0.5;
       }
@@ -574,10 +573,6 @@ const handleSearchInput = () => {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-
-    &-clear_search {
-      padding: 4px;
     }
 
     &-select_area {
