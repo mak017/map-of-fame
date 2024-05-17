@@ -60,35 +60,29 @@ const handleKeyDown = (e) => {
   max-height: 100vh;
   overflow: auto;
   transform: translate(-50%, -50%);
-  padding: 36px 36px 32px;
+  padding: 6px 36px 32px;
   border-radius: 2px;
   background: var(--color-light);
 }
 .close {
   display: block;
   position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 34px;
-  height: 34px;
-  padding: 0;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  padding: 12px;
   border: 0;
   background: none;
   cursor: pointer;
 }
 h3 {
-  margin-bottom: 36px;
+  margin-bottom: 35px;
   color: var(--color-dark);
   font-size: 24px;
   font-weight: 800;
   line-height: 1.22;
   text-align: center;
   text-transform: uppercase;
-}
-
-@media (max-width: 767px) {
-  .popup {
-    padding: 44px 12px 36px;
-  }
 }
 </style>
