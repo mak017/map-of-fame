@@ -50,6 +50,7 @@ const handleKeyDown = (e) => {
   opacity: 0.45;
   background: var(--color-dark);
 }
+
 .popup {
   position: fixed;
   left: 50%;
@@ -64,8 +65,9 @@ const handleKeyDown = (e) => {
   border-radius: 2px;
   background: var(--color-light);
 }
+
 .close {
-  display: block;
+  display: flex;
   position: absolute;
   top: 0;
   left: 0;
@@ -76,6 +78,7 @@ const handleKeyDown = (e) => {
   background: none;
   cursor: pointer;
 }
+
 h3 {
   margin-bottom: 35px;
   color: var(--color-dark);
