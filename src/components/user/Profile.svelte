@@ -561,7 +561,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
         type="button"
         class="button button-edit"
         on:click={initDescrEditing}>
-        <PencilSvg fill="var(--color-accent)" /></button>
+        <PencilSvg fill="var(--color-dark)" /></button>
     {/if}
     {#if isExpandableAbout && !isEditableAbout}
       <div class="expand-wrapper">
@@ -726,23 +726,29 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
     right: 0;
     bottom: -44px;
 
+    .name,
+    .follow {
+      height: 44px;
+      border-radius: 0;
+      background-color: var(--color-accent-light);
+      transition: 0.2s;
+
+      &:hover {
+        background-color: var(--color-accent-light-hover);
+      }
+    }
+
     .name {
       display: flex;
       align-items: center;
       justify-content: center;
       width: 44px;
-      height: 44px;
-      border-radius: 0;
-      background-color: var(--color-lotion);
     }
 
     .follow {
       width: 110px;
-      height: 44px;
       margin-left: 12px;
       padding: 0 5px;
-      border-radius: 0;
-      background-color: var(--color-lotion);
       color: var(--color-dark);
       font-size: 16px;
       text-transform: uppercase;
@@ -784,8 +790,8 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
       left: 50%;
       align-items: center;
       justify-content: center;
-      width: 48px;
-      height: 48px;
+      width: 40px;
+      height: 40px;
       border-radius: 0;
       transform: translateX(-50%);
       background-color: var(--color-light);
@@ -880,9 +886,19 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
   }
 
   .button-edit {
+    display: flex;
     align-self: flex-end;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
     margin-left: 10px;
-    background: none;
+    transition: 0.2s;
+    background-color: var(--color-accent-light);
+
+    &:hover {
+      background-color: var(--color-accent-light-hover);
+    }
   }
 
   .expand-wrapper {
@@ -938,7 +954,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 .isCurrentUser {
   .description {
     .text {
-      max-width: calc(100% - 30px);
+      max-width: calc(100% - 50px);
     }
 
     &.isEditableAbout {
@@ -1001,8 +1017,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 
 .right_tabs {
   display: flex;
-  margin: 0 -6px 0 auto;
-  background-color: var(--color-lotion);
+  margin-left: auto;
 
   .button {
     display: flex;
@@ -1010,15 +1025,18 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
     justify-content: center;
     width: 40px;
     height: 40px;
-    margin: 0 6px;
     border-bottom: 1px solid transparent;
     border-radius: 0;
-    background: none;
+    background-color: var(--color-accent-light);
     transition: 0.2s;
 
     &.active {
       border-bottom-color: var(--color-dark);
       pointer-events: none;
+    }
+
+    &:hover {
+      background-color: var(--color-accent-light-hover);
     }
   }
 }

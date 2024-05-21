@@ -24,9 +24,9 @@ export let amount = 18;
     animation-timing-function: linear;
     background: linear-gradient(
       to right,
-      var(--color-light-grey) 10%,
+      var(--color-accent-light) 10%,
       var(--color-grey) 18%,
-      var(--color-light-grey) 33%
+      var(--color-accent-light) 33%
     );
     background-size: 800px 104px;
   }

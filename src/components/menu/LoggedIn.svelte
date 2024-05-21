@@ -175,19 +175,18 @@ $: unusedInvitesCount = $profileState.invites.reduce(
   </li>
 </ul>
 
-<div class="hide-all">
-  <button type="button" class="button hide-button" on:click={handleHideAllClick}
-    >{$userData.isSpotsHidden ? "👀 Show" : "🚨 Hide"}</button>
+<button type="button" class="button hide-button" on:click={handleHideAllClick}>
+  <div class="text-top">{$userData.isSpotsHidden ? "👀 Show" : "🚨 Hide"}</div>
   <div class="text">all your photos</div>
-</div>
+</button>
 {#if $profileState.invites.length}
-  <div class="invites">
-    <button
-      type="button"
-      class="button"
-      on:click={() => toggleInvitesPopup(true)}>🖖 Invites</button>
+  <button
+    type="button"
+    class="button invites"
+    on:click={() => toggleInvitesPopup(true)}>
+    <div class="text-top">🖖 Invites</div>
     <div class="text">for your friends</div>
-  </div>
+  </button>
 {/if}
 <button type="button" class="button logout" on:click={handleLogout}
   ><span>Logout</span></button>
@@ -264,25 +263,26 @@ $: unusedInvitesCount = $profileState.invites.reduce(
   }
 }
 
-.hide-all,
+.hide-button,
 .invites {
   width: 100%;
   padding: 10px;
-  background-color: var(--color-lotion);
+  background-color: var(--color-accent-light);
+  transition: 0.2s;
+  text-align: start;
+
+  &:hover {
+    background-color: var(--color-accent-light-hover);
+  }
 }
 
-.hide-all {
+.hide-button {
   margin-bottom: 16px;
 }
 
-.button {
-  background: none;
+.text-top {
   font-weight: 500;
   line-height: 22px;
-
-  &:hover {
-    opacity: 0.7;
-  }
 }
 
 .logout {

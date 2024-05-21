@@ -55,7 +55,7 @@ export let onDelete;
   position: relative;
   overflow: hidden;
   border-radius: 2px;
-  background-color: #d3d3d3;
+  background-color: var(--color-accent-light);
   cursor: pointer;
 
   img {

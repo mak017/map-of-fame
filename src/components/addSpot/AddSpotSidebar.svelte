@@ -51,7 +51,7 @@ h2 {
   width: 208px;
   height: 100px;
   padding: 0 20px;
-  background: var(--color-lotion);
+  background: var(--color-accent-light);
   color: var(--color-dark);
   font-size: 24px;
   font-weight: 800;

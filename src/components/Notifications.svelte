@@ -163,7 +163,7 @@ const actionWhenInViewport = (element) => {
   margin-bottom: 16px;
   padding: 16px 24px;
   border-radius: 2px;
-  background-color: var(--color-lotion);
+  background-color: var(--color-accent-light);
   font-size: 16px;
 
   &.unseen {
@@ -187,7 +187,8 @@ const actionWhenInViewport = (element) => {
   margin-top: 16px;
 
   .button {
-    min-width: 140px;
+    width: 100%;
+    max-width: 140px;
     padding: 8px;
     font-size: 16px;
     text-transform: uppercase;

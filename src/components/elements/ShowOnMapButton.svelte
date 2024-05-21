@@ -13,9 +13,11 @@ export let showTextOnHover = false;
   class:showTextOnHover
   on:click={onClick}>
   {#if showTextOnHover && !isMobile()}
-    <span>Show on</span>
+    <span class="text-wrapper">Show on</span>
   {/if}
-  <MapSvg /></button>
+  <span class="button-wrapper">
+    <MapSvg />
+  </span></button>
 
 <style lang="scss">
 .show-on-map {
@@ -24,29 +26,54 @@ export let showTextOnHover = false;
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: none;
+  background: var(--color-accent-light);
   color: var(--color-dark);
   font-size: 14px;
   line-height: 22px;
   text-transform: uppercase;
 
-  > span {
-    margin-right: 10px;
+  .text-wrapper {
+    display: flex;
+    align-items: center;
+    width: 0;
+    height: 40px;
     opacity: 0;
+    visibility: hidden;
     transform: translateX(100%);
+    white-space: nowrap;
+  }
+
+  .button-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 40px;
   }
 
   &.showTextOnHover {
-    width: auto;
+    justify-content: space-between;
+    padding: 0 10px;
+    transition: 0.2s;
   }
 
   &:hover {
-    span {
+    background-color: var(--color-accent-light-hover);
+
+    .text-wrapper {
+      width: 74px;
       opacity: 1;
+      visibility: visible;
       transform: translateX(0);
       transition:
+        width 0.2s,
         transform 0.2s,
+        visibility 0.2s 0.05s,
         opacity 0.2s 0.05s;
+    }
+
+    &.showTextOnHover {
+      width: 124px;
     }
   }
 }

@@ -8,14 +8,6 @@ export let color = "var(--color-light)";
   viewBox="0 0 20 20"
   fill={color}
   xmlns="http://www.w3.org/2000/svg">
-  <rect
-    width="2.5"
-    height="20"
-    rx="1.25"
-    transform="matrix(-6.33767e-07 1 -1 5.46344e-07 20 8.8042)" />
-  <rect
-    width="2.5"
-    height="20"
-    rx="1.25"
-    transform="matrix(-1 -8.02355e-07 -5.46344e-07 -1 11.1611 20)" />
+  <path
+    d="M9.1999 0.399902V9.1999H0.399902V10.7999H9.1999V19.5999H10.7999V10.7999H19.5999V9.1999H10.7999V0.399902H9.1999Z" />
 </svg>
