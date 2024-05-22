@@ -349,15 +349,21 @@ const prepareDescription = (description) => {
             class="button"
             on:click={handleSpotVote(true)}
             disabled={!$isLoggedIn}
-            ><LikeSvg isActive={$openedMarkerData?.userVote === 1} />
-            <div>{$openedMarkerData?.likesCnt}</div></button>
+            ><div class="icon-wrapper">
+              <LikeSvg isActive={$openedMarkerData?.userVote === 1} />
+            </div>
+            <div class="text">{$openedMarkerData?.likesCnt}</div></button>
           <button
             type="button"
             class="button"
             on:click={handleSpotVote(false)}
             disabled={!$isLoggedIn}
-            ><LikeSvg isDislike isActive={$openedMarkerData?.userVote === -1} />
-            <div>{$openedMarkerData?.dislikesCnt}</div></button>
+            ><div class="icon-wrapper">
+              <LikeSvg
+                isDislike
+                isActive={$openedMarkerData?.userVote === -1} />
+            </div>
+            <div class="text">{$openedMarkerData?.dislikesCnt}</div></button>
         </div>
         <div class="buttons-wrapper">
           <div
@@ -368,6 +374,8 @@ const prepareDescription = (description) => {
             <ButtonDots
               isStaticPosition
               noTransition
+              isBig
+              withBg
               isVisuallyHidden={isExpandedButtons}
               onClick={() => (isExpandedButtons = true)} />
             {#if isExpandedButtons}
@@ -574,7 +582,13 @@ const prepareDescription = (description) => {
     display: block;
     width: 40px;
     height: 40px;
+    background-color: var(--color-accent-light);
+    transition: 0.2s;
     cursor: pointer;
+
+    &:hover {
+      background-color: var(--color-accent-light-hover);
+    }
   }
 
   button {
@@ -595,24 +609,35 @@ const prepareDescription = (description) => {
 
 .likes {
   display: flex;
-  position: relative;
-  top: 10px;
 
   .button {
     width: 40px;
     height: 40px;
-    background: none;
+    padding: 4px 0;
+    background-color: var(--color-accent-light);
     color: var(--color-dark);
     font-size: 13px;
 
-    > div {
+    .icon-wrapper {
+      height: 18px;
+      transform: translateY(7px);
+      transition: 0.2s;
+    }
+
+    .text {
       opacity: 0;
       transition: 0.3s;
     }
 
     &:hover,
     &:focus {
-      > div {
+      background-color: var(--color-accent-light-hover);
+
+      .icon-wrapper {
+        transform: translateY(0);
+      }
+
+      .text {
         opacity: 1;
       }
     }
@@ -632,11 +657,11 @@ const prepareDescription = (description) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
 }
 
 .complain button {
-  background: url(../../images/warning.svg) 50% 50% / auto no-repeat;
+  background: var(--color-accent-light) url(../../images/warning.svg) 50% 50% /
+    auto no-repeat;
 }
 
 .artist-area {

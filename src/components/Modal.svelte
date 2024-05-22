@@ -155,13 +155,17 @@ const handleResize = () => {
   height: 40px;
   padding: 12px;
   border: 0;
-  background: inherit;
+  background-color: var(--color-accent-light);
   cursor: pointer;
 
   > span {
     display: block;
     width: 15px;
     height: 15px;
+  }
+
+  &:hover {
+    background-color: var(--color-accent-light-hover);
   }
 }
 
@@ -198,13 +202,17 @@ h2 {
   right: 10px;
   width: 40px;
   height: 40px;
-  background-color: var(--color-light);
+  background-color: var(--color-accent-light);
   background-image: url(../images/burger2.svg);
   background-repeat: no-repeat;
   background-position: 50% 50%;
   background-size: 20px 14px;
   color: transparent;
   font-size: 0;
+
+  &:hover {
+    background-color: var(--color-accent-light-hover);
+  }
 }
 
 .content {
@@ -304,11 +312,23 @@ h2 {
     }
   }
 
+  .close {
+    left: 0;
+  }
+
+  .left-buttons {
+    left: 40px;
+  }
+
   .logo {
     top: 27px;
     left: 12px;
     width: 97px;
     height: 37px;
+  }
+
+  .button-menu {
+    right: 0;
   }
 
   .content {

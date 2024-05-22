@@ -287,11 +287,16 @@ $: unusedInvitesCount = $profileState.invites.reduce(
 
 .logout {
   align-self: flex-end;
-  width: 35px;
+  width: 40px;
   height: 55px;
   margin-top: auto;
-  background: url(../../images/logout.svg) 50% 50% / 23px 47px no-repeat;
+  background: var(--color-accent-light) url(../../images/logout.svg) 50% 50% /
+    23px 47px no-repeat;
   color: transparent;
   font-size: 0;
+
+  &:hover {
+    background-color: var(--color-accent-light-hover);
+  }
 }
 </style>

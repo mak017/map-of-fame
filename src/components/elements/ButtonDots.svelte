@@ -3,6 +3,8 @@ export let onClick;
 export let isVisuallyHidden = false;
 export let isStaticPosition = false;
 export let noTransition = false;
+export let isBig = false;
+export let withBg = false;
 </script>
 
 <button
@@ -11,6 +13,8 @@ export let noTransition = false;
   class:isVisuallyHidden
   class:isStaticPosition
   class:noTransition
+  class:isBig
+  class:withBg
   on:click={onClick}><span></span><span></span><span></span></button>
 
 <style lang="scss">
@@ -44,6 +48,21 @@ export let noTransition = false;
 
   &.noTransition {
     transition: none;
+  }
+
+  &.isBig {
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+  }
+
+  &.withBg {
+    background-color: var(--color-accent-light);
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: var(--color-accent-light-hover);
+    }
   }
 }
 </style>

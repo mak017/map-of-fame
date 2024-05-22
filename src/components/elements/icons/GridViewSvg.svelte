@@ -5,8 +5,8 @@ export let isActive = false;
 </script>
 
 <svg
-  width="30"
-  height="30"
+  width="20"
+  height="20"
   viewBox="0 0 25 25"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
