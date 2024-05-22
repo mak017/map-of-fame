@@ -1,15 +1,20 @@
 <script>
-import { goto, url } from "@roxi/routify";
+import { goto, params, url } from "@roxi/routify";
 
 import {
   isShowOnMapMode,
   selectedUserProfileData,
   openedMarkerData,
   hasBrowseHistory,
+  profileState,
 } from "../../../../js/store.js";
 
 import MarkerCard from "../../../../components/markerCard/MarkerCard.svelte";
 import Modal from "../../../../components/Modal.svelte";
+import PencilSvg from "../../../../components/elements/icons/PencilSvg.svelte";
+import Popup from "../../../../components/Popup.svelte";
+import DeleteSpot from "../../../../components/user/DeleteSpot.svelte";
+import TrashSvg from "../../../../components/elements/icons/TrashSvg.svelte";
 
 const getTitle = () => {
   if (!$openedMarkerData) return "";
@@ -21,6 +26,10 @@ const getTitle = () => {
 };
 
 let title = getTitle();
+let showDeletePopup = false;
+let { username, id } = $params;
+
+const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 
 $: if ($openedMarkerData) title = getTitle();
 </script>
@@ -47,4 +56,48 @@ $: if ($openedMarkerData) title = getTitle();
     url: $openedMarkerData?.firm?.bannerUrl,
   }}>
   <MarkerCard />
+  <div slot="left-buttons" class="left-buttons-wrapper">
+    <a
+      href={$url("/@:username/spot/:id/edit", { username: username, id })}
+      class="button edit"><PencilSvg fill="var(--color-dark)" /></a>
+    <button
+      type="button"
+      class="button delete"
+      on:click={() => toggleDeletePopup(true)}>
+      <TrashSvg fill="var(--color-dark)" />
+    </button>
+  </div>
 </Modal>
+
+{#if showDeletePopup}
+  <Popup title="Delete art?" on:close={() => toggleDeletePopup(false)}>
+    <DeleteSpot
+      close={() => toggleDeletePopup(false)}
+      currentSpot={$openedMarkerData}
+      onSubmit={() => {
+        profileState.reset();
+        $hasBrowseHistory ? window.history.back() : $goto("/");
+      }} />
+  </Popup>
+{/if}
+
+<style lang="scss">
+.left-buttons-wrapper {
+  display: flex;
+}
+
+.edit,
+.delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-accent-light);
+  transition: 0.2s;
+
+  &:hover {
+    background-color: var(--color-accent-light-hover);
+  }
+}
+</style>

@@ -1,5 +1,6 @@
 <script>
 import { onMount } from "svelte";
+import { fade } from "svelte/transition";
 import InfiniteScroll from "svelte-infinite-scroll";
 import { afterUrlChange, goto, params } from "@roxi/routify";
 import linkifyHtml from "linkify-html";
@@ -77,6 +78,7 @@ let isExpandedAbout = false;
 let aboutCharacterCount = 0;
 
 const token = loadFromLocalStorage("token") || null;
+const EMPTY_ABOUT_TEXT = "Write something about you.";
 
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
 const toggleSharePopup = (toggle) => (showSharePopup = toggle);
@@ -401,6 +403,7 @@ const getBgStyleUrl = (uploadedBg, userBg) => {
 
 const initDescrEditing = () => {
   isEditableAbout = true;
+
   setTimeout(() => {
     userDescrElement.focus();
     document.execCommand("selectAll", false, null);
@@ -446,9 +449,7 @@ const prepareAboutText = (text) => {
     });
   const textWithUpperFirst = upperFirst(formattedText);
 
-  return isEditableAbout || !isCurrentUser
-    ? textWithUpperFirst ?? ""
-    : textWithUpperFirst ?? "Write something about you.";
+  return textWithUpperFirst || "";
 };
 
 const handleFollowBtnClick = async () => {
@@ -532,17 +533,29 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
     {/if}
   </div>
   <div class="description" class:isExpandedAbout class:isEditableAbout>
+    {#if !about && !isEditableAbout && !userDescrElement.innerText.length}
+      <div class="text empty_state" in:fade={{ transition: 200 }}>
+        {EMPTY_ABOUT_TEXT}
+      </div>
+    {/if}
     <div
       id="user-description"
       class="text"
       contenteditable={isEditableAbout ? "plaintext-only" : false}
-      on:blur={handleDescrBlur(isEditableAbout)}
       use:clickOutside
+      on:blur={handleDescrBlur(isEditableAbout)}
       on:click_outside={() => {
         if (isEditableAbout) {
           isEditableAbout = false;
         }
-      }}>
+      }}
+      on:keydown|stopPropagation={(event) => {
+        if (isEditableAbout && event.key === "Escape") {
+          isEditableAbout = false;
+        }
+      }}
+      role="textbox"
+      tabindex="0">
       {@html prepareAboutText(about)}
     </div>
     {#if isEditableAbout}
@@ -870,6 +883,12 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
     overflow: hidden;
     min-width: 225px;
     max-height: 105px;
+
+    &.empty_state {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
   }
 
   &.isEditableAbout {

@@ -80,6 +80,9 @@ const handleResize = () => {
         {/if}
       </button>
     {/if}
+    <div class="left-buttons">
+      <slot name="left-buttons" />
+    </div>
     {#if title && (!hideTitleOnScroll || (hideTitleOnScroll && scrollTop < 100))}
       <h2 transition:fade|global={{ duration: 200 }}>{@html title}</h2>
     {/if}
@@ -160,6 +163,12 @@ const handleResize = () => {
     width: 15px;
     height: 15px;
   }
+}
+
+.left-buttons {
+  position: absolute;
+  top: 0;
+  left: 60px;
 }
 
 .logo {

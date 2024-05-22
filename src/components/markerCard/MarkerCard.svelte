@@ -27,7 +27,6 @@ import {
   areaSelection,
   areaSpots,
   userData,
-  editSpotData,
   isLoggedIn,
 } from "../../js/store";
 import { getSpotById, voteSpot } from "../../js/api/spot.js";
@@ -37,7 +36,6 @@ import Spinner from "../elements/Spinner.svelte";
 import ShowOnMapButton from "../elements/ShowOnMapButton.svelte";
 import ButtonDots from "../elements/ButtonDots.svelte";
 import ShareSvg from "../elements/icons/ShareSvg.svelte";
-import PencilSvg from "../elements/icons/PencilSvg.svelte";
 import LikeSvg from "../elements/icons/LikeSvg.svelte";
 import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import ShareMarker from "./ShareMarker.svelte";
@@ -157,7 +155,7 @@ const resetAreaSelectionMode = () => {
   document.getElementById("highlighted").innerHTML = "";
 };
 
-const onUserClick = (username) => () => {
+const navigateToUserProfile = () => {
   const { user } = $openedMarkerData;
 
   if (!$selectedUserProfileData.id) {
@@ -166,7 +164,16 @@ const onUserClick = (username) => () => {
   resetAreaSelectionMode();
   openedMarkerData.set(null);
   profileState.reset();
-  $goto("/@:username", { username });
+};
+
+const handleDescriptionInteraction = (event) => {
+  if ("key" in event && event.key !== "Enter") {
+    return;
+  }
+
+  if (event.target?.innerHTML?.startsWith("@")) {
+    navigateToUserProfile();
+  }
 };
 
 const handleShowOnMapClick = () => {
@@ -192,16 +199,6 @@ const handleShowOnMapClick = () => {
   selectedUserProfileData.set(user);
   $goto("/", { lat, lng, zoom: MAX_ZOOM, year });
   openedMarkerData.set(null);
-};
-
-const handleGoToEdit = (data) => {
-  const { id } = data;
-  editSpotData.set({
-    ...data,
-    img: data.img?.src,
-  });
-
-  $goto("/@:username/spot/:id/edit", { username: username, id });
 };
 
 const getUpdatedVoteCount = (value) => {
@@ -413,7 +410,11 @@ const prepareDescription = (description) => {
         </button>
       </div>
       {#if data.description}
-        <div class="spot-description">
+        <div
+          class="spot-description"
+          on:click={handleDescriptionInteraction}
+          on:keydown={handleDescriptionInteraction}
+          role="presentation">
           {@html prepareDescription(data.description)}
         </div>
       {/if}
@@ -444,13 +445,6 @@ const prepareDescription = (description) => {
         </div>
       {/if}
     </div>
-    {#if isCurrentUser}
-      <button
-        type="button"
-        class="button edit"
-        title="Edit spot"
-        on:click={() => handleGoToEdit(data)}><PencilSvg /></button>
-    {/if}
     {#if isShareOpened}
       <Popup on:close={() => handleShareToggle(false)} title="Share Link">
         <ShareMarker />
@@ -616,7 +610,8 @@ const prepareDescription = (description) => {
       transition: 0.3s;
     }
 
-    &:hover {
+    &:hover,
+    &:focus {
       > div {
         opacity: 1;
       }

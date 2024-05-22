@@ -5,6 +5,7 @@ import { fade } from "svelte/transition";
 import { userData } from "../../js/store";
 
 import PencilSvg from "../elements/icons/PencilSvg.svelte";
+import TrashSvg from "../elements/icons/TrashSvg.svelte";
 
 export let spot;
 export let isEditable;
@@ -45,7 +46,7 @@ export let onDelete;
       <button
         type="button"
         class="button delete"
-        on:click={() => onDelete(spot)} />
+        on:click={() => onDelete(spot)}><TrashSvg /></button>
     </div>
   {/if}
 </a>
@@ -136,6 +137,9 @@ export let onDelete;
 .view,
 .edit,
 .delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 54px;
   height: 54px;
   margin: 12px;
@@ -145,22 +149,8 @@ export let onDelete;
 }
 
 .view {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   color: var(--color-light);
   text-decoration: none;
   font-size: 32px;
-}
-
-.edit {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.delete {
-  background-image: url(../../../images/trash.svg);
-  background-size: 14px 18px;
 }
 </style>
