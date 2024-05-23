@@ -86,12 +86,16 @@ $afterUrlChange(() => {
   height: 40px;
   padding: 0;
   border: 0;
-  background: none;
+  background-color: var(--color-accent-light);
   cursor: pointer;
 
   > span {
     width: 20px;
     height: 20px;
+  }
+
+  &:hover {
+    background-color: var(--color-accent-light-hover);
   }
 }
 

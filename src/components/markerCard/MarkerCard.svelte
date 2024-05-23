@@ -384,7 +384,7 @@ const prepareDescription = (description) => {
                 transition:slide={{ duration: 300, axis: "x" }}>
                 {#if (data.link && !data.embedLink) || (data.embedLink && !isExternalMapsUrl(data.link))}
                   <div
-                    class="link"
+                    class="link button"
                     class:externalMap={isExternalMapsUrl(data.link)}>
                     <a href={data.link} target="_blank" rel="noreferrer"
                       >External link to art</a>
@@ -645,12 +645,14 @@ const prepareDescription = (description) => {
 }
 
 .link a {
-  background: url(../../images/web.svg) 50% 50% / auto no-repeat;
+  background: var(--color-accent-light) url(../../images/web.svg) 50% 50% / auto
+    no-repeat;
   font-size: 0;
 }
 
 .externalMap a {
-  background: url(../../images/panorama.svg) 50% 50% / auto no-repeat;
+  background: var(--color-accent-light) url(../../images/panorama.svg) 50% 50% /
+    auto no-repeat;
 }
 
 .share button {

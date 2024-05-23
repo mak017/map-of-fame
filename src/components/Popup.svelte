@@ -39,7 +39,7 @@ const handleKeyDown = (e) => {
   <slot />
 </div>
 
-<style>
+<style lang="scss">
 .popup-background {
   position: fixed;
   top: 0;
@@ -75,8 +75,13 @@ const handleKeyDown = (e) => {
   height: 40px;
   padding: 12px;
   border: 0;
-  background: none;
+  background: var(--color-accent-light);
+  transition: 0.2s;
   cursor: pointer;
+
+  &:hover {
+    background-color: var(--color-accent-light-hover);
+  }
 }
 
 h3 {
