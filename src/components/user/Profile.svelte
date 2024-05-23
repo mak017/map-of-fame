@@ -533,7 +533,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
     {/if}
   </div>
   <div class="description" class:isExpandedAbout class:isEditableAbout>
-    {#if !about && !isEditableAbout && !userDescrElement.innerText.length}
+    {#if !about && !isEditableAbout && !userDescrElement?.innerText.length}
       <div class="text empty_state" in:fade={{ transition: 200 }}>
         {EMPTY_ABOUT_TEXT}
       </div>
