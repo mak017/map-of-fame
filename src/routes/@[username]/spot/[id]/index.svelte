@@ -7,6 +7,7 @@ import {
   openedMarkerData,
   hasBrowseHistory,
   profileState,
+  userData,
 } from "../../../../js/store.js";
 
 import MarkerCard from "../../../../components/markerCard/MarkerCard.svelte";
@@ -57,15 +58,17 @@ $: if ($openedMarkerData) title = getTitle();
   }}>
   <MarkerCard />
   <div slot="left-buttons" class="left-buttons-wrapper">
-    <a
-      href={$url("/@:username/spot/:id/edit", { username: username, id })}
-      class="button edit"><PencilSvg fill="var(--color-dark)" /></a>
-    <button
-      type="button"
-      class="button delete"
-      on:click={() => toggleDeletePopup(true)}>
-      <TrashSvg fill="var(--color-dark)" />
-    </button>
+    {#if username === $userData.username}
+      <a
+        href={$url("/@:username/spot/:id/edit", { username: username, id })}
+        class="button edit"><PencilSvg fill="var(--color-dark)" /></a>
+      <button
+        type="button"
+        class="button delete"
+        on:click={() => toggleDeletePopup(true)}>
+        <TrashSvg fill="var(--color-dark)" />
+      </button>
+    {/if}
   </div>
 </Modal>
 
