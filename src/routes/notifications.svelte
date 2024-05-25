@@ -7,11 +7,11 @@ import Notifications from "../components/Notifications.svelte";
 
 <Modal
   id="notifications-modal"
-  title="Notifications"
   noLogo
   noMarginTop
   on:close={() => {
     $goto("/");
   }}>
   <Notifications />
+  <span title="slot">Notifications</span>
 </Modal>

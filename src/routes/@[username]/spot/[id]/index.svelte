@@ -17,22 +17,10 @@ import Popup from "../../../../components/Popup.svelte";
 import DeleteSpot from "../../../../components/user/DeleteSpot.svelte";
 import TrashSvg from "../../../../components/elements/icons/TrashSvg.svelte";
 
-const getTitle = () => {
-  if (!$openedMarkerData) return "";
-
-  return `<div class="posted-by">Posted by:</div>
-  <a href=${$url("/@:username", { username: $openedMarkerData.user.username })}>${
-    $openedMarkerData.user?.artist?.name || $openedMarkerData.user?.crew?.name
-  }</a>`;
-};
-
-let title = getTitle();
 let showDeletePopup = false;
 let { username, id } = $params;
 
 const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
-
-$: if ($openedMarkerData) title = getTitle();
 </script>
 
 <Modal
@@ -47,7 +35,6 @@ $: if ($openedMarkerData) title = getTitle();
   }}
   withAd
   alwaysOnTop
-  {title}
   noLogo
   noPaddingTop
   hideTitleOnScroll
@@ -57,6 +44,18 @@ $: if ($openedMarkerData) title = getTitle();
     url: $openedMarkerData?.firm?.bannerUrl,
   }}>
   <MarkerCard />
+  <div slot="title" class="title">
+    {#if $openedMarkerData}
+      <div class="posted-by">Posted by:</div>
+      <a
+        href={$url("/@:username", {
+          username: $openedMarkerData.user.username,
+        })}
+        on:click={profileState.reset}
+        >{$openedMarkerData.user?.artist?.name ||
+          $openedMarkerData.user?.crew?.name}</a>
+    {/if}
+  </div>
   <div slot="left-buttons" class="left-buttons-wrapper">
     {#if username === $userData.username}
       <a
@@ -87,6 +86,29 @@ $: if ($openedMarkerData) title = getTitle();
 <style lang="scss">
 .left-buttons-wrapper {
   display: flex;
+}
+
+.title {
+  .posted-by {
+    margin-top: 7px;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  a {
+    display: block;
+    max-width: 36vw;
+    overflow: hidden;
+    color: inherit;
+    font-size: 18px;
+    text-decoration: none;
+    text-overflow: ellipsis;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
 }
 
 .edit,

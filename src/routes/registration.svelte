@@ -28,7 +28,6 @@ const handleClose = () => {
 <Modal
   id="registration-modal"
   on:close={handleClose}
-  title={isInviteError ? "Registr💩tion" : "Registration"}
   withFooter
   noLogo
   extraMarginTopMobile
@@ -39,4 +38,5 @@ const handleClose = () => {
     {step}
     {setStep}
     setInviteError={() => (isInviteError = true)} />
+  <span slot="title">{isInviteError ? "Registr💩tion" : "Registration"}</span>
 </Modal>

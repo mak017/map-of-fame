@@ -11,7 +11,6 @@ import CloseCrossSvg from "./elements/icons/CloseCrossSvg.svelte";
 import ArrowLeftSvg from "./elements/icons/ArrowLeftSvg.svelte";
 
 export let id;
-export let title = "";
 export let withAd = false;
 export let withFooter = false;
 export let noLogo = false;
@@ -83,8 +82,10 @@ const handleResize = () => {
     <div class="left-buttons">
       <slot name="left-buttons" />
     </div>
-    {#if title && (!hideTitleOnScroll || (hideTitleOnScroll && scrollTop < 100))}
-      <h2 transition:fade|global={{ duration: 200 }}>{@html title}</h2>
+    {#if !hideTitleOnScroll || (hideTitleOnScroll && scrollTop < 100)}
+      <h2 transition:fade|global={{ duration: 200 }}>
+        <slot name="title"></slot>
+      </h2>
     {/if}
     {#if !noLogo}<a href={$url("/")} class="logo">Open map</a>{/if}
     <button
@@ -92,7 +93,7 @@ const handleResize = () => {
       on:click={() => {
         isMenuOpen.set(true);
       }}
-      in:fade|global={{ duration: 200 }}>Profile</button>
+      in:fade|global={{ duration: 200 }}>Menu</button>
   </div>
   <div class="content">
     <slot />

@@ -24,10 +24,10 @@ const handleClose = () => {
 <Modal
   id="registration-modal"
   on:close={handleClose}
-  title="Begistration"
   noLogo
   withFooter
   extraMarginTopMobile
   closeIconAsBack={step === 2}>
+  <span slot="title">Begistration</span>
   <Begistration {step} {setStep} />
 </Modal>

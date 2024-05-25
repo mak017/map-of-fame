@@ -187,9 +187,9 @@ const handleSearchInput = () => {
 {#if $shouldShowResetPassword}
   <Modal
     id="reset-password-modal"
-    title="Reset Password"
     on:close={() => shouldShowResetPassword.set(false)}>
     <ResetPassword />
+    <span slot="title">Reset Password</span>
   </Modal>
 {:else}
   <div class="main-top_left_wrapper">

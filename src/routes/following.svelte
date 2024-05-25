@@ -9,11 +9,22 @@ import Following from "../components/follow/Following.svelte";
 
 <Modal
   id="following-modal"
-  title={`Following${$followingState.total ? ` <span>(${$followingState.total})</span>` : ""}`}
   noLogo
   alwaysOnTop
   on:close={() => {
     $goto("/");
   }}>
   <Following />
+  <div slot="title">
+    <span>Following</span>
+    {#if $followingState.total}
+      <span class="count"> ({$followingState.total})</span>
+    {/if}
+  </div>
 </Modal>
+
+<style>
+.count {
+  font-weight: 400;
+}
+</style>

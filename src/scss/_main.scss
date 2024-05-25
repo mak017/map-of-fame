@@ -111,35 +111,6 @@ summary {
   bottom: 60px;
 }
 
-.modal {
-  h2 {
-    span {
-      font-weight: 400;
-    }
-
-    .posted-by {
-      margin-top: 7px;
-      font-size: 10px;
-      font-weight: 400;
-      line-height: 1.2;
-    }
-
-    a {
-      display: block;
-      max-width: 36vw;
-      overflow: hidden;
-      color: inherit;
-      font-size: 18px;
-      text-decoration: none;
-      text-overflow: ellipsis;
-
-      &:hover {
-        opacity: 0.7;
-      }
-    }
-  }
-}
-
 .svelte-select {
   touch-action: none !important;
   cursor: pointer;

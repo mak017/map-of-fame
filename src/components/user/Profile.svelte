@@ -497,6 +497,15 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
           </div>
         {/if}
       </div>
+      <div class="user-type-wrapper">
+        <div
+          class={`user-type ${isCurrentUser ? $userData.type : $profileState.user.type}`}
+          title={isCurrentUser ? $userData.type : $profileState.user.type}>
+        </div>
+        {#if (isCurrentUser ? $userData.level : $profileState.user.level) < 3}
+          <div class="sandbox" />
+        {/if}
+      </div>
       {#if name}
         <div class="buttons-wrapper">
           <button
@@ -733,11 +742,46 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
     width: 100%;
   }
 
+  .user-type-wrapper {
+    display: flex;
+    position: absolute;
+    bottom: -48px;
+    left: 0;
+
+    > div {
+      width: 44px;
+      height: 44px;
+      border-radius: 0;
+      background-color: var(--color-accent-light);
+    }
+
+    .artist {
+      background: var(--color-accent-light) url(../../images/artist.svg) 50% 50%/
+        29px 30px no-repeat;
+    }
+
+    .crew {
+      background: var(--color-accent-light) url(../../images/crew.svg) 50% 50%/ 30px
+        30px no-repeat;
+    }
+
+    .hunter {
+      background: var(--color-accent-light) url(../../images/hunter.svg) 50% 50%/
+        25px 30px no-repeat;
+    }
+
+    .sandbox {
+      margin-left: 4px;
+      background: var(--color-accent-light) url(../../images/sandbox.svg) 50%
+        50%/ 29px 25px no-repeat;
+    }
+  }
+
   .buttons-wrapper {
     display: flex;
     position: absolute;
     right: 0;
-    bottom: -44px;
+    bottom: -48px;
 
     .name,
     .follow {
@@ -844,6 +888,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 
 .user {
   max-width: 100%;
+  margin-bottom: -14px;
   overflow: hidden;
   color: var(--color-dark);
   text-overflow: ellipsis;
@@ -863,6 +908,8 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 
   &name {
     display: inline-block;
+    position: relative;
+    top: -14px;
     padding: 4px 10px;
     font-size: 16px;
     font-weight: 600;
@@ -1117,8 +1164,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
   width: 64px;
   height: 52px;
   border-radius: 0 50% 50% 0;
-  background: var(--color-accent) url(../../../images/map.svg) 50% 50%/ 30px 26px
-    no-repeat;
+  background: var(--color-accent) url(../../images/map.svg) 50% 50%/ 30px 26px no-repeat;
   color: transparent;
   font-size: 0;
 }

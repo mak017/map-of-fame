@@ -9,9 +9,9 @@ import Modal from "../components/Modal.svelte";
 <Modal
   id="login-modal"
   on:close={() => $goto("/")}
-  title="Log in"
   noLogo
   withFooter
   extraMarginTopMobile>
   <LoginForm />
+  <span slot="title">Log in</span>
 </Modal>

@@ -11,9 +11,9 @@ import EditSpot from "../../../../components/user/EditSpot.svelte";
 <Modal
   id="edit-spot-modal"
   on:close={() => ($hasBrowseHistory ? window.history.back() : $goto("/"))}
-  title="Edit Art"
   noLogo
   closeIconAsBack
   noMarginTop>
   <EditSpot />
+  <span slot="title">Edit Art</span>
 </Modal>
