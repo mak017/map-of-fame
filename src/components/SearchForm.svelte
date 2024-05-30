@@ -474,6 +474,7 @@ form {
   }
 }
 
+.username,
 .artist,
 .crew {
   overflow: hidden;

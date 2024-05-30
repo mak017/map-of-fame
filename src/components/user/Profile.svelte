@@ -889,9 +889,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 .user {
   max-width: 100%;
   margin-bottom: -14px;
-  overflow: hidden;
   color: var(--color-dark);
-  text-overflow: ellipsis;
 
   .name {
     margin-bottom: 4px;
@@ -903,6 +901,8 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 
     &-wrapper {
       padding: 6px 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 

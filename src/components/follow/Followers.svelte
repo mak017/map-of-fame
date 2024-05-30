@@ -231,6 +231,17 @@ const handleFollowBtnClick = (user) => async () => {
   }
 }
 
+.username,
+.artist,
+.crew {
+  overflow: hidden;
+
+  .value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .spots,
 .followers {
   text-align: center;
