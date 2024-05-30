@@ -71,6 +71,7 @@ h2 {
     flex: 0 0 40px;
     width: 100%;
     height: auto;
+    margin-bottom: 18px;
     background: none;
     font-size: 24px;
   }
