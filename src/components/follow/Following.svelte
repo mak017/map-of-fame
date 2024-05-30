@@ -120,7 +120,7 @@ const handleUnfollowBtnClick = (user) => async () => {
                     <div class="head">Artist</div>
                   {/if}
                   <div class="value">
-                    {user.artist ?? ""}
+                    {user.artist?.name ?? ""}
                   </div>
                 </div>
               {/if}
@@ -130,7 +130,7 @@ const handleUnfollowBtnClick = (user) => async () => {
                     <div class="head">Crew</div>
                   {/if}
                   <div class="value">
-                    {user.crew ?? ""}
+                    {user.crew?.name ?? ""}
                   </div>
                 </div>
               {/if}
