@@ -949,6 +949,10 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
       padding: 10px 8px 20px;
       border: 1px solid var(--color-black);
       border-radius: 2px;
+
+      &:focus-visible {
+        outline: none;
+      }
     }
   }
 
