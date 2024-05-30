@@ -923,6 +923,7 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
   align-self: flex-start;
   flex-wrap: wrap;
   max-width: 100%;
+  min-height: 40px;
   margin-bottom: 32px;
   font-size: 14px;
 
@@ -1172,9 +1173,11 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
 @media (max-width: 767px) {
   .user-bg-wrapper {
     height: 220px;
+    margin-bottom: 28px;
     padding: 12px 0;
 
-    .buttons-wrapper {
+    .buttons-wrapper,
+    .user-type-wrapper {
       bottom: -34px;
     }
   }
@@ -1190,8 +1193,11 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
   }
 
   .top {
-    position: relative;
-    flex-direction: column-reverse;
+    margin-bottom: 22px;
+  }
+
+  .username {
+    top: -6px;
   }
 
   .user .name {
