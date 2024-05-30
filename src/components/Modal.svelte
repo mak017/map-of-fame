@@ -21,6 +21,7 @@ export let noMarginTop = false;
 export let autoMargin = false;
 export let alwaysOnTop = false;
 export let extraMarginTopMobile = false;
+export let smallMarginTopMobile = false;
 export let closeIconAsBack = false;
 export let hideTitleOnScroll = false;
 export let twoLineTitle = false;
@@ -56,6 +57,7 @@ const handleResize = () => {
   class:noPaddingTop
   class:noMarginTop
   class:extraMarginTopMobile
+  class:smallMarginTopMobile
   class:twoLineTitle
   {id}
   role="presentation"
@@ -284,7 +286,7 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  margin-top: auto;
 
   a {
     padding: 0;
@@ -345,6 +347,12 @@ h2 {
   .extraMarginTopMobile {
     .content {
       margin-top: 150px;
+    }
+  }
+
+  .smallMarginTopMobile {
+    .content {
+      margin-top: 20px;
     }
   }
 }

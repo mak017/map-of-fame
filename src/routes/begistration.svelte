@@ -26,8 +26,9 @@ const handleClose = () => {
   on:close={handleClose}
   noLogo
   withFooter
-  extraMarginTopMobile
+  noMarginTop
+  smallMarginTopMobile
   closeIconAsBack={step === 2}>
-  <span slot="title">Begistration</span>
   <Begistration {step} {setStep} />
+  <span slot="title">Welcome</span>
 </Modal>

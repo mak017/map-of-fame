@@ -30,7 +30,8 @@ const handleClose = () => {
   on:close={handleClose}
   withFooter
   noLogo
-  extraMarginTopMobile
+  noMarginTop
+  smallMarginTopMobile
   closeIconAsBack={step === 2}>
   <RegistrationForm
     {inviteData}
@@ -38,5 +39,5 @@ const handleClose = () => {
     {step}
     {setStep}
     setInviteError={() => (isInviteError = true)} />
-  <span slot="title">{isInviteError ? "Registr💩tion" : "Registration"}</span>
+  <span slot="title">Welcome</span>
 </Modal>

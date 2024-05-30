@@ -144,7 +144,7 @@ form {
   }
 }
 .switch-to-sign-up {
-  margin-top: 36px;
+  margin-top: 24px;
   font-size: 18px;
   font-weight: 500;
   line-height: 1.22;

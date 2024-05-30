@@ -11,7 +11,7 @@ const closeMenuOnEnter = (e) => e.key === "Enter" && closeMenu();
 <ul class="links">
   <li>
     <a href={$url("/login")} on:click={closeMenu} on:keydown={closeMenuOnEnter}
-      >Login</a>
+      >Log In</a>
   </li>
   <li>
     <a
@@ -19,7 +19,7 @@ const closeMenuOnEnter = (e) => e.key === "Enter" && closeMenu();
         $settings.needInviteToRegister ? "/begistration" : "/registration",
       )}
       on:click={closeMenu}
-      on:keydown={closeMenuOnEnter}>Register</a>
+      on:keydown={closeMenuOnEnter}>Sign Up</a>
   </li>
 </ul>
 

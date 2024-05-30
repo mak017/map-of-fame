@@ -19,6 +19,7 @@ import ButtonPrimary from "../elements/ButtonPrimary.svelte";
 import FormEmailInput from "../elements/FormEmailInput.svelte";
 import FormPasswordInput from "../elements/FormPasswordInput.svelte";
 import FormTextInput from "../elements/FormTextInput.svelte";
+import Tiles from "./Tiles.svelte";
 
 import { ERROR_MESSAGES, USER_TYPES } from "../../js/constants";
 
@@ -219,6 +220,7 @@ const handleUsernameChange = (event) => {
   on:submit|preventDefault={handleSubmit}
   novalidate
   transition:fade|global={{ duration: 200 }}>
+  <Tiles isBeginner selectedType={userType?.name} />
   <div class="step">step {step} of 2</div>
   {#if step === 1}
     <div in:fade={{ duration: 200 }}>
@@ -320,7 +322,7 @@ form {
 }
 
 .switch-to-sign-in {
-  margin-top: 36px;
+  margin-top: 24px;
   font-size: 18px;
   font-weight: 500;
   line-height: 1.22;
