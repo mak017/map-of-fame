@@ -86,13 +86,18 @@ h2 {
     display: block;
     position: absolute;
     top: 0;
-    left: 10px;
+    left: 0;
     width: 40px;
     height: 40px;
     padding: 12px;
     border: 0;
-    background: none;
+    border-radius: 2px;
+    background: var(--color-accent-light);
     cursor: pointer;
+
+    &:hover {
+      background-color: var(--color-accent-light-hover);
+    }
   }
 
   .form-wrapper {
