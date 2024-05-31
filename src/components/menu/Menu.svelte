@@ -1,6 +1,6 @@
 <script>
 import { fade, fly } from "svelte/transition";
-import { afterUrlChange } from "@roxi/routify";
+import { afterUrlChange, url } from "@roxi/routify";
 
 import { isLoggedIn, isMenuOpen } from "../../js/store";
 import { isMobile } from "../../js/utils/commonUtils";
@@ -27,7 +27,7 @@ $afterUrlChange(() => {
     x: !isMobile() ? 270 : window.innerWidth,
     duration: 300,
   }}>
-  <div class="logo" />
+  <a href={$url("/")} class="logo">Go to home page</a>
   <button class="close" on:click={() => isMenuOpen.set(false)}>
     <span>
       <CloseCrossSvg />
@@ -73,6 +73,8 @@ $afterUrlChange(() => {
   height: 50px;
   margin-bottom: 40px;
   background: url(../../images/logo.png) 50% 50% / 151px no-repeat;
+  font-size: 0;
+  color: transparent;
 }
 
 .close {

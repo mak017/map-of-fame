@@ -149,7 +149,7 @@ const handleResize = () => {
 }
 
 .close {
-  display: block;
+  display: flex;
   position: absolute;
   top: 0;
   left: 10px;
@@ -162,7 +162,7 @@ const handleResize = () => {
   cursor: pointer;
 
   > span {
-    display: block;
+    display: flex;
     width: 15px;
     height: 15px;
   }

@@ -679,7 +679,7 @@ const prepareDescription = (description) => {
   cursor: text;
 }
 
-.description {
+.spot-description {
   margin-bottom: 32px;
   color: var(--color-dark);
   font-size: 16px;

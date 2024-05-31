@@ -44,11 +44,6 @@ const handleCategoryClick = (id) => {
     class:isOpened
     on:click={() => (isOpened = !isOpened)}
     transition:fade|global={{ duration: 200 }}>
-    {#if isOpened}
-      <span>
-        <ArrowLeftSvg isDarkColor isArrowUp />
-      </span>
-    {/if}
   </button>
   {#if isOpened}
     <ul class="options" transition:slide|global={{ duration: 200 }}>
@@ -109,7 +104,7 @@ li {
   color: var(--color-dark);
 
   &-filter {
-    background-image: url(../../images/filter.svg);
+    background-image: url(../images/filter.svg);
     background-size: 20px 16px;
 
     > span {
@@ -125,7 +120,9 @@ li {
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0;
       background-color: var(--color-lotion);
-      background-image: none;
+      background-image: url(../images/arrow-up.svg);
+      background-position: 50% 70%;
+      background-size: 22px 22px;
     }
   }
 
