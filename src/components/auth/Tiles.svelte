@@ -12,8 +12,9 @@ let clicked4 = false;
   {#if selectedType}
     <button
       type="button"
-      class="button tile {selectedType ? selectedType.toLowerCase() : ''}"
-    ></button>
+      class="button tile clicked {selectedType
+        ? selectedType.toLowerCase()
+        : ''}"></button>
   {:else}
     <button
       type="button"
