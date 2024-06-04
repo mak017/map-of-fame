@@ -98,7 +98,7 @@ const getSpotData = async () => {
     const {
       id,
       spotStatus: status,
-      img,
+      mainImage: { img },
       title,
       videoLink: video,
       embedLink,
@@ -121,7 +121,7 @@ const getSpotData = async () => {
     const data = {
       ...result,
       status,
-      img: { src: img, title: title || id },
+      img: { src: img || result.img, title: title || id },
       video,
       firm: { banner, bannerUrl },
       coords: { lat, lng },
@@ -429,17 +429,10 @@ const prepareDescription = (description) => {
       {#if data.embedLink}
         <div class="embed-link">{@html data.embedLink}</div>
       {/if}
-      {#if data.additionalImg}
-        <div class="img">
-          <img
-            src={data.additionalImg}
-            alt={`Additional image: ${data.img.title}`} />
-        </div>
-      {/if}
-      {#if Array.isArray(data.images) && data.images.length}
-        {#each data.images as image}
+      {#if data.images?.slice?.(1)?.length > 0}
+        {#each data.images.slice(1) as image (image.id)}
           <div class="img">
-            <img src={image} alt="Additional" />
+            <img src={image.img} alt={`Additional image: ${image.id}`} />
           </div>
         {/each}
       {/if}

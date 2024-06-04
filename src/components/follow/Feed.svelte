@@ -84,7 +84,7 @@ const handleSpotClick = (spot) => () => {
               data-scroll-element={spot.id}>
               <img
                 loading="lazy"
-                src={spot.thumbnail}
+                src={spot.mainImage?.thumbnail || spot.thumbnail}
                 alt={spot.title ?? `Spot ${spot.id}`}
                 in:fade|global={{ duration: 200 }} />
             </a>

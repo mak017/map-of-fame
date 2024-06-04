@@ -29,7 +29,7 @@ export let onDelete;
   data-spot-id={spot.id}>
   <img
     loading="lazy"
-    src={spot.thumbnail}
+    src={spot.mainImage?.thumbnail || spot.thumbnail}
     alt={spot.title || `${spot.username}'s art`}
     in:fade|global={{ duration: 200 }} />
   {#if isEditable}

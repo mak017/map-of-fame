@@ -161,7 +161,7 @@ const onSpotClick = (spot) => {
           <button class="button spot-card" on:click={() => onSpotClick(spot)}>
             <img
               loading="lazy"
-              src={spot.thumbnail}
+              src={spot.mainImage?.thumbnail || spot.thumbnail}
               alt={spot.title ?? `Spot ${spot.id} from area`}
               in:fade|global={{ duration: 200 }} />
           </button>
