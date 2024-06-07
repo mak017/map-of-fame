@@ -90,10 +90,7 @@ export const updateSpotDraft = async (
     artistsCrews,
     year,
     spotStatus,
-    img,
-    additionalImg,
-    sketch,
-    addImages,
+    images,
     videoLink,
     description,
     categoryId,
@@ -109,7 +106,17 @@ export const updateSpotDraft = async (
   formData.append("spot_status", spotStatus);
   if (lat) formData.append("lat", lat);
   if (lng) formData.append("lng", lng);
-  if (img) formData.append("img", img);
+  if (images?.length) {
+    images.forEach((item, index) => {
+      if (item.isDraft) {
+        formData.append(`images[${index}][img]`, item.draft);
+        formData.append(`images[${index}][isDraft]`, item.isDraft);
+      } else {
+        const key = item.id ? "id" : "load";
+        formData.append(`images[${index}][${key}]`, item[key]);
+      }
+    });
+  }
   if (categoryId) formData.append("category_id", categoryId);
   if (artistsCrews?.length) {
     artistsCrews.forEach((item, index) => {
@@ -181,15 +188,6 @@ export const updateSpotDraft = async (
   }
   if (firmId) formData.append("firm_id", firmId);
   if (typeof link !== "undefined") formData.append("link", link);
-  if (typeof additionalImg !== "undefined") {
-    formData.append("additionalImg", additionalImg);
-  }
-  if (typeof sketch !== "undefined") formData.append("sketch", sketch);
-  if (addImages?.length) {
-    addImages.forEach((item, index) => {
-      formData.append(`addImages[${index}]`, item);
-    });
-  }
   if (spotId) formData.append("spot_id", spotId);
   if (typeof showInProfile !== "undefined") {
     formData.append("showInProfile", showInProfile);

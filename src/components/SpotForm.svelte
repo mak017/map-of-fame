@@ -61,7 +61,7 @@ export let marker = null;
 export let editSpotData = {};
 export let onCancel;
 
-const isEditSpot = !!editSpotData.img;
+const isEditSpot = !!editSpotData.images?.length;
 
 const isArtist = () => $userData.type === USER_TYPES.artist.toLowerCase();
 const isCrew = () => $userData.type === USER_TYPES.crew.toLowerCase();
@@ -101,27 +101,10 @@ const currentYear = getCurrentYear();
 let year = getInitialYear();
 let prevYearValue = "";
 let selectedStatus = editSpotData.spotStatus ?? getInitialStatus();
-let images = isEditSpot
-  ? editSpotData.images?.map?.((image) => ({ filePreview: image }))
-  : [];
-let image = {
+let images = isEditSpot ? editSpotData.images : [];
+let newImageUpload = {
   file: undefined,
-  filePreview: editSpotData.img || "",
-  blob: undefined,
-};
-let image2 = {
-  file: undefined,
-  filePreview: editSpotData.additionalImg || "",
-  blob: undefined,
-};
-let image3 = {
-  file: undefined,
-  filePreview: editSpotData.images?.[0] || "",
-  blob: undefined,
-};
-let sketch = {
-  file: undefined,
-  filePreview: editSpotData.sketchImg || "",
+  img: "",
   blob: undefined,
 };
 let linkToVideo = editSpotData.videoLink || "";
@@ -159,12 +142,7 @@ let progressState = {
   crew5: false,
   year: false,
   selectedStatus: false,
-  image1: false,
-  image2: false,
-  image3: false,
-  image4: false,
-  image5: false,
-  sketch: false,
+  images: false,
   description: false,
   selectedCategory: false,
   linkToVideo: false,
@@ -262,30 +240,34 @@ const saveDraft = async (field) => {
     requestObject.lng = lng;
   }
 
-  // if (field.startsWith("image")) {
-  //   requestObject.addImages = [images.at(-1)];
-  //   delete requestObject.artistsCrews;
-  // }
-  if (field == "image") {
-    requestObject.img = image.blob ?? "";
-    delete requestObject.artistsCrews;
+  if (field === "images") {
+    requestObject.images = images.map((image) => {
+      const { blob, id, isDraft } = image;
+
+      if (isDraft) {
+        return image;
+      }
+
+      return blob ? { load: blob } : { id };
+    });
   }
-  if (field == "image2") {
-    requestObject.additionalImg = image2.blob ?? "";
-    delete requestObject.artistsCrews;
-  }
-  if (field == "image3") {
-    requestObject.addImages = [image3.blob ?? ""];
-    delete requestObject.artistsCrews;
-  }
-  if (field == "sketch") requestObject.sketch = sketch.blob ?? "";
+
   if (sprayPaintUsed) requestObject.firmId = sprayPaintUsed.id;
 
   if (isEqual(requestObject, savedRequestParams)) return;
 
   savedRequestParams = cloneDeep(requestObject);
   progressState[field] = true;
-  await updateSpotDraft(token, requestObject);
+  const updateResponse = await updateSpotDraft(token, requestObject);
+
+  if (field === "images" && updateResponse?.result?.data?.images?.length) {
+    images = updateResponse.result.data.images.map((image, index) => ({
+      img: images[index].img,
+      draft: image.img,
+      isDraft: image.isDraft ? 1 : 0,
+    }));
+  }
+
   progressState[field] = false;
 };
 
@@ -299,41 +281,13 @@ onDestroy(() => {
   marker?.off("moveend", saveDraftCoords);
 });
 
-const handleProcessedImage = (imageType, imageObject, isAdd) => {
-  if (imageType === "image") {
-    image = { ...imageObject };
-  }
-
-  if (imageType === "image2") {
-    image2 = { ...imageObject };
-  }
-
-  if (imageType === "image3") {
-    image3 = { ...imageObject };
-  }
-
-  // if (imageType === "sketch") {
-  //   sketch = { ...imageObject };
-  // }
-  images.push(imageObject);
-
-  saveDraft(imageType);
+const handleProcessedImage = (index, imageObject) => {
+  images[index] = imageObject;
+  saveDraft("images");
 };
 
-const onChangeImage = (imageType) => {
-  let imageObject = { ...image };
-  if (imageType === "image2") {
-    imageObject = { ...image2 };
-  }
-
-  if (imageType === "sketch") {
-    imageObject = { ...sketch };
-  }
-
-  if (imageType === "image3") {
-    imageObject = { ...image3 };
-  }
-  const isAdd = !imageObject.filePreview;
+const onChangeImage = (index) => {
+  let imageObject = images[index] || newImageUpload;
 
   const file = imageObject.file[0];
   if (file) {
@@ -356,9 +310,9 @@ const onChangeImage = (imageType) => {
               imageObject = {
                 ...imageObject,
                 blob: newBlob,
-                filePreview: URL.createObjectURL(newBlob),
+                img: URL.createObjectURL(newBlob),
               };
-              handleProcessedImage(imageType, imageObject);
+              handleProcessedImage(index, imageObject);
             },
           );
         } else {
@@ -375,10 +329,10 @@ const onChangeImage = (imageType) => {
                 ? {
                     ...imageObject,
                     blob: newBlob,
-                    filePreview: URL.createObjectURL(newBlob),
+                    img: URL.createObjectURL(newBlob),
                   }
-                : { ...imageObject, blob: file, filePreview: e.target.result };
-              handleProcessedImage(imageType, imageObject);
+                : { ...imageObject, blob: file, img: e.target.result };
+              handleProcessedImage(index, imageObject);
             },
           );
         }
@@ -394,24 +348,10 @@ const onChangeImage = (imageType) => {
   }
 };
 
-const onRemoveImage = (imageType) => {
-  if (imageType === "image2") {
-    image2 = {
-      file: undefined,
-      filePreview: "",
-      blob: undefined,
-    };
-  }
+const onRemoveImage = (index) => {
+  images.splice(index, 1);
 
-  if (imageType === "sketch") {
-    sketch = {
-      file: undefined,
-      filePreview: "",
-      blob: undefined,
-    };
-  }
-
-  saveDraft(imageType);
+  saveDraft("images");
 };
 
 const validateYearInput = () => {
@@ -433,7 +373,7 @@ const validateYearInput = () => {
 
 const validateImage = () => {
   errors.imageFile =
-    errors.imageFile || !image.filePreview ? ERROR_MESSAGES.fileEmpty : "";
+    errors.imageFile || !images.length ? ERROR_MESSAGES.fileEmpty : "";
 };
 
 const validateCategory = () => {
@@ -492,7 +432,7 @@ const handleLinkChange = () => {
   }
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   validate();
   if (
     !errors.year &&
@@ -511,8 +451,12 @@ const handleSubmit = () => {
     isInProgress = true;
     !isEditSpot && marker.dragging.disable();
 
-    publishSpotDraft(token, editSpotData?.id).then((response) => {
-      const { success, result, errors: error } = response;
+    try {
+      const {
+        success,
+        result,
+        errors: error,
+      } = await publishSpotDraft(token, editSpotData?.id);
       isSubmitting = false;
 
       if (success && result) {
@@ -522,10 +466,6 @@ const handleSubmit = () => {
               ? {
                   ...spot,
                   ...result,
-                  img: image.filePreview,
-                  thumbnail: image.filePreview,
-                  additionalImg: image2.filePreview,
-                  sketch: sketch.filePreview,
                 }
               : spot,
           );
@@ -542,9 +482,7 @@ const handleSubmit = () => {
       if (error && !isEmpty(error)) {
         if (error?.img) {
           errors.imageFile = error.img[0] || "";
-          image.filePreview = "";
-        } else if (error?.additionalImg) {
-          image2.filePreview = "";
+          images[0].img = "";
         } else if (error?.message) {
           errorPopupText = error.message[0] || "Oops, something went wrong";
         } else {
@@ -553,7 +491,9 @@ const handleSubmit = () => {
         !isEditSpot && marker.dragging.enable();
         isInProgress = false;
       }
-    });
+    } catch (error) {
+      errorPopupText = "Unexpected server error. Please try again later.";
+    }
   }
 };
 
@@ -627,98 +567,37 @@ const fetchUsersByCrew = async (filterText, index) => {
   class:isCoOwner={isCoOwner()}
   on:submit|preventDefault={handleSubmit}>
   <div class="upload-area">
-    <!-- {#each images as image, index (image.filePreview)}
+    {#each images as image, index (image.img)}
       <div class={`upload-image upload-image${index + 1}`}>
-        {#if image.filePreview}
-          <img src={image.filePreview} alt="Preview" class="preview_image" />
-          <div class="overlay">
-            <label for="upload-image2" class="re-upload" />
+        <img src={image.img} alt="Preview" class="preview_image" />
+        <div class="overlay">
+          <label for={`upload-image${index}`} class="re-upload" />
+          {#if index > 0}
             <button
               type="button"
               class="button delete"
-              on:click={() => onRemoveImage("image2")} />
-          </div>
-        {:else}
-          <label for="upload-image2" class="first_upload">
-            <span>Add image (2 of 2)</span>
-            <span>Max 10 Mb</span>
-          </label>
-        {/if}
+              on:click={() => onRemoveImage(index)} />
+          {/if}
+        </div>
         <input
           accept="image/png, image/jpeg"
-          bind:files={image2.file}
-          on:change={() => onChangeImage("image2")}
-          id="upload-image2"
+          bind:files={images[index].file}
+          on:change={() => onChangeImage(index)}
+          id={`upload-image${index}`}
           type="file" />
       </div>
-    {/each} -->
-    <div class="upload-image" class:error={errors.imageFile}>
-      {#if image.filePreview}
-        <img src={image.filePreview} alt="Preview" class="preview_image" />
-        <div class="overlay">
-          <label for="upload-image" class="re-upload" />
-        </div>
-      {:else}
-        <label for="upload-image" class="first_upload">
-          <span>Add image (1 of 2)</span>
+    {/each}
+    {#if images.length < 2}
+      <div class={`upload-image upload-image${images.length + 1}`}>
+        <label for={`upload-image${images.length}`} class="first_upload">
+          <span>Add image ({images.length + 1} of 2)</span>
           <span>Max 10 Mb</span>
         </label>
-      {/if}
-      {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
-      <input
-        accept="image/png, image/jpeg"
-        bind:files={image.file}
-        on:change={() => onChangeImage("image")}
-        id="upload-image"
-        type="file" />
-    </div>
-    {#if (image.filePreview && !isCoOwner()) || (isCoOwner() && image2.filePreview)}
-      <div class="upload-image upload-image2">
-        {#if image2.filePreview}
-          <img src={image2.filePreview} alt="Preview" class="preview_image" />
-          <div class="overlay">
-            <label for="upload-image2" class="re-upload" />
-            <button
-              type="button"
-              class="button delete"
-              on:click={() => onRemoveImage("image2")} />
-          </div>
-        {:else}
-          <label for="upload-image2" class="first_upload">
-            <span>Add image (2 of 2)</span>
-            <span>Max 10 Mb</span>
-          </label>
-        {/if}
         <input
           accept="image/png, image/jpeg"
-          bind:files={image2.file}
-          on:change={() => onChangeImage("image2")}
-          id="upload-image2"
-          type="file" />
-      </div>
-    {/if}
-    {#if isCoOwner()}
-      <div class="upload-image upload-image3">
-        {#if image3.filePreview}
-          <img src={image3.filePreview} alt="Preview" class="preview_image" />
-          <div class="overlay">
-            <label for="upload-image3" class="re-upload" />
-            <button
-              type="button"
-              class="button delete"
-              on:click={() => onRemoveImage("image3")} />
-          </div>
-        {:else}
-          <label for="upload-image3" class="first_upload">
-            <span>Add image</span>
-            <span>Max 10 Mb</span>
-          </label>
-        {/if}
-        <input
-          accept="image/png, image/jpeg"
-          bind:files={image3.file}
-          on:change={() => onChangeImage("image3")}
-          id="upload-image3"
+          bind:files={newImageUpload.file}
+          on:change={() => onChangeImage(images.length)}
+          id={`upload-image${images.length}`}
           type="file" />
       </div>
     {/if}
@@ -1070,6 +949,7 @@ form {
 
   &-popup-text {
     color: var(--color-error);
+    text-align: center;
   }
 }
 
