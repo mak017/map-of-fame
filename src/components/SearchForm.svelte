@@ -553,7 +553,7 @@ form {
   }
 
   .content-caption {
-    top: 62px;
+    top: 65px;
     width: 100vw;
     margin: 0 -12px;
     padding: 4px 12px 16px;

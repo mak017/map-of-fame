@@ -623,6 +623,11 @@ const prepareDescription = (description) => {
         opacity: 1;
       }
     }
+
+    &:disabled {
+      pointer-events: initial;
+      cursor: default;
+    }
   }
 }
 
