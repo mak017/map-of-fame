@@ -26,6 +26,7 @@ export let showTextOnHover = false;
   justify-content: center;
   width: 40px;
   height: 40px;
+  overflow: hidden;
   background: var(--color-accent-light);
   color: var(--color-dark);
   font-size: 14px;
@@ -59,21 +60,25 @@ export let showTextOnHover = false;
 
   &:hover {
     background-color: var(--color-accent-light-hover);
+  }
 
-    .text-wrapper {
-      width: 74px;
-      opacity: 1;
-      visibility: visible;
-      transform: translateX(0);
-      transition:
-        width 0.2s,
-        transform 0.2s,
-        visibility 0.2s 0.05s,
-        opacity 0.2s 0.05s;
-    }
+  @media (min-width: 768px) {
+    &:hover {
+      .text-wrapper {
+        width: 74px;
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0);
+        transition:
+          width 0.2s,
+          transform 0.2s,
+          visibility 0.2s 0.05s,
+          opacity 0.2s 0.05s;
+      }
 
-    &.showTextOnHover {
-      width: 124px;
+      &.showTextOnHover {
+        width: 124px;
+      }
     }
   }
 }

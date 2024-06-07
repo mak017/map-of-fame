@@ -353,17 +353,6 @@ const prepareDescription = (description) => {
               <LikeSvg isActive={$openedMarkerData?.userVote === 1} />
             </div>
             <div class="text">{$openedMarkerData?.likesCnt}</div></button>
-          <button
-            type="button"
-            class="button"
-            on:click={handleSpotVote(false)}
-            disabled={!$isLoggedIn}
-            ><div class="icon-wrapper">
-              <LikeSvg
-                isDislike
-                isActive={$openedMarkerData?.userVote === -1} />
-            </div>
-            <div class="text">{$openedMarkerData?.dislikesCnt}</div></button>
         </div>
         <div class="buttons-wrapper">
           <div

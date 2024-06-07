@@ -529,7 +529,6 @@ form {
   }
 
   form {
-    top: -10px;
     align-items: flex-end;
     width: 100vw;
     margin: 0 -12px;
@@ -554,7 +553,7 @@ form {
   }
 
   .content-caption {
-    top: 57px;
+    top: 62px;
     width: 100vw;
     margin: 0 -12px;
     padding: 4px 12px 16px;

@@ -440,6 +440,8 @@ const handleSearchInput = () => {
       padding: 0 12px;
       background: none;
       color: var(--color-dark);
+      font-size: 16px;
+      line-height: 22px;
 
       > span {
         transition: transform 0.3s;
