@@ -531,6 +531,7 @@ form {
   form {
     align-items: flex-end;
     width: 100vw;
+    height: 67px;
     margin: 0 -12px;
     padding: 0 12px 20px;
     overflow: hidden;
@@ -538,6 +539,7 @@ form {
 
   .input-wrapper {
     flex: 0 0 min(calc(100% - 56px), 530px);
+    height: 47px;
   }
 
   .button-wrapper {
@@ -553,7 +555,8 @@ form {
   }
 
   .content-caption {
-    top: 65px;
+    top: 66px;
+    z-index: 1;
     width: 100vw;
     margin: 0 -12px;
     padding: 4px 12px 16px;
