@@ -125,6 +125,7 @@ const handleSubmit = () => {
   searchState.setCurrentView("list");
   fetchArtistsCrews();
   fetchPhotoWall(0, true);
+  parentModal.scrollTo(0, 0);
 };
 
 const handleScrollElementClick = (identifier) => () => {
