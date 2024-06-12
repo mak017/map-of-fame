@@ -418,8 +418,8 @@ const prepareDescription = (description) => {
       {#if data.embedLink}
         <div class="embed-link">{@html data.embedLink}</div>
       {/if}
-      {#if data.images?.slice?.(1)?.length > 0}
-        {#each data.images.slice(1) as image (image.id)}
+      {#if data.images?.length > 1}
+        {#each data.images.filter((image) => image.id !== data.mainImageId) as image (image.id)}
           <div class="img">
             <img src={image.img} alt={`Additional image: ${image.id}`} />
           </div>

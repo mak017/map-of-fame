@@ -101,7 +101,9 @@ const currentYear = getCurrentYear();
 let year = getInitialYear();
 let prevYearValue = "";
 let selectedStatus = editSpotData.spotStatus ?? getInitialStatus();
-let images = isEditSpot ? editSpotData.images : [];
+let images = isEditSpot
+  ? [...editSpotData.images].sort((a, b) => a.sortIndex - b.sortIndex)
+  : [];
 let newImageUpload = {
   file: undefined,
   img: "",
