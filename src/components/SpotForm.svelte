@@ -592,7 +592,11 @@ const fetchUsersByCrew = async (filterText, index) => {
     {#if images.length < 2}
       <div class={`upload-image upload-image${images.length + 1}`}>
         <label for={`upload-image${images.length}`} class="first_upload">
-          <span>Add image ({images.length + 1} of 2)</span>
+          <span
+            >Add image ({images.length + 1} of {Math.max(
+              images.length + 1,
+              2,
+            )})</span>
           <span>Max 10 Mb</span>
         </label>
         <input
@@ -1008,7 +1012,7 @@ form {
 
   .upload-area {
     grid-column: 1/3;
-    grid-row: 1/10;
+    grid-row: 1/11;
   }
 
   .upload-image {

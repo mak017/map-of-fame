@@ -191,7 +191,7 @@ $: if (!$profileState.isInitialized && !$isUserVerifyProgress) {
 
 $afterUrlChange(({ route }) => {
   const { params } = route;
-  if (params.username && username !== params.username) {
+  if (params.username && !params.id && username !== params.username) {
     username = params.username;
     profileState.reset();
   }

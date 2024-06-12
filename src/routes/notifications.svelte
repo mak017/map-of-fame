@@ -13,5 +13,5 @@ import Notifications from "../components/Notifications.svelte";
     $goto("/");
   }}>
   <Notifications />
-  <span title="slot">Notifications</span>
+  <span slot="title">Notifications</span>
 </Modal>

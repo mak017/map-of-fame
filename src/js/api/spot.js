@@ -176,7 +176,7 @@ export const updateSpotDraft = async (
   }
   if (coOwners.length) {
     coOwners.forEach((item, index) =>
-      formData.append(`co_owners[${index}]`, item)
+      formData.append(`co-owners[${index}]`, item)
     );
   }
   if (typeof year !== "undefined") formData.append("year", year);
