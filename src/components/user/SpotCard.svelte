@@ -1,17 +1,20 @@
 <script>
-import { url } from "@roxi/routify";
+import { params, url } from "@roxi/routify";
 import { fade } from "svelte/transition";
 
 import { userData } from "../../js/store";
 
 import PencilSvg from "../elements/icons/PencilSvg.svelte";
 import TrashSvg from "../elements/icons/TrashSvg.svelte";
+import UnchainSvg from "../elements/icons/UnchainSvg.svelte";
 
 export let spot;
 export let isEditable;
 export let onSpotClick;
 export let onEdit;
 export let onDelete;
+
+let { username } = $params;
 </script>
 
 <a
@@ -46,7 +49,13 @@ export let onDelete;
       <button
         type="button"
         class="button delete"
-        on:click={() => onDelete(spot)}><TrashSvg /></button>
+        on:click={() => onDelete(spot)}>
+        {#if spot.user.username === username}
+          <TrashSvg />
+        {:else}
+          <UnchainSvg />
+        {/if}
+      </button>
     </div>
   {/if}
 </a>
