@@ -141,6 +141,9 @@ export const SPOT_ID_VOTE = (id) => `${ENDPOINT_ORIGIN}/api/spot/${id}/vote`;
 export const SPOT_ID_OWNER_UNLINK = (id) =>
   `${ENDPOINT_ORIGIN}/api/spot/${id}/owner/unlink`;
 
+export const SPOT_ID_COOWNER_IMAGE = (id) =>
+  `${ENDPOINT_ORIGIN}/api/spot/${id}/co-owner/image`;
+
 export const SPOT_SEARCH = () => `${ENDPOINT_ORIGIN}/api/spot/search`;
 
 export const SPOT_SEARCH_BY_IDS = (ids) => {

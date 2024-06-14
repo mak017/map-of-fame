@@ -5,6 +5,7 @@ import {
   DRAFT_UPDATE,
   SPOT_FROM_POLY,
   SPOT_ID,
+  SPOT_ID_COOWNER_IMAGE,
   SPOT_ID_FEEDBACK,
   SPOT_ID_INCORRECT_STATUS,
   SPOT_ID_OWNER_UNLINK,
@@ -373,6 +374,31 @@ export const getUserCategories = async (token) => {
   const bearer = `Bearer ${token}`;
   const response = await fetch(USER_CATEGORY(), {
     method: "GET",
+    withCredentials: true,
+    headers: { Authorization: bearer },
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const postCoownerImage = async (token, spotId, img) => {
+  const bearer = `Bearer ${token}`;
+  const formData = new FormData();
+  formData.append("img", img);
+  const response = await fetch(SPOT_ID_COOWNER_IMAGE(spotId), {
+    method: "POST",
+    withCredentials: true,
+    headers: { Authorization: bearer },
+    body: formData,
+  });
+  const result = await response.json();
+  return result;
+};
+
+export const deleteCoownerImage = async (token, spotId) => {
+  const bearer = `Bearer ${token}`;
+  const response = await fetch(SPOT_ID_COOWNER_IMAGE(spotId), {
+    method: "DELETE",
     withCredentials: true,
     headers: { Authorization: bearer },
   });

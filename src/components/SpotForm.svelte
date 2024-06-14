@@ -11,6 +11,7 @@ import {
 import { getFirmsRequest } from "../js/api/settings";
 import {
   getUserCategories,
+  postCoownerImage,
   publishSpotDraft,
   updateSpotDraft,
 } from "./../js/api/spot";
@@ -161,6 +162,8 @@ const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
   crewData: data.crewUser,
   isTouchedArtist: false,
   isTouchedCrew: false,
+  artistCollabType: "tagged",
+  crewCollabType: "tagged",
 }));
 let artistCrewPairs =
   editArtistCrewPairs?.length > 0
@@ -284,6 +287,12 @@ onDestroy(() => {
 });
 
 const handleProcessedImage = (index, imageObject) => {
+  if (isCoOwner()) {
+    postCoownerImage(token, editSpotData.id, imageObject.blob);
+
+    return;
+  }
+
   images[index] = imageObject;
   saveDraft("images");
 };
@@ -589,7 +598,7 @@ const fetchUsersByCrew = async (filterText, index) => {
           type="file" />
       </div>
     {/each}
-    {#if images.length < 2}
+    {#if images.length < 2 && !isCoOwner()}
       <div class={`upload-image upload-image${images.length + 1}`}>
         <label for={`upload-image${images.length}`} class="first_upload">
           <span
@@ -599,11 +608,26 @@ const fetchUsersByCrew = async (filterText, index) => {
             )})</span>
           <span>Max 10 Mb</span>
         </label>
+        {#if errors.imageFile}<span class="error">{errors.imageFile}</span>{/if}
         <input
           accept="image/png, image/jpeg"
           bind:files={newImageUpload.file}
           on:change={() => onChangeImage(images.length)}
           id={`upload-image${images.length}`}
+          type="file" />
+      </div>
+    {/if}
+    {#if isCoOwner()}
+      <div class={`upload-image upload-image-coowner`}>
+        <label for={`upload-image-coowner`} class="first_upload">
+          <span>Add image</span>
+          <span>Max 10 Mb</span>
+        </label>
+        <input
+          accept="image/png, image/jpeg"
+          bind:files={newImageUpload.file}
+          on:change={onChangeImage}
+          id={`upload-image-coowner`}
           type="file" />
       </div>
     {/if}

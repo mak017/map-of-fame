@@ -8,6 +8,7 @@ import {
   hasBrowseHistory,
   profileState,
   userData,
+  editSpotData,
 } from "../../../../js/store.js";
 
 import MarkerCard from "../../../../components/markerCard/MarkerCard.svelte";
@@ -60,7 +61,9 @@ const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
     {#if username === $userData.username}
       <a
         href={$url("/@:username/spot/:id/edit", { username: username, id })}
-        class="button edit"><PencilSvg fill="var(--color-dark)" /></a>
+        class="button edit"
+        on:click={() => editSpotData.set($openedMarkerData)}
+        ><PencilSvg fill="var(--color-dark)" /></a>
       <button
         type="button"
         class="button delete"
