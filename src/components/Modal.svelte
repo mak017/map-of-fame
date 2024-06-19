@@ -183,7 +183,7 @@ const handleResize = () => {
   width: 100px;
   height: 33px;
   border-radius: 0 0 2px 2px;
-  background: url(../../images/logo.png) 50% 50% / contain no-repeat;
+  background: url(../images/logo.png) 50% 50% / contain no-repeat;
   filter: grayscale(1);
   color: transparent;
   font-size: 0;

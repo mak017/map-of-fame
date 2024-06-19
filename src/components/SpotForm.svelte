@@ -10,6 +10,7 @@ import {
 } from "../js/api/search.js";
 import { getFirmsRequest } from "../js/api/settings";
 import {
+  deleteCoownerImage,
   getUserCategories,
   postCoownerImage,
   publishSpotDraft,
@@ -267,7 +268,8 @@ const saveDraft = async (field) => {
 
   if (field === "images" && updateResponse?.result?.data?.images?.length) {
     images = updateResponse.result.data.images.map((image, index) => ({
-      img: images[index].img,
+      ...images[index],
+      img: images[index]?.img,
       draft: image.img,
       isDraft: image.isDraft ? 1 : 0,
     }));
@@ -287,13 +289,11 @@ onDestroy(() => {
 });
 
 const handleProcessedImage = (index, imageObject) => {
-  if (isCoOwner()) {
-    postCoownerImage(token, editSpotData.id, imageObject.blob);
+  images[index] = imageObject;
 
+  if (isCoOwner()) {
     return;
   }
-
-  images[index] = imageObject;
   saveDraft("images");
 };
 
@@ -360,8 +360,11 @@ const onChangeImage = (index) => {
 };
 
 const onRemoveImage = (index) => {
-  images.splice(index, 1);
+  images = images.filter((_, imageIndex) => imageIndex !== index);
 
+  if (isCoOwner()) {
+    return;
+  }
   saveDraft("images");
 };
 
@@ -444,7 +447,9 @@ const handleLinkChange = () => {
 };
 
 const handleSubmit = async () => {
-  validate();
+  const isCoowner = isCoOwner();
+
+  !isCoowner && validate();
   if (
     !errors.year &&
     !errors.imageFile &&
@@ -452,7 +457,6 @@ const handleSubmit = async () => {
     !errors.linkToVideo &&
     !errors.link
   ) {
-    const token = loadFromLocalStorage("token") || null;
     isSubmitting = true;
 
     if (isInProgress) {
@@ -460,6 +464,21 @@ const handleSubmit = async () => {
     }
 
     isInProgress = true;
+
+    if (isCoowner) {
+      const image = images.find((i) => i.blob) ?? newImageUpload;
+      if (image?.blob) {
+        await postCoownerImage(token, editSpotData.id, image.blob);
+      }
+
+      if (editSpotData.images.length > images.length) {
+        await deleteCoownerImage(token, editSpotData.id);
+      }
+
+      onCancel();
+      return;
+    }
+
     !isEditSpot && marker.dragging.disable();
 
     try {
@@ -579,7 +598,10 @@ const fetchUsersByCrew = async (filterText, index) => {
   on:submit|preventDefault={handleSubmit}>
   <div class="upload-area">
     {#each images as image, index (image.img)}
-      <div class={`upload-image upload-image${index + 1}`}>
+      <div
+        class={`upload-image upload-image${index + 1}`}
+        class:upload-image-coowner={isCoOwner() &&
+          (image.authorId === $userData.id || image.blob)}>
         <img src={image.img} alt="Preview" class="preview_image" />
         <div class="overlay">
           <label for={`upload-image${index}`} class="re-upload" />
@@ -598,7 +620,7 @@ const fetchUsersByCrew = async (filterText, index) => {
           type="file" />
       </div>
     {/each}
-    {#if images.length < 2 && !isCoOwner()}
+    {#if (isEditSpot ? images.filter((image) => image.authorId === $userData.id || image.blob) : images).length < 2 && !isCoOwner()}
       <div class={`upload-image upload-image${images.length + 1}`}>
         <label for={`upload-image${images.length}`} class="first_upload">
           <span
@@ -617,17 +639,17 @@ const fetchUsersByCrew = async (filterText, index) => {
           type="file" />
       </div>
     {/if}
-    {#if isCoOwner()}
-      <div class={`upload-image upload-image-coowner`}>
-        <label for={`upload-image-coowner`} class="first_upload">
+    {#if isCoOwner() && !images.some((image) => image.authorId === $userData.id || image.blob)}
+      <div class="upload-image upload-image-coowner">
+        <label for="upload-image-coowner" class="first_upload">
           <span>Add image</span>
           <span>Max 10 Mb</span>
         </label>
         <input
           accept="image/png, image/jpeg"
           bind:files={newImageUpload.file}
-          on:change={onChangeImage}
-          id={`upload-image-coowner`}
+          on:change={() => onChangeImage(images.length)}
+          id="upload-image-coowner"
           type="file" />
       </div>
     {/if}
@@ -1075,7 +1097,7 @@ form {
 }
 
 .isCoOwner {
-  .upload-image:not(:last-child),
+  .upload-image:not(.upload-image-coowner),
   .year,
   .artists-area,
   .status,
