@@ -234,11 +234,6 @@ const handleUsernameChange = (event) => {
         CHEATER or L👀SER? <br />
         Anyway your invitation code = used or wrong
       </div>
-    {:else}
-      <div class="invite-from" in:fade={{ duration: 200 }}>
-        По воле юзера {inviteData.from} <br />
-        ты получил доступ в святую святых, аминь друг мой, да прибудет с тобой силы.
-      </div>
     {/if}
   {/if}
   <div class="step">step {step} of 2</div>
