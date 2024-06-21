@@ -297,7 +297,7 @@ const handleProcessedImage = (index, imageObject) => {
   saveDraft("images");
 };
 
-const onChangeImage = (index) => {
+const handleChangeImage = (index) => {
   let imageObject = images[index] || newImageUpload;
 
   const file = imageObject.file[0];
@@ -359,7 +359,15 @@ const onChangeImage = (index) => {
   }
 };
 
-const onRemoveImage = (index) => {
+const handleMoveImage = (index) => {
+  images = [
+    images[index],
+    ...images.filter((_, imageIndex) => index !== imageIndex),
+  ];
+  saveDraft("images");
+};
+
+const handleRemoveImage = (index) => {
   images = images.filter((_, imageIndex) => imageIndex !== index);
 
   if (isCoOwner()) {
@@ -606,16 +614,22 @@ const fetchUsersByCrew = async (filterText, index) => {
         <div class="overlay">
           <label for={`upload-image${index}`} class="re-upload" />
           {#if index > 0}
+            {#if !isCoOwner()}
+              <button
+                type="button"
+                class="button move-first"
+                on:click={() => handleMoveImage(index)} />
+            {/if}
             <button
               type="button"
               class="button delete"
-              on:click={() => onRemoveImage(index)} />
+              on:click={() => handleRemoveImage(index)} />
           {/if}
         </div>
         <input
           accept="image/png, image/jpeg"
           bind:files={images[index].file}
-          on:change={() => onChangeImage(index)}
+          on:change={() => handleChangeImage(index)}
           id={`upload-image${index}`}
           type="file" />
       </div>
@@ -634,7 +648,7 @@ const fetchUsersByCrew = async (filterText, index) => {
         <input
           accept="image/png, image/jpeg"
           bind:files={newImageUpload.file}
-          on:change={() => onChangeImage(images.length)}
+          on:change={() => handleChangeImage(images.length)}
           id={`upload-image${images.length}`}
           type="file" />
       </div>
@@ -648,7 +662,7 @@ const fetchUsersByCrew = async (filterText, index) => {
         <input
           accept="image/png, image/jpeg"
           bind:files={newImageUpload.file}
-          on:change={() => onChangeImage(images.length)}
+          on:change={() => handleChangeImage(images.length)}
           id="upload-image-coowner"
           type="file" />
       </div>
@@ -963,24 +977,29 @@ form {
     background: rgba(0, 0, 0, 0.45);
   }
 
-  .re-upload {
-    width: 54px;
-    height: 54px;
-    background-color: var(--color-accent);
-    background-image: url(/images/re-upload.svg);
-    background-size: 24px 24px;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    cursor: pointer;
-  }
-
+  .re-upload,
+  .move-first,
   .delete {
     width: 54px;
     height: 54px;
     background-color: var(--color-accent);
-    background-repeat: no-repeat;
     background-position: 50% 50%;
-    background-image: url(/images/trash.svg);
+    background-repeat: no-repeat;
+  }
+
+  .re-upload {
+    background-image: url(../images/re-upload.svg);
+    background-size: 24px 24px;
+    cursor: pointer;
+  }
+
+  .move-first {
+    background-image: url(../images/one.svg);
+    background-size: 11px 20px;
+  }
+
+  .delete {
+    background-image: url(../images/trash.svg);
     background-size: 14px 18px;
   }
 
