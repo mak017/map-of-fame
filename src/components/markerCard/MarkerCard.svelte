@@ -41,7 +41,12 @@ import MarkerCardComplaint from "./MarkerCardComplaint.svelte";
 import ShareMarker from "./ShareMarker.svelte";
 import StatusUpdate from "./StatusUpdate.svelte";
 
-import { EMPTY_YEAR_STRING, MAX_ZOOM, MIN_ZOOM } from "../../js/constants.js";
+import {
+  EMPTY_YEAR_STRING,
+  MAX_ZOOM,
+  MIN_ZOOM,
+  USER_TYPES,
+} from "../../js/constants.js";
 
 const emojiList = [
   "👽",
@@ -253,7 +258,7 @@ const getUserLink = (user, text) => {
 };
 
 const resolveArtistCrew = (pair) => {
-  const { artist, crew, artistUser, crewUser } = pair;
+  const { artist, crew, artistUser, crewUser, type } = pair;
   const hasArtist = !!(artist?.name || artistUser?.id);
   const hasCrew = !!(crew?.name || crewUser?.id);
 
@@ -261,19 +266,24 @@ const resolveArtistCrew = (pair) => {
     return EMPTY_ARTIST;
   }
 
+  const resolvedArtistUser =
+    type === USER_TYPES.artist.toLowerCase() ? pair : artistUser;
+  const resolvedCrewUser =
+    type === USER_TYPES.crew.toLowerCase() ? pair : crewUser;
+
   if (hasArtist && hasCrew) {
     return `${getRandomEmojis()}&nbsp;${getUserLink(
-      artistUser,
+      resolvedArtistUser,
       artist?.name,
-    )} <span>[${getUserLink(crewUser, crew?.name)}]</span>`;
+    )} <span>[${getUserLink(resolvedCrewUser, crew?.name)}]</span>`;
   }
 
   if (hasArtist) {
-    return `${getRandomEmojis()}&nbsp;${getUserLink(artistUser, artist?.name)}`;
+    return `${getRandomEmojis()}&nbsp;${getUserLink(resolvedArtistUser, artist?.name)}`;
   }
 
   return `${getRandomEmojis(3)}&nbsp;<span>[${getUserLink(
-    crewUser,
+    resolvedCrewUser,
     crew?.name,
   )}]</span>`;
 };
@@ -403,7 +413,11 @@ const prepareDescription = (description) => {
       <div class="artist-area">
         <div class="subtitle">ARTIST [CREW]</div>
         <button class="button title artist" on:click={profileState.reset}>
-          {@html getArtistsString(data.artistCrew)}
+          {@html getArtistsString([
+            data.artistCrew[0],
+            ...data.approvedOwners.map(({ user }) => user),
+            ...data.artistCrew.slice(1),
+          ])}
         </button>
       </div>
       {#if data.description}
