@@ -58,7 +58,7 @@ const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
     {/if}
   </div>
   <div slot="left-buttons" class="left-buttons-wrapper">
-    {#if username === $userData.username || $openedMarkerData.approvedOwners.some((data) => data.user.id === $userData.id)}
+    {#if username === $userData.username || $openedMarkerData?.approvedOwners.some((data) => data.user.id === $userData.id)}
       <a
         href={$url("/@:username/spot/:id/edit", { username: username, id })}
         class="button edit"
