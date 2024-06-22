@@ -58,12 +58,14 @@ const toggleDeletePopup = (toggle) => (showDeletePopup = toggle);
     {/if}
   </div>
   <div slot="left-buttons" class="left-buttons-wrapper">
-    {#if username === $userData.username}
+    {#if username === $userData.username || $openedMarkerData.approvedOwners.some((data) => data.user.id === $userData.id)}
       <a
         href={$url("/@:username/spot/:id/edit", { username: username, id })}
         class="button edit"
         on:click={() => editSpotData.set($openedMarkerData)}
         ><PencilSvg fill="var(--color-dark)" /></a>
+    {/if}
+    {#if username === $userData.username}
       <button
         type="button"
         class="button delete"

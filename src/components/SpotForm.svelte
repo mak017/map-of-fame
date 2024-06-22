@@ -614,7 +614,7 @@ const fetchUsersByCrew = async (filterText, index) => {
         <div class="overlay">
           <label for={`upload-image${index}`} class="re-upload" />
           {#if index > 0}
-            {#if !isCoOwner()}
+            {#if isEditSpot && !isCoOwner()}
               <button
                 type="button"
                 class="button move-first"
