@@ -142,33 +142,24 @@ export const updateSpotDraft = async (
             typeof userArtist !== "undefined"))
       ) {
         if (!userArtist && !artist) {
-          if (crewCollabType !== "collab") {
-            formData.append(`artist_crew[${index}][user_by_artist_id]`, "");
-            formData.append(`artist_crew[${index}][artist]`, "");
-          }
+          formData.append(`artist_crew[${index}][user_by_artist_id]`, "");
+          formData.append(`artist_crew[${index}][artist]`, "");
         } else if (userArtist) {
-          artistCollabType === "tagged"
-            ? formData.append(
-                `artist_crew[${index}][user_by_artist_id]`,
-                userArtist
-              )
-            : coOwners.push(userArtist);
+          formData.append(
+            `artist_crew[${index}][user_by_artist_id]`,
+            userArtist
+          );
+          artistCollabType === "collab" && coOwners.push(userArtist);
         } else {
           formData.append(`artist_crew[${index}][artist]`, artist);
         }
 
         if (!userCrew && !crew) {
-          if (artistCollabType !== "collab") {
-            formData.append(`artist_crew[${index}][user_by_crew_id]`, "");
-            formData.append(`artist_crew[${index}][crew]`, "");
-          }
+          formData.append(`artist_crew[${index}][user_by_crew_id]`, "");
+          formData.append(`artist_crew[${index}][crew]`, "");
         } else if (userCrew) {
-          crewCollabType === "tagged"
-            ? formData.append(
-                `artist_crew[${index}][user_by_crew_id]`,
-                userCrew
-              )
-            : coOwners.push(userCrew);
+          formData.append(`artist_crew[${index}][user_by_crew_id]`, userCrew);
+          crewCollabType === "collab" && coOwners.push(userCrew);
         } else {
           formData.append(`artist_crew[${index}][crew]`, crew);
         }

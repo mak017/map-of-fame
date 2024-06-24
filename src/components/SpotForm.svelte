@@ -71,7 +71,9 @@ const isHunter = () => $userData.type === USER_TYPES.hunter.toLowerCase();
 const isCoOwner = () =>
   isEditSpot &&
   editSpotData.approvedOwners.some(
-    (owner) => owner.user.username === $userData.username,
+    (owner) =>
+      owner.user.username === $userData.username &&
+      editSpotData.userId !== owner.userId,
   );
 
 const getInitialYear = () => {
@@ -166,29 +168,9 @@ const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
   artistCollabType: "tagged",
   crewCollabType: "tagged",
 }));
-const editApprovedOwners = editSpotData.approvedOwners?.map((data) => {
-  const { user } = data;
-  const isArtist = user.type === USER_TYPES.artist.toLowerCase();
-  return {
-    artist: user.artist?.name ?? "",
-    crew: user.crew?.name ?? "",
-    userArtist: isArtist ? user.id : "",
-    userCrew: isArtist ? null : user.id,
-    artistData: isArtist ? user : null,
-    crewData: isArtist ? null : user,
-    isTouchedArtist: false,
-    isTouchedCrew: false,
-    artistCollabType: isArtist ? "collab" : "tagged",
-    crewCollabType: isArtist ? "tagged" : "collab",
-  };
-});
 let artistCrewPairs =
   editArtistCrewPairs?.length > 0
-    ? [
-        editArtistCrewPairs[0],
-        ...editApprovedOwners,
-        ...editArtistCrewPairs.slice(1),
-      ]
+    ? editArtistCrewPairs
     : [
         {
           artist: isArtist() ? $userData.artist?.name ?? "" : "",

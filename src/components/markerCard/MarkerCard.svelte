@@ -258,7 +258,7 @@ const getUserLink = (user, text) => {
 };
 
 const resolveArtistCrew = (pair) => {
-  const { artist, crew, artistUser, crewUser, type } = pair;
+  const { artist, crew, artistUser, crewUser } = pair;
   const hasArtist = !!(artist?.name || artistUser?.id);
   const hasCrew = !!(crew?.name || crewUser?.id);
 
@@ -266,24 +266,19 @@ const resolveArtistCrew = (pair) => {
     return EMPTY_ARTIST;
   }
 
-  const resolvedArtistUser =
-    type === USER_TYPES.artist.toLowerCase() ? pair : artistUser;
-  const resolvedCrewUser =
-    type === USER_TYPES.crew.toLowerCase() ? pair : crewUser;
-
   if (hasArtist && hasCrew) {
     return `${getRandomEmojis()}&nbsp;${getUserLink(
-      resolvedArtistUser,
+      artistUser,
       artist?.name,
-    )} <span>[${getUserLink(resolvedCrewUser, crew?.name)}]</span>`;
+    )} <span>[${getUserLink(crewUser, crew?.name)}]</span>`;
   }
 
   if (hasArtist) {
-    return `${getRandomEmojis()}&nbsp;${getUserLink(resolvedArtistUser, artist?.name)}`;
+    return `${getRandomEmojis()}&nbsp;${getUserLink(artistUser, artist?.name)}`;
   }
 
   return `${getRandomEmojis(3)}&nbsp;<span>[${getUserLink(
-    resolvedCrewUser,
+    crewUser,
     crew?.name,
   )}]</span>`;
 };
@@ -413,11 +408,7 @@ const prepareDescription = (description) => {
       <div class="artist-area">
         <div class="subtitle">ARTIST [CREW]</div>
         <button class="button title artist" on:click={profileState.reset}>
-          {@html getArtistsString([
-            data.artistCrew[0],
-            ...data.approvedOwners.map(({ user }) => user),
-            ...data.artistCrew.slice(1),
-          ])}
+          {@html getArtistsString(data.artistCrew)}
         </button>
       </div>
       {#if data.description}
