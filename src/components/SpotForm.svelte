@@ -310,6 +310,10 @@ const handleProcessedImage = (index, imageObject) => {
 const handleChangeImage = (index) => {
   let imageObject = images[index] || newImageUpload;
 
+  if (imageObject.isDraft) {
+    imageObject.isDraft = false;
+  }
+
   const file = imageObject.file[0];
   if (file) {
     const reader = new FileReader();
