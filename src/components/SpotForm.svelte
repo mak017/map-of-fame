@@ -165,8 +165,16 @@ const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
   crewData: data.crewUser,
   isTouchedArtist: false,
   isTouchedCrew: false,
-  artistCollabType: "tagged",
-  crewCollabType: "tagged",
+  artistCollabType: editSpotData.approvedOwners?.some(
+    (ownerData) => ownerData.userId === data.userByArtistId,
+  )
+    ? "collab"
+    : "tagged",
+  crewCollabType: editSpotData.approvedOwners?.some(
+    (ownerData) => ownerData.userId === data.userByCrewId,
+  )
+    ? "collab"
+    : "tagged",
 }));
 let artistCrewPairs =
   editArtistCrewPairs?.length > 0
