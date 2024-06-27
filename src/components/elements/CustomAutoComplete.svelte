@@ -15,7 +15,6 @@ export let showList = false;
 export let isAddSpot = false;
 export let label = "";
 export let inputId = "";
-export let index = 0;
 export let type = "tagged";
 export let onInputChange = () => {};
 export let onInputBlur = () => {};
@@ -91,29 +90,27 @@ onDestroy(() => {
         >{data.name || data.artist?.name || data.crew?.name}</span>
       <span class="username">({data.type || `@${data.username}`})</span>
     </div>
-    {#if index > 0}
-      <div class="collab-wrapper" class:isExpandedCollab>
-        <ButtonDots
-          onClick={handleDotsClick}
-          isVisuallyHidden={isExpandedCollab} />
-        <div class="switcher-tabs">
-          <FormRadioButton
-            id={`tagged-${inputId}`}
-            bind:group={type}
-            on:change={onChangeType}
-            value="tagged"
-            label="Tagged"
-            className="small" />
-          <FormRadioButton
-            id={`collab-${inputId}`}
-            bind:group={type}
-            on:change={onChangeType}
-            value="collab"
-            label="Collab"
-            className="small" />
-        </div>
+    <div class="collab-wrapper" class:isExpandedCollab>
+      <ButtonDots
+        onClick={handleDotsClick}
+        isVisuallyHidden={isExpandedCollab} />
+      <div class="switcher-tabs">
+        <FormRadioButton
+          id={`tagged-${inputId}`}
+          bind:group={type}
+          on:change={onChangeType}
+          value="tagged"
+          label="Tagged"
+          className="small" />
+        <FormRadioButton
+          id={`collab-${inputId}`}
+          bind:group={type}
+          on:change={onChangeType}
+          value="collab"
+          label="Collab"
+          className="small" />
       </div>
-    {/if}
+    </div>
   {/if}
 </div>
 

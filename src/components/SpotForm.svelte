@@ -166,12 +166,16 @@ const editArtistCrewPairs = editSpotData.artistCrew?.map((data) => ({
   isTouchedArtist: false,
   isTouchedCrew: false,
   artistCollabType: editSpotData.approvedOwners?.some(
-    (ownerData) => ownerData.userId === data.userByArtistId,
+    (ownerData) =>
+      ownerData.userId === data.userByArtistId &&
+      ownerData.userId !== editSpotData.userId,
   )
     ? "collab"
     : "tagged",
   crewCollabType: editSpotData.approvedOwners?.some(
-    (ownerData) => ownerData.userId === data.userByCrewId,
+    (ownerData) =>
+      ownerData.userId === data.userByCrewId &&
+      ownerData.userId !== editSpotData.userId,
   )
     ? "collab"
     : "tagged",
@@ -695,7 +699,6 @@ const fetchUsersByCrew = async (filterText, index) => {
           label="Artist name"
           inputId={`artist-input-${index}`}
           type={artistCrewPairs[index].artistCollabType}
-          {index}
           onInputBlur={(event) => {
             if (event.target.value !== pair.artist) {
               artistCrewPairs[index].artist = event.target.value;
@@ -738,7 +741,6 @@ const fetchUsersByCrew = async (filterText, index) => {
           label="Crew name"
           inputId={`crew-input-${index}`}
           type={artistCrewPairs[index].crewCollabType}
-          {index}
           onInputBlur={(event) => {
             if (event.target.value !== pair.crew) {
               artistCrewPairs[index].crew = event.target.value;
