@@ -43,7 +43,8 @@ const handleDelete = async () => {
     type="button"
     class="delete"
     on:click={handleDelete}
-    disabled={isInProgress}>Delete</button>
+    disabled={isInProgress}
+    >{currentSpot.user.username === username ? "Delete" : "Unchain"}</button>
   <ButtonPrimary
     type="button"
     text="Cancel"

@@ -701,7 +701,11 @@ const handleFollowBtnClick = async () => {
 {/if}
 
 {#if showDeletePopup}
-  <Popup title="Delete art?" on:close={() => toggleDeletePopup(false)}>
+  <Popup
+    title={currentSpot.user.username === username
+      ? "Delete art?"
+      : "Collaboration"}
+    on:close={() => toggleDeletePopup(false)}>
     <DeleteSpot
       close={() => toggleDeletePopup(false)}
       {currentSpot}
