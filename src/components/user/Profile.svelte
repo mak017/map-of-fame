@@ -105,7 +105,13 @@ onMount(() => {
   });
 });
 
-const fetchSpots = ({ year, offset, isNewFetch = false }) => {
+const handleMarkedSpotsSwitch = (showMarked) => () => {
+  profileState.setShowMarkedSpots(showMarked);
+  profileState.setSpotsList([{}]);
+  fetchSpots({ isNewFetch: true });
+};
+
+const fetchSpots = async ({ year, offset, isNewFetch = false }) => {
   profileState.setIsLoading(isNewFetch);
   profileState.setIsShowSpinner(true);
 
@@ -113,34 +119,35 @@ const fetchSpots = ({ year, offset, isNewFetch = false }) => {
     ? getUserMarkedSpots
     : getUserSpots;
 
-  request(username, token, {
+  const { success, result, errors } = await request(username, token, {
     year,
     offset,
     sortBy: $profileState.sortBy,
-  }).then((response) => {
-    const { success, result, errors } = response;
-    if (success && result) {
-      const { spots, years } = result;
-      if (isNewFetch) {
-        profileState.setSpotsList([]);
-      }
-      newBatch = spots ? [...spots] : [];
-      profileState.setSpotsList([...$profileState.spotsList, ...newBatch]);
-      profileState.setHasMore(newBatch.length === MAX_ITEMS_PER_PAGE);
-      const yearsToApply = getProfileYears(years);
-      profileState.setYearsToApply(yearsToApply);
-      if ($profileState.currentYear === undefined || year === undefined) {
-        profileState.setCurrentYear(yearsToApply[0]);
-      }
-    }
-    if (errors && !isEmpty(errors)) {
-      if (errors.year) {
-        fetchSpots({});
-      }
-    }
-    profileState.setIsLoading(false);
-    profileState.setIsShowSpinner(false);
   });
+
+  if (success && result) {
+    const { spots, years } = result;
+    if (isNewFetch) {
+      profileState.setSpotsList([]);
+    }
+    newBatch = spots ? [...spots] : [];
+    profileState.setSpotsList([...$profileState.spotsList, ...newBatch]);
+    profileState.setHasMore(newBatch.length === MAX_ITEMS_PER_PAGE);
+    const yearsToApply = getProfileYears(years);
+    profileState.setYearsToApply(yearsToApply);
+    if ($profileState.currentYear === undefined || year === undefined) {
+      profileState.setCurrentYear(yearsToApply[0]);
+    }
+  }
+
+  if (errors && !isEmpty(errors)) {
+    if (errors.year) {
+      fetchSpots({});
+    }
+  }
+
+  profileState.setIsLoading(false);
+  profileState.setIsShowSpinner(false);
 };
 
 let { username } = $params;
@@ -462,12 +469,6 @@ const handleFollowBtnClick = async () => {
     profileState.setUser(updatedUser);
   }
 };
-
-const handleMarkedSpotsSwitch = (showMarked) => () => {
-  profileState.setShowMarkedSpots(showMarked);
-  profileState.setSpotsList([{}]);
-  fetchSpots({ isNewFetch: true });
-};
 </script>
 
 <div
@@ -596,100 +597,100 @@ const handleMarkedSpotsSwitch = (showMarked) => () => {
       </div>
     {/if}
   </div>
-  {#if !!$profileState.spotsList.length || $profileState.isShowSpinner || $profileState.showMarkedSpots}
-    <div class="data">
-      {#if !!$profileState.spotsList.length || $profileState.showMarkedSpots}
-        <div class="data-tabs_wrapper">
-          <div class="right_tabs">
-            <button
-              type="button"
-              class="button"
-              class:active={!$profileState.showMarkedSpots}
-              on:click={handleMarkedSpotsSwitch(false)}
-              ><GridViewSvg
-                isActive={!$profileState.showMarkedSpots} /></button>
-            <button
-              type="button"
-              class="button"
-              class:active={$profileState.showMarkedSpots}
-              on:click={handleMarkedSpotsSwitch(true)}
-              ><MentionSvg isActive={$profileState.showMarkedSpots} /></button>
-          </div>
-        </div>
-        <div class="data-top">
-          <div class="year-select">
-            <CustomSelect
-              items={$profileState.yearsToApply}
-              selectedValue={{
-                value: $profileState.currentYear,
-                label: $profileState.currentYear || EMPTY_YEAR_STRING,
-              }}
-              isYear
-              on:select={handleYearSelect} />
-          </div>
-          {#if $profileState.currentYear === ALL_YEARS_STRING}
-            <div class="sorting">
-              <span>Sort by: </span>
-              <button
-                type="button"
-                class="button"
-                class:active={$profileState.sortBy === "created_at"}
-                on:click={handleSortingChange("created_at")}>Upload</button>
-              {" / "}
-              <button
-                type="button"
-                class="button"
-                class:active={$profileState.sortBy === "year"}
-                on:click={handleSortingChange("year")}>Year</button>
-            </div>
-          {/if}
-          <div class="show-on-map">
-            <ShowOnMapButton
-              onClick={() => handleShowOnMapClick(false)}
-              showTextOnHover />
-          </div>
-        </div>
-      {/if}
-      {#if !$profileState.isLoading}
-        <div class="spots">
-          {#each $profileState.spotsList as spot}
-            <SpotCard
-              isEditable={isCurrentUser && !$profileState.showMarkedSpots}
-              {spot}
-              onSpotClick={handleSpotClick}
-              onEdit={handleEdit}
-              onDelete={handleDelete} />
-          {/each}
-          {#if parentModal}
-            <InfiniteScroll
-              hasMore={$profileState.hasMore}
-              threshold={100}
-              on:loadMore={onLoadMore}
-              elementScroll={parentModal} />
-          {/if}
-        </div>
-      {/if}
-      {#if $profileState.isShowSpinner}
-        <div class="spots"><PlaceholdersGrid /></div>
-      {:else if !$profileState.spotsList.length}
-        <div class="empty-state marked">No marked spots found</div>
-      {/if}
+  <div class="data">
+    <div class="data-tabs_wrapper">
+      <div class="right_tabs">
+        <button
+          type="button"
+          class="button"
+          class:active={!$profileState.showMarkedSpots}
+          on:click={handleMarkedSpotsSwitch(false)}
+          ><GridViewSvg isActive={!$profileState.showMarkedSpots} /></button>
+        <button
+          type="button"
+          class="button"
+          class:active={$profileState.showMarkedSpots}
+          on:click={handleMarkedSpotsSwitch(true)}
+          ><MentionSvg isActive={$profileState.showMarkedSpots} /></button>
+      </div>
     </div>
-  {:else if !$profileState.isShowSpinner}
-    <div class="empty-state">
-      <img src="../../../images/empty.jpg" alt="Empty" />
-      <p>
-        {#if isCurrentUser}
-          <button
-            type="button"
-            class="button empty-button"
-            on:click={handleAddSpot}>Make your mark</button> on society, not in society
-        {:else}
-          Make your mark on society, not in society
+    {#if !!$profileState.spotsList.length}
+      <div class="data-top">
+        <div class="year-select">
+          <CustomSelect
+            items={$profileState.yearsToApply}
+            selectedValue={{
+              value: $profileState.currentYear,
+              label: $profileState.currentYear || EMPTY_YEAR_STRING,
+            }}
+            isYear
+            on:select={handleYearSelect} />
+        </div>
+        {#if $profileState.currentYear === ALL_YEARS_STRING}
+          <div class="sorting">
+            <span>Sort by: </span>
+            <button
+              type="button"
+              class="button"
+              class:active={$profileState.sortBy === "created_at"}
+              on:click={handleSortingChange("created_at")}>Upload</button>
+            {" / "}
+            <button
+              type="button"
+              class="button"
+              class:active={$profileState.sortBy === "year"}
+              on:click={handleSortingChange("year")}>Year</button>
+          </div>
         {/if}
-      </p>
-    </div>
-  {/if}
+        <div class="show-on-map">
+          <ShowOnMapButton
+            onClick={() => handleShowOnMapClick(false)}
+            showTextOnHover />
+        </div>
+      </div>
+    {/if}
+    {#if !$profileState.isLoading && $profileState.spotsList?.length}
+      <div class="spots">
+        {#each $profileState.spotsList as spot}
+          <SpotCard
+            isEditable={isCurrentUser && !$profileState.showMarkedSpots}
+            {spot}
+            onSpotClick={handleSpotClick}
+            onEdit={handleEdit}
+            onDelete={handleDelete} />
+        {/each}
+        {#if parentModal}
+          <InfiniteScroll
+            hasMore={$profileState.hasMore}
+            threshold={100}
+            on:loadMore={onLoadMore}
+            elementScroll={parentModal} />
+        {/if}
+      </div>
+    {/if}
+    {#if $profileState.isShowSpinner}
+      <div class="spots"><PlaceholdersGrid /></div>
+    {:else if !$profileState.spotsList.length}
+      {#if $profileState.showMarkedSpots}
+        <div class="empty-state marked">No marked spots found</div>
+      {:else}
+        <div class="empty-state">
+          <img src="../../../images/empty.jpg" alt="Empty" />
+          <p>
+            {#if isCurrentUser}
+              <button
+                type="button"
+                class="button empty-button"
+                on:click={handleAddSpot}>Make your mark</button> on society, not
+              in society
+            {:else}
+              Make your mark on society, not in society
+            {/if}
+          </p>
+        </div>
+      {/if}
+    {/if}
+  </div>
 </div>
 
 {#if $isFirstTimeVisit && !$profileState.isLoading && !isCurrentUser}
