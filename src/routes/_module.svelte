@@ -1,7 +1,8 @@
 <script>
 import L from "leaflet";
 import { SearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
-import { afterUrlChange, goto } from "@roxi/routify";
+import { MetaTags } from "svelte-meta-tags";
+import { afterUrlChange, goto, isActive } from "@roxi/routify";
 import { DrawAreaSelection } from "@bopen/leaflet-area-selection";
 
 import {
@@ -35,8 +36,10 @@ import {
   hasBrowseHistory,
   isUserVerifyProgress,
   selectedYear,
+  openedMarkerData,
 } from "./../js/store.js";
 import { requestSpots, requestSpotsInArea } from "../js/init.js";
+import { getSpotCardMetadata } from "../js/metatags.js";
 import { placeMarkers } from "../js/utils/mapUtils/markersUtils.js";
 
 import Loader from "../components/elements/Loader.svelte";
@@ -45,9 +48,28 @@ import "@/scss/init.scss";
 
 globalGoto.set($goto);
 
+let metaTags = {};
+
+const getMetaTags = () => {
+  if ($isActive("/@[username]/spot/[id]", {}, { recursive: false })) {
+    metaTags = getSpotCardMetadata();
+  } else {
+    metaTags = {
+      title: "STREEET.art",
+      description: "Карта уличного искусства",
+      keywords: [],
+    };
+  }
+};
+
+getMetaTags();
+
 $afterUrlChange(() => {
   hasBrowseHistory.set(true);
+  getMetaTags();
 });
+
+$: if ($openedMarkerData) getMetaTags();
 
 let selectedCategories = loadFromLocalStorage("categories") || [1];
 
@@ -144,6 +166,7 @@ $: if ($isInitialized && !$isUserVerifyProgress && !$isShowOnMapMode) {
 </script>
 
 <svelte:window on:resize={adjustVhProp} />
+<MetaTags {...metaTags} />
 {#if $isLoading}
   <Loader />
 {:else}
