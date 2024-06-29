@@ -179,7 +179,7 @@ $: unusedInvitesCount = $profileState.invites.reduce(
   <div class="text-top">{$userData.isSpotsHidden ? "👀 Show" : "🚨 Hide"}</div>
   <div class="text">all your photos</div>
 </button>
-{#if $profileState.invites.length}
+{#if $profileState.invites.length && unusedInvitesCount > 0}
   <button
     type="button"
     class="button invites"
