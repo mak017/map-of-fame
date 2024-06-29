@@ -52,7 +52,12 @@ let metaTags = {};
 
 const getMetaTags = () => {
   if ($isActive("/@[username]/spot/[id]", {}, { recursive: false })) {
-    metaTags = getSpotCardMetadata();
+    //  metaTags = getSpotCardMetadata();
+    metaTags = {
+      title: "STREEET.art",
+      description: "Карта уличного искусства",
+      robots: "noindex",
+    };
   } else {
     metaTags = {
       title: "STREEET.art",
